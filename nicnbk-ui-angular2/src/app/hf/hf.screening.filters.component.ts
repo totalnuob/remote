@@ -96,4 +96,8 @@ export class HFScreeningFilteredResultsComponent extends CommonFormViewComponent
         this.router.navigate(['/hf/screening/filteredResults/edit/', this.screeningId, id]);
     }
 
+    deleteFilteredResult(id){
+        alert("TODO: delete filter, id=" + id);
+    }
+
 }

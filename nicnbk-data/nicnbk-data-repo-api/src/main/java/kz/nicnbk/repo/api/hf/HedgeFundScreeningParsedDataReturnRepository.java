@@ -38,5 +38,8 @@ public interface HedgeFundScreeningParsedDataReturnRepository extends PagingAndS
     @Query("SELECT e FROM HedgeFundScreeningParsedDataReturn e WHERE e.screening.id=?1 AND e.fundId=?2 AND e.date >= ?3 AND e.date <= ?4")
     List<HedgeFundScreeningParsedDataReturn> findByScreeningIdAndFundIdDateRange(Long screeningId, Long fundId, Date dateFrom, Date dateTo, Sort sorting);
 
+    @Query("SELECT DISTINCT e.returnsCurrency FROM HedgeFundScreeningParsedDataReturn e WHERE e.screening.id=?1")
+    List<String> getUniqueCurrencies(Long screeningId);
+
 
 }

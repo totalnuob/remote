@@ -31,6 +31,9 @@ public class HedgeFundScreeningFilteredResultEntityConverter extends BaseDozerEn
     @Autowired
     private HedgeFundScreeningFilteredResultRepository filteredResultRepository;
 
+    @Autowired
+    private HedgeFundScreeningEntityConverter screeningEntityConverter;
+
     @Override
     public HedgeFundScreeningFilteredResult assemble(HedgeFundScreeningFilteredResultDto dto){
         HedgeFundScreeningFilteredResult entity = super.assemble(dto);
@@ -76,6 +79,7 @@ public class HedgeFundScreeningFilteredResultEntityConverter extends BaseDozerEn
         HedgeFundScreeningFilteredResultDto dto = super.disassemble(entity);
 
         dto.setScreeningId(entity.getScreening().getId());
+        dto.setScreening(this.screeningEntityConverter.disassemble(entity.getScreening()));
 
         if(entity.getStartDate() != null){
             dto.setStartDateMonth(DateUtils.getMonthYearDate(entity.getStartDate()));

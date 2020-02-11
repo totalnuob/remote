@@ -96,7 +96,7 @@ export class AppComponent {
 
     activeBlock = 'corp';
 
-    snow = true;
+    snow = false;
 
     private moduleAccessChecker: ModuleAccessCheckerService;
 

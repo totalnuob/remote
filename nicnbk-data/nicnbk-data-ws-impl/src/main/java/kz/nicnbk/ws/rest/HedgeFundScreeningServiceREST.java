@@ -5,6 +5,7 @@ import kz.nicnbk.service.api.authentication.TokenService;
 import kz.nicnbk.service.api.hf.HedgeFundScreeningService;
 import kz.nicnbk.service.dto.common.FileUploadResultDto;
 import kz.nicnbk.service.dto.common.ListResponseDto;
+import kz.nicnbk.service.dto.common.ResponseDto;
 import kz.nicnbk.service.dto.common.ResponseStatusType;
 import kz.nicnbk.service.dto.files.FilesDto;
 import kz.nicnbk.service.dto.hf.*;
@@ -173,7 +174,6 @@ public class HedgeFundScreeningServiceREST extends CommonServiceREST{
     @RequestMapping(value = "/filteredResults/get/{id}", method = RequestMethod.GET)
     public ResponseEntity getFilteredResult(@PathVariable long id){
         HedgeFundScreeningFilteredResultDto dto = this.screeningService.getFilteredResultWithFundsInfo(id);
-
         return buildNonNullResponse(dto);
     }
 
@@ -344,4 +344,17 @@ public class HedgeFundScreeningServiceREST extends CommonServiceREST{
             logger.error("(PeriodicReport) File export: failed to close input stream", e);
         }
     }
+
+    @PreAuthorize("hasRole('ROLE_HEDGE_FUND_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/filteredResults/saveResults", method = RequestMethod.POST)
+    public ResponseEntity<?> saveResults(@RequestBody HedgeFundScreeningSaveParamsDto saveParamsDto) {
+        // set creator
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
+
+        ResponseDto response = this.screeningService.saveResults(saveParamsDto, username);
+
+        return buildNonNullResponseWithStatus(response);
+    }
+
 }

@@ -249,7 +249,7 @@ export class HFScreeningEditComponent extends CommonFormViewComponent implements
 
 
     public canEdit() {
-        return this.moduleAccessChecker.checkAccessHedgeFundsEditor();
+        return this.moduleAccessChecker.checkAccessHedgeFundsEditor() && this.screening.editable;
     }
 
     searchReturns(months){

@@ -31,7 +31,7 @@
                             <div class="form-group form-horizontal">
                                 <label class="control-label col-md-2" for="name">Name:</label>
                                 <div class="col-md-10">
-                                    <input type="text" id="name" class="form-control" placeholder="Enter name..." maxlength="250" name="name" [(ngModel)]="screening.name"
+                                    <input type="text" id="name" class="form-control" placeholder="Enter name..." maxlength="250" name="name" [(ngModel)]="screening.name" [disabled]="!screening?.editable"
                                     required #name="ngModel"/>
                                     <div [hidden]="name.valid || name.pristine" class="alert alert-danger">Name is required</div>
                                 </div>
@@ -44,6 +44,7 @@
                                 <label class="control-label col-md-2" for="shortName">Short Name:</label>
                                 <div class="col-md-10">
                                     <input type="text" id="shortName" class="form-control" placeholder="Short name..." maxlength="250" name="shortName" [(ngModel)]="screening.shortName"
+                                           [disabled]="!screening?.editable"
                                            required #shortName="ngModel"/>
                                     <div [hidden]="shortName.valid || shortName.pristine" class="alert alert-danger">Short Name is required</div>
                                 </div>
@@ -56,6 +57,7 @@
                                 <label class="control-label col-md-2" for="description">Description:</label>
                                 <div class="col-md-10">
                                     <textarea fz-elastic type="text" id="description" class="form-control" maxlength="250" name="description" [(ngModel)]="screening.description"
+                                              [disabled]="!screening?.editable"
                                               #description="ngModel"></textarea>
                                     <!--<div [hidden]="description.valid || description.pristine" class="alert alert-danger">Description is required</div>-->
                                 </div>
@@ -68,7 +70,8 @@
                                 <label class="control-label col-md-2" for="screeningDate">Date:</label>
                                 <div class="col-md-10">
                                     <div class='input-group date col-md-3' id='screeningDateDiv'>
-                                        <input type='text' class="form-control" name="screeningDate" id="screeningDate" [(ngModel)]="screening.date" #screeningDate="ngModel"/>
+                                        <input type='text' class="form-control" name="screeningDate" id="screeningDate" [(ngModel)]="screening.date" #screeningDate="ngModel"
+                                               [disabled]="!screening?.editable"/>
                                         <span class="input-group-addon">
                                             <span class="glyphicon glyphicon-calendar"></span>
                                         </span>

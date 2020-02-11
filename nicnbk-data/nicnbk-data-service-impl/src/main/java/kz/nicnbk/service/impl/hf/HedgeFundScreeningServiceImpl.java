@@ -3,18 +3,22 @@ package kz.nicnbk.service.impl.hf;
 import kz.nicnbk.common.service.exception.ExcelFileParseException;
 import kz.nicnbk.common.service.util.*;
 import kz.nicnbk.repo.api.hf.*;
+import kz.nicnbk.repo.model.employee.Employee;
 import kz.nicnbk.repo.model.files.Files;
 import kz.nicnbk.repo.model.hf.*;
+import kz.nicnbk.repo.model.lookup.BenchmarkLookup;
 import kz.nicnbk.repo.model.lookup.CurrencyLookup;
 import kz.nicnbk.repo.model.lookup.FileTypeLookup;
+import kz.nicnbk.service.api.benchmark.BenchmarkService;
 import kz.nicnbk.service.api.common.CurrencyRatesService;
+import kz.nicnbk.service.api.employee.EmployeeService;
 import kz.nicnbk.service.api.files.FileService;
 import kz.nicnbk.service.api.hf.HedgeFundScoringService;
 import kz.nicnbk.service.api.hf.HedgeFundScreeningService;
 import kz.nicnbk.service.converter.hf.*;
-import kz.nicnbk.service.dto.common.FileUploadResultDto;
-import kz.nicnbk.service.dto.common.ListResponseDto;
-import kz.nicnbk.service.dto.common.ResponseStatusType;
+import kz.nicnbk.service.dto.benchmark.BenchmarkValueDto;
+import kz.nicnbk.service.dto.common.*;
+import kz.nicnbk.service.dto.employee.EmployeeDto;
 import kz.nicnbk.service.dto.files.FilesDto;
 import kz.nicnbk.service.dto.hf.*;
 import kz.nicnbk.service.dto.lookup.CurrencyRatesDto;
@@ -112,6 +116,34 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
     @Autowired
     private FileService fileService;
 
+    @Autowired
+    private BenchmarkService benchmarkService;
+
+    @Autowired
+    private EmployeeService employeeService;
+
+    @Autowired
+    private HedgeFundScreeningSavedResultsRepository screeningSavedResultsRepository;
+
+    @Autowired
+    private HedgeFundScreeningSavedResultFundsRepository screeningSavedResultFundsRepository;
+
+    @Autowired
+    private HedgeFundScreeningSavedResultFundsEntityConverter screeningSavedResultFundsEntityConverter;
+
+    @Autowired
+    private HedgeFundScreeningSavedResultsCurrencyRepository screeningSavedResultsCurrencyRepository;
+
+    @Autowired
+    private HedgeFundScreeningSavedResultsCurrencyEntityConverter screeningSavedResultsCurrencyEntityConverter;
+
+    @Autowired
+    private HedgeFundScreeningSavedResultsBenchmarkRepository screeningSavedResultsBenchmarkRepository;
+
+    @Autowired
+    private HedgeFundScreeningSavedResultsBenchmarkEntityConverter screeningSavedResultsBenchmarkEntityConverter;
+
+
 
     /*** CRUD operations **********************************************************************************************/
     @Override
@@ -120,6 +152,10 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
             if(screeningDto.getId() == null){
                 screeningDto.setCreator(username);
             }else{
+                if(!checkScreeningEditable(screeningDto.getId())){
+                    logger.error("Error saving HF Screening: screening is not editable [user]=" + username);
+                    return null;
+                }
                 screeningDto.setUpdater(username);
             }
             HedgeFundScreening entity = this.screeningEntityConverter.assemble(screeningDto);
@@ -174,10 +210,24 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
                     dto.setParsedUcitsData(parsedUcitsData);
                 }
 
+                dto.setEditable(checkScreeningEditable(id));
                 return dto;
             }
         }
         return null;
+    }
+
+    private boolean checkScreeningEditable(Long id){
+        // check if all existing filters editable
+        List<HedgeFundScreeningFilteredResultDto> filteredResults = getFilteredResultsByScreeningId(id);
+        if(filteredResults != null && !filteredResults.isEmpty()){
+            for(HedgeFundScreeningFilteredResultDto filteredResultDto: filteredResults){
+                if(!checkFilteredResultEditable(filteredResultDto.getId())){
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     @Override
@@ -188,6 +238,7 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
             while(entitiesIterator.hasNext()){
                 HedgeFundScreening entity = entitiesIterator.next();
                 HedgeFundScreeningDto dto = this.screeningEntityConverter.disassemble(entity);
+                dto.setEditable(checkScreeningEditable(entity.getId()));
                 screenings.add(dto);
             }
         }
@@ -447,7 +498,6 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
             entitiesPage = screeningRepository.search(searchParams.getDateFromNonEmpty(), searchParams.getDateToNonEmpty(), searchParams.getSearchTextLowerCase(),
                     new PageRequest(page, searchParams.getPageSize(), new Sort(Sort.Direction.DESC, "date", "name")));
 
-
             HedgeFundScreeningPagedSearchResult result = new HedgeFundScreeningPagedSearchResult();
             if (entitiesPage != null) {
                 result.setTotalElements(entitiesPage.getTotalElements());
@@ -462,6 +512,9 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
                     result.setSearchParams(searchParams.getSearchParamsAsString());
                 }
                 result.setScreenings(this.screeningEntityConverter.disassembleList(entitiesPage.getContent()));
+                for(HedgeFundScreeningDto screening: result.getScreenings()){
+                    screening.setEditable(checkScreeningEditable(screening.getId()));
+                }
 
                 //Collections.sort(result.getScreenings());
             }
@@ -477,6 +530,10 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
         try {
 
             // TODO: check permissions? editable screening?
+            if(!checkScreeningEditable(screeningId)){
+                logger.error("Error saving HF Screening data file: screening is not editable [user]=" + username);
+                return null;
+            }
 
             FileUploadResultDto fileUploadResultDto = new FileUploadResultDto();
 
@@ -570,6 +627,9 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
         List<HedgeFundScreeningFilteredResult> entities = filteredResultRepository.findByScreeningId(screeningId);
         if(entities != null){
             List<HedgeFundScreeningFilteredResultDto> results = this.filteredResultEntityConverter.disassembleList(entities);
+            for(HedgeFundScreeningFilteredResultDto dto: results){
+                dto.setEditable(checkFilteredResultEditable(dto.getId()));
+            }
             return results;
         }
         return new ArrayList<HedgeFundScreeningFilteredResultDto>();
@@ -582,6 +642,10 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
             if(dto.getId() == null){
                 dto.setCreator(username);
             }else{
+                if(!checkFilteredResultEditable(dto.getId())){
+                    logger.error("Error saving filtered result: not editable [user]=" + username);
+                    return null;
+                }
                 dto.setUpdater(username);
                 dto.setCreator(null);
             }
@@ -606,12 +670,14 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
             HedgeFundScreeningFilteredResultStatisticsDto statisticsDto = getFilteredResultStatistics(filteredResultDto);
             filteredResultDto.setFilteredResultStatistics(statisticsDto);
 
-            // to check funds
-//
-
             // added funds
             List<HedgeFundScreeningParsedDataDto> addedFunds = getAddedFundsByFilteredResultId(id);
             filteredResultDto.setAddedFunds(addedFunds);
+
+            // edited funds
+            List<HedgeFundScreeningParsedDataDto> editedFunds = getEditedIncludedFunds(id);
+            filteredResultDto.setEditedFunds(editedFunds);
+
 
             //excluded funds
             List<HedgeFundScreeningParsedDataDto> excludedFunds = getExcludedFunds(filteredResultDto.getId());
@@ -627,12 +693,20 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
         return null;
     }
 
+    private boolean checkFilteredResultEditable(Long id){
+        HedgeFundScreeningSavedResultsDto savedResultsDto = getSavedResultsByFilteredResultId(id);
+        if(savedResultsDto != null && savedResultsDto.getId() != null) {
+            return false;
+        }
+        return true;
+    }
+
     @Override
     public HedgeFundScreeningFilteredResultDto getFilteredResultWithoutFundsInfo(Long id) {
         HedgeFundScreeningFilteredResult entity = this.filteredResultRepository.findOne(id);
         if(entity != null){
             HedgeFundScreeningFilteredResultDto dto =  this.filteredResultEntityConverter.disassemble(entity);
-
+            dto.setEditable(checkFilteredResultEditable(id));
             return dto;
         }
 
@@ -1207,6 +1281,10 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
 
     @Override
     public boolean removeFileAndData(Long fileId, Long screeningId, String username){
+        if(!checkScreeningEditable(screeningId)){
+            logger.error("Error removing data file for HF Screening: screening is not editable [user]=" + username);
+            return false;
+        }
         HedgeFundScreening entity = this.screeningRepository.findOne(screeningId);
 
         if(fileId == null || entity.getDataFile() == null || entity.getDataFile().getId().longValue() != fileId.longValue()) {
@@ -1330,6 +1408,12 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
             }
             statisticsDto.setUnqualified(unqualified);
 
+            // final results
+            if(params.getId() != null) {
+                HedgeFundScreeningFinalResultsDto resultsDto = getFinalResultsByFilteredResultId(params.getId());
+                statisticsDto.setFinalResults(resultsDto);
+            }
+
 //            System.out.println("QUALIFIED CHECK");
 //            for(int i = 0; i < qualified.length; i++){
 //                for(int j = 0; j < qualified[i].length; j++){
@@ -1441,6 +1525,63 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
 //        }
 
         return statisticsDto;
+    }
+
+    private HedgeFundScreeningFinalResultsDto getFinalResultsByFilteredResultId(Long filteredResultId){
+        HedgeFundScreeningSavedResultsDto savedResultsDto = getSavedResultsByFilteredResultId(filteredResultId);
+        if(savedResultsDto != null) {
+            HedgeFundScreeningFinalResultsDto finalResultsDto = new HedgeFundScreeningFinalResultsDto();
+            finalResultsDto.setSelectedLookbackAUM(savedResultsDto.getSelectedLookbackAUM());
+            finalResultsDto.setSelectedLookbackReturn(savedResultsDto.getSelectedLookbackReturn());
+
+            // fund list
+            List<HedgeFundScreeningSavedResultFundsDto> funds = getSavedResultFundsBySavedResultsId(savedResultsDto.getId());
+            if(funds != null && !funds.isEmpty()){
+                List<HedgeFundScreeningSavedResultFundsDto> qualifiedFunds = new ArrayList<>();
+                List<HedgeFundScreeningSavedResultFundsDto> unqualifiedFunds = new ArrayList<>();
+                List<HedgeFundScreeningSavedResultFundsDto> undecidedFunds = new ArrayList<>();
+                for(HedgeFundScreeningSavedResultFundsDto fund: funds){
+                    if(fund.getType() == 1){
+                        qualifiedFunds.add(fund);
+                    }else if(fund.getType() == 2){
+                        unqualifiedFunds.add(fund);
+                    }else if(fund.getType() == 3){
+                        undecidedFunds.add(fund);
+                    }
+                }
+                finalResultsDto.setQualifiedFunds(qualifiedFunds);
+                finalResultsDto.setUnqualifiedFunds(unqualifiedFunds);
+                finalResultsDto.setUndecidedFunds(undecidedFunds);
+
+                if(qualifiedFunds != null && !qualifiedFunds.isEmpty()){
+                    if(qualifiedFunds.size() > 50){
+                        if(MathUtils.subtract(2, qualifiedFunds.get(50).getTotalScore(), qualifiedFunds.get(49).getTotalScore()) == 0.00){
+                            // remove with total score equal to 51-st fund total score
+                            int index = 49;
+                            Double currentTotalScore = qualifiedFunds.get(49).getTotalScore();
+                            while(currentTotalScore.doubleValue() == qualifiedFunds.get(49).getTotalScore().doubleValue()){
+                                index--;
+                                currentTotalScore = qualifiedFunds.get(index).getTotalScore();
+                            }
+
+                            finalResultsDto.setTop50qualifiedFunds(qualifiedFunds.subList(0, index + 1));
+                        }else{
+                            // first 50
+                            finalResultsDto.setTop50qualifiedFunds(qualifiedFunds.subList(0, 50));
+                        }
+                    }else{
+                        finalResultsDto.setTop50qualifiedFunds(qualifiedFunds);
+                    }
+                }
+            }
+
+            // currency rates
+
+            // benchmarks
+            return finalResultsDto;
+        }
+        return null;
+
     }
 
     private Map<Integer, List<HedgeFundScreeningParsedDataDto>> getAddedFundsQualifiedByReturnLookbackMap(HedgeFundScreeningFilteredResultDto params){
@@ -1726,6 +1867,10 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
     public boolean updateFundInfo(HedgeFundScreeningParsedDataDto fund, String username) {
 
         // TODO: check min AUM, track record
+        if(fund.getFilteredResultId() != null && !checkFilteredResultEditable(fund.getFilteredResultId())){
+            logger.error("Failed to update fund info: filtered result is not editable [" + username + "]");
+            return false;
+        }
 
         try{
             if (fund.getScreening() == null || fund.getScreening().getId() == null) {
@@ -1930,19 +2075,23 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
     }
 
     @Override
-    public boolean deleteAddedFund(String fundName, Long filteredResultI, String username) {
+    public boolean deleteAddedFund(String fundName, Long filteredResultId, String username) {
         try {
-            HedgeFundScreeningAddedFund addedFund = this.addedFundRepository.findByFundNameAndFilteredResultId(fundName, filteredResultI);
+            if(!checkFilteredResultEditable(filteredResultId)){
+                logger.error("Failed to delete added fund : filtered result is not editable [" + username + "]");
+                return false;
+            }
+            HedgeFundScreeningAddedFund addedFund = this.addedFundRepository.findByFundNameAndFilteredResultId(fundName, filteredResultId);
             if(addedFund != null) {
                 // clear returns
                 this.addedFundReturnRepository.deleteByFundId(addedFund.getId());
 
                 // delete fund
-                this.addedFundRepository.deleteByFundNameAndFilteredResultId(fundName, filteredResultI);
+                this.addedFundRepository.deleteByFundNameAndFilteredResultId(fundName, filteredResultId);
                 return true;
             }
         }catch (Exception ex){
-            this.logger.error("Failed to delete added fund: fundName=" + fundName + ", filteredResultId=" + filteredResultI + "[user=" + username + "]", ex);
+            this.logger.error("Failed to delete added fund: fundName=" + fundName + ", filteredResultId=" + filteredResultId + "[user=" + username + "]", ex);
         }
         return false;
     }
@@ -1962,6 +2111,10 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
 //        }
 //        return false;
         try {
+            if(!checkFilteredResultEditable(filteredResultId)){
+                logger.error("Failed to exclude fund : filtered result is not editable [" + username + "]");
+                return false;
+            }
             if(StringUtils.isEmpty(excludeComment)){
                 logger.error("Failed to exclude fund - comment required: filter id=" +
                         (filteredResultId != null ? filteredResultId.longValue() : null) +
@@ -2015,6 +2168,10 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
 //        return false;
 
         try {
+            if(!checkFilteredResultEditable(filteredResultId)){
+                logger.error("Failed to include added fund : filtered result is not editable [" + username + "]");
+                return false;
+            }
             HedgeFundScreeningEditedFund entity = this.editedFundRepository.findByFilteredResultIdAndFundId(filteredResultId, fundId);
             if (entity != null) {
                 entity.setExcluded(false);
@@ -2225,12 +2382,13 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
 
         for(int lookback = lookbackStart; lookback <= params.getLookbackReturns().intValue(); lookback++){
             // Check date
-            Date dateFrom = DateUtils.moveDateByMonths(params.getStartDateFromTextOrCurrent(), 0 - (Math.max(0, params.getTrackRecord().intValue() + lookback - 1)));
+            Date dateFrom = DateUtils.getLastDayOfCurrentMonth(DateUtils.moveDateByMonths(params.getStartDateFromTextOrCurrent(), 0 - (Math.max(0, params.getTrackRecord().intValue() + lookback - 1))));
+            Date dateTo = DateUtils.getLastDayOfCurrentMonth(DateUtils.moveDateByMonths(params.getStartDateFromTextOrCurrent(), (0 - lookback)));
 
             Map<Long, List<Date>> fundReturnCountsMap = new HashMap<>();
             if(fundReturns != null && !fundReturns.isEmpty()) {
                 for(HedgeFundScreeningParsedDataReturn fundReturn: fundReturns){
-                    if(fundReturn.getDate().compareTo(dateFrom) < 0){
+                    if(fundReturn.getDate().before(dateFrom) || fundReturn.getDate().after(dateTo)){
                         // skip dates not in this lookback range
                         continue;
                     }
@@ -3061,15 +3219,13 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
         Date dateTo = params.getStartDateFromTextOrCurrent() != null ? params.getStartDateFromTextOrCurrent() : DateUtils.getFirstDayOfNextMonth(new Date());
 
         List<HedgeFundScreeningParsedDataDto> excludedFunds = getExcludedFunds(params.getId());
+        List<HedgeFundScreeningParsedDataDto> autoExcluded = getAutoExcludedFunds(params.getScreeningId(), params.getId());
         for(HedgeFundScreeningParsedDataDto record: fundList) {
-            record.setStrategyAUMCheck(true);
-            record.setManagerAUMCheck(false);
-            record.setTrackRecordCheck(true);
-            HedgeFundScreeningParsedDataAUM  fundAUM = this.parsedDataAUMRepository.getLastAUMByDatesAndFundId(params.getScreeningId(),
-                    dateFrom, dateTo, record.getFundId());
             if(record.isAdded()){
                 continue;
             }
+            HedgeFundScreeningParsedDataAUM  fundAUM = this.parsedDataAUMRepository.getLastAUMByDatesAndFundId(params.getScreeningId(),
+                    dateFrom, dateTo, record.getFundId());
             if(fundAUM != null) {
                 // Set most recent fund AUM
                 if (fundAUM.getReturnsCurrency() != null && !fundAUM.getReturnsCurrency().equalsIgnoreCase(CurrencyLookup.USD.getCode())) {
@@ -3085,7 +3241,7 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
                         }else{
                             // lookback period
                             record.setFundAUM(MathUtils.multiply(fundAUM.getValue(), currencyRatesDto.getValueUSD()));
-                            //record.setFundAUMDate(fundAUM.getDate());
+                            record.setFundAUMDate(fundAUM.getDate());
                         }
                     }else{
                         record.setFundAUMByCurrency(fundAUM.getValue());
@@ -3101,7 +3257,6 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
                     }
                 }
             }
-
 
             // Set recent Strategy AUM
             Double recentStrategyAUM = 0.0;
@@ -3145,9 +3300,6 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
                 }
             }
 
-            // TODO: Ucits as Strategy AUM
-
-
             // Set recent track record
             List<HedgeFundScreeningParsedDataReturn> returns =
                     this.parsedDataReturnRepository.findByScreeningIdAndFundId(params.getScreeningId(), record.getFundId(), new Sort(Sort.Direction.DESC, "date"));
@@ -3155,33 +3307,107 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
                 Date firstDate = null;
                 Date prevDate = null;
                 int dateCounter = 0;
+
+                Date validTrackRecordStartDate = null;
+                Date validTrackRecordEndDate = null;
                 for (HedgeFundScreeningParsedDataReturn returnValue : returns) {
                     // MUST BE DESCENDING ORDER
                     if (firstDate != null && prevDate != null &&
                             DateUtils.getMonthsChanged(returnValue.getDate(), prevDate) == 2) {
                         prevDate = returnValue.getDate();
                         dateCounter++;
-                        if (dateCounter == params.getTrackRecord().intValue()) {
-                            record.setRecentTrackRecordDate(firstDate);
-                            if (firstDate.compareTo(DateUtils.moveDateByMonths(params.getStartDateFromTextOrCurrent(), params.getLookbackReturns().intValue())) == 0) {
-                                // unqualified by AUM
-                                record.setRecentTrackRecordDateWithinLookback(true);
-                            } else {
-                                // unqualified by track record
-                                record.setRecentTrackRecordDateWithinLookback(false);
-                            }
-                            break;
-                        }
+
+//                        if (dateCounter == params.getTrackRecord().intValue()) {
+//                            record.setRecentTrackRecordDate(firstDate);
+//
+//                            // TODO: if track record start on params.STARTDATE not exactle on lookback date, but also valid
+//                            // TODO: e.g. returns start on SEP 2019, but AUG 2019 is ok too
+//                            // TODO: trackRecordCheck !!!!
+//
+//                            if (firstDate.compareTo(DateUtils.getLastDayOfCurrentMonth(DateUtils.moveDateByMonths(params.getStartDateFromTextOrCurrent(),(0 - params.getLookbackReturns().intValue())))) == 0) {
+//                                // unqualified by AUM
+//                                record.setRecentTrackRecordDateWithinLookback(true);
+//                            } else {
+//                                // unqualified by track record
+//                                record.setRecentTrackRecordDateWithinLookback(false);
+//                            }
+//                            break;
+//                        }
                     } else {
-                        firstDate = returnValue.getDate();
-                        prevDate = returnValue.getDate();
-                        dateCounter = 1;
+                        if(dateCounter >= params.getTrackRecord().intValue()){
+                            // valid returns sequence
+                            validTrackRecordStartDate = firstDate;
+                            validTrackRecordEndDate = prevDate;
+                            break;
+                        }else {
+                            firstDate = returnValue.getDate();
+                            prevDate = returnValue.getDate();
+                            dateCounter = 1;
+                        }
+                    }
+                }
+
+                if(validTrackRecordStartDate == null && dateCounter >= params.getTrackRecord().intValue()){
+                    // valid returns sequence
+                    validTrackRecordStartDate = firstDate;
+                    validTrackRecordEndDate = prevDate;
+                }
+
+                if(validTrackRecordStartDate != null && validTrackRecordEndDate != null){
+                    record.setRecentTrackRecordDate(validTrackRecordStartDate);
+                    Date trackRecordStartDate = DateUtils.getLastDayOfCurrentMonth(DateUtils.moveDateByMonths(params.getStartDateFromTextOrCurrent(),(0 - params.getLookbackReturns().intValue())));
+                    Date trackRecordEndDate = DateUtils.getLastDayOfCurrentMonth(DateUtils.moveDateByMonths(trackRecordStartDate, (0 - params.getTrackRecord().intValue() + 1)));
+                    if(validTrackRecordStartDate.compareTo(trackRecordStartDate) >= 0 &&
+                            validTrackRecordEndDate.compareTo(trackRecordEndDate) <= 0){
+                        // track record within lookback
+                        record.setRecentTrackRecordDateWithinLookback(true);
+                    }else{
+                        record.setRecentTrackRecordDateWithinLookback(false);
                     }
                 }
             }
+
+            // STRATEGY AUM CHECK
+            Double strategyAUMValueToCheck = null;
+            if(record.getStrategyAUM() != null && record.getStrategyAUM().doubleValue() != 0){
+                strategyAUMValueToCheck = record.getStrategyAUM();
+            }else if(record.getFundAUM() != null && record.getFundAUM().doubleValue() != 0){
+                strategyAUMValueToCheck = record.getFundAUM();
+            }
+
+            if(strategyAUMValueToCheck != null && strategyAUMValueToCheck.doubleValue() >= params.getFundAUM().doubleValue()){
+                record.setStrategyAUMCheck(true);
+            }else{
+                record.setStrategyAUMCheck(false);
+            }
+
+            // MANAGER AUM CHECK
+            if((record.getManagerAUM() != null && record.getManagerAUM().doubleValue() >= params.getManagerAUM().doubleValue()) ||
+                    (strategyAUMValueToCheck != null && strategyAUMValueToCheck.doubleValue() >= params.getManagerAUM().doubleValue())){
+                record.setManagerAUMCheck(true);
+            }else{
+                record.setManagerAUMCheck(false);
+            }
+
+            // TRACK RECORD CHECK
+            if(record.getRecentTrackRecordDate() != null && record.getRecentTrackRecordDateWithinLookback()){
+                record.setTrackRecordCheck(true);
+            }else{
+                record.setTrackRecordCheck(false);
+            }
+
             // Excluded funds
             if(excludedFunds != null){
                 for(HedgeFundScreeningParsedDataDto excludedFund: excludedFunds){
+                    if(record.getFundId() != null && excludedFund.getFundId() != null &&
+                            record.getFundId().longValue() == excludedFund.getFundId().longValue()){
+                        record.setExcluded(true);
+                        break;
+                    }
+                }
+            }
+            if(autoExcluded != null){
+                for(HedgeFundScreeningParsedDataDto excludedFund: autoExcluded){
                     if(record.getFundId() != null && excludedFund.getFundId() != null &&
                             record.getFundId().longValue() == excludedFund.getFundId().longValue()){
                         record.setExcluded(true);
@@ -3585,7 +3811,138 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
         return null;
     }
 
+    private Set<String> getUniqueCurrencies(Long screeningId){
+        Set<String> currencies = new HashSet<>();
+        List<String> currencies1 = this.parsedDataReturnRepository.getUniqueCurrencies(screeningId);
+        List<String> currencies2 = this.parsedDataAUMRepository.getUniqueCurrencies(screeningId);
+        currencies.addAll(currencies1);
+        currencies.addAll(currencies2);
+        return currencies;
+    }
 
+    //@Transactional
+    public ResponseDto saveResults(HedgeFundScreeningSaveParamsDto saveParamsDto, String username) {
+        HedgeFundScreeningFilteredResultDto params = new HedgeFundScreeningFilteredResultDto();
+        HedgeFundScreeningFilteredResultDto filteredResultDto = getFilteredResultWithoutFundsInfo(saveParamsDto.getFilteredResultId());
+        if(!checkFilteredResultEditable(saveParamsDto.getFilteredResultId())){
+            logger.error("Failed to save final results : filtered result already saved [" + username + "]");
+            ResponseDto responseDto = new ResponseDto();
+            responseDto.setErrorMessageEn("Failed to save final results : filtered result already saved [" + username + "]");
+            return responseDto;
+        }
+
+        params.setId(saveParamsDto.getFilteredResultId());
+        params.setScreeningId(filteredResultDto.getScreeningId());
+        params.setFundAUM(filteredResultDto.getFundAUM());
+        params.setManagerAUM(filteredResultDto.getManagerAUM());
+        params.setStartDate(filteredResultDto.getStartDate());
+        params.setTrackRecord(filteredResultDto.getTrackRecord());
+        params.setLookbackReturns(saveParamsDto.getLookbackReturn());
+        params.setLookbackAUM(saveParamsDto.getLookbackAUM());
+        // Qualified fund list
+        ListResponseDto qualifiedFundListResponse = getFilteredResultQualifiedFundList(params, true);
+        // Unqualified fund list
+        List<HedgeFundScreeningParsedDataDto> unqualifiedFundList = getFilteredResultUnqualifiedFundList(params);
+        // Undecided fund list
+        List<HedgeFundScreeningParsedDataDto> undecidedFundList = getFilteredResultUndecidedFundList(params);
+
+        // All currencies
+        Set<String> currencies = getUniqueCurrencies(filteredResultDto.getScreeningId());
+
+        // All dates
+        int move = Math.max(filteredResultDto.getTrackRecord() + filteredResultDto.getLookbackReturns(), filteredResultDto.getLookbackAUM());
+        Date dateFrom = DateUtils.getLastDayOfCurrentMonth(DateUtils.moveDateByMonths(filteredResultDto.getStartDate(), 0 - move - 1));
+        Date dateTo = DateUtils.getLastDayOfCurrentMonth(DateUtils.moveDateByMonths(filteredResultDto.getStartDate(), 1));
+
+        // Currency rates
+        List<CurrencyRatesDto> currencyRates = this.currencyRatesService.getRatesEndOfMonthForDateRangeAndCurrencies(dateFrom, dateTo, currencies);
+
+        // Benchmarks
+        String[] benchmarks = {BenchmarkLookup.T_BILLS.getCode(), BenchmarkLookup.S_AND_P.getCode()};
+        List<BenchmarkValueDto> benchmarkValues = this.benchmarkService.getBenchmarkValuesEndOfMonthForDateRangeAndTypes(dateFrom, dateTo, 10, benchmarks);
+
+        // Save results
+        HedgeFundScreeningSavedResults savedResults = new HedgeFundScreeningSavedResults();
+        savedResults.setFilteredResult(new HedgeFundScreeningFilteredResult(filteredResultDto.getId()));
+        savedResults.setSelectedLookbackAUM(saveParamsDto.getLookbackAUM());
+        savedResults.setSelectedLookbackReturn(saveParamsDto.getLookbackReturn());
+
+        savedResults.setCreationDate(new Date());
+        EmployeeDto creatorDto = this.employeeService.findByUsername(username);
+        if (creatorDto != null) {
+            savedResults.setCreator(new Employee(creatorDto.getId()));
+        }
+
+        savedResults = this.screeningSavedResultsRepository.save(savedResults);
+
+        // Save funds
+        List<HedgeFundScreeningSavedResultFunds> savedResultsFunds = new ArrayList<>();
+        if(!qualifiedFundListResponse.isStatusOK()) {
+            // TODO: Error fund list
+        }
+        List<HedgeFundScreeningSavedResultFunds> qualifiedFundEntities =
+                this.screeningSavedResultFundsEntityConverter.assembleList((List<HedgeFundScreeningParsedDataDto>) qualifiedFundListResponse.getRecords(), 1, savedResults.getId());
+
+        List<HedgeFundScreeningSavedResultFunds> unqualifiedFundEntities =
+                this.screeningSavedResultFundsEntityConverter.assembleList(unqualifiedFundList, 2, savedResults.getId());
+
+        List<HedgeFundScreeningSavedResultFunds> undecidedFundEntities =
+                this.screeningSavedResultFundsEntityConverter.assembleList(undecidedFundList, 3, savedResults.getId());
+
+        savedResultsFunds.addAll(qualifiedFundEntities);
+        savedResultsFunds.addAll(unqualifiedFundEntities);
+        savedResultsFunds.addAll(undecidedFundEntities);
+
+        this.screeningSavedResultFundsRepository.save(savedResultsFunds);
+
+        // Save currency rates
+        List<HedgeFundScreeningSavedResultsCurrency> currencyRateEntities =
+                this.screeningSavedResultsCurrencyEntityConverter.assembleListFromCurrencyRates(currencyRates, savedResults.getId());
+        this.screeningSavedResultsCurrencyRepository.save(currencyRateEntities);
+
+        // Save benchmarks
+        List<HedgeFundScreeningSavedResultsBenchmark> benchmarkEntities =
+                this.screeningSavedResultsBenchmarkEntityConverter.assembleListFromBenchmarkValues(benchmarkValues, savedResults.getId());
+        this.screeningSavedResultsBenchmarkRepository.save(benchmarkEntities);
+
+        ResponseDto responseDto = new ResponseDto();
+        responseDto.setSuccessMessageEn("Successfully saved results: saved results id=" + savedResults.getId().longValue() +
+                "; total funds saved: " + savedResultsFunds.size() + "; total currency rates saved: " + currencyRateEntities.size() +
+                "; total benchmarks saved: " + benchmarkEntities.size());
+        return responseDto;
+    }
+
+    private HedgeFundScreeningSavedResultsDto getSavedResultsByFilteredResultId(Long filteredResultId){
+        HedgeFundScreeningSavedResultsDto resultsDto = new HedgeFundScreeningSavedResultsDto();
+        List<HedgeFundScreeningSavedResults> savedResultsList = this.screeningSavedResultsRepository.findByFilteredResultId(filteredResultId);
+        if(savedResultsList != null && !savedResultsList.isEmpty()){
+            resultsDto.setFilteredResult(new HedgeFundScreeningFilteredResultDto(filteredResultId));
+            resultsDto.setSelectedLookbackAUM(savedResultsList.get(0).getSelectedLookbackAUM());
+            resultsDto.setSelectedLookbackReturn(savedResultsList.get(0).getSelectedLookbackReturn());
+
+            resultsDto.setId(savedResultsList.get(0).getId());
+            if(savedResultsList.get(0).getCreator() != null) {
+                resultsDto.setCreator(savedResultsList.get(0).getCreator().getUsername());
+            }
+            resultsDto.setCreationDate(savedResultsList.get(0).getCreationDate());
+            if(savedResultsList.get(0).getUpdater() != null) {
+                resultsDto.setUpdater(savedResultsList.get(0).getUpdater().getUsername());
+            }
+            resultsDto.setUpdateDate(savedResultsList.get(0).getUpdateDate());
+            return resultsDto;
+        }
+        return null;
+
+    }
+
+    private List<HedgeFundScreeningSavedResultFundsDto> getSavedResultFundsBySavedResultsId(Long savedResultsId){
+        List<HedgeFundScreeningSavedResultFundsDto> savedResultFunds = new ArrayList<>();
+        List<HedgeFundScreeningSavedResultFunds> foundEntities = this.screeningSavedResultFundsRepository.findBySavedResultsId(savedResultsId);
+        if(foundEntities != null && !foundEntities.isEmpty()) {
+            savedResultFunds = this.screeningSavedResultFundsEntityConverter.disassembleList(foundEntities);
+        }
+        return savedResultFunds;
+    }
 
 
 //    private int checkQualifiedFundList(HedgeFundScreeningFilteredResultDto params){
@@ -3765,8 +4122,6 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
 //
 //        System.out.println("CHECK MATRIX FINISHED");
 //    }
-
-
 
 
     /************ DEPRECATED **/

@@ -1,5 +1,6 @@
 package kz.nicnbk.service.impl.common;
 
+import kz.nicnbk.common.service.model.BaseDictionaryDto;
 import kz.nicnbk.common.service.util.DateUtils;
 import kz.nicnbk.common.service.util.MathUtils;
 import kz.nicnbk.common.service.util.PaginationUtils;
@@ -29,9 +30,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.history.Revisions;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by magzumov on 20.11.2017.
@@ -73,6 +72,8 @@ public class CurrencyRatesServiceImpl implements CurrencyRatesService {
             dto.setValue(entity.getValue());
             dto.setAverageValue(entity.getAverageValue());
             dto.setValueUSD(entity.getValueUSD());
+            dto.setCurrency(new BaseDictionaryDto(entity.getCurrency().getCode(), entity.getCurrency().getNameEn(),
+                    entity.getCurrency().getNameRu(), entity.getCurrency().getNameKz()));
             return dto;
         }
         return null;
@@ -384,6 +385,25 @@ public class CurrencyRatesServiceImpl implements CurrencyRatesService {
             return currencyRatesDto.getValueUSD();
         }
         return null;
+    }
+
+    @Override
+    public List<CurrencyRatesDto> getRatesEndOfMonthForDateRangeAndCurrencies(Date dateFrom, Date dateTo, Set<String> currencies) {
+        List<CurrencyRatesDto> currencyRates = new ArrayList<>();
+        dateTo = DateUtils.getLastDayOfCurrentMonth(dateTo);
+        dateFrom = DateUtils.getLastDayOfCurrentMonth(dateFrom);
+        for(String currency: currencies){
+            Date date = dateFrom;
+            while(date.before(dateTo) || date.compareTo(dateTo) == 0) {
+                //System.out.println(currency + " - " + DateUtils.getDateFormatted(date));
+                CurrencyRatesDto currencyRatesDto = getRateForDateAndCurrency(date, currency);
+                if(currencyRatesDto != null) {
+                    currencyRates.add(currencyRatesDto);
+                }
+                date = DateUtils.getLastDayOfCurrentMonth(DateUtils.moveDateByMonths(date, 1));
+            }
+        }
+        return currencyRates;
     }
 
 }

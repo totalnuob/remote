@@ -5,6 +5,7 @@ import kz.nicnbk.common.service.util.PaginationUtils;
 import kz.nicnbk.repo.api.benchmark.BenchmarkValueRepository;
 import kz.nicnbk.repo.model.benchmark.BenchmarkValue;
 import kz.nicnbk.repo.model.employee.Employee;
+import kz.nicnbk.repo.model.lookup.BenchmarkLookup;
 import kz.nicnbk.service.api.benchmark.BenchmarkService;
 import kz.nicnbk.service.api.employee.EmployeeService;
 import kz.nicnbk.service.converter.benchmark.BenchmarkValueEntityConverter;
@@ -23,10 +24,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by magzumov on 05.01.2017.
@@ -246,6 +244,38 @@ public class BenchmarkServiceImpl implements BenchmarkService {
             }
         }
         return benchmarks;
+    }
+
+    /**
+     * Returns list of benchmark values (dtos) that satisfy the specified parameters.
+     * Monthly (end of the month) benchmark values within the specified date period.
+     * For each date in date period looks for most recent date within specified days range,since
+     * benchmark values can be set not for the last day of the month due to weekends or holidays.
+     * Looks for specified benchmarks (arrays of benchmark codes).
+     * @param dateFrom - start date
+     * @param dateTo - end date
+     * @param daysRange - moving each date by days
+     * @param benchmarkCodes - array of benchmark codes
+     * @return - list of benchmark values
+     */
+    @Override
+    public List<BenchmarkValueDto> getBenchmarkValuesEndOfMonthForDateRangeAndTypes(Date dateFrom, Date dateTo, int daysRange, String[] benchmarkCodes) {
+        List<BenchmarkValueDto> benchmarkValues = new ArrayList<>();
+        for(String benchmark: benchmarkCodes){
+            Date date = DateUtils.getLastDayOfCurrentMonth(dateFrom);
+            while(date.before(dateTo) || date.compareTo(dateTo) == 0) {
+                Date date1 = DateUtils.getLastDayOfCurrentMonth(date);
+                Date date2 = DateUtils.moveDateByDays(date1, 0 - daysRange);
+                List<BenchmarkValueDto> matchingValues = getBenchmarkValuesForDatesAndType(date2, date1, benchmark);
+                if(matchingValues != null && !matchingValues.isEmpty()) {
+                    Collections.sort(matchingValues);
+                    Collections.reverse(matchingValues);
+                    benchmarkValues.add(matchingValues.get(0));
+                }
+                date = DateUtils.getLastDayOfCurrentMonth(DateUtils.moveDateByMonths(date, 1));
+            }
+        }
+        return benchmarkValues;
     }
 
 }

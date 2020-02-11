@@ -3,6 +3,7 @@ package kz.nicnbk.service.dto.hf;
 import kz.nicnbk.common.service.model.BaseDto;
 import kz.nicnbk.common.service.model.BaseEntityDto;
 import kz.nicnbk.common.service.util.StringUtils;
+import kz.nicnbk.repo.model.hf.HedgeFundScreeningSavedResults;
 
 import java.util.Date;
 
@@ -16,6 +17,8 @@ public class HedgeFundScreeningFilteredResultStatisticsDto implements BaseDto {
     private Integer[][] qualified;
     private Integer[][] unqualified;
     private Integer[][] undecided;
+
+    private HedgeFundScreeningFinalResultsDto finalResults;
 
     private HedgeFundScreeningFilteredResultDto parameters;
 
@@ -57,6 +60,14 @@ public class HedgeFundScreeningFilteredResultStatisticsDto implements BaseDto {
 
     public void setParameters(HedgeFundScreeningFilteredResultDto parameters) {
         this.parameters = parameters;
+    }
+
+    public HedgeFundScreeningFinalResultsDto getFinalResults() {
+        return finalResults;
+    }
+
+    public void setFinalResults(HedgeFundScreeningFinalResultsDto finalResults) {
+        this.finalResults = finalResults;
     }
 }
 

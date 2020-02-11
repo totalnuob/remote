@@ -32,6 +32,10 @@ public class ResponseDto implements BaseDto {
         this.status = status;
     }
 
+    public boolean isStatusOK(){
+        return this.status != null && this.status.getCode().equalsIgnoreCase(ResponseStatusType.SUCCESS.getCode());
+    }
+
     public ResponseMessageDto getMessage() {
         return message;
     }

@@ -29,328 +29,725 @@
             </div>
         </div>
     </div>
-    <div [ngBusy]="busyGet" class="row withpadding" style="position: relative; min-height: 80px;">
-        <form (ngSubmit)="saveFilters()" #paramsForm="ngForm">
-            <div class="col-md-12">
-                <div class="col-md-6">
+    <ul class="nav nav-tabs">
+        <li *ngIf="filteredResult?.filteredResultStatistics?.finalResults != null" [class.active]="filteredResult?.filteredResultStatistics?.finalResults != null">
+            <a data-toggle="tab" href="#final">FINAL</a>
+        </li>
+        <li [class.active]="filteredResult?.filteredResultStatistics?.finalResults == null">
+            <a data-toggle="tab" href="#process">PROCESS</a>
+        </li>
+    </ul>
+
+    <div class="tab-content">
+        <div id="final" [class]="filteredResult?.filteredResultStatistics?.finalResults != null ? 'tab-pane fade in active' : 'tab-pane fade'">
+            <br/>
+            <div>
+                <button class="btn btn-danger pull-right" (click)="deleteSavedResults()">DELETE RESULTS</button>
+            </div>
+            <br/>
+
+            <div>
+                <h2>{{filteredResult?.screening?.name}}</h2>
+                <h4><small> 01 Jan 2020</small></h4>
+                <hr style="height:2px;border:none;color:#ccc;background-color:#ccc;">
+
+                <h4>Screening Parameters</h4>
+                <div class="row withpadding">
+                    <div class="col-md-6">
+                        <span class="col-md-4" style="font-weight: bold;">Strategy AUM</span>
+                        <span class="col-md-2">{{getAmountShort(filteredResult?.fundAUM)}}</span>
+
+                    </div>
+                    <div class="col-md-6">
+                        <span class="col-md-4" style="font-weight: bold;">Track Record</span>
+                        <span class="col-md-2">{{filteredResult?.trackRecord}}</span>
+                    </div>
+                </div>
+                <div class="row withpadding">
+                    <div class="col-md-6">
+                        <span class="col-md-4" style="font-weight: bold;">Manager AUM</span>
+                        <span class="col-md-2">{{getAmountShort(filteredResult?.managerAUM)}}</span>
+                    </div>
+                    <div class="col-md-6">
+                        <span class="col-md-4" style="font-weight: bold;">Lookback (returns)</span>
+                        <span class="col-md-2">{{filteredResult?.lookbackReturns}}</span>
+                    </div>
+                </div>
+                <div class="row withpadding">
+                    <div class="col-md-6">
+                        <span class="col-md-4" style="font-weight: bold;">Start date</span>
+                        <span class="col-md-2">{{filteredResult?.startDateMonth}}</span>
+                    </div>
+                    <div class="col-md-6">
+                        <span class="col-md-4" style="font-weight: bold;">Lookback (AUM)</span>
+                        <span class="col-md-2">{{filteredResult?.lookbackAUM}}</span>
+                    </div>
+                </div>
+                <br/>
+                <div class="row withpadding">
+                    <div class="col-md-12">
+                        <div class="col-md-2" style="font-weight: bold;">Description</div>
+                        <div class="col-md-10">{{filteredResult?.description}}</div>
+                    </div>
+                </div>
+                <hr style="height:2px;border:none;color:#ccc;background-color:#ccc;">
+
+                <h4>Screening Results</h4>
+                <div class="row withpadding">
+                    <div class="col-md-6">
+                        <div id="finalScreeningResultsPieChart"></div>
+                    </div>
+                    <div class="col-md-6">
+                        <div id="finalUnqualifiedFundsReasonBarChart"></div>
+                    </div>
+                </div>
+                <hr style="height:2px;border:none;color:#ccc;background-color:#ccc;">
+
+                <h4>Scoring Parameters</h4>
+                <div class="row withpadding">
+                    <div class="col-md-6">
+                        <span class="col-md-4" style="font-weight: bold;">Selected Lookback (AUM)</span>
+                        <span class="col-md-2">{{filteredResult?.filteredResultStatistics?.finalResults?.selectedLookbackAUM}}</span>
+                    </div>
+                    <div class="col-md-6">
+                        <span class="col-md-4" style="font-weight: bold;">Selected Lookback (RETURNS)</span>
+                        <span class="col-md-2">{{filteredResult?.filteredResultStatistics?.finalResults?.selectedLookbackReturn}}</span>
+                    </div>
+                </div>
+                <br/>
+                <div *ngIf="filteredResult?.filteredResultStatistics?.qualified?.length > 0">
                     <table class="table table-hover">
                         <tr>
-                            <td>Strategy AUM,$</td>
-                            <td><input class="form-control"  required type="text" name="fundAUM" [(ngModel)]="filteredResult.fundAUM"
-                                       (keyup)="onNumberChangeFundAUM()"/></td>
+                            <td [attr.colspan]="filteredResult.filteredResultStatistics.qualified[0].length + 1" align="right">AUM LOOKBACK</td>
                         </tr>
                         <tr>
-                            <td>Manager AUM,$</td>
-                            <td><input class="form-control"  required type="text" name="managerAUM" [(ngModel)]="filteredResult.managerAUM"
-                            (keyup)="onNumberChangeManagerAUM()"/></td>
+                            <td [attr.rowspan]="filteredResult.filteredResultStatistics.qualified.length + 1">
+                                <div align="right" style="writing-mode: vertical-rl;">RETURN LOOKBACK</div>
+                            </td>
                         </tr>
-                        <tr>
-                            <td>Lookback date from</td>
-                            <td>
-                                <div class='input-group date col-md-2' id='startDateTPickeer' style="width: 100%">
-                                    <input type='text' class="form-control" id="startDate" name="startDate" [(ngModel)]="filteredResult.startDateMonth"/>
-                                        <span class="input-group-addon">
-                                            <span class="glyphicon glyphicon-calendar"></span>
-                                        </span>
-                                 </div>
+                        <tr *ngFor="let row of filteredResult?.filteredResultStatistics?.qualified; let i=index" [style.background-color]="i==0 ? '#D5E1EC' : white"
+                            align="right" [style.font-weight]="i==0 ? 'bold' : ''">
+                            <td *ngFor="let td of row; let j=index" [style.background-color]="getCellColor(i,j)" align="center" [style.color]="white" [style.font-weight]="j==0 ? 'bold' : ''">
+                                    <span *ngIf="i != 0 && j != 0 && td != 0" style="color: white"
+                                          [style.border]="i - 1  == filteredResult?.filteredResultStatistics?.finalResults?.selectedLookbackReturn && j - 1 == filteredResult?.filteredResultStatistics?.finalResults?.selectedLookbackAUM ? '2px solid black' : ''">{{td}}</span>
+                                <span *ngIf="i == 0 || j == 0 || td == 0">{{td}}</span>
+                                <!--                                    <span style="color:red" *ngIf="i - 1  == filteredResult?.filteredResultStatistics?.finalResults?.selectedLookbackReturn && j - 1 == filteredResult?.filteredResultStatistics?.finalResults?.selectedLookbackAUM"-->
+                                <!--                                          class="glyphicon glyphicon-ok"></span>-->
                             </td>
                         </tr>
                     </table>
                 </div>
-                <div class="col-md-6">
-                    <table class="table table-hover">
-                        <tr>
-                            <td>Track Record (months)</td>
-                            <td><input class="form-control" required type="text" name="trackRecord" [(ngModel)]="filteredResult.trackRecord"/></td>
-                        </tr>
-                        <tr>
-                            <td>Lookback Returns (months)</td>
-                            <td><input class="form-control" required type="text" name="lookbackReturns" [(ngModel)]="filteredResult.lookbackReturns"/></td>
-                        </tr>
-                        <tr>
-                            <td>Lookback AUM (months)</td>
-                            <td><input class="form-control" required type="text" name="lookbackAUM" [(ngModel)]="filteredResult.lookbackAUM"/></td>
-                        </tr>
-                        <tr>
-                            <td colspan="2">
-                                <button type="button" class="btn btn-success pull-right" [disabled]="!paramsForm.form.valid" (click)="saveFilters()">SAVE</button>
-                            </td>
-                        </tr>
-                    </table>
+                <hr style="height:2px;border:none;color:#ccc;background-color:#ccc;">
+
+                <div class="row withpadding">
+                    <div class="col-md-6">
+                        <div id="finalQualifiedTop50StrategiesPieChart"></div>
+                    </div>
+                    <div class="col-md-6">
+                        <div id="finalTop50QualifiedBarChart"></div>
+                    </div>
+                </div>
+
+                <div class="row withpadding top-buffer">
+                    <span style="font-weight: bold;">TOP 50 Qualified funds:</span>
+                    <button [disabled]="filteredResult?.filteredResultStatistics?.finalResults?.top50qualifiedFunds == null || filteredResult?.filteredResultStatistics?.finalResults?.top50qualifiedFunds.length == 0"
+                            class="btn btn-sm btn-success" type="button" data-toggle="collapse"
+                            data-target="#finalTop50QualifiedFundListCollapse" aria-expanded="false">
+                            <span>{{filteredResult?.filteredResultStatistics?.finalResults?.top50qualifiedFunds != null ?
+                                filteredResult?.filteredResultStatistics?.finalResults?.top50qualifiedFunds.length : 0}}</span>
+                    </button>
+                    <div class="collapse in" id="finalTop50QualifiedFundListCollapse">
+                        <div class="card card-body">
+                            <table class="table table-responsive table-hover condensed-table small">
+                                <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Fund ID</th>
+                                    <th>Fund name</th>
+                                    <th>Investment Manager</th>
+                                    <th>Main Strategy</th>
+                                    <th>Ann RoR</th>
+                                    <th>Sortino</th>
+                                    <th>Beta</th>
+                                    <th>CF Var 99</th>
+                                    <th>Alpha</th>
+                                    <th>Omega</th>
+                                    <th>TOTAL</th>
+                                    <th>Fund AUM</th>
+                                    <th>Strategy AUM</th>
+                                    <th>Manager AUM</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr *ngFor="let fund of filteredResult?.filteredResultStatistics?.finalResults?.top50qualifiedFunds; let i = index">
+                                    <td>{{i + 1}}</td>
+                                    <td>{{fund.fundId}}</td>
+                                    <td>{{(fund.added ? '* ' : '') + fund.fundName}}</td>
+                                    <td>{{fund.investmentManager}}</td>
+                                    <td>{{fund.mainStrategy}}</td>
+                                    <td>{{fund.annualizedReturn | percent:'1.2-2'}}</td>
+                                    <td>{{fund.sortino | number:'1.2-2' }}</td>
+                                    <td>{{(fund.beta | number:'1.1-1') == 0.0 ? (fund.beta > 0 ? 0.1 : -0.1) : (fund.beta | number:'1.1-1')}}</td>
+                                    <td>{{fund.cfVar| percent:'1.2-2'}}</td>
+                                    <td>{{fund.alpha| percent:'1.2-2'}}</td>
+                                    <td>{{fund.omega| number:'1.2-2'}}</td>
+                                    <td style="background-color: #f9eaea;">{{fund.totalScore| number:'1.2-2'}}</td>
+                                    <td>{{getAmountShort(fund.fundAUM)}}</td>
+                                    <td>{{getAmountShort(fund.strategyAUM)}}</td>
+                                    <td>{{getAmountShort(fund.managerAUM)}}</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4">* - manually added fund</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row withpadding top-buffer">
+                    <span style="font-weight: bold;">Other Qualified funds:</span>
+                    <button [disabled]="filteredResult?.filteredResultStatistics?.finalResults?.qualifiedFunds == null || filteredResult?.filteredResultStatistics?.finalResults?.qualifiedFunds.length == 0"
+                            class="btn btn-sm btn-success" type="button" data-toggle="collapse"
+                            data-target="#finalQualifiedFundListCollapse" aria-expanded="false">
+                            <span>{{filteredResult?.filteredResultStatistics?.finalResults?.qualifiedFunds != null ?
+                                (filteredResult?.filteredResultStatistics?.finalResults?.qualifiedFunds.length - filteredResult?.filteredResultStatistics?.finalResults?.top50qualifiedFunds.length) : 0}}</span>
+                    </button>
+
+                    <div class="collapse" id="finalQualifiedFundListCollapse">
+                        <div class="card card-body">
+                            <table class="table table-responsive table-hover condensed-table small">
+                                <thead>
+                                <tr>
+                                    <th >#</th>
+                                    <th>Fund ID</th>
+                                    <th>Fund name</th>
+                                    <th>Investment Manager</th>
+                                    <th>Main Strategy</th>
+                                    <th>Ann RoR</th>
+                                    <th>Sortino</th>
+                                    <th>Beta</th>
+                                    <th>CF Var 99</th>
+                                    <th>Alpha</th>
+                                    <th>Omega</th>
+                                    <th>TOTAL</th>
+                                    <th>Fund AUM</th>
+                                    <th>Strategy AUM</th>
+                                    <th>Manager AUM</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr *ngFor="let fund of filteredResult?.filteredResultStatistics?.finalResults?.qualifiedFunds | slice:filteredResult?.filteredResultStatistics?.finalResults?.top50qualifiedFunds.length ; let i = index">
+                                    <td>{{i + filteredResult?.filteredResultStatistics?.finalResults?.top50qualifiedFunds.length + 1}}</td>
+                                    <td>{{fund.fundId}}</td>
+                                    <td>{{fund.fundName}}</td>
+                                    <td>{{fund.investmentManager}}</td>
+                                    <td>{{fund.mainStrategy}}</td>
+                                    <td>{{fund.annualizedReturn | percent:'1.2-2'}}</td>
+                                    <td>{{fund.sortino | number:'1.2-2' }}</td>
+                                    <td>{{(fund.beta | number:'1.1-1') == 0.0 ? (fund.beta > 0 ? 0.1 : -0.1) : (fund.beta | number:'1.1-1')}}</td>
+                                    <td>{{fund.cfVar| percent:'1.2-2'}}</td>
+                                    <td>{{fund.alpha| percent:'1.2-2'}}</td>
+                                    <td>{{fund.omega| number:'1.2-2'}}</td>
+                                    <td style="background-color: #f9eaea">{{fund.totalScore| number:'1.2-2'}}</td>
+                                    <td>{{getAmountShort(fund.fundAUM)}}</td>
+                                    <td>{{getAmountShort(fund.strategyAUM)}}</td>
+                                    <td>{{getAmountShort(fund.managerAUM)}}</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row withpadding top-buffer">
+                    <span style="font-weight: bold;">Unqualified funds:</span>
+
+                    <button [disabled]="filteredResult?.filteredResultStatistics?.finalResults?.unqualifiedFunds == null || filteredResult?.filteredResultStatistics?.finalResults?.unqualifiedFunds.length == 0"
+                            class="btn btn-sm btn-danger" type="button" data-toggle="collapse"
+                            data-target="#finalUnqualifiedFundListCollapse" aria-expanded="false" aria-controls="finalUnqualifiedFundListCollapse">
+                            <span>{{filteredResult?.filteredResultStatistics?.finalResults?.unqualifiedFunds != null ?
+                                filteredResult?.filteredResultStatistics?.finalResults?.unqualifiedFunds.length : 0}}</span>
+                    </button>
+                    <div class="collapse" id="finalUnqualifiedFundListCollapse">
+                        <div class="card card-body">
+                            <table class="table table-responsive table-hover condensed-table small">
+                                <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Fund ID</th>
+                                    <th>Fund name</th>
+                                    <th>Investment Manager</th>
+                                    <th>Main Strategy</th>
+                                    <th>Fund AUM</th>
+                                    <th>Strategy AUM</th>
+                                    <th>Manager AUM</th>
+                                    <th>Track record</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr *ngFor="let fund of filteredResult?.filteredResultStatistics?.finalResults?.unqualifiedFunds; let i = index">
+                                    <td>{{i + 1}}</td>
+                                    <td>{{fund.fundId}}</td>
+                                    <td>{{fund.fundName}}</td>
+                                    <td>{{fund.investmentManager}}</td>
+                                    <td>{{fund.mainStrategy}}</td>
+                                    <td>
+                                        <!--                                            {{getAmountShort(fund.fundAUM)}}-->
+                                        <span *ngIf="fund.fundAUM != null" [style.text-decoration]="fund.editedFundAUM != null ? 'line-through' : ''" data-toggle="tooltip"
+                                              data-placement="top" title="{{fund.fundAUM}}">
+                                            ${{getAmountShort(fund.fundAUM)}}
+                                            <span class="glyphicon glyphicon-calendar"
+                                                  *ngIf="fund?.fundAUMDate != null"
+                                                  data-toggle="tooltip" data-placement="top" title="{{fund.fundAUMDate}}">
+                                            </span>
+                                            </span>
+                                        <span *ngIf="fund.editedFundAUM != null" data-placement="top" [style.border]="'1px solid black'" title="{{fund.editedFundAUM}}" >
+                                                ${{getAmountShort(fund.editedFundAUM)}}
+                                                <span class="glyphicon glyphicon-calendar"
+                                                      *ngIf="fund?.editedFundAUMDate != null"
+                                                      data-toggle="tooltip" data-placement="top" title="{{fund.editedFundAUMDate}}">
+                                                </span>
+                                            </span>
+                                        <span *ngIf="fund.fundAUM == null && fund.recentFundAUM != null">
+                                                $ {{getAmountShort(fund.recentFundAUM)}} {{(fund.recentFundAUMDate != null ? "(" + getReportDateShortFormatted(fund.recentFundAUMDate) + ")" : '')}}
+                                            </span>
+
+                                        <span *ngIf="fund.currency != null && fund.currency.code != null && fund.currency.code != 'USD'"> <!--[style.color]="fundAUMByCurrency != null ? 'black' : 'red'">-->
+                                            {{fund.currency.code + ' ' + getAmountShort(fund.fundAUMByCurrency)}}
+                                            </span>
+                                        <span class="glyphicon glyphicon-calendar"
+                                              *ngIf="fund?.fundAUMDate != null && fund.fundAUM == null"
+                                              data-toggle="tooltip" data-placement="top" title="{{fund.fundAUMDate}}">
+                                            </span>
+                                    </td>
+                                    <td>
+                                        <!--                                            {{getAmountShort(fund.strategyAUM)}}-->
+                                        <span style="color:green" *ngIf="fund.strategyAUMCheck" class="glyphicon glyphicon-ok"></span>
+                                        <span style="color:red" *ngIf="!fund.strategyAUMCheck" class="glyphicon glyphicon-remove"></span>
+                                        &nbsp;&nbsp;
+                                        <span *ngIf="fund?.strategyAUM != null">
+                                                {{getAmountShort(fund.strategyAUM)}}
+                                            </span>
+                                        <span *ngIf="fund.strategyAUM == null && fund.recentStrategyAUM != null">
+                                                {{getAmountShort(fund.recentStrategyAUM)}} {{fund.recentStrategyAUMDate != null ? getReportDateShortFormatted(fund.recentStrategyAUMDate) : ''}}
+                                            </span>
+                                        <span class="glyphicon glyphicon-exclamation-sign"
+                                              *ngIf="fund.strategyAUMWithMissingCurrency"
+                                              data-toggle="tooltip" data-placement="top" title="Currency rates missing for some of the Manager funds">
+                                            </span>
+                                    </td>
+                                    <td>
+                                        <!--                                            {{getAmountShort(fund.managerAUM)}}-->
+                                        <span style="color:green" *ngIf="fund.managerAUMCheck" class="glyphicon glyphicon-ok"></span>
+                                        <span style="color:red" *ngIf="!fund.managerAUMCheck" class="glyphicon glyphicon-remove"></span>
+                                        &nbsp;&nbsp;
+                                        {{fund.managerAUM != null ? getAmountShort(fund.managerAUM) : 'N/A'}} &nbsp;
+                                    </td>
+                                    <td>
+                                        <span style="color:green" *ngIf="fund.trackRecordCheck" class="glyphicon glyphicon-ok"></span>
+                                        <span style="color:red" *ngIf="!fund.trackRecordCheck" class="glyphicon glyphicon-remove"></span>
+                                        {{getReportDateShortFormatted(fund.recentTrackRecordDate) }}
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row withpadding top-buffer">
+                    <span style="font-weight: bold;">Undecided funds:</span>
+
+                    <button [disabled]="filteredResult?.filteredResultStatistics?.finalResults?.undecidedFunds == null || filteredResult?.filteredResultStatistics?.finalResults?.undecidedFunds.length == 0"
+                            class="btn btn-sm btn-secondary" type="button" data-toggle="collapse"
+                            data-target="#finalUndecidedFundListCollapse" aria-expanded="false" aria-controls="finalUndecidedFundListCollapse">
+                            <span>{{filteredResult?.filteredResultStatistics?.finalResults?.undecidedFunds != null ?
+                                filteredResult?.filteredResultStatistics?.finalResults?.undecidedFunds.length : 0}}</span>
+                    </button>
+
+                    <div class="collapse" id="finalUndecidedFundListCollapse">
+                        <div class="card card-body">
+                            <table class="table table-responsive table-hover condensed-table small">
+                                <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Fund ID</th>
+                                    <th>Fund name</th>
+                                    <th>Investment Manager</th>
+                                    <th>Main Strategy</th>
+                                    <th>Fund AUM</th>
+                                    <th>Strategy AUM</th>
+                                    <th>Manager AUM</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr *ngFor="let fund of filteredResult?.filteredResultStatistics?.finalResults?.undecidedFunds; let i = index">
+                                    <td>{{i + 1}}</td>
+                                    <td>{{fund.fundId}}</td>
+                                    <td>{{fund.fundName}}</td>
+                                    <td>{{fund.investmentManager}}</td>
+                                    <td>{{fund.mainStrategy}}</td>
+                                    <td>{{getAmountShort(fund.fundAUM)}}</td>
+                                    <td>{{getAmountShort(fund.strategyAUM)}}</td>
+                                    <td>{{getAmountShort(fund.managerAUM)}}</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </form>
-        <div>
-            <button type="submit" *ngIf="filteredResult != null && filteredResult.id > 0" class="btn btn-primary pull-right" [disabled]="!paramsForm.form.valid" (click)="applyFilters()">APPLY</button>
         </div>
-        <br/>
-    </div>
-    <div [ngBusy]="busyStats">
-        <div *ngIf="filteredResult?.filteredResultStatistics != null">
-            <ul class="nav nav-tabs">
-                <li class="active">
-                    <a data-toggle="tab" href="#qualified">QUALIFIED</a>
-                </li>
-                <li>
-                    <a data-toggle="tab" href="#unqualified">UNQUALIFIED</a>
-                </li>
-                <li>
-                    <a data-toggle="tab" href="#undecided">UNDECIDED</a>
-                </li>
-            </ul>
-            <div class="tab-content">
-                <div id="qualified" class="tab-pane fade in active">
-                    <br/>
-                    <div class="row withpadding">
-                        <div *ngIf="filteredResult?.filteredResultStatistics?.qualified?.length > 0">
+        <div id="process" [class]="filteredResult?.filteredResultStatistics?.finalResults == null ? 'tab-pane fade in active' : 'tab-pane fade'">
+            <br/>
+            <div [ngBusy]="busyGet" class="row withpadding" style="position: relative; min-height: 80px;">
+                <form (ngSubmit)="saveFilters()" #paramsForm="ngForm">
+                    <div class="col-md-12">
+                        <div class="col-md-6">
                             <table class="table table-hover">
                                 <tr>
-                                    <td [attr.colspan]="filteredResult.filteredResultStatistics.qualified[0].length + 1" style="font-weight: bold" align="right">AUM LOOKBACK</td>
+                                    <td>Strategy AUM,$</td>
+                                    <td><input class="form-control"  required type="text" name="fundAUM" [(ngModel)]="filteredResult.fundAUM"
+                                               [disabled]="!filteredResult?.editable"
+                                               (keyup)="onNumberChangeFundAUM()"/></td>
                                 </tr>
                                 <tr>
-                                    <td [attr.rowspan]="filteredResult.filteredResultStatistics.qualified.length + 1" style="font-weight: bold;">
-                                        <div align="right" style="writing-mode: vertical-rl;">RETURN LOOKBACK</div>
+                                    <td>Manager AUM,$</td>
+                                    <td><input class="form-control"  required type="text" name="managerAUM" [(ngModel)]="filteredResult.managerAUM"
+                                               [disabled]="!filteredResult?.editable"
+                                               (keyup)="onNumberChangeManagerAUM()"/></td>
+                                </tr>
+                                <tr>
+                                    <td>Lookback date from</td>
+                                    <td>
+                                        <div class='input-group date col-md-2' id='startDateTPickeer' style="width: 100%">
+                                            <input type='text' class="form-control" id="startDate" name="startDate" [(ngModel)]="filteredResult.startDateMonth"
+                                                   [disabled]="!filteredResult?.editable"/>
+                                            <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </span>
+                                        </div>
                                     </td>
                                 </tr>
-                                <tr *ngFor="let row of filteredResult?.filteredResultStatistics?.qualified; let i=index" [style.background-color]="i==0 ? '#D5E1EC' : white"
-                                    align="right" [style.font-weight]="i==0 ? 'bold' : ''">
-                                    <td *ngFor="let td of row; let j=index" [style.background-color]="getCellColor(i,j)" align="center" [style.color]="white" [style.font-weight]="j==0 ? 'bold' : ''">
-                                        <a *ngIf="i != 0 && j != 0 && td != 0" (click)="showFunds(i-1, j-1, 1, td)" style="color: white" data-toggle="modal" data-target="#fundListModal">{{td}}</a>
-                                        <span *ngIf="i == 0 || j == 0 || td == 0">{{td}}</span>
-                                    </td>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <table class="table table-hover">
+                                <tr>
+                                    <td>Track Record (months)</td>
+                                    <td><input class="form-control" required type="text" name="trackRecord" [(ngModel)]="filteredResult.trackRecord"
+                                               [disabled]="!filteredResult?.editable"/></td>
+                                </tr>
+                                <tr>
+                                    <td>Lookback Returns (months)</td>
+                                    <td><input class="form-control" required type="text" name="lookbackReturns" [(ngModel)]="filteredResult.lookbackReturns"
+                                               [disabled]="!filteredResult?.editable"/></td>
+                                </tr>
+                                <tr>
+                                    <td>Lookback AUM (months)</td>
+                                    <td><input class="form-control" required type="text" name="lookbackAUM" [(ngModel)]="filteredResult.lookbackAUM"
+                                               [disabled]="!filteredResult?.editable"/></td>
                                 </tr>
 <!--                                <tr>-->
-<!--                                    <td [attr.colspan]="filteredResult.filteredResultStatistics.qualified.length" style="font-weight: bold" align="left">RETURN LOOKBACK</td>-->
+<!--                                    <td colspan="2">-->
+<!--                                        <button type="button" class="btn btn-success pull-right" [disabled]="!paramsForm.form.valid || !filteredResult?.editable" (click)="saveFilters()">SAVE</button>-->
+<!--                                    </td>-->
 <!--                                </tr>-->
                             </table>
                         </div>
                     </div>
-<!--                    <h4>Funds that require attention</h4>-->
-<!--                    <div class="row" *ngIf="filteredResult.toCheckFunds != null && filteredResult.toCheckFunds.length > 0">-->
-<!--                        <table class="table table-hover small">-->
-<!--                            <thead>-->
-<!--                            <tr>-->
-<!--                                <th width="10%">FUND ID</th>-->
-<!--                                <th width="15%">FUND NAME</th>-->
-<!--                                <th width="15%">INVESTMENT MANAGER</th>-->
-<!--&lt;!&ndash;                                <th width="10%">MAIN STRATEGY</th>&ndash;&gt;-->
-<!--                                <th width="10%">FUND STATUS</th>-->
-<!--                                <th width="10%">FUND AUM,$</th>-->
-<!--                                <th width="10%">MANAGER AUM,$</th>-->
-<!--                                <th width="25%">COMMENT</th>-->
-<!--                                <th width="5%">&nbsp;</th>-->
-<!--                            </tr>-->
-<!--                            </thead>-->
-<!--                            <tbody>-->
-<!--                                <tr *ngFor="let fund of filteredResult.toCheckFunds">-->
-<!--                                    <td>{{fund.fundId}}</td>-->
-<!--                                    <td>{{fund.fundName}}</td>-->
-<!--                                    <td>{{fund.investmentManager}}</td>-->
-<!--&lt;!&ndash;                                    <td>{{fund.mainStrategy}}</td>&ndash;&gt;-->
-<!--                                    <td>{{fund.fundStatus}}</td>-->
-<!--                                    <td>{{getAmountShort(fund.fundAUM)}}</td>-->
-<!--                                    <td>{{getAmountShort(fund.managerAUM)}}</td>-->
-<!--                                    <td>{{fund.fundAUMComment}}</td>-->
-<!--                                    <td> <span (click)="editFund(fund)" data-toggle="modal" data-target="#fundEditModal">-->
-<!--                                            <span class="glyphicon glyphicon-pencil"></span>-->
-<!--                                            </span>-->
-<!--                                        &nbsp;-->
-<!--                                        <span data-toggle="modal" (click)="openExcludeFund(fund, 'CHECK')" data-target="#excludeFundModal">-->
-<!--                                            <span class="glyphicon glyphicon-remove"></span>-->
-<!--                                        </span>-->
-<!--                                    </td>-->
-<!--                                </tr>-->
-<!--                            </tbody>-->
-<!--                        </table>-->
-<!--                    </div>-->
-<!--                    <span *ngIf="filteredResult.toCheckFunds == null || filteredResult.toCheckFunds.length == 0"><i>No funds to check</i></span>-->
 
-
-
-
-                    <h4>Added Funds</h4>
                     <div class="row withpadding">
-                        <span *ngIf="selectedFund == null" class="btn btn-sm btn-primary pull-right" (click)="editFund()" data-toggle="modal" data-target="#fundEditModal">Add fund
+                        <div class="col-md-2">
+                            <label> Description</label>
+                        </div>
+                        <div class="col-md-8">
+                            <input  class="form-control" [disabled]="!filteredResult?.editable" placeholder="Enter description ..."  type="text" name="description" [(ngModel)]="filteredResult.description"/>
+                        </div>
+                        <div class="col-md-2">
+                            <button type="button" class="btn btn-success pull-right" [disabled]="!paramsForm.form.valid || !filteredResult?.editable" (click)="saveFilters()">SAVE</button>
+                        </div>
+                    </div>
+                </form>
+                <br/>
+                <div>
+                    <button type="submit" *ngIf="filteredResult != null && filteredResult.id > 0" class="btn btn-primary pull-right" [disabled]="!paramsForm.form.valid" (click)="applyFilters()">APPLY</button>
+                </div>
+                <br/>
+            </div>
+
+            <div [ngBusy]="busyStats">
+                <div *ngIf="filteredResult?.filteredResultStatistics != null">
+                    <ul class="nav nav-tabs">
+                        <li class="active">
+                            <a data-toggle="tab" href="#qualified">QUALIFIED</a>
+                        </li>
+                        <li>
+                            <a data-toggle="tab" href="#unqualified">UNQUALIFIED</a>
+                        </li>
+                        <li>
+                            <a data-toggle="tab" href="#undecided">UNDECIDED</a>
+                        </li>
+<!--                        <li *ngIf="filteredResult?.filteredResultStatistics?.finalResults != null">-->
+<!--                            <a data-toggle="tab" href="#final"  (click)="viewFinalResultsTab()">FINAL</a>-->
+<!--                        </li>-->
+                    </ul>
+                    <div class="tab-content">
+                        <div id="qualified" class="tab-pane fade in active">
+                            <br/>
+                            <div class="row withpadding">
+                                <div *ngIf="filteredResult?.filteredResultStatistics?.qualified?.length > 0">
+                                    <table class="table table-hover">
+                                        <tr>
+                                            <td [attr.colspan]="filteredResult.filteredResultStatistics.qualified[0].length + 1" style="font-weight: bold" align="right">AUM LOOKBACK</td>
+                                        </tr>
+                                        <tr>
+                                            <td [attr.rowspan]="filteredResult.filteredResultStatistics.qualified.length + 1" style="font-weight: bold;">
+                                                <div align="right" style="writing-mode: vertical-rl;">RETURN LOOKBACK</div>
+                                            </td>
+                                        </tr>
+                                        <tr *ngFor="let row of filteredResult?.filteredResultStatistics?.qualified; let i=index" [style.background-color]="i==0 ? '#D5E1EC' : white"
+                                            align="right" [style.font-weight]="i==0 ? 'bold' : ''">
+                                            <td *ngFor="let td of row; let j=index" [style.background-color]="getCellColor(i,j)" align="center" [style.color]="white" [style.font-weight]="j==0 ? 'bold' : ''">
+                                                <a *ngIf="i != 0 && j != 0 && td != 0" (click)="showFunds(i-1, j-1, 1, td)" style="color: white" data-toggle="modal" data-target="#fundListModal">{{td}}</a>
+                                                <span *ngIf="i == 0 || j == 0 || td == 0">{{td}}</span>
+                                            </td>
+                                        </tr>
+                                        <!--                                <tr>-->
+                                        <!--                                    <td [attr.colspan]="filteredResult.filteredResultStatistics.qualified.length" style="font-weight: bold" align="left">RETURN LOOKBACK</td>-->
+                                        <!--                                </tr>-->
+                                    </table>
+                                </div>
+                            </div>
+
+                            <h4>Added Funds</h4>
+                            <div class="row withpadding">
+                        <span *ngIf="selectedFund == null && filteredResult.editable" class="btn btn-sm btn-primary pull-right" (click)="editFund()"
+                              data-toggle="modal" data-target="#fundEditModal">Add fund
                                 <span class="glyphicon glyphicon-plus"></span>
                         </span>
-                    </div>
-                    <div class="row" *ngIf="filteredResult.addedFunds != null && filteredResult.addedFunds.length > 0">
-                        <table class="table table-hover small">
-                            <thead>
-                            <tr>
-                                <th width="5%">#</th>
-                                <th width="10%">FUND ID</th>
-                                <th width="15%">FUND NAME</th>
-                                <th width="15%">INVESTMENT MANAGER</th>
-<!--                                <th width="10%">MAIN STRATEGY</th>-->
-                                <th width="10%">FUND STATUS</th>
-                                <th width="10%">FUND AUM,$</th>
-                                <th width="10%">MANAGER AUM,$</th>
-                                <th width="20%">COMMENT</th>
-                                <th width="5%">&nbsp;</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr *ngFor="let fund of filteredResult.addedFunds; let i=index">
-                                <td>{{i + 1}}</td>
-                                <td>{{fund.fundId}}</td>
-                                <td>{{fund.fundName}}</td>
-                                <td>{{fund.investmentManager}}</td>
-<!--                                <td>{{fund.mainStrategy}}</td>-->
-                                <td>{{fund.fundStatus}}</td>
-                                <td>{{getAmountShort(fund.fundAUM)}}</td>
-                                <td>{{getAmountShort(fund.managerAUM)}}</td>
-<!--                                <td>{{fund.fundAUMComment}}</td>-->
-                                <td>&nbsp;</td>
-                                <td> <span (click)="editFund(fund)" data-toggle="modal" data-target="#fundEditModal">
-                                            <span class="glyphicon glyphicon-pencil"></span>
-                                            </span>
-                                    &nbsp;
-                                    <span (click)="removeFund(fund)">
-                                        <span class="glyphicon glyphicon-trash"></span>
-                                    </span>
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <span *ngIf="filteredResult.addedFunds == null || filteredResult.addedFunds.length == 0"><i>No funds added</i></span>
+                            </div>
+                            <div class="row" *ngIf="filteredResult.addedFunds != null && filteredResult.addedFunds.length > 0">
+                                <table class="table table-hover small">
+                                    <thead>
+                                    <tr>
+                                        <th width="5%">#</th>
+                                        <th width="10%">FUND ID</th>
+                                        <th width="15%">FUND NAME</th>
+                                        <th width="15%">INVESTMENT MANAGER</th>
+                                        <!--                                <th width="10%">MAIN STRATEGY</th>-->
+                                        <th width="10%">FUND STATUS</th>
+                                        <th width="10%">FUND AUM,$</th>
+                                        <th width="10%">MANAGER AUM,$</th>
+                                        <th width="20%">COMMENT</th>
+                                        <th width="5%">&nbsp;</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr *ngFor="let fund of filteredResult.addedFunds; let i=index">
+                                        <td>{{i + 1}}</td>
+                                        <td>{{fund.fundId}}</td>
+                                        <td>{{fund.fundName}}</td>
+                                        <td>{{fund.investmentManager}}</td>
+                                        <!--                                <td>{{fund.mainStrategy}}</td>-->
+                                        <td>{{fund.fundStatus}}</td>
+                                        <td>{{getAmountShort(fund.fundAUM)}}</td>
+                                        <td>{{getAmountShort(fund.managerAUM)}}</td>
+                                        <!--                                <td>{{fund.fundAUMComment}}</td>-->
+                                        <td>&nbsp;</td>
+                                        <td>
+                                            <div *ngIf="filteredResult.editable">
+                                        <span (click)="editFund(fund)" data-toggle="modal" data-target="#fundEditModal">
+                                                <span class="glyphicon glyphicon-pencil"></span>
+                                                </span>
+                                                &nbsp;
+                                                <span (click)="removeFund(fund)">
+                                            <span class="glyphicon glyphicon-trash"></span>
+                                        </span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <span *ngIf="filteredResult.addedFunds == null || filteredResult.addedFunds.length == 0"><i>No funds added</i></span>
 
-                    <h4>Excluded Funds</h4>
-                    <div class="row" *ngIf="filteredResult.excludedFunds != null && filteredResult.excludedFunds.length > 0">
-                        <table class="table table-hover small">
-                            <thead>
-                            <tr>
-                                <th width="5%">#</th>
-                                <th width="10%">FUND ID</th>
-                                <th width="15%">FUND NAME</th>
-                                <th width="15%">INVESTMENT MANAGER</th>
-<!--                                <th width="10%">MAIN STRATEGY</th>-->
-                                <th width="10%">FUND STATUS</th>
-                                <th width="10%">FUND AUM,$</th>
-                                <th width="10%">MANAGER AUM,$</th>
-                                <th width="20%">COMMENT</th>
-                                <th width="5%">&nbsp;</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr *ngFor="let fund of filteredResult.excludedFunds; let i=index">
-                                <td>{{i + 1}}</td>
-                                <td>{{fund.fundId}}</td>
-                                <td>{{fund.fundName}}</td>
-                                <td>{{fund.investmentManager}}</td>
-<!--                                <td>{{fund.mainStrategy}}</td>-->
-                                <td>{{fund.fundStatus}}</td>
-                                <td>
+                            <h4>Edited Funds</h4>
+                            <div class="row" *ngIf="filteredResult.editedFunds != null && filteredResult.editedFunds.length > 0">
+                                <table class="table table-hover small">
+                                    <thead>
+                                    <tr>
+                                        <th width="5%">#</th>
+                                        <th width="10%">FUND ID</th>
+                                        <th width="15%">FUND NAME</th>
+                                        <th width="15%">INVESTMENT MANAGER</th>
+                                        <th width="10%">EDITED FUND AUM,$</th>
+                                        <th width="10%">EDITED FUND AUM DATE</th>
+                                        <th width="20%">EDITED FUND AUM COMMENT</th>
+                                        <th width="10%">EDITED MANAGER AUM,$</th>
+<!--                                        <th width="20%">COMMENT</th>-->
+                                        <th width="5%">&nbsp;</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr *ngFor="let fund of filteredResult.editedFunds; let i=index">
+                                        <td>{{i + 1}}</td>
+                                        <td>{{fund.fundId}}</td>
+                                        <td>{{fund.fundName}}</td>
+                                        <td>{{fund.investmentManager}}</td>
+                                        <td>{{getAmountShort(fund.editedFundAUM)}}</td>
+                                        <td>{{fund.editedFundAUMDate}}</td>
+                                        <td>{{fund.editedFundAUMComment}}</td>
+                                        <td>{{getAmountShort(fund.managerAUM)}}</td>
+                                        <td>
+                                            <span *ngIf="filteredResult.editable" (click)="edit(fund)">
+                                                    <span class="glyphicon glyphicon-pencil"></span>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <span *ngIf="filteredResult.editedFunds == null || filteredResult.editedFunds.length == 0"><i>No edited funds</i></span>
+
+                            <h4>Excluded Funds</h4>
+                            <div class="row" *ngIf="filteredResult.excludedFunds != null && filteredResult.excludedFunds.length > 0">
+                                <table class="table table-hover small">
+                                    <thead>
+                                    <tr>
+                                        <th width="5%">#</th>
+                                        <th width="10%">FUND ID</th>
+                                        <th width="15%">FUND NAME</th>
+                                        <th width="15%">INVESTMENT MANAGER</th>
+                                        <!--                                <th width="10%">MAIN STRATEGY</th>-->
+                                        <th width="10%">FUND STATUS</th>
+                                        <th width="10%">FUND AUM,$</th>
+                                        <th width="10%">MANAGER AUM,$</th>
+                                        <th width="20%">COMMENT</th>
+                                        <th width="5%">&nbsp;</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr *ngFor="let fund of filteredResult.excludedFunds; let i=index">
+                                        <td>{{i + 1}}</td>
+                                        <td>{{fund.fundId}}</td>
+                                        <td>{{fund.fundName}}</td>
+                                        <td>{{fund.investmentManager}}</td>
+                                        <!--                                <td>{{fund.mainStrategy}}</td>-->
+                                        <td>{{fund.fundStatus}}</td>
+                                        <td>
                                     <span [style.text-decoration]="fund.excludeFromStrategyAUM ? 'line-through' : ''"
                                           data-toggle="tooltip" data-placement="top" title="{{fund.excludeFromStrategyAUM ? 'Excluded from Strategy AUM calculation' : 'Included into Strategy AUM calculation'}}">
                                         {{getAmountShort(fund.fundAUM)}}
                                     </span>
-                                </td>
-                                <td>{{getAmountShort(fund.managerAUM)}}</td>
-                                <td>{{fund.excludeComment}}</td>
-                                <td>
-                                    <span (click)="includeFund(fund)">
+                                        </td>
+                                        <td>{{getAmountShort(fund.managerAUM)}}</td>
+                                        <td>{{fund.excludeComment}}</td>
+                                        <td>
+                                    <span *ngIf="filteredResult.editable" (click)="includeFund(fund)">
                                             <span class="glyphicon glyphicon-plus"></span>
                                         </span>
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <span *ngIf="filteredResult.excludedFunds == null || filteredResult.excludedFunds.length == 0"><i>No excluded funds</i></span>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <span *ngIf="filteredResult.excludedFunds == null || filteredResult.excludedFunds.length == 0"><i>No excluded funds</i></span>
 
-                    <h4>Auto-Excluded Funds (AUM not affecting Strategy AUM)</h4>
-                    <div class="row" *ngIf="filteredResult.autoExcludedFunds != null && filteredResult.autoExcludedFunds.length > 0">
-                        <table class="table table-hover small">
-                            <thead>
-                            <tr>
-                                <th width="5%">#</th>
-                                <th width="10%">FUND ID</th>
-                                <th width="15%">FUND NAME</th>
-                                <th width="15%">INVESTMENT MANAGER</th>
-                                <!--                                <th width="10%">MAIN STRATEGY</th>-->
-                                <th width="10%">FUND STATUS</th>
-                                <th width="10%">FUND AUM,$</th>
-                                <th width="10%">MANAGER AUM,$</th>
-                                <th width="20%">COMMENT</th>
-                                <th width="5%">&nbsp;</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr *ngFor="let fund of filteredResult.autoExcludedFunds; let i=index" style="background-color: #DCDCDC;">
-                                <td>{{i + 1}}</td>
-                                <td>{{fund.fundId}}</td>
-                                <td>{{fund.fundName}}</td>
-                                <td>{{fund.investmentManager}}</td>
-                                <!--                                <td>{{fund.mainStrategy}}</td>-->
-                                <td>{{fund.fundStatus}}</td>
-                                <td>{{getAmountShort(fund.fundAUM)}}</td>
-                                <td>{{getAmountShort(fund.managerAUM)}}</td>
-                                <td>{{fund.excludeComment}}</td>
-                                <td>
-                                    <span (click)="includeFund(fund)">
-                                            <span class="glyphicon glyphicon-plus"></span>
-                                        </span>
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <span *ngIf="filteredResult.autoExcludedFunds == null || filteredResult.autoExcludedFunds.length == 0"><i>No auto-excluded funds</i></span>
-                </div>
-
-                <div id="unqualified" class="tab-pane fade">
-                    <br/>
-                    <div class="row withpadding">
-                        <div *ngIf="filteredResult?.filteredResultStatistics?.unqualified?.length > 0">
-                            <table class="table table-hover">
-                                <tr>
-                                    <td [attr.colspan]="filteredResult.filteredResultStatistics.unqualified[0].length + 1" style="font-weight: bold" align="right">AUM LOOKBACK</td>
-                                </tr>
-                                <tr>
-                                    <td [attr.rowspan]="filteredResult.filteredResultStatistics.unqualified.length + 1" style="font-weight: bold;">
-                                        <div align="right" style="writing-mode: vertical-rl;">RETURN LOOKBACK</div>
-                                    </td>
-                                </tr>
-                                <tr *ngFor="let row of filteredResult?.filteredResultStatistics?.unqualified; let i=index" [style.background-color]="i==0 ? '#D5E1EC' : white"
-                                    align="right" [style.font-weight]="i==0 ? 'bold' : ''">
-                                    <td *ngFor="let td of row; let j=index" [style.background-color]="getCellColor(i,j)" align="right" [style.color]="white" [style.font-weight]="j==0 ? 'bold' : ''" align="center">
-                                        <a *ngIf="i != 0 && j != 0 && td != 0" (click)="showFunds(i-1, j-1, 2, td)" style="color: white" data-toggle="modal" data-target="#fundListModal">{{td}}</a>
-                                        <span *ngIf="i == 0 || j == 0 || td == 0">{{td}}</span>
-                                    </td>
-                                </tr>
-<!--                                <tr>-->
-<!--                                    <td [attr.colspan]="filteredResult.filteredResultStatistics.unqualified.length" style="font-weight: bold" align="left">RETURN LOOKBACK</td>-->
-<!--                                </tr>-->
-                            </table>
+                            <h4>Auto-Excluded Funds (AUM not affecting Strategy AUM)</h4>
+                            <div class="row" *ngIf="filteredResult.autoExcludedFunds != null && filteredResult.autoExcludedFunds.length > 0">
+                                <table class="table table-hover small">
+                                    <thead>
+                                    <tr>
+                                        <th width="5%">#</th>
+                                        <th width="10%">FUND ID</th>
+                                        <th width="15%">FUND NAME</th>
+                                        <th width="15%">INVESTMENT MANAGER</th>
+                                        <!--                                <th width="10%">MAIN STRATEGY</th>-->
+                                        <th width="10%">FUND STATUS</th>
+                                        <th width="10%">FUND AUM,$</th>
+                                        <th width="10%">MANAGER AUM,$</th>
+                                        <th width="20%">COMMENT</th>
+                                        <th width="5%">&nbsp;</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr *ngFor="let fund of filteredResult.autoExcludedFunds; let i=index" style="background-color: #DCDCDC;">
+                                        <td>{{i + 1}}</td>
+                                        <td>{{fund.fundId}}</td>
+                                        <td>{{fund.fundName}}</td>
+                                        <td>{{fund.investmentManager}}</td>
+                                        <!--                                <td>{{fund.mainStrategy}}</td>-->
+                                        <td>{{fund.fundStatus}}</td>
+                                        <td>{{getAmountShort(fund.fundAUM)}}</td>
+                                        <td>{{getAmountShort(fund.managerAUM)}}</td>
+                                        <td>{{fund.excludeComment}}</td>
+                                        <td>
+                                    <span *ngIf="filteredResult.editable" (click)="includeFund(fund)">
+                                        <span class="glyphicon glyphicon-plus"></span>
+                                    </span>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <span *ngIf="filteredResult.autoExcludedFunds == null || filteredResult.autoExcludedFunds.length == 0"><i>No auto-excluded funds</i></span>
                         </div>
-                    </div>
-                </div>
-                <div id="undecided" class="tab-pane fade">
-                    <br/>
-                    <div class="row withpadding">
-                        <div *ngIf="filteredResult?.filteredResultStatistics?.undecided?.length > 0">
-                            <table class="table table-hover">
-                                <tr>
-                                    <td [attr.colspan]="filteredResult.filteredResultStatistics.undecided[0].length + 1" style="font-weight: bold" align="right">AUM LOOKBACK</td>
-                                </tr>
-                                <tr>
-                                    <td [attr.rowspan]="filteredResult.filteredResultStatistics.undecided.length + 1" style="font-weight: bold;">
-                                        <div align="right" style="writing-mode: vertical-rl;">RETURN LOOKBACK</div>
-                                    </td>
-                                </tr>
-                                <tr *ngFor="let row of filteredResult?.filteredResultStatistics?.undecided; let i=index" [style.background-color]="i==0 ? '#D5E1EC' : white"
-                                    align="right" [style.font-weight]="i==0 ? 'bold' : ''">
-                                    <td *ngFor="let td of row; let j=index" [style.background-color]="getCellColor(i,j)" align="center" [style.color]="white" [style.font-weight]="j==0 ? 'bold' : ''">
-                                        <a *ngIf="i != 0 && j != 0 && td != 0" (click)="showFunds(i-1, j-1, 3, td)" style="color: white" data-toggle="modal" data-target="#fundListModal">{{td}}</a>
-                                        <span *ngIf="i == 0 || j == 0 || td == 0">{{td}}</span>
-                                    </td>
-                                </tr>
-<!--                                <tr>-->
-<!--                                    <td [attr.colspan]="filteredResult.filteredResultStatistics.undecided.length" style="font-weight: bold" align="left">RETURN LOOKBACK</td>-->
-<!--                                </tr>-->
-                            </table>
+                        <div id="unqualified" class="tab-pane fade">
+                            <br/>
+                            <div class="row withpadding">
+                                <div *ngIf="filteredResult?.filteredResultStatistics?.unqualified?.length > 0">
+                                    <table class="table table-hover">
+                                        <tr>
+                                            <td [attr.colspan]="filteredResult.filteredResultStatistics.unqualified[0].length + 1" style="font-weight: bold" align="right">AUM LOOKBACK</td>
+                                        </tr>
+                                        <tr>
+                                            <td [attr.rowspan]="filteredResult.filteredResultStatistics.unqualified.length + 1" style="font-weight: bold;">
+                                                <div align="right" style="writing-mode: vertical-rl;">RETURN LOOKBACK</div>
+                                            </td>
+                                        </tr>
+                                        <tr *ngFor="let row of filteredResult?.filteredResultStatistics?.unqualified; let i=index" [style.background-color]="i==0 ? '#D5E1EC' : white"
+                                            align="right" [style.font-weight]="i==0 ? 'bold' : ''">
+                                            <td *ngFor="let td of row; let j=index" [style.background-color]="getCellColor(i,j)" align="right" [style.color]="white" [style.font-weight]="j==0 ? 'bold' : ''" align="center">
+                                                <a *ngIf="i != 0 && j != 0 && td != 0" (click)="showFunds(i-1, j-1, 2, td)" style="color: white" data-toggle="modal" data-target="#fundListModal">{{td}}</a>
+                                                <span *ngIf="i == 0 || j == 0 || td == 0">{{td}}</span>
+                                            </td>
+                                        </tr>
+                                        <!--                                <tr>-->
+                                        <!--                                    <td [attr.colspan]="filteredResult.filteredResultStatistics.unqualified.length" style="font-weight: bold" align="left">RETURN LOOKBACK</td>-->
+                                        <!--                                </tr>-->
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="undecided" class="tab-pane fade">
+                            <br/>
+                            <div class="row withpadding">
+                                <div *ngIf="filteredResult?.filteredResultStatistics?.undecided?.length > 0">
+                                    <table class="table table-hover">
+                                        <tr>
+                                            <td [attr.colspan]="filteredResult.filteredResultStatistics.undecided[0].length + 1" style="font-weight: bold" align="right">AUM LOOKBACK</td>
+                                        </tr>
+                                        <tr>
+                                            <td [attr.rowspan]="filteredResult.filteredResultStatistics.undecided.length + 1" style="font-weight: bold;">
+                                                <div align="right" style="writing-mode: vertical-rl;">RETURN LOOKBACK</div>
+                                            </td>
+                                        </tr>
+                                        <tr *ngFor="let row of filteredResult?.filteredResultStatistics?.undecided; let i=index" [style.background-color]="i==0 ? '#D5E1EC' : white"
+                                            align="right" [style.font-weight]="i==0 ? 'bold' : ''">
+                                            <td *ngFor="let td of row; let j=index" [style.background-color]="getCellColor(i,j)" align="center" [style.color]="white" [style.font-weight]="j==0 ? 'bold' : ''">
+                                                <a *ngIf="i != 0 && j != 0 && td != 0" (click)="showFunds(i-1, j-1, 3, td)" style="color: white" data-toggle="modal" data-target="#fundListModal">{{td}}</a>
+                                                <span *ngIf="i == 0 || j == 0 || td == 0">{{td}}</span>
+                                            </td>
+                                        </tr>
+                                        <!--                                <tr>-->
+                                        <!--                                    <td [attr.colspan]="filteredResult.filteredResultStatistics.undecided.length" style="font-weight: bold" align="left">RETURN LOOKBACK</td>-->
+                                        <!--                                </tr>-->
+                                    </table>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -362,7 +759,6 @@
         <div class="modal-dialog" style=" min-height: 100px; max-height:85%;  margin-top: 100px; margin-bottom:50px; width:75%;">
             <div class="modal-content" id="modalMessagesDiv">
                 <div [ngBusy]="busyModal"  class="modal-body">
-
                     <div class="row">
                         <div class="col-md-12">
                             <div class="alert alert-danger" *ngIf="modalErrorMessage != null"><span>{{modalErrorMessage}}</span>
@@ -374,7 +770,12 @@
                         </div>
                     </div>
                     <div class="row withpadding" *ngIf="fundListType == 1 || fundListType == 2">
-                        <button class="btn btn-primary pull-right" (click)="exportFundList()">Export</button>
+                        <button class="btn btn-primary pull-left" (click)="exportFundList()">Export as XLSX</button>
+                        <span class="pull-right">&nbsp;</span>
+                    </div>
+                    <div class="row">&nbsp;</div>
+                    <div class="row withpadding" *ngIf="fundListType == 1">
+                        <button class="btn btn-success pull-right" (click)="saveScoringResults(fundListLookbackAUM, fundListLookbackReturn)">Save results</button>
                         <span class="pull-right">&nbsp;</span>
                     </div>
                     <div class="row withpadding">
@@ -450,8 +851,8 @@
                                     <td *ngIf="fundListType == 1">{{fund.omega| number:'1.2-2'}}</td>
                                     <td  *ngIf="fundListType == 1" style="background-color: #f9eaea">{{fund.totalScore| number:'1.2-2'}}</td>
                                     <td align="center">
-                                        <span style="color:green" *ngIf="fund.strategyAUMCheck" class="glyphicon glyphicon-ok"></span>
-                                        <span style="color:red" *ngIf="!fund.strategyAUMCheck" class="glyphicon glyphicon-remove"></span>
+<!--                                        <span style="color:green" *ngIf="fund.strategyAUMCheck" class="glyphicon glyphicon-ok"></span>-->
+<!--                                        <span style="color:red" *ngIf="!fund.strategyAUMCheck" class="glyphicon glyphicon-remove"></span>-->
                                         <br/>
                                         <span *ngIf="fund.fundAUM != null" [style.text-decoration]="fund.editedFundAUM != null ? 'line-through' : ''" data-toggle="tooltip"
                                                      data-placement="top" title="{{fund.fundAUM}}">
@@ -495,16 +896,13 @@
                                             <span *ngIf="fund?.strategyAUM != null">
                                                 {{getAmountShort(fund.strategyAUM)}}
                                             </span>
-
                                             <span *ngIf="fund.strategyAUM == null && fund.recentStrategyAUM != null">
-                                                {{getAmountShort(fund.recentStrategyAUM)}} {{(fund.recentStrategyAUMDate != null ? "( from " + getReportDateShortFormatted(fund.recentStrategyAUMDate) + ")" : '')}}
+                                                {{getAmountShort(fund.recentStrategyAUM)}} {{fund.recentStrategyAUMDate != null ? getReportDateShortFormatted(fund.recentStrategyAUMDate) : ''}}
                                             </span>
-
                                             <span class="glyphicon glyphicon-exclamation-sign"
                                                   *ngIf="fund.strategyAUMWithMissingCurrency"
                                                   data-toggle="tooltip" data-placement="top" title="Currency rates missing for some of the Manager funds">
                                             </span>
-
                                             <!--<a data-toggle="modal" data-target="#infoModal" style="cursor: pointer">-->
                                                 <!--<span class="glyphicon glyphicon-exclamation-sign"></span>-->
                                             <!--</a>-->
@@ -540,12 +938,12 @@
                                 <td>
                                     <!--<a class="btn btn-xs btn-default" data-toggle="modal" (click)="editFund(fund)" data-target="#insideModal">edit</a>-->
 
-                                    <span (click)="editFund(fund)" style="color: black" data-toggle="modal" data-target="#fundEditModal">
+                                    <span *ngIf="filteredResult.editable" (click)="editFund(fund)" style="color: black" data-toggle="modal" data-target="#fundEditModal">
                                             <span class="glyphicon glyphicon-pencil"></span>
                                     </span>
                                 </td>
                                 <td>
-                                    <span style="color: black" data-toggle="modal" (click)="openExcludeFund(fund, 'FUNDLIST')" data-target="#excludeFundModal">
+                                    <span *ngIf="filteredResult.editable" style="color: black" data-toggle="modal" (click)="openExcludeFund(fund, 'FUNDLIST')" data-target="#excludeFundModal">
                                             <span class="glyphicon glyphicon-trash"></span>
                                     </span>
                                 </td>
@@ -558,27 +956,13 @@
                         </div>
                     </div>
                 </div>
-
-                <!--<div class="modal fade" id="infoModal" role="dialog">-->
-                    <!--<div class="modal-dialog" style="overflow-y: scroll; max-height:85%;  margin-top: 50px; margin-bottom:50px; width:65%;">-->
-                        <!--<div class="modal-content">-->
-                            <!--<div class="modal-header">-->
-                                <!--<h3 class="modal-title"  style="word-wrap: break-word">Currency rates missing for some of the Investor funds</h3>-->
-                            <!--</div>-->
-                            <!--<div class="modal-body">-->
-                            <!--</div>-->
-                        <!--</div>-->
-                    <!--</div>-->
-                <!--</div>-->
-
                 <div class="modal-footer">
                     <button type="button" style="display:none;" class="btn btn-default pull-left" id="closeFundListModalButton" (click)="closeFundListModal()" data-dismiss="modal">Close</button>
-                    <!--<button *ngIf="showManagerAUMInput" type="button" class="btn btn-success pull-right" (click)="saveUndecidedList()">SAVE</button>-->
-                    <!--<button type="button" class="btn btn-primary pull-right" (click)="closeModal()" data-dismiss="modal">OK</button>-->
                 </div>
             </div>
         </div>
     </div>
+
     <div class="modal fade" id="excludeFundModal" role="dialog" tabindex="-1">
         <div class="modal-dialog" style=" min-height: 100px; max-height:85%;  margin-top: 100px; margin-bottom:50px; width:75%;">
             <div class="modal-content"  *ngIf="selectedFund != null">
@@ -635,83 +1019,6 @@
             </div>
         </div>
     </div>
-    <!--<div [ngBusy]="busyStats" class="modal fade" id="insideModal" role="dialog" tabindex="-1">-->
-        <!--<div class="modal-dialog" style="min-height: 100px; margin-top: 20%; width:75%;">-->
-            <!--<div class="modal-content" *ngIf="selectedFund != null">-->
-                <!--<div [ngBusy]="busyModal"  class="modal-body">-->
-                    <!--<div class="row">-->
-                        <!--<div class="row top-buffer" >-->
-                            <!--<div class="col-md-12">-->
-                                <!--<div class="alert alert-info" *ngIf="selectedFundSuccessMessage != null"><span>{{selectedFundSuccessMessage}}</span>-->
-                                <!--</div>-->
-                            <!--</div>-->
-                        <!--</div>-->
-                        <!--<div class="row top-buffer" >-->
-                            <!--<div class="col-md-12">-->
-                                <!--<div class="alert alert-danger" *ngIf="selectedFundErrorMessage != null"><span>{{selectedFundErrorMessage}}</span>-->
-                                <!--</div>-->
-                            <!--</div>-->
-                        <!--</div>-->
-                    <!--</div>-->
-
-                    <!--<h4>{{selectedFund.fundName}}</h4>-->
-                    <!--<div class="row">-->
-                        <!--<div class="col-md-12">-->
-                            <!--<div class="col-md-3">-->
-                                <!--<label>Fund AUM,$: </label>-->
-                                <!--<span [style.text-decoration]="selectedFund.editedFundAUM != null && selectedFund.editedFundAUM != '' ? 'line-through' : ''"-->
-                                      <!--[style.font-weight]="selectedFund.editedFundAUM != null && selectedFund.editedFundAUM != '' ? '' : 'bold'">-->
-                                    <!--{{getAmountShort(selectedFund.fundAUM)}}</span>-->
-                                <!--<input class="form-control" type="text" name="fundAUM" [(ngModel)]="selectedFund.editedFundAUM" placeholder="Upd Fund AUM, $..."-->
-                                       <!--(keyup)="onNumberChangeSelectedEditedFundAUM()"/>-->
-                            <!--</div>-->
-                            <!--<div class="col-md-3">-->
-                                <!--<label>AUM Date</label>-->
-                                <!--<span [style.text-decoration]="selectedFund.editedFundAUM != null && selectedFund.editedFundAUM != '' ? 'line-through' : ''"-->
-                                      <!--[style.font-weight]="selectedFund.editedFundAUM != null && selectedFund.editedFundAUM != '' ? '' : 'bold'">-->
-                                    <!--<span class="glyphicon glyphicon-calendar"></span>{{selectedFund.fundAUMDate}}-->
-                                <!--</span>-->
-                                <!--<div class='input-group date col-md-2' id='editedFundAUMDateTPicker' style="width: 100%">-->
-                                    <!--<input type='text' class="form-control" id="editedFundAUMDate" name="editedFundAUMDate" [(ngModel)]="selectedFund.editedFundAUMDateMonthYear"-->
-                                    <!--[style.text-decoration]="selectedFund.editedFundAUM == null || selectedFund.editedFundAUM === '' ? 'line-through' : ''"/>-->
-                                                <!--<span class="input-group-addon">-->
-                                                    <!--<span class="glyphicon glyphicon-calendar"></span>-->
-                                                <!--</span>-->
-                                <!--</div>-->
-                            <!--</div>-->
-                            <!--<div class="col-md-6">-->
-                                <!--<label>Comment</label>-->
-                                <!--<input class="form-control" type="text" name="fundAUM" [(ngModel)]="selectedFund.editedFundAUMComment" placeholder="Comment..."-->
-                                       <!--[style.text-decoration]="selectedFund.editedFundAUM == null || selectedFund.editedFundAUM === '' ? 'line-through' : ''"/>-->
-                            <!--</div>-->
-                        <!--</div>-->
-                        <!--<div class="row">-->
-                            <!--<div class="col-md-12">-->
-                                <!--<div class="col-md-3">-->
-                                    <!--<label>Manager AUM, $</label>-->
-                                    <!--<input class="form-control" type="text" name="fundAUM" [(ngModel)]="selectedFund.managerAUM"-->
-                                           <!--(keyup)="onNumberChangeSelectedFundManagerAUM()" placeholder="Manager AUM, $..."/>-->
-                                <!--</div>-->
-                            <!--</div>-->
-                        <!--</div>-->
-                        <!--<div class="row">-->
-                            <!--<div class="col-md-12">&nbsp;</div>-->
-                        <!--</div>-->
-                        <!--<div class="row">-->
-                            <!--<div class="col-md-12">-->
-                                <!--<div class="col-md-9">-->
-                                    <!--<button class="btn btn-default pull-left" style="display:none;" id="closeFundEditModalButton" (click)="closeFundEditModal()" data-dismiss="modal">CLOSE</button>-->
-                                <!--</div>-->
-                                <!--<div class="col-md-3">-->
-                                    <!--<button class="btn btn-success pull-right" (click)="saveFund()">SAVE</button>-->
-                                <!--</div>-->
-                            <!--</div>-->
-                        <!--</div>-->
-                    <!--</div>-->
-                <!--</div>-->
-            <!--</div>-->
-        <!--</div>-->
-    <!--</div>-->
 
     <div class="modal fade" id="fundEditModal" role="dialog" tabindex="-1">
         <!--<div class="modal-dialog" style="overflow-y: scroll; min-height: 100px; margin-top: 20%; width:75%;">-->
@@ -861,6 +1168,7 @@
             </div>
         </div>
     </div>
+
     <div class="modal fade" id="returnInputModal" role="dialog">
         <div class="modal-dialog" style="overflow-y: scroll; max-height:85%;  margin-top: 50px; margin-bottom:50px;">
             <div class="modal-content">

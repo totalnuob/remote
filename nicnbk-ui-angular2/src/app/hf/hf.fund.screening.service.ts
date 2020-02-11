@@ -48,6 +48,7 @@ export class HedgeFundScreeningService extends CommonService{
     private HF_SCREENING_FILTERED_DELETE_ADDED_FUND_URL = this.HF_BASE_URL + "filteredResults/deleteAddedFund/";
     private HF_SCREENING_FILTERED_EXCLUDE_FUND_URL = this.HF_BASE_URL + "filteredResults/excludeFund/";
     private HF_SCREENING_FILTERED_INCLUDE_FUND_URL = this.HF_BASE_URL + "filteredResults/includeFund/";
+    private HF_SCREENING_FILTERED_SAVE_RESULTS_URL = this.HF_BASE_URL + "filteredResults/saveResults/";
 
 
 
@@ -217,6 +218,14 @@ export class HedgeFundScreeningService extends CommonService{
         let body = JSON.stringify(fund);
 
         return this.http.post(this.HF_SCREENING_FILTERED_UPDATE_FUND_URL, body, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+    saveResults(saveParams){
+        let body = JSON.stringify(saveParams);
+
+        return this.http.post(this.HF_SCREENING_FILTERED_SAVE_RESULTS_URL, body, this.getOptionsWithCredentials())
             .map(this.extractData)
             .catch(this.handleErrorResponse);
     }

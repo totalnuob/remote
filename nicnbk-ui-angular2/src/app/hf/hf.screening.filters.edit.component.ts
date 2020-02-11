@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, AfterViewInit  } from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {HedgeFundService} from "./hf.fund.service";
 import {CommonFormViewComponent} from "../common/common.component";
@@ -12,9 +12,13 @@ import {HedgeFundScreeningService} from "./hf.fund.screening.service";
 import {HedgeFundScreeningFilteredResult} from "./model/hf.screening.filtered.result";
 import {HedgeFundScreeningFilteredResultStatistics} from "./model/hf.screening.filtered.result.statistics";
 import {HedgeFundScreeningFilteredResultFund} from "./model/hf.screening.filtered.result.fund";
+import {GoogleChartComponent} from "../google-chart/google-chart.component";
+
 import {DATA_APP_URL} from "../common/common.service.constants";
 
+declare var google:any;
 declare var $:any
+
 @Component({
     selector: 'hf-fund-search',
     templateUrl: 'view/hf.screening.filters.edit.component.html',
@@ -24,7 +28,7 @@ declare var $:any
     ],
     providers: []
 })
-export class HFScreeningFilteredResultsEditComponent extends CommonFormViewComponent{
+export class HFScreeningFilteredResultsEditComponent extends GoogleChartComponent implements AfterViewInit{
 
     screeningId;
     id;
@@ -63,12 +67,16 @@ export class HFScreeningFilteredResultsEditComponent extends CommonFormViewCompo
     excludeFundModalErrorMessage;
     excludeFundModalSuccessMessage;
 
+    showFinalQualifiedFundList = true;
+    showFinalUnqualifiedFundList = false;
+    showFinalUndecidedFundList = false;
+
     constructor(
         private screeningService: HedgeFundScreeningService,
         private router: Router,
         private route: ActivatedRoute
     ){
-        super(router);
+        super();
 
         this.moduleAccessChecker = new ModuleAccessCheckerService;
 
@@ -90,22 +98,6 @@ export class HFScreeningFilteredResultsEditComponent extends CommonFormViewCompo
                     }
                 }
             });
-    }
-
-    loadFilteredResult(){
-        this.busyGet = this.screeningService.getFilteredResult(this.id)
-            .subscribe(
-                result => {
-                    this.filteredResult = result;
-                    //console.log(this.filteredResult);
-                    this.onNumberChangeFundAUM();
-                    this.onNumberChangeManagerAUM();
-                },
-                error => {
-                    //console.log(error);
-                    this.postAction(null, "Failed to load screening filtered results");
-                }
-            );
     }
 
     ngOnInit():any {
@@ -133,6 +125,300 @@ export class HFScreeningFilteredResultsEditComponent extends CommonFormViewCompo
             $('#modalMessagesDiv').css("background-color", "white");
             $('#closeFundExcludeModalBtn').click();
         });
+    }
+
+    drawGraph(){
+        if(this.filteredResult != null && this.filteredResult.filteredResultStatistics != null && this.filteredResult.filteredResultStatistics.finalResults != null){
+            this.drawFinalScreeningResultsPieChart();
+            this.drawFinalUnqualifiedFundsReasonBarChart();
+
+            this.drawFinalQualifiedTop50StrategiesPieChart();
+            this.drawFinalTop5QualifiedBarChart();
+        }
+    }
+
+    drawFinalScreeningResultsPieChart(){
+        if(typeof google.visualization === 'undefined'){
+            console.log("undefined");
+            return;
+        }
+        var qualified = this.filteredResult.filteredResultStatistics.finalResults.qualifiedFunds != null ? this.filteredResult.filteredResultStatistics.finalResults.qualifiedFunds.length : 0;
+        var unqualified = this.filteredResult.filteredResultStatistics.finalResults.unqualifiedFunds != null ? this.filteredResult.filteredResultStatistics.finalResults.unqualifiedFunds.length : 0;
+        var undecided = this.filteredResult.filteredResultStatistics.finalResults.undecidedFunds != null ? this.filteredResult.filteredResultStatistics.finalResults.undecidedFunds.length : 0;
+        var total = qualified + unqualified + undecided;
+
+        var dataList = [['Type', 'Number']];
+        if(qualified > 0){
+            dataList.push(["Qualified funds", qualified]);
+        }
+        if(unqualified > 0){
+            dataList.push(["Unqualified funds", unqualified]);
+        }
+        if(undecided > 0){
+            dataList.push(["Undecided funds", undecided]);
+        }
+
+        var data = google.visualization.arrayToDataTable(dataList);
+
+        var options = {
+            title: 'Screening results',
+            legend: {position: 'labeled'},
+            chartArea: {
+                height: '80%',
+                top: '10%'
+            },
+            pieSliceText: 'value',
+            colors: ['#428F4A', '#E86753', '#CFD0D0']
+            sliceVisibilityThreshold: 0
+        };
+
+        var chart = new google.visualization.PieChart(document.getElementById('finalScreeningResultsPieChart'));
+        chart.draw(data, options);
+    }
+
+    drawFinalQualifiedTop50StrategiesPieChart(){
+        console.log("drawFinalQualifiedTop50StrategiesPieChart");
+            if(typeof google.visualization === 'undefined'){
+                console.log("undefined");
+                return;
+            }
+            let strategyMap = new Map();
+            for(var i = 0; i < this.filteredResult.filteredResultStatistics.finalResults.top50qualifiedFunds.length; i++){
+                var strategy = this.filteredResult.filteredResultStatistics.finalResults.top50qualifiedFunds[i].mainStrategy;
+                if(strategyMap.get(strategy) != null){
+                    var count = strategyMap.get(strategy);
+                    strategyMap.set(strategy, (count + 1));
+                }else if(strategy != null){
+                    strategyMap.set(strategy, 1);
+                }
+            }
+            console.log(strategyMap);
+
+            var dataList = [['Type', 'Number']];
+            strategyMap.forEach(function(value, key) {
+                console.log([key, value]);
+                dataList.push([key, value]);
+            })
+            console.log(dataList);
+
+            var data = google.visualization.arrayToDataTable(dataList);
+            var options = {
+                title: 'Top 50 by Strategy',
+                //legend: {position: 'labeled'},
+                chartArea: {
+                    height: '80%',
+                    top: '10%'
+                },
+                pieSliceText: 'value',
+                //colors: ['#428F4A', '#E86753', '#CFD0D0']
+                sliceVisibilityThreshold: 0
+            };
+
+            var chart = new google.visualization.PieChart(document.getElementById('finalQualifiedTop50StrategiesPieChart'));
+            chart.draw(data, options);
+        }
+
+    getUnqualifiedFundsStatistics(){
+        if(this.filteredResult.filteredResultStatistics.finalResults != null && this.filteredResult.filteredResultStatistics.finalResults.unqualifiedFunds != null){
+            var fundAUMCount = 0;
+            var managerAUMCount = 0;
+            var trackRecordCount = 0;
+            var excludedCount = 0;
+            console.log(this.filteredResult.filteredResultStatistics.finalResults.unqualifiedFunds);
+            for(var i = 0; i < this.filteredResult.filteredResultStatistics.finalResults.unqualifiedFunds.length; i++){
+                var fund = this.filteredResult.filteredResultStatistics.finalResults.unqualifiedFunds[i];
+                if(!fund.strategyAUMCheck){
+                    fundAUMCount++;
+                }
+                if(!fund.managerAUMCheck){
+                    managerAUMCount++;
+                }
+                if(!fund.trackRecordCheck){
+                    trackRecordCount++;
+                }
+                if(fund.excluded){
+                    excludedCount++;
+                }
+            }
+            return [fundAUMCount, managerAUMCount, trackRecordCount, excludedCount];
+        }
+    }
+
+    drawFinalUnqualifiedFundsReasonBarChart(){
+        var unqualifiedFundsStatistics = this.getUnqualifiedFundsStatistics();
+        console.log(unqualifiedFundsStatistics);
+        if(unqualifiedFundsStatistics == null || unqualifiedFundsStatistics.length != 4){
+            return;
+        }
+
+        var dataArray = [['', '']];
+        dataArray.push(['Strategy AUM', unqualifiedFundsStatistics[0]]);
+        dataArray.push(['Manager AUM', unqualifiedFundsStatistics[1]]);
+        dataArray.push(['Track Record', unqualifiedFundsStatistics[2]]);
+        dataArray.push(['Excluded fund', unqualifiedFundsStatistics[3]]);
+
+        //console.log(dataArray);
+        if(google && google.visualization) {
+            var data = google.visualization.arrayToDataTable(dataArray);
+
+            var options = {
+                title: "Unqualified Funds Analysis",
+                titleTextStyle: {
+                    color: 'black',    // any HTML string color ('red', '#cc00cc')
+                    //fontName: <string>, // i.e. 'Times New Roman'
+                    fontSize: 12, // 12, 18 whatever you want (don't specify px)
+                    bold: true,    // true or false
+                    italic: false   // true of false
+                },
+                //width: 600,
+                //height: 400,
+                animation: {
+                    duration: 500,
+                    easing: 'out',
+                    startup: true,
+                },
+                hAxis: {
+                    format: '#.##',
+                },
+                chartArea: {left: '30%'},
+
+                //bar: {groupWidth: "80%"},
+                colors: ['#307240', '#79b588', '#b6dbbf', '#a7aba8'],
+                legend: {position: "none"},
+            };
+
+            var chart = new google.visualization.BarChart(document.getElementById("finalUnqualifiedFundsReasonBarChart"));
+            chart.draw(data, options);
+        }
+    }
+
+    drawFinalTop5QualifiedBarChart(){
+        if(google && google.visualization) {
+            var count1 = 0;
+            var count2 = 0;
+            var count3 = 0;
+            var count4 = 0;
+            var count5 = 0;
+            var count6 = 0;
+            var count7 = 0;
+            var count8 = 0;
+            var count9 = 0;
+            var count10 = 0;
+            var minScore = Math.round(this.filteredResult.filteredResultStatistics.finalResults.top50qualifiedFunds[this.filteredResult.filteredResultStatistics.finalResults.top50qualifiedFunds.length - 1].totalScore);
+
+            for(var i = 0; i < this.filteredResult.filteredResultStatistics.finalResults.top50qualifiedFunds.length; i++){
+                var totalScore = Number(this.filteredResult.filteredResultStatistics.finalResults.top50qualifiedFunds[i].totalScore);
+                if(totalScore <= 1){
+                    count1++;
+                }else if(totalScore > 1 && totalScore <= 2){
+                    count2++;
+                }else if(totalScore > 2 && totalScore <= 3){
+                    count3++;
+                }else if(totalScore > 3 && totalScore <= 4){
+                    count4++;
+                }else if(totalScore > 4 && totalScore <= 5){
+                    count5++;
+                }else if(totalScore > 5 && totalScore <= 6){
+                    count6++;
+                }else if(totalScore > 6 && totalScore <= 7){
+                    count7++;
+                }else if(totalScore > 7 && totalScore <= 8){
+                    count8++;
+                }else if(totalScore > 8 && totalScore <= 9){
+                    count9++;
+                }else if(totalScore > 9){
+                    count10++;
+                }
+            }
+
+            var dataArray = [['', '']];
+            if(count1 > 0){
+                dataArray.push(['<= 1', count1]);
+            }
+            if(count2 > 0){
+                dataArray.push(['1 - 2', count2]);
+            }
+            if(count3 > 0){
+                dataArray.push(['2 - 3', count3]);
+            }
+            if(count4 > 0){
+                dataArray.push(['3 - 4', count4]);
+            }
+            if(count5 > 0){
+                dataArray.push(['4 - 5', count5]);
+            }
+            if(count6 > 0){
+                dataArray.push(['5 - 6', count6]);
+            }
+            if(count7 > 0){
+                dataArray.push(['6 - 7', count7]);
+            }
+            if(count8 > 0){
+                dataArray.push(['7 - 8', count8]);
+            }
+            if(count9 > 0){
+                dataArray.push(['8 - 9', count9]);
+            }
+            if(count10 > 0){
+                dataArray.push(['> 9', count10]);
+            }
+            //console.log(dataArray);
+            var data = google.visualization.arrayToDataTable(dataArray);
+
+            var options = {
+                title: "Top 50 Total Score Distribution",
+                titleTextStyle: {
+                    color: 'black',    // any HTML string color ('red', '#cc00cc')
+                    //fontName: <string>, // i.e. 'Times New Roman'
+                    fontSize: 12, // 12, 18 whatever you want (don't specify px)
+                    bold: true,    // true or false
+                    italic: false   // true of false
+                },
+                //width: 600,
+                //height: 400,
+                animation: {
+                    duration: 500,
+                    easing: 'out',
+                    startup: true,
+                },
+                hAxis: {
+                    format: '#.##',
+                },
+                chartArea: {left: '30%'},
+
+                //bar: {groupWidth: "80%"},
+                colors: ['#307240', '#79b588', '#b6dbbf', '#a7aba8'],
+                legend: {position: "none"},
+            };
+
+            var chart = new google.visualization.ColumnChart(document.getElementById("finalTop50QualifiedBarChart"));
+            chart.draw(data, options);
+        }
+    }
+
+    loadFilteredResult(){
+        this.busyGet = this.screeningService.getFilteredResult(this.id)
+            .subscribe(
+                result => {
+                    this.filteredResult = result;
+                    //console.log(this.filteredResult);
+                    this.onNumberChangeFundAUM();
+                    this.onNumberChangeManagerAUM();
+                    if(this.filteredResult.filteredResultStatistics.finalResults != null){
+                        this.drawGraph();
+                    }
+                    this.successMessage = null;
+                    this.errorMessage = null;
+                    this.modalSuccessMessage = null;
+                    this.modalErrorMessage = nulls;
+                    this.selectedFundErrorMessage = null;
+                    this.selectedFundSuccessMessage = null;
+                },
+                error => {
+                    //console.log(error);
+                    this.postAction(null, "Failed to load screening filtered results");
+                }
+            );
     }
 
     saveFilters() {
@@ -499,6 +785,9 @@ export class HFScreeningFilteredResultsEditComponent extends CommonFormViewCompo
     //    fund.editing = false;
     //    fund.managerAUM = this.managerAUMbeforeEdit;
     //}
+
+
+
 
     closeFundListModal(){
         this.filteredFundList = null;
@@ -1033,6 +1322,40 @@ export class HFScreeningFilteredResultsEditComponent extends CommonFormViewCompo
         this.returnUploadErrorMessage = null;
         this.returnUploadSuccessMessage = "Returns added";
 
+    }
+
+    saveScoringResults(fundListLookbackAUM, fundListLookbackReturn){
+        if(confirm("Are you sure want to save results?"){
+            let saveParams = {"filteredResultId": this.filteredResult.id, "lookbackReturn": fundListLookbackReturn, "lookbackAUM": fundListLookbackAUM};
+            this.busyModal = this.screeningService.saveResults(saveParams)
+                .subscribe(
+                    result => {
+                        if(result.status != null && result.status === 'SUCCESS'){
+                            this.modalSuccessMessage = "Successfully saved results"
+                            this.modalErrorMessage = null;
+                            //this.filteredResult.editable = false;
+                            this.needUpdate = true;
+                        }else{
+                            console.log(result);
+                            this.modalSuccessMessage = null;
+                            this.modalErrorMessage = "Failed to save results";
+                            if(result.message != null && result.message.nameEn != null && result.message.nameEn.trim() != ''{
+                                this.modalErrorMessage = result.message.nameEn;
+                            }
+                        }
+                    },
+                    error => {
+                        this.modalErrorMessage = "Failed to save results";
+                        this.modalSuccessMessage = null;
+                    }
+                );
+        }
+    }
+
+    deleteSavedResults(){
+        if(confirm("Are you sure want to delete saved results?"){
+            alert("TODO: deletion");
+        }
     }
 
 }

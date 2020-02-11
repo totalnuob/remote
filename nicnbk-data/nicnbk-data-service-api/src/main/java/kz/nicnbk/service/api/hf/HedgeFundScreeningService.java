@@ -3,6 +3,7 @@ package kz.nicnbk.service.api.hf;
 import kz.nicnbk.service.api.base.BaseService;
 import kz.nicnbk.service.dto.common.FileUploadResultDto;
 import kz.nicnbk.service.dto.common.ListResponseDto;
+import kz.nicnbk.service.dto.common.ResponseDto;
 import kz.nicnbk.service.dto.files.FilesDto;
 import kz.nicnbk.service.dto.hf.*;
 
@@ -74,5 +75,7 @@ public interface HedgeFundScreeningService extends BaseService {
     FilesDto getQualifiedFundListAsStream(Long filteredResultId, int lookbackAUM, int lookbackReturn);
 
     FilesDto getUnqualifiedFundListAsStream(Long filteredResultId, int lookbackAUM, int lookbackReturn);
+
+    ResponseDto saveResults(HedgeFundScreeningSaveParamsDto saveParamsDto, String username);
 }
 

@@ -14,9 +14,15 @@ public class HedgeFundScreeningFilteredResultDto extends HedgeFundScreeningParam
     private HedgeFundScreeningFilteredResultStatisticsDto filteredResultStatistics;
     private List<HedgeFundScreeningParsedDataDto> toCheckFunds;
     private List<HedgeFundScreeningParsedDataDto> addedFunds;
+    private List<HedgeFundScreeningParsedDataDto> editedFunds;
     private List<HedgeFundScreeningParsedDataDto> excludedFunds;
     private List<HedgeFundScreeningParsedDataDto> autoExcludedFunds;
 
+    private HedgeFundScreeningDto screening;
+
+    private boolean editable;
+
+    private String description;
 
     public HedgeFundScreeningFilteredResultDto(){}
 
@@ -67,6 +73,38 @@ public class HedgeFundScreeningFilteredResultDto extends HedgeFundScreeningParam
 
     public void setAutoExcludedFunds(List<HedgeFundScreeningParsedDataDto> autoExcludedFunds) {
         this.autoExcludedFunds = autoExcludedFunds;
+    }
+
+    public boolean isEditable() {
+        return editable;
+    }
+
+    public void setEditable(boolean editable) {
+        this.editable = editable;
+    }
+
+    public HedgeFundScreeningDto getScreening() {
+        return screening;
+    }
+
+    public void setScreening(HedgeFundScreeningDto screening) {
+        this.screening = screening;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public List<HedgeFundScreeningParsedDataDto> getEditedFunds() {
+        return editedFunds;
+    }
+
+    public void setEditedFunds(List<HedgeFundScreeningParsedDataDto> editedFunds) {
+        this.editedFunds = editedFunds;
     }
 }
 

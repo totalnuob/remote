@@ -23,6 +23,14 @@ public class HedgeFundScreeningFilteredResult extends CreateUpdateBaseEntity {
     private Integer lookbackAUM;
     private Date startDate;
 
+    private String description;
+
+    public HedgeFundScreeningFilteredResult(){}
+
+    public HedgeFundScreeningFilteredResult(Long id){
+        setId(id);
+    }
+
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="screening_id", nullable = false)
     public HedgeFundScreening getScreening() {
@@ -85,5 +93,13 @@ public class HedgeFundScreeningFilteredResult extends CreateUpdateBaseEntity {
 
     public void setStartDate(Date startDate) {
         this.startDate = startDate;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

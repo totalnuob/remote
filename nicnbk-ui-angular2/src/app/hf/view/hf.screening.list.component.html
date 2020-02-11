@@ -83,6 +83,7 @@
                 <th>CREATED BY</th>
                 <th>UPDATED</th>
                 <th>UPDATED BY</th>
+                <th>&nbsp;</th>
             </tr>
             </thead>
 
@@ -95,6 +96,12 @@
                 <td width="10%" (click)="navigate(screening.id)">{{screening.creator}}</td>
                 <td width="10%" (click)="navigate(screening.id)">{{screening.updateDate}}</td>
                 <td width="10%" (click)="navigate(screening.id)">{{screening.updater}}</td>
+                <td>
+                    &nbsp;<span *ngIf="!screening.editable" class="glyphicon glyphicon-lock" style="color: green" (click)="navigate(screening.id)"></span>
+                    <button *ngIf="screening.editable" class="btn btn-danger btn-xs" (click)="deleteScreening(screening.id)">
+                        <span class="glyphicon glyphicon-trash"></span>
+                    </button>
+                </td>
                 <!--<td width="5%">-->
                     <!--<a><i class="glyphicon glyphicon-file"></i></a>-->
                 <!--</td>-->

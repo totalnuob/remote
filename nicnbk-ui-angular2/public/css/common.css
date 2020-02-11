@@ -1,3 +1,6 @@
+
+
+
 /* customizable snowflake styling */
 .snowflake {
     color: #fff;
@@ -221,6 +224,11 @@ label {
 }
 
 .nopadding {
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+.condensed-table tr td {
     padding: 0 !important;
     margin: 0 !important;
 }

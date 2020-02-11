@@ -15,4 +15,6 @@ export class HedgeFundScreening {
     parsedData: HedgeFundScreeningParsedData[];
 
     parsedUcitsData: HedgeFundScreeningParsedData[];
+
+    editable: boolean;
 }
