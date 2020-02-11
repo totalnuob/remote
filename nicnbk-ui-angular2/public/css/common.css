@@ -1,5 +1,5 @@
 /* customizable snowflake styling */
-.snowflake {
+/*.snowflake {
     color: #fff;
     font-size: 1em;
     font-family: Arial;
@@ -166,6 +166,11 @@
     -webkit-animation-delay:3s,1.5s;
     animation-delay:3s,1.5s
 }
+*/
+
+
+
+
 
 /* disable shifting when scroll bards is added */
 html {

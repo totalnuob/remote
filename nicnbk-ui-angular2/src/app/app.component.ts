@@ -96,7 +96,7 @@ export class AppComponent {
 
     activeBlock = 'corp';
 
-    snow = true;
+    //snow = true;
 
     private moduleAccessChecker: ModuleAccessCheckerService;
 
@@ -186,13 +186,13 @@ export class AppComponent {
         return localStorage.getItem("authenticatedUser") != null;
     }
 
-    showSnow(){
-        return this.snow;
-    }
+//    showSnow(){
+//        return this.snow;
+//   }
 
-    changeSnow(){
-        this.snow = !this.snow;
-    }
+//    changeSnow(){
+//        this.snow = !this.snow;
+//    }
 
     checkAvailable(menu){
         if(menu === "HR"){
