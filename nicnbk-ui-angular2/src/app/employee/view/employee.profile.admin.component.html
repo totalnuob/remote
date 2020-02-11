@@ -52,13 +52,13 @@
             <label class="control-label col-sm-2">Date of birth*:</label>
             <div class="col-sm-3">
                 <div class='input-group date col-md-2' id='birthDatePicker' style="width: 100%">
-                    <input type="text" class="form-control" id="birthDate" name="birthDate" style="font-size: small" [(ngModel)]="employee.birthDate" required #birthDate="ngModel"/>
+                    <input type="text" class="form-control" id="birthDate" name="birthDate" style="font-size: small" [(ngModel)]="employee.birthDate" #birthDate="ngModel"/>
                     <span class="input-group-addon">
                         <span class="glyphicon glyphicon-calendar"></span>
                     </span>
                 </div>
             </div>
-            <div [hidden]="birthDate.valid || birthDate.pristine" class="alert alert-danger col-md-3">Enter date of birth3</div>
+<!--            <div [hidden]="birthDate.valid || birthDate.pristine" class="alert alert-danger col-md-3">Enter date of birth</div>-->
         </div>
         <div class="row form-group">
             <label class="control-label col-sm-2">Position:</label>

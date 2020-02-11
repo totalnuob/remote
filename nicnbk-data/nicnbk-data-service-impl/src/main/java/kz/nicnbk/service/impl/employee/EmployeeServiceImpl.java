@@ -17,6 +17,7 @@ import kz.nicnbk.service.api.employee.EmployeeService;
 import kz.nicnbk.service.converter.employee.DepartmentEntityConverter;
 import kz.nicnbk.service.converter.employee.EmployeeEntityConverter;
 import kz.nicnbk.service.converter.employee.RoleEntityConverter;
+import kz.nicnbk.service.dto.authentication.UserRoles;
 import kz.nicnbk.service.dto.common.EntitySaveResponseDto;
 import kz.nicnbk.service.dto.common.ResponseStatusType;
 import kz.nicnbk.service.dto.employee.*;
@@ -152,6 +153,17 @@ public class EmployeeServiceImpl implements EmployeeService{
             logger.error("Failed to save employee profile." + saveResponseDto.getMessage().getMessageText() + " [updater=" + updater + "]");
             return saveResponseDto;
         }
+        boolean isAdmin = false;
+        EmployeeDto updaterEmployee = getEmployeeByUsername(updater);
+        if(updaterEmployee.getRoles() != null && !updaterEmployee.getRoles().isEmpty()){
+            for(BaseDictionaryDto role: updaterEmployee.getRoles()){
+                if(role.getCode().equalsIgnoreCase(UserRoles.ADMIN.getCode())){
+                    isAdmin = true;
+                    break;
+                }
+            }
+        }
+
         try {
             Employee entity = null;
 
@@ -160,15 +172,17 @@ public class EmployeeServiceImpl implements EmployeeService{
             }else{
                 entity = this.employeeRepository.findOne(employeeDto.getId());
 
-                if(entity.getActive() != employeeDto.getActive()) {
-                    this.tokenService.revokeUsername(entity.getUsername());
+                if(isAdmin){
+                    if(entity.getActive() != employeeDto.getActive()) {
+                        this.tokenService.revokeUsername(entity.getUsername());
+                    }
+                    entity.setActive(employeeDto.getActive());
                 }
 
                 entity.setFirstName(employeeDto.getFirstName());
                 entity.setLastName(employeeDto.getLastName());
                 entity.setBirthDate(employeeDto.getBirthDate());
                 entity.setPatronymic(employeeDto.getPatronymic());
-                entity.setActive(employeeDto.getActive());
 
             }
             Position position = null;
@@ -177,16 +191,18 @@ public class EmployeeServiceImpl implements EmployeeService{
             }
             entity.setPosition(position);
 
-            Set<Role> roles = new HashSet<>();
-            if(employeeDto.getRoles() != null) {
-                for (BaseDictionaryDto dto: employeeDto.getRoles()) {
-                    roles.add(this.roleRepository.findOne(dto.getId()));
+            if(isAdmin){
+                Set<Role> roles = new HashSet<>();
+                if(employeeDto.getRoles() != null) {
+                    for (BaseDictionaryDto dto: employeeDto.getRoles()) {
+                        roles.add(this.roleRepository.findOne(dto.getId()));
+                    }
                 }
+                if(!entity.getRoles().equals(roles)) {
+                    this.tokenService.revokeUsername(entity.getUsername());
+                }
+                entity.setRoles(roles);
             }
-            if(!entity.getRoles().equals(roles)) {
-                this.tokenService.revokeUsername(entity.getUsername());
-            }
-            entity.setRoles(roles);
 
             Long id = this.employeeRepository.save(entity).getId();
             logger.info("Successfully saved employee profile: id= " + entity.getId().longValue() + ", username=" + employeeDto.getUsername() + " [updater=" + updater + "]");
@@ -220,8 +236,8 @@ public class EmployeeServiceImpl implements EmployeeService{
             saveResponseDto.setErrorMessageEn("Last name cannot be empty");
         }else if(StringUtils.isEmpty(employeeDto.getFirstName())){
             saveResponseDto.setErrorMessageEn("First name cannot be empty");
-        }else if(employeeDto.getBirthDate() == null){
-            saveResponseDto.setErrorMessageEn("Date of birth cannot be empty");
+//        }else if(employeeDto.getBirthDate() == null){
+//            saveResponseDto.setErrorMessageEn("Date of birth cannot be empty");
         }else if(StringUtils.isEmpty(employeeDto.getUsername())){
             saveResponseDto.setErrorMessageEn("Username cannot be empty");
         }
