@@ -97,7 +97,38 @@ export class HFScreeningFilteredResultsComponent extends CommonFormViewComponent
     }
 
     deleteFilteredResult(id){
-        alert("TODO: delete filter, id=" + id);
+        if(confirm("Are you sure want to delete filtered result?")){
+            this.busy = this.screeningService.deleteFilteredResult(id)
+                .subscribe(
+                    result => {
+                        console.log(result);
+                        if(result.status != null && result.status === 'SUCCESS'){
+                            this.successMessage = "Successfully deleted filtered result"
+                            this.errorMessage = null;
+                            this.busy = this.screeningService.findAllFilteredResults(this.screeningId)
+                                .subscribe(
+                                    result  => {
+                                        //console.log(result);
+                                        this.records = result;
+                                    },
+                                    error =>  {
+                                        this.postAction(null, "Failed to load screening filtered results (after deletion)");
+                                    }
+                                );
+                        }else{
+                            this.successMessage = null;
+                            this.errorMessage = "Failed to delete filtered result";
+                            if(result.message != null && result.message.nameEn != null && result.message.nameEn.trim() != ''{
+                                this.errorMessage = result.message.nameEn;
+                            }
+                        }
+                    },
+                    error => {
+                        this.errorMessage = "Failed to delete filtered result";
+                        this.successMessage = null;
+                    }
+                );
+        }
     }
 
 }

@@ -77,5 +77,14 @@ public interface HedgeFundScreeningService extends BaseService {
     FilesDto getUnqualifiedFundListAsStream(Long filteredResultId, int lookbackAUM, int lookbackReturn);
 
     ResponseDto saveResults(HedgeFundScreeningSaveParamsDto saveParamsDto, String username);
+
+    ResponseDto deleteSavedResultsById(Long id, String username);
+
+    ResponseDto archiveSavedResultsById(Long id, String username);
+
+    ResponseDto deleteFilteredResultById(Long id, String username);
+
+    ResponseDto deleteScreeningById(Long id, String username);
+
 }
 

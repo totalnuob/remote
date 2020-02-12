@@ -38,6 +38,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import java.io.*;
@@ -124,6 +125,12 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
 
     @Autowired
     private HedgeFundScreeningSavedResultsRepository screeningSavedResultsRepository;
+
+    @Autowired
+    private HedgeFundScreeningSavedResultsAddedFundRepository screeningSavedResultsAddedFundRepository;
+
+    @Autowired
+    private HedgeFundScreeningSavedResultsAddedFundReturnRepository screeningSavedResultsAddedFundReturnRepository;
 
     @Autowired
     private HedgeFundScreeningSavedResultFundsRepository screeningSavedResultFundsRepository;
@@ -514,6 +521,8 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
                 result.setScreenings(this.screeningEntityConverter.disassembleList(entitiesPage.getContent()));
                 for(HedgeFundScreeningDto screening: result.getScreenings()){
                     screening.setEditable(checkScreeningEditable(screening.getId()));
+                    List<HedgeFundScreeningFilteredResultDto> filters = getFilteredResultsByScreeningId(screening.getId());
+                    screening.setExistingFilteredResults(filters != null ? filters.size() : 0);
                 }
 
                 //Collections.sort(result.getScreenings());
@@ -547,6 +556,11 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
 
                 HedgeFundScreening entity = this.screeningRepository.findOne(screeningId);
                 entity.setDataFile(new Files(fileId));
+                entity.setUpdateDate(new Date());
+                EmployeeDto updater = this.employeeService.findByUsername(username);
+                if(updater != null){
+                    entity.setUpdater(new Employee(updater.getId()));
+                }
                 this.screeningRepository.save(entity);
 
                 logger.info("Saved HF Screening attachment file information to DB: file id=" + fileId + " [user]=" + username);
@@ -653,6 +667,16 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
 
             if (entity != null) {
                 Long id = this.filteredResultRepository.save(entity).getId();
+
+                HedgeFundScreening screening = this.screeningRepository.findOne(dto.getScreeningId());
+                if(screening != null) {
+                    EmployeeDto updater = this.employeeService.findByUsername(username);
+                    if (updater != null) {
+                        screening.setUpdateDate(new Date());
+                        screening.setUpdater(new Employee(updater.getId()));
+                        this.screeningRepository.save(screening);
+                    }
+                }
                 logger.info("Successfully saved HF Screening filtered result: id=" + id + " [user]=" + username);
                 return id;
             }
@@ -1296,6 +1320,14 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
             logger.error(errorMessage);
             return false;
         }
+
+        EmployeeDto updater = this.employeeService.findByUsername(username);
+        if (updater != null) {
+            entity.setUpdateDate(new Date());
+            entity.setUpdater(new Employee(updater.getId()));
+            this.screeningRepository.save(entity);
+        }
+
         boolean deletedSheet1 = deleteParsedDataSheet1(screeningId, FileTypeLookup.HF_SCREENING_DATA_FILE.getCode());
         boolean deletedSheet2 = deleteParsedDataSheet2(screeningId);
         boolean deletedSheet3 = deleteParsedDataSheet3(screeningId, FileTypeLookup.HF_SCREENING_DATA_FILE.getCode());
@@ -1531,6 +1563,7 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
         HedgeFundScreeningSavedResultsDto savedResultsDto = getSavedResultsByFilteredResultId(filteredResultId);
         if(savedResultsDto != null) {
             HedgeFundScreeningFinalResultsDto finalResultsDto = new HedgeFundScreeningFinalResultsDto();
+            finalResultsDto.setId(savedResultsDto.getId());
             finalResultsDto.setSelectedLookbackAUM(savedResultsDto.getSelectedLookbackAUM());
             finalResultsDto.setSelectedLookbackReturn(savedResultsDto.getSelectedLookbackReturn());
 
@@ -1853,6 +1886,15 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
                         logger.info("HF Screening - Successfully updated Manager AUM: fund id=" + fund.getFundId().longValue() + " [user]=" + username);
                     }
                 }
+                EmployeeDto updater = this.employeeService.findByUsername(username);
+                if (updater != null && fundList.get(0).getScreening() != null) {
+                    HedgeFundScreening screening = this.screeningRepository.findOne(fundList.get(0).getScreening().getId());
+                    if(screening != null) {
+                        screening.setUpdateDate(new Date());
+                        screening.setUpdater(new Employee(updater.getId()));
+                        this.screeningRepository.save(screening);
+                    }
+                }
                 return true;
 
             }catch (Exception ex){
@@ -1866,7 +1908,6 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
     @Override
     public boolean updateFundInfo(HedgeFundScreeningParsedDataDto fund, String username) {
 
-        // TODO: check min AUM, track record
         if(fund.getFilteredResultId() != null && !checkFilteredResultEditable(fund.getFilteredResultId())){
             logger.error("Failed to update fund info: filtered result is not editable [" + username + "]");
             return false;
@@ -2071,6 +2112,15 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
             this.editedFundRepository.save(newEditedFunds);
         }
 
+        EmployeeDto updater = this.employeeService.findByUsername(username);
+        if (updater != null && fund.getScreening() != null) {
+            HedgeFundScreening screening = this.screeningRepository.findOne(fund.getScreening().getId());
+            if(screening != null) {
+                screening.setUpdateDate(new Date());
+                screening.setUpdater(new Employee(updater.getId()));
+                this.screeningRepository.save(screening);
+            }
+        }
         return true;
     }
 
@@ -2088,6 +2138,17 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
 
                 // delete fund
                 this.addedFundRepository.deleteByFundNameAndFilteredResultId(fundName, filteredResultId);
+
+                EmployeeDto updater = this.employeeService.findByUsername(username);
+                HedgeFundScreeningFilteredResultDto filteredResultDto = getFilteredResultWithoutFundsInfo(filteredResultId);
+                if (updater != null && filteredResultDto != null && filteredResultDto.getScreening() != null) {
+                    HedgeFundScreening screening = this.screeningRepository.findOne(filteredResultDto.getScreening().getId());
+                    if(screening != null) {
+                        screening.setUpdateDate(new Date());
+                        screening.setUpdater(new Employee(updater.getId()));
+                        this.screeningRepository.save(screening);
+                    }
+                }
                 return true;
             }
         }catch (Exception ex){
@@ -2098,18 +2159,7 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
 
     @Override
     public boolean excludeParsedFund(Long filteredResultId, Long fundId,  String excludeComment, boolean excludeFromStrategyAUM, String username){
-//        try {
-//            HedgeFundScreeningParsedData entity = this.parsedDataRepository.findByFundIdAndScreeningId(fundId, screeningId);
-//            if (entity != null) {
-//                entity.setExcluded(true);
-//                this.parsedDataRepository.save(entity);
-//                return true;
-//            }
-//        }catch (Exception ex){
-//            logger.error("Failed to exclude fund: screening id " + (screeningId != null ? screeningId.longValue() : null) +
-//                    ", fund id " + (fundId != null ? fundId.longValue() : null) + " [username=" + username + "]");
-//        }
-//        return false;
+
         try {
             if(!checkFilteredResultEditable(filteredResultId)){
                 logger.error("Failed to exclude fund : filtered result is not editable [" + username + "]");
@@ -2144,6 +2194,16 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
                 }
             }
             editedFundRepository.save(entity);
+            EmployeeDto updater = this.employeeService.findByUsername(username);
+            HedgeFundScreeningFilteredResultDto filteredResultDto = getFilteredResultWithoutFundsInfo(filteredResultId);
+            if (updater != null && filteredResultDto != null && filteredResultDto.getScreening() != null) {
+                HedgeFundScreening screening = this.screeningRepository.findOne(filteredResultDto.getScreening().getId());
+                if(screening != null) {
+                    screening.setUpdateDate(new Date());
+                    screening.setUpdater(new Employee(updater.getId()));
+                    this.screeningRepository.save(screening);
+                }
+            }
             return true;
         }catch (Exception ex){
             logger.error("Failed to exclude fund: filter id " + (filteredResultId != null ? filteredResultId.longValue() : null) +
@@ -2154,18 +2214,6 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
 
     @Override
     public boolean includeParsedFund(Long filteredResultId, Long fundId, String username){
-//        try {
-//            HedgeFundScreeningParsedData entity = this.parsedDataRepository.findByFundIdAndScreeningId(fundId, screeningId);
-//            if (entity != null) {
-//                entity.setExcluded(null);
-//                this.parsedDataRepository.save(entity);
-//                return true;
-//            }
-//        }catch (Exception ex){
-//            logger.error("Failed to include fund: screening id " + (screeningId != null ? screeningId.longValue() : null) +
-//                    ", fund id " + (fundId != null ? fundId.longValue() : null) + " [username=" + username + "]");
-//        }
-//        return false;
 
         try {
             if(!checkFilteredResultEditable(filteredResultId)){
@@ -2192,6 +2240,17 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
                     entity.setExcludeComment(null);
                     entity.setExcludeFromStrategyAUM(false);
                     editedFundRepository.save(entity);
+
+                    EmployeeDto updater = this.employeeService.findByUsername(username);
+                    HedgeFundScreeningFilteredResultDto filteredResultDto = getFilteredResultWithoutFundsInfo(filteredResultId);
+                    if (updater != null && filteredResultDto != null && filteredResultDto.getScreening() != null) {
+                        HedgeFundScreening screening = this.screeningRepository.findOne(filteredResultDto.getScreening().getId());
+                        if(screening != null) {
+                            screening.setUpdateDate(new Date());
+                            screening.setUpdater(new Employee(updater.getId()));
+                            this.screeningRepository.save(screening);
+                        }
+                    }
                     return true;
                 }else{
                     logger.error("Failed to include fund: filter not found with id=" + filteredResultId + " [username=" + username + "]");
@@ -3820,7 +3879,8 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
         return currencies;
     }
 
-    //@Transactional
+    @Override
+    @Transactional
     public ResponseDto saveResults(HedgeFundScreeningSaveParamsDto saveParamsDto, String username) {
         HedgeFundScreeningFilteredResultDto params = new HedgeFundScreeningFilteredResultDto();
         HedgeFundScreeningFilteredResultDto filteredResultDto = getFilteredResultWithoutFundsInfo(saveParamsDto.getFilteredResultId());
@@ -3864,6 +3924,13 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
         // Save results
         HedgeFundScreeningSavedResults savedResults = new HedgeFundScreeningSavedResults();
         savedResults.setFilteredResult(new HedgeFundScreeningFilteredResult(filteredResultDto.getId()));
+        savedResults.setFundAUM(filteredResultDto.getFundAUM());
+        savedResults.setManagerAUM(filteredResultDto.getManagerAUM());
+        savedResults.setStartDate(filteredResultDto.getStartDate());
+        savedResults.setTrackRecord(filteredResultDto.getTrackRecord());
+        savedResults.setLookbackAUM(filteredResultDto.getLookbackAUM());
+        savedResults.setLookbackReturns(filteredResultDto.getLookbackReturns());
+
         savedResults.setSelectedLookbackAUM(saveParamsDto.getLookbackAUM());
         savedResults.setSelectedLookbackReturn(saveParamsDto.getLookbackReturn());
 
@@ -3895,6 +3962,29 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
 
         this.screeningSavedResultFundsRepository.save(savedResultsFunds);
 
+        // Save added funds
+        List<HedgeFundScreeningParsedDataDto> addedFunds = getAddedFundsByFilteredResultId(saveParamsDto.getFilteredResultId());
+        if(addedFunds != null && !addedFunds.isEmpty()) {
+            List<HedgeFundScreeningSavedResultsAddedFund> entities = new ArrayList<>();
+            for(HedgeFundScreeningParsedDataDto addedFund: addedFunds){
+                HedgeFundScreeningSavedResultsAddedFund entity = new HedgeFundScreeningSavedResultsAddedFund();
+                entity.setFundId(addedFund.getFundId());
+                entity.setFundName(addedFund.getFundName());
+                entity.setInvestmentManager(addedFund.getInvestmentManager());
+                entity.setMainStrategy(addedFund.getMainStrategy());
+                entity.setFundAUM(addedFund.getFundAUM());
+                entity.setFundAUMDate(addedFund.getFundAUMDate());
+                entity.setFundAUMComment(addedFund.getFundAUMComment());
+                entity.setManagerAUM(addedFund.getManagerAUM());
+                entity.setSavedResults(savedResults);
+
+                entities.add(entity);
+            }
+            this.screeningSavedResultsAddedFundRepository.save(entities);
+        }
+
+        // Save edited funds
+
         // Save currency rates
         List<HedgeFundScreeningSavedResultsCurrency> currencyRateEntities =
                 this.screeningSavedResultsCurrencyEntityConverter.assembleListFromCurrencyRates(currencyRates, savedResults.getId());
@@ -3905,11 +3995,212 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
                 this.screeningSavedResultsBenchmarkEntityConverter.assembleListFromBenchmarkValues(benchmarkValues, savedResults.getId());
         this.screeningSavedResultsBenchmarkRepository.save(benchmarkEntities);
 
+        EmployeeDto updater = this.employeeService.findByUsername(username);
+        if (updater != null && filteredResultDto != null && filteredResultDto.getScreening() != null) {
+            HedgeFundScreening screening = this.screeningRepository.findOne(filteredResultDto.getScreening().getId());
+            if(screening != null) {
+                screening.setUpdateDate(new Date());
+                screening.setUpdater(new Employee(updater.getId()));
+                this.screeningRepository.save(screening);
+            }
+        }
+
         ResponseDto responseDto = new ResponseDto();
         responseDto.setSuccessMessageEn("Successfully saved results: saved results id=" + savedResults.getId().longValue() +
                 "; total funds saved: " + savedResultsFunds.size() + "; total currency rates saved: " + currencyRateEntities.size() +
                 "; total benchmarks saved: " + benchmarkEntities.size());
         return responseDto;
+    }
+
+
+    @Override
+    public ResponseDto archiveSavedResultsById(Long id, String username){
+        ResponseDto responseDto = new ResponseDto();
+        HedgeFundScreeningSavedResults entity = this.screeningSavedResultsRepository.findOne(id);
+        if(entity != null){
+            // archive saved results entity
+            entity.setArchived(true);
+            this.screeningSavedResultsRepository.save(entity);
+
+            EmployeeDto updater = this.employeeService.findByUsername(username);
+            HedgeFundScreeningFilteredResultDto filteredResultDto = getFilteredResultWithoutFundsInfo(entity.getFilteredResult().getId());
+            if (updater != null && filteredResultDto != null && filteredResultDto.getScreening() != null) {
+                HedgeFundScreening screening = this.screeningRepository.findOne(filteredResultDto.getScreening().getId());
+                if(screening != null) {
+                    screening.setUpdateDate(new Date());
+                    screening.setUpdater(new Employee(updater.getId()));
+                    this.screeningRepository.save(screening);
+                }
+            }
+
+            String message = "Successfully archived saved results with id=" + id.longValue() + " [username=" + username + "]";
+            logger.info(message);
+            responseDto.setSuccessMessageEn(message);
+            return responseDto;
+        }
+        String errorMessage = "Failed to archive saved results: saved results not found with id=" +
+                (id != null ? id.longValue() : null) + " [username=" + username + "]";
+        logger.error(errorMessage);
+        responseDto.setErrorMessageEn(errorMessage);
+        return responseDto;
+    }
+
+    @Override
+    @Transactional
+    public ResponseDto deleteSavedResultsById(Long id, String username){
+        ResponseDto responseDto = new ResponseDto();
+        HedgeFundScreeningSavedResultsDto savedResultsDto = getSavedResultsById(id);
+        if(savedResultsDto != null){
+            // delete saved benchmarks
+            List<HedgeFundScreeningSavedResultsBenchmark> benchmarks = this.screeningSavedResultsBenchmarkRepository.findBySavedResultsId(id);
+            this.screeningSavedResultsBenchmarkRepository.delete(benchmarks);
+
+            // delete saved currency rates
+            List<HedgeFundScreeningSavedResultsCurrency> currencyRates = this.screeningSavedResultsCurrencyRepository.findBySavedResultsId(id);
+            this.screeningSavedResultsCurrencyRepository.delete(currencyRates);
+
+            // delete saved funds
+            List<HedgeFundScreeningSavedResultFunds> funds = this.screeningSavedResultFundsRepository.findBySavedResultsId(id);
+            this.screeningSavedResultFundsRepository.delete(funds);
+
+            // delete saved results entity
+            this.screeningSavedResultsRepository.delete(id);
+
+            EmployeeDto updater = this.employeeService.findByUsername(username);
+            HedgeFundScreeningFilteredResultDto filteredResultDto = getFilteredResultWithoutFundsInfo(savedResultsDto.getFilteredResult().getId());
+            if (updater != null && filteredResultDto != null && filteredResultDto.getScreening() != null) {
+                HedgeFundScreening screening = this.screeningRepository.findOne(filteredResultDto.getScreening().getId());
+                if(screening != null) {
+                    screening.setUpdateDate(new Date());
+                    screening.setUpdater(new Employee(updater.getId()));
+                    this.screeningRepository.save(screening);
+                }
+            }
+
+            String message = "Successfully deleted saved results with id=" + id.longValue() + " [username=" + username + "]";
+            logger.info(message);
+            responseDto.setSuccessMessageEn(message);
+            return responseDto;
+        }
+        String errorMessage = "Failed to delete saved results: saved results not found with id=" +
+                (id != null ? id.longValue() : null) + " [username=" + username + "]";
+        logger.error(errorMessage);
+        responseDto.setErrorMessageEn(errorMessage);
+        return responseDto;
+    }
+
+    @Override
+    @Transactional
+    public ResponseDto deleteFilteredResultById(Long id, String username){
+        ResponseDto responseDto = new ResponseDto();
+        HedgeFundScreeningFilteredResultDto filteredResultDto = getFilteredResultWithoutFundsInfo(id);
+        if(filteredResultDto != null){
+            if(!checkFilteredResultEditable(id)){
+                String errorMessage = "Failed to delete filtered result with id=" + id.longValue() + ": entity not editable";
+                logger.error(errorMessage + " [username=" + username + "]");
+                responseDto.setErrorMessageEn(errorMessage);
+                return responseDto;
+            }
+
+            deleteFilteredResultEntitiesById(id);
+
+            EmployeeDto updater = this.employeeService.findByUsername(username);
+            if (updater != null && filteredResultDto != null && filteredResultDto.getScreening() != null) {
+                HedgeFundScreening screening = this.screeningRepository.findOne(filteredResultDto.getScreening().getId());
+                if(screening != null) {
+                    screening.setUpdateDate(new Date());
+                    screening.setUpdater(new Employee(updater.getId()));
+                    this.screeningRepository.save(screening);
+                }
+            }
+
+            String message = "Successfully deleted filtered result with id=" + id.longValue();
+            logger.info(message + " [username=" + username + "]");
+            responseDto.setSuccessMessageEn(message);
+            return responseDto;
+
+        }
+        String errorMessage = "Failed to delete filtered result: filtered result not found with id=" +
+                (id != null ? id.longValue() : null);
+        logger.error(errorMessage + " [username=" + username + "]");
+        responseDto.setErrorMessageEn(errorMessage);
+        return responseDto;
+    }
+
+    private void deleteFilteredResultEntitiesById(Long id){
+        // added funds
+        List<HedgeFundScreeningAddedFund> addedFunds = this.addedFundRepository.findByFilteredResultId(id, new Sort(Sort.Direction.ASC, "id"));
+        // added funds: returns
+        List<HedgeFundScreeningAddedFundReturn> addedFundReturns = this.addedFundReturnRepository.findByFilterResultId(id);
+        this.addedFundReturnRepository.delete(addedFundReturns);
+        this.addedFundRepository.delete(addedFunds);
+
+        // edited funds & excluded
+        List<HedgeFundScreeningEditedFund> editedFunds = this.editedFundRepository.findAllByFilteredResultId(id);
+        this.editedFundRepository.delete(editedFunds);
+
+        // delete filtered result entity
+        this.filteredResultRepository.delete(id);
+
+    }
+
+    @Override
+    @Transactional
+    public ResponseDto deleteScreeningById(Long id, String username){
+        ResponseDto responseDto = new ResponseDto();
+        HedgeFundScreeningDto screeningDto = get(id);
+        if(screeningDto != null){
+            List<HedgeFundScreeningFilteredResultDto> filteredResults = getFilteredResultsByScreeningId(id);
+            if(filteredResults != null && !filteredResults.isEmpty()){
+                String errorMessage = "Failed to delete screening with id=" + id.longValue() + ": filters exist";
+                logger.error(errorMessage + " [username=" + username + "]");
+                responseDto.setErrorMessageEn(errorMessage);
+                return responseDto;
+            }
+
+            // delete parsed data
+            this.parsedDataRepository.deleteByScreeningId(id);
+            this.parsedDataReturnRepository.deleteByScreeningId(id);
+            this.parsedDataAUMRepository.deleteByScreeningId(id);
+
+            // delete file
+            this.fileService.safeDelete(screeningDto.getFileId());
+
+            // delete screening entity
+            this.screeningRepository.delete(id);
+
+            String message = "Successfully deleted screening with id=" + id.longValue();
+            logger.info(message + " [username=" + username + "]");
+            responseDto.setSuccessMessageEn(message);
+            return responseDto;
+        }
+        String errorMessage = "Failed to delete screening: screening not found with id=" +
+                (id != null ? id.longValue() : null);
+        logger.error(errorMessage + " [username=" + username + "]");
+        responseDto.setErrorMessageEn(errorMessage);
+        return responseDto;
+    }
+
+    private HedgeFundScreeningSavedResultsDto getSavedResultsById(Long id){
+        HedgeFundScreeningSavedResults entity = this.screeningSavedResultsRepository.findOne(id);
+        if(entity != null){
+            HedgeFundScreeningSavedResultsDto resultsDto = new HedgeFundScreeningSavedResultsDto();
+            resultsDto.setFilteredResult(this.filteredResultEntityConverter.disassemble(entity.getFilteredResult()));
+            resultsDto.setSelectedLookbackAUM(entity.getSelectedLookbackAUM());
+            resultsDto.setSelectedLookbackReturn(entity.getSelectedLookbackReturn());
+
+            resultsDto.setId(entity.getId());
+            if(entity.getCreator() != null) {
+                resultsDto.setCreator(entity.getCreator().getUsername());
+            }
+            resultsDto.setCreationDate(entity.getCreationDate());
+            if(entity.getUpdater() != null) {
+                resultsDto.setUpdater(entity.getUpdater().getUsername());
+            }
+            resultsDto.setUpdateDate(entity.getUpdateDate());
+            return resultsDto;
+        }
+        return null;
     }
 
     private HedgeFundScreeningSavedResultsDto getSavedResultsByFilteredResultId(Long filteredResultId){

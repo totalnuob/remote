@@ -83,6 +83,7 @@
                 <th>CREATED BY</th>
                 <th>UPDATED</th>
                 <th>UPDATED BY</th>
+                <th># of filters</th>
                 <th>&nbsp;</th>
             </tr>
             </thead>
@@ -91,20 +92,20 @@
 
             <tr *ngFor = "let screening of screenings" style="cursor: pointer">
                 <!--<td width="5%"></td>-->
-                <td width="30%"(click)="navigate(screening.id)">{{screening.date}}</td>
-                <td width="30%" (click)="navigate(screening.id)">{{screening.name}}</td>
-                <td width="10%" (click)="navigate(screening.id)">{{screening.creator}}</td>
-                <td width="10%" (click)="navigate(screening.id)">{{screening.updateDate}}</td>
-                <td width="10%" (click)="navigate(screening.id)">{{screening.updater}}</td>
+                <td (click)="navigate(screening.id)">{{screening.date}}</td>
+                <td (click)="navigate(screening.id)">{{screening.name}}</td>
+                <td (click)="navigate(screening.id)">{{screening.creator}}</td>
+                <td (click)="navigate(screening.id)">{{screening.updateDate}}</td>
+                <td (click)="navigate(screening.id)">{{screening.updater}}</td>
+                <td (click)="navigate(screening.id)">
+                    {{screening.existingFilteredResults}}
+                </td>
                 <td>
-                    &nbsp;<span *ngIf="!screening.editable" class="glyphicon glyphicon-lock" style="color: green" (click)="navigate(screening.id)"></span>
-                    <button *ngIf="screening.editable" class="btn btn-danger btn-xs" (click)="deleteScreening(screening.id)">
+                    &nbsp;<span *ngIf="!screening.editable" class="glyphicon glyphicon-lock" (click)="navigate(screening.id)"></span>
+                    <button *ngIf="screening.editable" [disabled]="screening.existingFilteredResults > 0" class="btn btn-danger btn-xs" (click)="deleteScreening(screening.id)">
                         <span class="glyphicon glyphicon-trash"></span>
                     </button>
                 </td>
-                <!--<td width="5%">-->
-                    <!--<a><i class="glyphicon glyphicon-file"></i></a>-->
-                <!--</td>-->
             </tr>
             </tbody>
         </table>

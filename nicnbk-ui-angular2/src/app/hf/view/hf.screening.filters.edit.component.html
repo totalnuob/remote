@@ -38,11 +38,11 @@
         </li>
     </ul>
 
-    <div class="tab-content">
+    <div class="tab-content" [ngBusy]="busyGet">
         <div id="final" [class]="filteredResult?.filteredResultStatistics?.finalResults != null ? 'tab-pane fade in active' : 'tab-pane fade'">
             <br/>
             <div>
-                <button class="btn btn-danger pull-right" (click)="deleteSavedResults()">DELETE RESULTS</button>
+                <button class="btn btn-danger pull-right" (click)="deleteSavedResults()">Move to archive</button>
             </div>
             <br/>
 
@@ -401,7 +401,7 @@
         </div>
         <div id="process" [class]="filteredResult?.filteredResultStatistics?.finalResults == null ? 'tab-pane fade in active' : 'tab-pane fade'">
             <br/>
-            <div [ngBusy]="busyGet" class="row withpadding" style="position: relative; min-height: 80px;">
+            <div class="row withpadding" style="position: relative; min-height: 80px;">
                 <form (ngSubmit)="saveFilters()" #paramsForm="ngForm">
                     <div class="col-md-12">
                         <div class="col-md-6">
@@ -775,7 +775,7 @@
                     </div>
                     <div class="row">&nbsp;</div>
                     <div class="row withpadding" *ngIf="fundListType == 1">
-                        <button class="btn btn-success pull-right" (click)="saveScoringResults(fundListLookbackAUM, fundListLookbackReturn)">Save results</button>
+                        <button class="btn btn-success pull-right" (click)="saveScoringResults(fundListLookbackAUM, fundListLookbackReturn)">Mark as final</button>
                         <span class="pull-right">&nbsp;</span>
                     </div>
                     <div class="row withpadding">

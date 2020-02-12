@@ -95,10 +95,12 @@ export class HFScreeningFilteredResultsEditComponent extends GoogleChartComponen
                     } else {
                         this.filteredResult = new HedgeFundScreeningFilteredResult();
                         this.filteredResult.screeningId = this.screeningId;
+                        this.filteredResult.editable = true;
                     }
                 }
             });
     }
+
 
     ngOnInit():any {
         $('#startDateTPickeer').datetimepicker({
@@ -1352,10 +1354,30 @@ export class HFScreeningFilteredResultsEditComponent extends GoogleChartComponen
         }
     }
 
+
     deleteSavedResults(){
         if(confirm("Are you sure want to delete saved results?"){
-            alert("TODO: deletion");
+            this.busyGet = this.screeningService.deleteSavedResults(this.filteredResult.filteredResultStatistics.finalResults.id)
+                .subscribe(
+                    result => {
+                        console.log(result);
+                        if(result.status != null && result.status === 'SUCCESS'){
+                            this.successMessage = "Successfully deleted saved results"
+                            this.errorMessage = null;
+                            this.loadFilteredResult();
+                        }else{
+                            this.successMessage = null;
+                            this.errorMessage = "Failed to delete saved results";
+                            if(result.message != null && result.message.nameEn != null && result.message.nameEn.trim() != ''){
+                                this.errorMessage = result.message.nameEn;
+                            }
+                        }
+                    },
+                    error => {
+                        this.errorMessage = "Failed to delete saved results";
+                        this.successMessage = null;
+                    }
+                );
         }
     }
-
 }

@@ -30,6 +30,8 @@ public class HedgeFundScreeningDto extends CreateUpdateBaseEntityDto<HedgeFundSc
 
     private boolean editable;
 
+    private int existingFilteredResults;
+
     public HedgeFundScreeningDto(){}
 
     public HedgeFundScreeningDto(Long id){
@@ -130,6 +132,14 @@ public class HedgeFundScreeningDto extends CreateUpdateBaseEntityDto<HedgeFundSc
 
     public void setEditable(boolean editable) {
         this.editable = editable;
+    }
+
+    public int getExistingFilteredResults() {
+        return existingFilteredResults;
+    }
+
+    public void setExistingFilteredResults(int existingFilteredResults) {
+        this.existingFilteredResults = existingFilteredResults;
     }
 }
 

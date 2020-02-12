@@ -9,6 +9,8 @@ public class HedgeFundScreeningSavedResultsDto extends CreateUpdateBaseEntityDto
     private int selectedLookbackReturn;
     private int selectedLookbackAUM;
 
+    private boolean archived;
+
     public HedgeFundScreeningFilteredResultDto getFilteredResult() {
         return filteredResult;
     }
@@ -31,5 +33,13 @@ public class HedgeFundScreeningSavedResultsDto extends CreateUpdateBaseEntityDto
 
     public void setSelectedLookbackAUM(int selectedLookbackAUM) {
         this.selectedLookbackAUM = selectedLookbackAUM;
+    }
+
+    public boolean isArchived() {
+        return archived;
+    }
+
+    public void setArchived(boolean archived) {
+        this.archived = archived;
     }
 }

@@ -64,7 +64,7 @@
                 <td (click)="navigate(record.id)">{{record.lookbackAUM}}</td>
                 <td (click)="navigate(record.id)">{{record.startDate}}</td>
                 <td>
-                    &nbsp;<span *ngIf="!record.editable" class="glyphicon glyphicon-lock" style="color: green" (click)="navigate(record.id)"></span>
+                    &nbsp;<span *ngIf="!record.editable" class="glyphicon glyphicon-lock" (click)="navigate(record.id)"></span>
                     <button *ngIf="record.editable" class="btn btn-danger btn-xs" (click)="deleteFilteredResult(record.id)">
                         <span class="glyphicon glyphicon-trash"></span>
                     </button>
@@ -75,6 +75,8 @@
             </tr>
             </tbody>
         </table>
+
+
 
         <!--</div>-->
         <!--<div class="row pull-right">-->

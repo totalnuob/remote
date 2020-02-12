@@ -114,7 +114,43 @@ export class HFScreeningListComponent extends CommonFormViewComponent{
     }
 
     deleteScreening(id){
-        alert("TODO: delete screening, id=" + id);
-    }
+        if(confirm("Are you sure want to delete screening?"){
+            this.busyGet = this.screeningService.deleteScreening(id)
+                .subscribe(
+                    result => {
+                        //console.log(result);
+                        if(result.status != null && result.status === 'SUCCESS'){
+                            this.successMessage = "Successfully deleted screening"
+                            this.errorMessage = null;
+                            this.busy = this.screeningService.search(this.searchParams)
+                                .subscribe(
+                                    searchResult  => {
+                                        console.log(searchResult);
+                                        this.screenings = searchResult.screenings;
+                                        this.searchResult = searchResult;
+                                    },
+                                    error =>  {
+                                        this.errorMessage = "Failed to search screening list (after deletion)"
+                                    }
+                                );
+                        }else{
+                            this.successMessage = null;
+                            this.errorMessage = "Failed to delete screening";
+                            if(result.message != null && result.message.nameEn != null && result.message.nameEn.trim() != ''){
+                                this.errorMessage = result.message.nameEn;
+                            }
+                        }
+                    },
+                    error => {
+                        console.log(error);
+                        this.errorMessage = "Failed to delete screening";
+                        this.successMessage = null;
+                        if(error.message != null ){
+                            this.errorMessage = error.message;
+                        }
+                    }
 
+                );
+        }
+    }
 }

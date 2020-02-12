@@ -357,4 +357,41 @@ public class HedgeFundScreeningServiceREST extends CommonServiceREST{
         return buildNonNullResponseWithStatus(response);
     }
 
+    @PreAuthorize("hasRole('ROLE_HEDGE_FUND_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/filteredResults/deleteResults/{id}", method = RequestMethod.DELETE)
+    public ResponseEntity<?> deleteSavedResults(@PathVariable(value = "id") Long id) {
+        // set creator
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
+
+        //ResponseDto response = this.screeningService.deleteSavedResultsById(id, username);
+        ResponseDto response = this.screeningService.archiveSavedResultsById(id, username);
+
+        return buildNonNullResponseWithStatus(response);
+    }
+
+    @PreAuthorize("hasRole('ROLE_HEDGE_FUND_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/filteredResults/deleteFilteredResult/{id}", method = RequestMethod.DELETE)
+    public ResponseEntity<?> deleteFilteredResult(@PathVariable(value = "id") Long id) {
+        // set creator
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
+
+        ResponseDto response = this.screeningService.deleteFilteredResultById(id, username);
+
+        return buildNonNullResponseWithStatus(response);
+    }
+
+    @PreAuthorize("hasRole('ROLE_HEDGE_FUND_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
+    public ResponseEntity<?> deleteScreening(@PathVariable(value = "id") Long id) {
+        // set creator
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
+
+        ResponseDto response = this.screeningService.deleteScreeningById(id, username);
+
+        return buildNonNullResponseWithStatus(response);
+    }
+
 }
