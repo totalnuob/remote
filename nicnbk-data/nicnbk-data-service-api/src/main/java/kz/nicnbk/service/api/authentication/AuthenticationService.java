@@ -8,5 +8,5 @@ import kz.nicnbk.service.dto.authentication.AuthenticatedUserDto;
  */
 public interface AuthenticationService extends BaseService {
 
-    AuthenticatedUserDto authenticate(String username, String password);
+    AuthenticatedUserDto authenticate(String username, String password, String code);
 }

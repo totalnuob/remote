@@ -318,6 +318,11 @@ public class EmployeeServiceImpl implements EmployeeService{
         return null;
     }
 
+    @Override
+    public EmployeeDto findActiveByUsernamePasswordCode(String username, String password, String code) {
+        return this.findActiveByUsernamePassword(username, password);
+    }
+
     private Boolean successfulLoginAttempt(Employee employee) {
         if (employee == null) {
             return false;
