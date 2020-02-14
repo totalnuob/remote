@@ -280,14 +280,20 @@ public class EmployeeServiceImpl implements EmployeeService{
                 if (employee.getActive() != null && !employee.getActive()) {
                     return null;
                 }
+                if (employee.getLocked() != null && employee.getLocked()) {
+                    this.failedLoginAttempt(employee);
+                    return null;
+                }
                 String salt = employee.getSalt();
                 String generatedPassword = generatePassword(password, salt);
                 if (employee.getPassword().equals(generatedPassword)) {
                     // authentication OK, return employee info
+                    this.successfulLoginAttempt(employee);
                     EmployeeDto employeeDto = this.employeeEntityConverter.disassemble(employee);
                     return employeeDto;
                 } else {
                     // authentication failed
+                    this.failedLoginAttempt(employee);
                     return null;
                 }
             }
@@ -295,6 +301,32 @@ public class EmployeeServiceImpl implements EmployeeService{
             logger.error("Employee search by username-password failed with error: username=" + username, ex);
         }
         return null;
+    }
+
+    private Boolean successfulLoginAttempt(Employee employee) {
+        if (employee == null) {
+            return false;
+        }
+        employee.setFailedLoginAttempts(0);
+        employee.setLocked(false);
+        this.employeeRepository.save(employee);
+        return true;
+    }
+
+    private Boolean failedLoginAttempt(Employee employee) {
+        if (employee == null) {
+            return false;
+        }
+        if (employee.getFailedLoginAttempts() == null) {
+            employee.setFailedLoginAttempts(1);
+        } else {
+            employee.setFailedLoginAttempts(employee.getFailedLoginAttempts() + 1);
+        }
+        if (employee.getFailedLoginAttempts() >= 3) {
+            employee.setLocked(true);
+        }
+        this.employeeRepository.save(employee);
+        return true;
     }
 
     @Override
