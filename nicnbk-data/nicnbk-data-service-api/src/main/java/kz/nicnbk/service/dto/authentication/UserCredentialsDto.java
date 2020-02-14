@@ -8,6 +8,7 @@ import kz.nicnbk.common.service.model.BaseDto;
 public class UserCredentialsDto implements BaseDto {
     private String username;
     private String password;
+    private String code;
 
     public String getUsername() {
         return username;
@@ -23,5 +24,13 @@ public class UserCredentialsDto implements BaseDto {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
     }
 }

@@ -21,7 +21,7 @@ export class LoginComponent implements OnInit{
         }
     }
 
-    public user = new User('','');
+    public user = new User('','', '');
     public errorMsg = '';
 
     //busy: Subscription;
