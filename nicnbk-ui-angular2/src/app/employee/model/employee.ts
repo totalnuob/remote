@@ -11,5 +11,8 @@ export class Employee {
     username: string;
     active: boolean;
 
+    failedLoginAttempts: number;
+    locked: boolean;
+
     roles: any[];
 }

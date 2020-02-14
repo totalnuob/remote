@@ -18,6 +18,7 @@ export class EmployeeService extends CommonService{
     private EMPLOYEE_SAVE_URL = this.EMPLOYEE_BASE_URL + "save/";
     private EMPLOYEE_SAVE_AND_CHANGE_PASSWORD_URL = this.EMPLOYEE_BASE_URL + "saveAndChangePassword/";
     private EMPLOYEE_GET_BY_USERNAME_URL = this.EMPLOYEE_BASE_URL + "getByUsername/";
+    private EMPLOYEE_GET_FULL_BY_USERNAME_URL = this.EMPLOYEE_BASE_URL + "getFullByUsername/";
     private EMPLOYEE_CHANGE_PASSWORD_URL = this.EMPLOYEE_BASE_URL + "changeSelfPassword/";
     private EMPLOYEE_POSITIONS_ALL_URL = this.EMPLOYEE_BASE_URL + "getAllPositions/";
     private EMPLOYEE_ROLES_ALL_URL = this.EMPLOYEE_BASE_URL + "getAllRoles/";
@@ -49,6 +50,12 @@ export class EmployeeService extends CommonService{
     getEmployeeByUsername(username){
         //console.log(body);
         return this.http.get(this.EMPLOYEE_GET_BY_USERNAME_URL + username, this.getOptionsWithCredentials())
+            .map(this.extractDataList)
+            .catch(this.handleErrorResponse);
+    }
+
+    getFullEmployeeByUsername(username){
+        return this.http.get(this.EMPLOYEE_GET_FULL_BY_USERNAME_URL + username, this.getOptionsWithCredentials())
             .map(this.extractDataList)
             .catch(this.handleErrorResponse);
     }

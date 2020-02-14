@@ -16,6 +16,7 @@ import kz.nicnbk.service.api.authentication.TokenService;
 import kz.nicnbk.service.api.employee.EmployeeService;
 import kz.nicnbk.service.converter.employee.DepartmentEntityConverter;
 import kz.nicnbk.service.converter.employee.EmployeeEntityConverter;
+import kz.nicnbk.service.converter.employee.EmployeeFullEntityConverter;
 import kz.nicnbk.service.converter.employee.RoleEntityConverter;
 import kz.nicnbk.service.dto.authentication.UserRoles;
 import kz.nicnbk.service.dto.common.EntitySaveResponseDto;
@@ -48,6 +49,9 @@ public class EmployeeServiceImpl implements EmployeeService{
 
     @Autowired
     private EmployeeEntityConverter employeeEntityConverter;
+
+    @Autowired
+    private EmployeeFullEntityConverter employeeFullEntityConverter;
 
     @Autowired
     private PositionRepository positionRepository;
@@ -102,6 +106,17 @@ public class EmployeeServiceImpl implements EmployeeService{
             if (employee != null) {
                 EmployeeDto employeeDto = this.employeeEntityConverter.disassemble(employee);
                 return employeeDto;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public EmployeeFullDto getFullEmployeeByUsername(String username) {
+        if(username != null) {
+            Employee employee = this.employeeRepository.findByUsername(username);
+            if (employee != null) {
+                return this.employeeFullEntityConverter.disassemble(employee);
             }
         }
         return null;

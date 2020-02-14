@@ -98,6 +98,14 @@
                 <button class="btn btn-xs btn-default" (click)="newPassword = 'Qwerty123'; newPasswordConfirm = 'Qwerty123'">Use 'Qwerty123'</button>
             </div>
         </div>
+        <div class="row form-group">
+            <label class="control-label col-sm-2">Status:</label>
+            <div class="col-sm-2">
+                <button *ngIf="employee.locked == null || !employee.locked" class="btn btn-xs btn-success" (click)="employee.locked = true" disabled>UNLOCKED</button>
+                <button *ngIf="employee.locked != null && employee.locked" class="btn btn-xs btn-danger" (click)="employee.locked = false" disabled>LOCKED</button>
+            </div>
+            <label class="control-label col-sm-8"># failed login attempts: {{employee.failedLoginAttempts == null ? 0 : employee.failedLoginAttempts}}</label>
+        </div>
         <hr style="border-top: 1px solid #B5AEAE"/>
         <div class="row form-group">
             <label class="control-label col-sm-2">Roles:</label>

@@ -66,6 +66,18 @@ public class EmployeeServiceREST extends CommonServiceREST{
         }
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/getFullByUsername/{username}", method = RequestMethod.GET)
+    public ResponseEntity getFullEmployeeByUsername(@PathVariable String username){
+        EmployeeFullDto employeeFullDto = this.employeeService.getFullEmployeeByUsername(username);
+        if(employeeFullDto == null){
+            // error occurred
+            return new ResponseEntity<>(null, null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }else{
+            return new ResponseEntity<>(employeeFullDto, null, HttpStatus.OK);
+        }
+    }
+
     @RequestMapping(value = "/search", method = RequestMethod.POST)
     public ResponseEntity<?> search(@RequestBody EmployeeSearchParamsDto searchParams) {
         EmployeePagedSearchResult searchResult = this.employeeService.search(searchParams);

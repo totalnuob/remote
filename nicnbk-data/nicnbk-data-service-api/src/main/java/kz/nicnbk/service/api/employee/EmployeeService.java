@@ -18,6 +18,8 @@ public interface EmployeeService extends BaseService {
 
     EmployeeDto getEmployeeByUsername(String username);
 
+    EmployeeFullDto getFullEmployeeByUsername(String username);
+
     EmployeePagedSearchResult search(EmployeeSearchParamsDto searchParams);
 
     EntitySaveResponseDto save(EmployeeDto employeeDto, String updater);

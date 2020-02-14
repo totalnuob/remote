@@ -86,7 +86,7 @@ export class EmployeeProfileAdminComponent extends CommonFormViewComponent{
                             this.breadcrumbParamsPath = JSON.parse(this.breadcrumbParams)['path'];
 
                             if(this.username != 'newEmployee') {
-                                this.employeeService.getEmployeeByUsername(this.username)
+                                this.employeeService.getFullEmployeeByUsername(this.username)
                                     .subscribe( response => {
                                             this.employee = response;
                                             console.log(this.employee);
@@ -119,6 +119,8 @@ export class EmployeeProfileAdminComponent extends CommonFormViewComponent{
                                 this.chosenDepartment = null;
                                 this.chosenPosition = null;
                                 this.employee.active = true;
+                                this.employee.locked = false;
+                                this.employee.failedLoginAttempts = 0;
 
                                 console.log('New User creation');
                             }
