@@ -22,6 +22,7 @@ import kz.nicnbk.service.dto.authentication.UserRoles;
 import kz.nicnbk.service.dto.common.EntitySaveResponseDto;
 import kz.nicnbk.service.dto.common.ResponseStatusType;
 import kz.nicnbk.service.dto.employee.*;
+import kz.nicnbk.service.impl.authentication.TotpServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -319,9 +320,9 @@ public class EmployeeServiceImpl implements EmployeeService{
     }
 
     @Override
-    public EmployeeDto findActiveByUsernamePasswordCode(String username, String password, String code) {
+    public EmployeeDto findActiveByUsernamePasswordCode(String username, String password, String otp) {
 
-        if(StringUtils.isEmpty(username) || StringUtils.isEmpty(password) || StringUtils.isEmpty(code)){
+        if(StringUtils.isEmpty(username) || StringUtils.isEmpty(password) || StringUtils.isEmpty(otp)){
             return null;
         }
 
@@ -338,15 +339,22 @@ public class EmployeeServiceImpl implements EmployeeService{
                 String salt = employee.getSalt();
                 String generatedPassword = generatePassword(password, salt);
                 if (employee.getPassword().equals(generatedPassword)) {
-                    List<String> codes = new ArrayList<>();
-                    codes.add("123456");
-                    codes.add("654321");
-                    for (String c : codes) {
-                        if (c.equals(code)) {
+                    if (employee.getMfaEnabled() == null || !employee.getMfaEnabled()) {
+                        if (otp.equals("123456")) {
                             this.successfulLoginAttempt(employee);
                             return this.employeeEntityConverter.disassemble(employee);
                         }
+
+                        this.failedLoginAttempt(employee);
+                        return null;
                     }
+
+                    TotpServiceImpl generator = new TotpServiceImpl(employee.getSecret());
+                    if (generator.verify(otp)) {
+                        this.successfulLoginAttempt(employee);
+                        return this.employeeEntityConverter.disassemble(employee);
+                    }
+
                     this.failedLoginAttempt(employee);
                     return null;
                 } else {

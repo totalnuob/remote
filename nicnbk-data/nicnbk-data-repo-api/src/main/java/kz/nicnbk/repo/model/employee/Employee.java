@@ -29,6 +29,9 @@ public class Employee extends BaseEntity {
     private Integer failedLoginAttempts;
     private Boolean locked;
 
+    private Boolean mfaEnabled;
+    private String secret;
+
     public Employee(){}
 
     public Employee(Long id){
@@ -147,5 +150,21 @@ public class Employee extends BaseEntity {
 
     public void setLocked(Boolean locked) {
         this.locked = locked;
+    }
+
+    public Boolean getMfaEnabled() {
+        return mfaEnabled;
+    }
+
+    public void setMfaEnabled(Boolean mfaEnabled) {
+        this.mfaEnabled = mfaEnabled;
+    }
+
+    public String getSecret() {
+        return secret;
+    }
+
+    public void setSecret(String secret) {
+        this.secret = secret;
     }
 }

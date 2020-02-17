@@ -28,9 +28,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private EmployeeService employeeService;
 
     @Override
-    public AuthenticatedUserDto authenticate(String username, String password, String code) {
+    public AuthenticatedUserDto authenticate(String username, String password, String otp) {
         try {
-            EmployeeDto employeeDto = employeeService.findActiveByUsernamePasswordCode(username, password, code);
+            EmployeeDto employeeDto = employeeService.findActiveByUsernamePasswordCode(username, password, otp);
             if (employeeDto == null) {
                 logger.error("Failed to authenticate: username=" + username);
                 return null;

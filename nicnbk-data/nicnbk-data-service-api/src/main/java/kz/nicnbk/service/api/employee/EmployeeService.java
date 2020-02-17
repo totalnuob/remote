@@ -28,7 +28,7 @@ public interface EmployeeService extends BaseService {
 
     EmployeeDto findActiveByUsernamePassword(String username, String password);
 
-    EmployeeDto findActiveByUsernamePasswordCode(String username, String password, String code);
+    EmployeeDto findActiveByUsernamePasswordCode(String username, String password, String otp);
 
     EmployeeDto findByUsername(String username);
 

@@ -36,7 +36,7 @@ public class AuthenticationServiceREST {
     public ResponseEntity<?> authenticate(@RequestBody UserCredentialsDto credentials, HttpServletRequest req, HttpServletResponse response){
 
         // authenticate
-        AuthenticatedUserDto userDto = authenticationService.authenticate(credentials.getUsername(), credentials.getPassword(), credentials.getCode());
+        AuthenticatedUserDto userDto = authenticationService.authenticate(credentials.getUsername(), credentials.getPassword(), credentials.getOtp());
         if(userDto == null){
             // invalid credentials
             response.addCookie(getClearTokenCookie());
