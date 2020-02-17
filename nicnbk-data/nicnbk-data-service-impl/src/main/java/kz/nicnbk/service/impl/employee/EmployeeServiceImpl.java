@@ -320,7 +320,44 @@ public class EmployeeServiceImpl implements EmployeeService{
 
     @Override
     public EmployeeDto findActiveByUsernamePasswordCode(String username, String password, String code) {
-        return this.findActiveByUsernamePassword(username, password);
+
+        if(StringUtils.isEmpty(username) || StringUtils.isEmpty(password) || StringUtils.isEmpty(code)){
+            return null;
+        }
+
+        try {
+            Employee employee = this.employeeRepository.findByUsername(username);
+            if (employee != null) {
+                if (employee.getActive() != null && !employee.getActive()) {
+                    return null;
+                }
+                if (employee.getLocked() != null && employee.getLocked()) {
+                    this.failedLoginAttempt(employee);
+                    return null;
+                }
+                String salt = employee.getSalt();
+                String generatedPassword = generatePassword(password, salt);
+                if (employee.getPassword().equals(generatedPassword)) {
+                    List<String> codes = new ArrayList<>();
+                    codes.add("123456");
+                    codes.add("654321");
+                    for (String c : codes) {
+                        if (c.equals(code)) {
+                            this.successfulLoginAttempt(employee);
+                            return this.employeeEntityConverter.disassemble(employee);
+                        }
+                    }
+                    this.failedLoginAttempt(employee);
+                    return null;
+                } else {
+                    this.failedLoginAttempt(employee);
+                    return null;
+                }
+            }
+        }catch (Exception ex){
+            logger.error("Employee search by username-password-code failed with error: username=" + username, ex);
+        }
+        return null;
     }
 
     private Boolean successfulLoginAttempt(Employee employee) {
