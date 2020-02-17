@@ -4,6 +4,7 @@ import kz.nicnbk.common.service.util.StringUtils;
 import kz.nicnbk.service.api.authentication.TokenService;
 import kz.nicnbk.service.api.employee.EmployeeService;
 import kz.nicnbk.service.dto.authentication.ChangePasswordCredentialsDto;
+import kz.nicnbk.service.dto.authentication.MfaRegistrationDto;
 import kz.nicnbk.service.dto.authentication.TokenUserInfo;
 import kz.nicnbk.service.dto.authentication.UserCredentialsDto;
 import kz.nicnbk.service.dto.common.EntitySaveResponseDto;
@@ -226,5 +227,17 @@ public class EmployeeServiceREST extends CommonServiceREST{
         } else {
             return new ResponseEntity<>(departments, null, HttpStatus.OK);
         }
+    }
+
+    @RequestMapping(value = "/registerMfa", method = RequestMethod.POST)
+    public ResponseEntity registerMfa(@RequestBody MfaRegistrationDto registrationDto){
+        // get authentication
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        TokenUserInfo tokenUserInfo = this.tokenService.decode((String)authentication.getDetails());
+        if(tokenUserInfo == null || StringUtils.isEmpty(tokenUserInfo.getUsername())){
+            return new ResponseEntity<>(null, null, HttpStatus.BAD_REQUEST);
+        }
+
+        return new ResponseEntity<>(123, null, HttpStatus.OK);
     }
 }

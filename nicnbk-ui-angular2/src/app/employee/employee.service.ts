@@ -23,6 +23,7 @@ export class EmployeeService extends CommonService{
     private EMPLOYEE_POSITIONS_ALL_URL = this.EMPLOYEE_BASE_URL + "getAllPositions/";
     private EMPLOYEE_ROLES_ALL_URL = this.EMPLOYEE_BASE_URL + "getAllRoles/";
     private EMPLOYEE_DEPARTMENTS_ALL_URL = this.EMPLOYEE_BASE_URL + "getAllDepartments/";
+    private EMPLOYEE_REGISTER_MFA_URL = this.EMPLOYEE_BASE_URL + "registerMfa/";
 
 
     findAll(): Observable<any[]> {
@@ -96,6 +97,13 @@ export class EmployeeService extends CommonService{
         var body = JSON.stringify({employeeDto: profile, password: password});
         // console.log(body);
         return this.http.post(this.EMPLOYEE_SAVE_AND_CHANGE_PASSWORD_URL, body, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+    registerMfa(secret, otp): Observable<any> {
+        var body = JSON.stringify({secret: secret, otp: otp});
+        return this.http.post(this.EMPLOYEE_REGISTER_MFA_URL, body, this.getOptionsWithCredentials())
             .map(this.extractData)
             .catch(this.handleErrorResponse);
     }

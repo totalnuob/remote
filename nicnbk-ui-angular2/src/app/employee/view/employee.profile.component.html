@@ -50,7 +50,7 @@
     <!--</ul>-->
 
 
-    <div class="tab-content">
+    <div [ngBusy]="busy" class="tab-content">
         <div id="PROFILE" role="tabpanel" aria-labelledby="PROFILE" class="tab-pane active" *ngIf="employee != null">
             <div class="row">
                 <button *ngIf="canEditEmployeeProfile()" class="btn btn-primary pull-right" (click)="editEmployeeProfile()">Edit</button>

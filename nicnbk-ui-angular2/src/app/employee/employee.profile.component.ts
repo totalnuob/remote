@@ -8,6 +8,7 @@ import {Employee} from "./model/employee";
 import {cursorTo} from "readline";
 import {ModuleAccessCheckerService} from "../authentication/module.access.checker.service";
 import {EmployeesSearchParams} from "./model/employees-search-params";
+import {Subscription} from "../../../node_modules/rxjs";
 
 
 export class ChangePasswordCredentials {
@@ -25,6 +26,8 @@ declare var $:any
     styleUrls: ['../../../public/css/footer.css']
 })
 export class EmployeeProfileComponent extends CommonFormViewComponent implements OnInit{
+
+    busy: Subscription;
 
     activeTab = "PROFILE";
     public errorMessage;
@@ -210,6 +213,23 @@ export class EmployeeProfileComponent extends CommonFormViewComponent implements
     }
 
     registerMfa() {
-        console.log('Sent');
+        this.busy = this.employeeService.registerMfa(this.secret, this.otp)
+            .subscribe(
+                response => {
+                    this.postAction("Successfully registered MFA", null);
+                    this.secret = "";
+                    this.secretQR = "";
+                    this.secretGoogleChart = "";
+                    this.otp = "";
+                },
+                (error:ErrorResponse) => {
+                    if (error && !error.isEmpty()) {
+                        this.processErrorMessage(error);
+                        console.log(error);
+                    }else {
+                        this.postAction(null, "Error registering MFA");
+                    }
+                }
+            );
     }
 }
