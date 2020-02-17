@@ -344,10 +344,12 @@ public class EmployeeServiceImpl implements EmployeeService{
                         return this.employeeEntityConverter.disassemble(employee);
                     }
 
-                    TotpServiceImpl generator = new TotpServiceImpl(employee.getSecret());
-                    if (generator.verify(otp)) {
-                        this.successfulLoginAttempt(employee);
-                        return this.employeeEntityConverter.disassemble(employee);
+                    if (!StringUtils.isEmpty(otp) && !StringUtils.isEmpty(employee.getSecret())) {
+                        TotpServiceImpl generator = new TotpServiceImpl(employee.getSecret());
+                        if (generator.verify(otp)) {
+                            this.successfulLoginAttempt(employee);
+                            return this.employeeEntityConverter.disassemble(employee);
+                        }
                     }
 
                     this.failedLoginAttempt(employee);
