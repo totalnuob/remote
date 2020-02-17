@@ -322,7 +322,7 @@ public class EmployeeServiceImpl implements EmployeeService{
     @Override
     public EmployeeDto findActiveByUsernamePasswordCode(String username, String password, String otp) {
 
-        if(StringUtils.isEmpty(username) || StringUtils.isEmpty(password) || StringUtils.isEmpty(otp)){
+        if(StringUtils.isEmpty(username) || StringUtils.isEmpty(password)){
             return null;
         }
 
@@ -340,13 +340,8 @@ public class EmployeeServiceImpl implements EmployeeService{
                 String generatedPassword = generatePassword(password, salt);
                 if (employee.getPassword().equals(generatedPassword)) {
                     if (employee.getMfaEnabled() == null || !employee.getMfaEnabled()) {
-                        if (otp.equals("123456")) {
-                            this.successfulLoginAttempt(employee);
-                            return this.employeeEntityConverter.disassemble(employee);
-                        }
-
-                        this.failedLoginAttempt(employee);
-                        return null;
+                        this.successfulLoginAttempt(employee);
+                        return this.employeeEntityConverter.disassemble(employee);
                     }
 
                     TotpServiceImpl generator = new TotpServiceImpl(employee.getSecret());
