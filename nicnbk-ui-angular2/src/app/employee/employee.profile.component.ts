@@ -34,6 +34,11 @@ export class EmployeeProfileComponent extends CommonFormViewComponent implements
     newPassword: string;
     newPasswordConfirm: string;
 
+    secret = "";
+    secretQR = "";
+    secretGoogleChart = "";
+    otp = "";
+
     private sub: any;
     //private employeeId: number;
     private username: string;
@@ -192,5 +197,19 @@ export class EmployeeProfileComponent extends CommonFormViewComponent implements
                 " of " + this.employee.position.department.nameEn : "");
 
         }
+    }
+
+    getSecret() {
+        this.secret = '';
+        var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
+        for (var i = 0; i < 32; i++) {
+            this.secret += possible.charAt(Math.floor(Math.random() * possible.length));
+        }
+        this.secretQR = 'otpauth://totp/UNIC (' + localStorage.getItem("authenticatedUser") + ')?secret=' + this.secret;
+        this.secretGoogleChart = 'https://chart.googleapis.com/chart?chs=300x300&cht=qr&chl=' + this.secretQR;
+    }
+
+    registerMfa() {
+        console.log('Sent');
     }
 }
