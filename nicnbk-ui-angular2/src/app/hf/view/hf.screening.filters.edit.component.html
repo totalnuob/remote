@@ -988,26 +988,6 @@
                 </div>
 
                 <br/>
-<!--                <div *ngIf="selectedArchivedResult?.qualified?.length > 0">-->
-<!--                    <table class="table table-hover">-->
-<!--                        <tr>-->
-<!--                            <td [attr.colspan]="selectedArchivedResult?.qualified[0].length + 1" align="right">AUM LOOKBACK</td>-->
-<!--                        </tr>-->
-<!--                        <tr>-->
-<!--                            <td [attr.rowspan]="selectedArchivedResult?.qualified?.length + 1">-->
-<!--                                <div align="right" style="writing-mode: vertical-rl;">RETURN LOOKBACK</div>-->
-<!--                            </td>-->
-<!--                        </tr>-->
-<!--                        <tr *ngFor="let row of selectedArchivedResult?.qualified; let i=index" [style.background-color]="i==0 ? '#D5E1EC' : white"-->
-<!--                            align="right" [style.font-weight]="i==0 ? 'bold' : ''">-->
-<!--                            <td *ngFor="let td of row; let j=index" [style.background-color]="getCellColor(i,j)" align="center" [style.color]="white" [style.font-weight]="j==0 ? 'bold' : ''">-->
-<!--                                    <span *ngIf="i != 0 && j != 0 && td != 0" style="color: white"-->
-<!--                                          [style.border]="i - 1  == selectedArchivedResult?.selectedLookbackReturn && j - 1 == selectedArchivedResult?.selectedLookbackAUM ? '2px solid black' : ''">{{td}}</span>-->
-<!--                                <span *ngIf="i == 0 || j == 0 || td == 0">{{td}}</span>-->
-<!--                            </td>-->
-<!--                        </tr>-->
-<!--                    </table>-->
-<!--                </div>-->
                 <hr style="height:2px;border:none;color:#ccc;background-color:#ccc;">
 
                 <h4>Scoring Results</h4>
@@ -1431,7 +1411,8 @@
                     </div>
                     <div class="row">&nbsp;</div>
                     <div class="row withpadding" *ngIf="fundListType == 1">
-                        <button class="btn btn-success pull-right" (click)="saveScoringResults(fundListLookbackAUM, fundListLookbackReturn)">Mark as final</button>
+                        <button class="btn btn-success pull-right"  [disabled]="filteredResult?.filteredResultStatistics?.finalResults != null"
+                                (click)="saveScoringResults(fundListLookbackAUM, fundListLookbackReturn)">Mark as final</button>
                         <span class="pull-right">&nbsp;</span>
                     </div>
                     <div class="row withpadding">

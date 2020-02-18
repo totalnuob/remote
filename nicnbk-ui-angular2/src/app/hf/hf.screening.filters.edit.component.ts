@@ -1361,11 +1361,8 @@ export class HFScreeningFilteredResultsEditComponent extends GoogleChartComponen
         }
         this.selectedFundReturns = returns;
 
-        //////console.log(returns);
-
         this.returnUploadErrorMessage = null;
         this.returnUploadSuccessMessage = "Returns added";
-
     }
 
     saveScoringResults(fundListLookbackAUM, fundListLookbackReturn){
@@ -1380,17 +1377,25 @@ export class HFScreeningFilteredResultsEditComponent extends GoogleChartComponen
                             //this.filteredResult.editable = false;
                             this.needUpdate = true;
                         }else{
-                            ////console.log(result);
+                            console.log(result);
                             this.modalSuccessMessage = null;
                             this.modalErrorMessage = "Failed to save results";
                             if(result.message != null && result.message.nameEn != null && result.message.nameEn.trim() != ''{
                                 this.modalErrorMessage = result.message.nameEn;
+                            }else if(result.message != null && result.message.nameEn.trim() != ''){
+                                this.modalErrorMessage = result.message;
                             }
                         }
                     },
                     error => {
+                        console.log(error);
                         this.modalErrorMessage = "Failed to save results";
                         this.modalSuccessMessage = null;
+                        if(error.message != null && error.message.nameEn != null && error.message.nameEn.trim() != ''{
+                            this.modalErrorMessage = error.message.nameEn;
+                        }else if(error.message != null && error.message.trim() != ''){
+                            this.modalErrorMessage = error.message;
+                        }
                     }
                 );
         }
@@ -1491,6 +1496,4 @@ export class HFScreeningFilteredResultsEditComponent extends GoogleChartComponen
                 );
         }
     }
-
 }
-
