@@ -25,7 +25,7 @@
             <label class="control-label col-sm-2">Username*:</label>
             <div class="col-sm-10">
                 <input type="text" class="form-control" [(ngModel)]="employee.username" required #userName="ngModel" [disabled]="this.employee.id != null"/>
-                <div [hidden]="userName.valid || userName.pristine" class="alert alert-danger col-md-3">Enter username</div>
+                <div [hidden]="userName.valid || userName.pristine || this.employee.id != null" class="alert alert-danger col-md-3">Enter username</div>
             </div>
         </div>
         <div class="row form-group">
