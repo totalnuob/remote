@@ -1,7 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {HedgeFundService} from "./hf.fund.service";
-import {CommonFormViewComponent} from "../common/common.component";
+//import {CommonFormViewComponent} from "../common/common.component";
 import {Subscription} from 'rxjs';
 import {ModuleAccessCheckerService} from "../authentication/module.access.checker.service";
 import {ErrorResponse} from "../common/error-response";
@@ -12,20 +12,24 @@ import {HedgeFundScreeningService} from "./hf.fund.screening.service";
 import {HedgeFundScreeningFilteredResult} from "./model/hf.screening.filtered.result";
 import {HedgeFundScreeningFilteredResultStatistics} from "./model/hf.screening.filtered.result.statistics";
 import {HedgeFundScreeningFilteredResultFund} from "./model/hf.screening.filtered.result.fund";
+import {GoogleChartComponent} from "../google-chart/google-chart.component";
+
 import {DATA_APP_URL} from "../common/common.service.constants";
 
+declare var google:any;
 declare var $:any
+
 @Component({
-    selector: 'hf-fund-search',
+    selector: 'hf-screening-filters-edit',
     templateUrl: 'view/hf.screening.filters.edit.component.html',
     styleUrls: [
         //'../../../public/css/...',
-        '../../../node_modules/angular2-busy/build/style/busy.css'
+        //'../../../node_modules/angular2-busy/build/style/busy.css'
     ],
     providers: []
 })
-export class HFScreeningFilteredResultsEditComponent extends CommonFormViewComponent{
 
+export class HFScreeningFilteredResultsEditComponent extends GoogleChartComponent implements OnInit {
     screeningId;
     id;
     filteredResult = new HedgeFundScreeningFilteredResult;
@@ -63,12 +67,20 @@ export class HFScreeningFilteredResultsEditComponent extends CommonFormViewCompo
     excludeFundModalErrorMessage;
     excludeFundModalSuccessMessage;
 
+    showFinalQualifiedFundList = true;
+    showFinalUnqualifiedFundList = false;
+    showFinalUndecidedFundList = false;
+
+    selectedArchivedResult;
+
+    finalResult;
+
     constructor(
         private screeningService: HedgeFundScreeningService,
         private router: Router,
         private route: ActivatedRoute
     ){
-        super(router);
+        super();
 
         this.moduleAccessChecker = new ModuleAccessCheckerService;
 
@@ -87,28 +99,14 @@ export class HFScreeningFilteredResultsEditComponent extends CommonFormViewCompo
                     } else {
                         this.filteredResult = new HedgeFundScreeningFilteredResult();
                         this.filteredResult.screeningId = this.screeningId;
+                        this.filteredResult.editable = true;
                     }
                 }
             });
     }
 
-    loadFilteredResult(){
-        this.busyGet = this.screeningService.getFilteredResult(this.id)
-            .subscribe(
-                result => {
-                    this.filteredResult = result;
-                    //console.log(this.filteredResult);
-                    this.onNumberChangeFundAUM();
-                    this.onNumberChangeManagerAUM();
-                },
-                error => {
-                    //console.log(error);
-                    this.postAction(null, "Failed to load screening filtered results");
-                }
-            );
-    }
-
     ngOnInit():any {
+        super.ngOnInit();
         $('#startDateTPickeer').datetimepicker({
             //defaultDate: new Date(),
             format: 'MM.YYYY'
@@ -118,21 +116,355 @@ export class HFScreeningFilteredResultsEditComponent extends CommonFormViewCompo
             $('#closeFundListModalButton').click();
         });
 
-
         $('#fundEditModal').on('hidden.bs.modal', function () {
             $('#modalMessagesDiv').css("background-color", "white");
             $('#closeFundEditModalBtn').click();
             $('#closeReturnsModalBtn').click();
         });
 
-//        $('#returnInputModal').on('hidden.bs.modal', function () {
-//            $('#closeReturnsModalBtn').click();
-//        });
-
         $('#excludeFundModal').on('hidden.bs.modal', function () {
             $('#modalMessagesDiv').css("background-color", "white");
             $('#closeFundExcludeModalBtn').click();
         });
+    }
+
+    drawGraph(){
+        //console.log("drawGraph")
+        if(this.filteredResult != null && this.filteredResult.filteredResultStatistics != null && this.filteredResult.filteredResultStatistics.finalResults != null){
+            this.drawFinalScreeningResultsPieChart();
+            this.drawFinalUnqualifiedFundsReasonBarChart();
+
+            this.drawFinalQualifiedTop50StrategiesPieChart();
+            this.drawFinalTop5QualifiedTotalScoreBarChart();
+        }
+    }
+
+    drawFinalScreeningResultsPieChart(){
+        this.drawScreeningResultsPieChart(this.filteredResult.filteredResultStatistics.finalResults.qualifiedFunds,
+                                            this.filteredResult.filteredResultStatistics.finalResults.unqualifiedFunds,
+                                            this.filteredResult.filteredResultStatistics.finalResults.undecidedFunds,
+                                            'finalScreeningResultsPieChart');
+    }
+
+    drawArchivedScreeningResultsPieChart(){
+        if(this.selectedArchivedResult != null){
+            this.drawScreeningResultsPieChart(this.selectedArchivedResult.qualifiedFunds,
+                                                this.selectedArchivedResult.unqualifiedFunds,
+                                                this.selectedArchivedResult.undecidedFunds,
+                                                "archivedFinalScreeningResultsPieChart");
+        }
+    }
+
+    drawScreeningResultsPieChart(qualifiedFunds, unqualifiedFunds, undecidedFunds, divName){
+       if(typeof google.visualization === 'undefined'){
+           console.log("google undefined");
+           return;
+       }
+
+       var qualified = qualifiedFunds != null ? qualifiedFunds.length : 0;
+       var unqualified = unqualifiedFunds != null ? unqualifiedFunds.length : 0;
+       var undecided = undecidedFunds != null ? undecidedFunds.length : 0;
+       var total = qualified + unqualified + undecided;
+
+       var dataList = [['Type', 'Number']];
+       if(qualified > 0){
+           dataList.push(["Qualified funds", qualified]);
+       }
+       if(unqualified > 0){
+           dataList.push(["Unqualified funds", unqualified]);
+       }
+       if(undecided > 0){
+           dataList.push(["Undecided funds", undecided]);
+       }
+
+       var data = google.visualization.arrayToDataTable(dataList);
+
+       var options = {
+           title: 'Screening results',
+           legend: {position: 'labeled'},
+           chartArea: {
+               height: '80%',
+               top: '10%'
+           },
+           pieSliceText: 'value',
+           colors: ['#428F4A', '#E86753', '#CFD0D0']
+           sliceVisibilityThreshold: 0
+       };
+
+       var chart = new google.visualization.PieChart(document.getElementById(divName));
+       chart.draw(data, options);
+   }
+
+   drawArchivedQualifiedTop50StrategiesPieChart(){
+        this.drawQualifiedTop50StrategiesPieChart(this.selectedArchivedResult.top50qualifiedFunds, 'archivedFinalQualifiedTop50StrategiesPieChart');
+   }
+
+   drawFinalQualifiedTop50StrategiesPieChart(){
+        this.drawQualifiedTop50StrategiesPieChart(this.filteredResult.filteredResultStatistics.finalResults.top50qualifiedFunds, 'finalQualifiedTop50StrategiesPieChart');
+   }
+
+   drawQualifiedTop50StrategiesPieChart(top50qualifiedFunds, divName){
+        if(typeof google.visualization === 'undefined'){
+            console.log("google undefined");
+            return;
+        }
+        let strategyMap = new Map();
+        for(var i = 0; i < top50qualifiedFunds.length; i++){
+            var strategy = top50qualifiedFunds[i].mainStrategy;
+            if(strategyMap.get(strategy) != null){
+                var count = strategyMap.get(strategy);
+                strategyMap.set(strategy, (count + 1));
+            }else if(strategy != null){
+                strategyMap.set(strategy, 1);
+            }
+        }
+
+        var dataList = [['Type', 'Number']];
+        strategyMap.forEach(function(value, key) {
+            dataList.push([key, value]);
+        })
+
+        var data = google.visualization.arrayToDataTable(dataList);
+        var options = {
+            title: 'Top 50 by Strategy',
+            //legend: {position: 'labeled'},
+            chartArea: {
+                height: '80%',
+                top: '10%'
+            },
+            pieSliceText: 'value',
+            //colors: ['#428F4A', '#E86753', '#CFD0D0']
+            sliceVisibilityThreshold: 0
+        };
+
+        var chart = new google.visualization.PieChart(document.getElementById(divName));
+        chart.draw(data, options);
+    }
+
+    getUnqualifiedFundsStatistics(unqualifiedFunds){
+        if(unqualifiedFunds != null){
+            var fundAUMCount = 0;
+            var managerAUMCount = 0;
+            var trackRecordCount = 0;
+            var excludedCount = 0;
+            for(var i = 0; i < unqualifiedFunds.length; i++){
+                var fund = unqualifiedFunds[i];
+                if(!fund.strategyAUMCheck){
+                    fundAUMCount++;
+                }
+                if(!fund.managerAUMCheck){
+                    managerAUMCount++;
+                }
+                if(!fund.trackRecordCheck){
+                    trackRecordCount++;
+                }
+                if(fund.excluded){
+                    excludedCount++;
+                }
+            }
+            return [fundAUMCount, managerAUMCount, trackRecordCount, excludedCount];
+        }
+    }
+
+    drawArchivedUnqualifiedFundsReasonBarChart(){
+        this.drawUnqualifiedFundsReasonBarChart(this.selectedArchivedResult.unqualifiedFunds,
+            "archivedFinalUnqualifiedFundsReasonBarChart");
+    }
+
+    drawFinalUnqualifiedFundsReasonBarChart(){
+        this.drawUnqualifiedFundsReasonBarChart(this.filteredResult.filteredResultStatistics.finalResults.unqualifiedFunds,
+            "finalUnqualifiedFundsReasonBarChart");
+    }
+
+    drawUnqualifiedFundsReasonBarChart(unqualifiedFunds, divName){
+        var unqualifiedFundsStatistics = this.getUnqualifiedFundsStatistics(unqualifiedFunds);
+        if(unqualifiedFundsStatistics == null || unqualifiedFundsStatistics.length != 4){
+            return;
+        }
+        if(typeof google.visualization === 'undefined'){
+            console.log("google undefined");
+            return;
+        }
+
+        var dataArray = [['', '']];
+        dataArray.push(['Strategy AUM', unqualifiedFundsStatistics[0]]);
+        dataArray.push(['Manager AUM', unqualifiedFundsStatistics[1]]);
+        dataArray.push(['Track Record', unqualifiedFundsStatistics[2]]);
+        dataArray.push(['Excluded fund', unqualifiedFundsStatistics[3]]);
+
+        ////console.log(dataArray);
+        if(google && google.visualization) {
+            var data = google.visualization.arrayToDataTable(dataArray);
+
+            var options = {
+                title: "Unqualified Funds Analysis",
+                titleTextStyle: {
+                    color: 'black',    // any HTML string color ('red', '#cc00cc')
+                    //fontName: <string>, // i.e. 'Times New Roman'
+                    fontSize: 12, // 12, 18 whatever you want (don't specify px)
+                    bold: true,    // true or false
+                    italic: false   // true of false
+                },
+                //width: 600,
+                //height: 400,
+                animation: {
+                    duration: 500,
+                    easing: 'out',
+                    startup: true,
+                },
+                hAxis: {
+                    format: '#.##',
+                },
+                chartArea: {left: '30%'},
+
+                //bar: {groupWidth: "80%"},
+                colors: ['#307240', '#79b588', '#b6dbbf', '#a7aba8'],
+                legend: {position: "none"},
+            };
+
+            var chart = new google.visualization.BarChart(document.getElementById(divName));
+            chart.draw(data, options);
+        }
+    }
+
+
+    drawArchivedTop5QualifiedTotalScoreBarChart(){
+        this.drawTop5QualifiedTotalScoreBarChart(this.selectedArchivedResult.top50qualifiedFunds, "archivedFinalTop50QualifiedBarChart");
+    }
+
+    drawFinalTop5QualifiedTotalScoreBarChart(){
+        this.drawTop5QualifiedTotalScoreBarChart(this.filteredResult.filteredResultStatistics.finalResults.top50qualifiedFunds,
+            "finalTop50QualifiedBarChart");
+    }
+
+    drawTop5QualifiedTotalScoreBarChart(top50qualifiedFunds, divName){
+        if(google && google.visualization) {
+            var count1 = 0;
+            var count2 = 0;
+            var count3 = 0;
+            var count4 = 0;
+            var count5 = 0;
+            var count6 = 0;
+            var count7 = 0;
+            var count8 = 0;
+            var count9 = 0;
+            var count10 = 0;
+            var minScore = Math.round(top50qualifiedFunds[top50qualifiedFunds.length - 1].totalScore);
+
+            for(var i = 0; i < top50qualifiedFunds.length; i++){
+                var totalScore = Number(top50qualifiedFunds[i].totalScore);
+                if(totalScore <= 1){
+                    count1++;
+                }else if(totalScore > 1 && totalScore <= 2){
+                    count2++;
+                }else if(totalScore > 2 && totalScore <= 3){
+                    count3++;
+                }else if(totalScore > 3 && totalScore <= 4){
+                    count4++;
+                }else if(totalScore > 4 && totalScore <= 5){
+                    count5++;
+                }else if(totalScore > 5 && totalScore <= 6){
+                    count6++;
+                }else if(totalScore > 6 && totalScore <= 7){
+                    count7++;
+                }else if(totalScore > 7 && totalScore <= 8){
+                    count8++;
+                }else if(totalScore > 8 && totalScore <= 9){
+                    count9++;
+                }else if(totalScore > 9){
+                    count10++;
+                }
+            }
+
+            var dataArray = [['', '']];
+            if(count1 > 0){
+                dataArray.push(['<= 1', count1]);
+            }
+            if(count2 > 0){
+                dataArray.push(['1 - 2', count2]);
+            }
+            if(count3 > 0){
+                dataArray.push(['2 - 3', count3]);
+            }
+            if(count4 > 0){
+                dataArray.push(['3 - 4', count4]);
+            }
+            if(count5 > 0){
+                dataArray.push(['4 - 5', count5]);
+            }
+            if(count6 > 0){
+                dataArray.push(['5 - 6', count6]);
+            }
+            if(count7 > 0){
+                dataArray.push(['6 - 7', count7]);
+            }
+            if(count8 > 0){
+                dataArray.push(['7 - 8', count8]);
+            }
+            if(count9 > 0){
+                dataArray.push(['8 - 9', count9]);
+            }
+            if(count10 > 0){
+                dataArray.push(['> 9', count10]);
+            }
+            ////console.log(dataArray);
+            var data = google.visualization.arrayToDataTable(dataArray);
+
+            var options = {
+                title: "Top 50 Total Score Distribution",
+                titleTextStyle: {
+                    color: 'black',    // any HTML string color ('red', '#cc00cc')
+                    //fontName: <string>, // i.e. 'Times New Roman'
+                    fontSize: 12, // 12, 18 whatever you want (don't specify px)
+                    bold: true,    // true or false
+                    italic: false   // true of false
+                },
+                //width: 600,
+                //height: 400,
+                animation: {
+                    duration: 500,
+                    easing: 'out',
+                    startup: true,
+                },
+                hAxis: {
+                    format: '#.##',
+                },
+                chartArea: {left: '30%'},
+
+                //bar: {groupWidth: "80%"},
+                colors: ['#307240', '#79b588', '#b6dbbf', '#a7aba8'],
+                legend: {position: "none"},
+            };
+
+            var chart = new google.visualization.ColumnChart(document.getElementById(divName));
+            chart.draw(data, options);
+        }
+    }
+
+    loadFilteredResult(){
+        this.busyGet = this.screeningService.getFilteredResult(this.id)
+            .subscribe(
+                result => {
+                    this.filteredResult = result;
+                    ////console.log(this.filteredResult);
+                    this.onNumberChangeFundAUM();
+                    this.onNumberChangeManagerAUM();
+                    if(this.filteredResult.filteredResultStatistics.finalResults != null){
+                        this.finalResult = this.filteredResult.filteredResultStatistics.finalResults;
+                        this.drawGraph();
+                    }
+                    this.successMessage = null;
+                    this.errorMessage = null;
+                    this.modalSuccessMessage = null;
+                    this.modalErrorMessage = nulls;
+                    this.selectedFundErrorMessage = null;
+                    this.selectedFundSuccessMessage = null;
+                },
+                error => {
+                    ////console.log(error);
+                    this.postAction(null, "Failed to load screening filtered results");
+                }
+            );
     }
 
     saveFilters() {
@@ -148,7 +480,7 @@ export class HFScreeningFilteredResultsEditComponent extends CommonFormViewCompo
             return;
         }
 
-        //console.log(this.filteredResult);
+        ////console.log(this.filteredResult);
         this.busyGet = this.screeningService.saveFilteredResult(this.filteredResult)
             .subscribe(
                 response => {
@@ -233,14 +565,15 @@ export class HFScreeningFilteredResultsEditComponent extends CommonFormViewCompo
 
 
     exportFundList() {
-        //console.log(this.fundListLookbackAUM, this.fundListLookbackReturn, this.fundListType);
-        this.busyModal = this.screeningService.makeFileRequest(DATA_APP_URL + `hf/screening/scoring/export/${this.filteredResult.id}/${this.fundListLookbackAUM}/${this.fundListLookbackReturn}`)
+        ////console.log(this.fundListLookbackAUM, this.fundListLookbackReturn, this.fundListType);
+        ////console.log(this.fundListType);
+        this.busyModal = this.screeningService.makeFileRequest(DATA_APP_URL + `hf/screening/scoring/export/${this.fundListType}/${this.filteredResult.id}/${this.fundListLookbackAUM}/${this.fundListLookbackReturn}`)
             .subscribe(
                 response  => {
-                    //console.log("ok");
+                    ////console.log("ok");
                 },
                 error => {
-                    //console.log("fails")
+                    ////console.log("fails")
                     this.modalErrorMessage = "Error exporting data";
                     this.modalSuccessMessage = null;
                 }
@@ -313,7 +646,7 @@ export class HFScreeningFilteredResultsEditComponent extends CommonFormViewCompo
                 .subscribe(
                     result => {
                         this.filteredFundList = result;
-                        //console.log(result);
+                        ////console.log(result);
                         if(value != null && value != this.filteredFundList.length){
                             alert("Expected " + value + ", received " + this.filteredFundList.length);
                         }
@@ -358,7 +691,7 @@ export class HFScreeningFilteredResultsEditComponent extends CommonFormViewCompo
             }
         }
         var step = (max - min) / 5.0;
-        //console.log("value=" + value + ", min="  +min + ", max=" + max + ", step=" + step)
+        ////console.log("value=" + value + ", min="  +min + ", max=" + max + ", step=" + step)
 
         if(value >= min && value <= min + 1*step){
             return '#E86753'; //'#f7dea5';
@@ -429,7 +762,7 @@ export class HFScreeningFilteredResultsEditComponent extends CommonFormViewCompo
     //    this.busyStats = this.screeningService.updateManagerAUM(this.filteredFundList)
     //        .subscribe(
     //            result => {
-    //                //console.log(result);
+    //                ////console.log(result);
     //
     //                for(var i = 0; i < this.filteredFundList.length; i++) {
     //                    if(this.filteredFundList[i].managerAUM != null) {
@@ -475,7 +808,7 @@ export class HFScreeningFilteredResultsEditComponent extends CommonFormViewCompo
     //    this.busyStats = this.screeningService.updateManagerAUM(updates)
     //        .subscribe(
     //            result => {
-    //                //console.log(result);
+    //                ////console.log(result);
     //
     //                for(var i = 0; i < this.filteredFundList.length; i++) {
     //                    if(this.filteredFundList[i].managerAUM != null) {
@@ -603,7 +936,7 @@ export class HFScreeningFilteredResultsEditComponent extends CommonFormViewCompo
     }
 
     //public onNumberFund(fund){
-    //    //console.log(fund);
+    //    ////console.log(fund);
     //    if(fund.managerAUM != null && fund.managerAUM != 'undefined' && fund.managerAUM.toString().length > 0) {
     //        if(fund.managerAUM.toString()[fund.managerAUM.toString().length - 1] != '.' || fund.managerAUM.toString().split('.').length > 2){
     //            fund.managerAUM = fund.managerAUM.toString().replace(/,/g , '');
@@ -647,13 +980,13 @@ export class HFScreeningFilteredResultsEditComponent extends CommonFormViewCompo
                 currentDate = date;
             }
         }
-        //console.log(dates);
+        ////console.log(dates);
         return dates;
     }
 
     generateTrackRecordMonthsYearList(){
         var dates = this.generateTrackRecordMonths();
-        //console.log(dates);
+        ////console.log(dates);
 
         var datesByYears = [];
         var currentYear = dates[0].split(".")[1];
@@ -677,7 +1010,7 @@ export class HFScreeningFilteredResultsEditComponent extends CommonFormViewCompo
             }
             datesByYears.push(currentYearDates);
         }
-        //console.log(datesByYears);
+        ////console.log(datesByYears);
         return datesByYears;
     }
 
@@ -691,7 +1024,7 @@ export class HFScreeningFilteredResultsEditComponent extends CommonFormViewCompo
             this.selectedFund.added = true;
         }
 
-        //console.log(this.selectedFund);
+        ////console.log(this.selectedFund);
 
         this.selectedFundErrorMessage = null;
         this.selectedFundSuccessMessage = null;
@@ -719,7 +1052,7 @@ export class HFScreeningFilteredResultsEditComponent extends CommonFormViewCompo
             returns.push(yearReturns);
         }
         this.selectedFundReturns = returns;
-        //console.log(this.selectedFund.returns);
+        ////console.log(this.selectedFund.returns);
 
         // FIX, since rendering takes time, no element for datetimepicker() function call
         setTimeout(function(){
@@ -838,12 +1171,12 @@ export class HFScreeningFilteredResultsEditComponent extends CommonFormViewCompo
                     }
                 }
             }
-            //console.log(this.selectedFund);
+            ////console.log(this.selectedFund);
             // Save fund info
             this.busyFundEdit = this.screeningService.updateFund(this.selectedFund)
                 .subscribe(
                     result => {
-                        //console.log(result);
+                        ////console.log(result);
                         //this.showFunds(this.fundListLookbackReturn, this.fundListLookbackAUM, this.fundListType, null);
 
                         this.selectedFundSuccessMessage = "Successfully updated fund info."
@@ -890,11 +1223,11 @@ export class HFScreeningFilteredResultsEditComponent extends CommonFormViewCompo
         $('#modalMessagesDiv').css("background-color", "grey");
         this.selectedFund = fund;
         this.excludeSource = source;
-        //console.log(this.selectedFund);
+        ////console.log(this.selectedFund);
     }
 
     excludeFund(){
-        //console.log(this.selectedFund);
+        ////console.log(this.selectedFund);
         if(this.selectedFund.excludeComment == null || this.selectedFund.excludeComment.trim() === ''){
             this.excludeFundModalErrorMessage = "Comment required";
             this.excludeFundModalSuccessMessage = null;
@@ -908,7 +1241,7 @@ export class HFScreeningFilteredResultsEditComponent extends CommonFormViewCompo
             fundShort.screening.id = this.screeningId;
             fundShort.filteredResultId = this.filteredResult.id;
             fundShort.excludeFromStrategyAUM = this.selectedFund.excludeFromStrategyAUM;
-            console.log(this.selectedFund);
+            ////console.log(this.selectedFund);
             this.busyModal = this.screeningService.excludeFund(fundShort)
                 .subscribe(
                     result => {
@@ -964,8 +1297,9 @@ export class HFScreeningFilteredResultsEditComponent extends CommonFormViewCompo
 
         }
     }
+
     closeReturnsModal(){
-        //console.log("closeReturnsModal");
+        ////console.log("closeReturnsModal");
         this.uploadedReturns = "";
         this.returnUploadSuccessMessage = null;
         this.returnUploadErrorMessage = null;
@@ -990,15 +1324,23 @@ export class HFScreeningFilteredResultsEditComponent extends CommonFormViewCompo
                 this.returnUploadErrorMessage = "Invalid return format - date";
                 return;
             }
+            var day = row[0].split(".")[0];
             var month = row[0].split(".")[1];
             var year = row[0].split(".")[2];
+            if(Number(month) < 1 || Number(month) > 12){
+                this.returnUploadErrorMessage = "Invalid return date format: month must be 1-12";
+                this.returnUploadSuccessMessage = null;
+                return;
+            }else if(Number(day) < 1 || Number(day) > 31){
+                this.returnUploadErrorMessage = "Invalid return date format: day must be 1-31";
+                this.returnUploadSuccessMessage = null;
+                return;
+            }
             var returnValue = row[1].replace(/,/g, '.');
             returnValue = returnValue.replace('%', '');
             fundReturns.push({"date": month + '.' + year, "value": parseFloat(Number(returnValue)/100).toFixed(12)});
         }
-
-        //console.log(fundReturns);
-
+        ////console.log(fundReturns);
         var returns = [];
         var datesByYear = this.generateTrackRecordMonthsYearList();
         for(var i = 0; i < datesByYear.length; i++){
@@ -1019,11 +1361,136 @@ export class HFScreeningFilteredResultsEditComponent extends CommonFormViewCompo
         }
         this.selectedFundReturns = returns;
 
-        //console.log(returns);
+        //////console.log(returns);
 
         this.returnUploadErrorMessage = null;
         this.returnUploadSuccessMessage = "Returns added";
 
     }
 
+    saveScoringResults(fundListLookbackAUM, fundListLookbackReturn){
+        if(confirm("Are you sure want to save results?"){
+            let saveParams = {"filteredResultId": this.filteredResult.id, "lookbackReturn": fundListLookbackReturn, "lookbackAUM": fundListLookbackAUM};
+            this.busyModal = this.screeningService.saveResults(saveParams)
+                .subscribe(
+                    result => {
+                        if(result.status != null && result.status === 'SUCCESS'){
+                            this.modalSuccessMessage = "Successfully saved results"
+                            this.modalErrorMessage = null;
+                            //this.filteredResult.editable = false;
+                            this.needUpdate = true;
+                        }else{
+                            ////console.log(result);
+                            this.modalSuccessMessage = null;
+                            this.modalErrorMessage = "Failed to save results";
+                            if(result.message != null && result.message.nameEn != null && result.message.nameEn.trim() != ''{
+                                this.modalErrorMessage = result.message.nameEn;
+                            }
+                        }
+                    },
+                    error => {
+                        this.modalErrorMessage = "Failed to save results";
+                        this.modalSuccessMessage = null;
+                    }
+                );
+        }
+    }
+
+    deleteSavedResults(){
+        if(confirm("Are you sure want to delete saved results?"){
+            this.busyGet = this.screeningService.deleteSavedResults(this.filteredResult.filteredResultStatistics.finalResults.id)
+                .subscribe(
+                    result => {
+                        ////console.log(result);
+                        if(result.status != null && result.status === 'SUCCESS'){
+                            this.successMessage = "Successfully deleted saved results"
+                            this.errorMessage = null;
+                            this.loadFilteredResult();
+                        }else{
+                            this.successMessage = null;
+                            this.errorMessage = "Failed to delete saved results";
+                            if(result.message != null && result.message.nameEn != null && result.message.nameEn.trim() != ''){
+                                this.errorMessage = result.message.nameEn;
+                            }
+                        }
+                    },
+                    error => {
+                        this.errorMessage = "Failed to delete saved results";
+                        this.successMessage = null;
+                    }
+                );
+        }
+    }
+
+    loadArchivedResults(){
+        ////console.log(this.selectedArchivedResult);
+    }
+
+    archiveSelected(value){
+        this.selectedArchivedResult = null;
+        if(value == null || value == 0){
+            return;
+        }
+        for(var i = 0; i < this.filteredResult.filteredResultStatistics.archivedResults.length; i++){
+            if(this.filteredResult.filteredResultStatistics.archivedResults[i].id == value){
+                this.selectedArchivedResult = this.filteredResult.filteredResultStatistics.archivedResults[i];
+
+                this.drawArchivedScreeningResultsPieChart();
+                this.drawArchivedUnqualifiedFundsReasonBarChart();
+
+                this.drawArchivedQualifiedTop50StrategiesPieChart();
+                this.drawArchivedTop5QualifiedTotalScoreBarChart();
+                break;
+            }
+        }
+    }
+
+    getFinalResultName(finalResult){
+        if(finalResult != null){
+            return super.getAmountShort(finalResult.fundAUM) + ' - ' + super.getAmountShort(finalResult.managerAUM) +
+            ' - ' + finalResult.trackRecord + ' - ' + finalResult.selectedLookbackAUM + '(' + finalResult.lookbackAUM + ')' +
+            ' - ' + finalResult.selectedLookbackReturn + '(' + finalResult.lookbackReturns + ')' + ' [archived  ' + finalResult.creationDate +']';
+        }
+    }
+
+    viewArchived(){
+        this.finalResult = null;
+    }
+    viewFinal(){
+        this.finalResult = this.filteredResult.filteredResultStatistics.finalResults;
+        this.selectedArchivedResult = null;
+        $('#archiveSelect').val(0);
+    }
+    viewProcess(){
+        this.finalResult = null;
+        this.selectedArchivedResult = null;
+        $('#archiveSelect').val(0);
+    }
+
+    markAsFinalArchived(){
+        if(confirm("Are you sure want to mark archived as non-archived?"){
+            this.busyGet = this.screeningService.markAsSavedResultNonArchived(this.selectedArchivedResult.id)
+                .subscribe(
+                    result => {
+                        if(result.status != null && result.status === 'SUCCESS'){
+                            this.successMessage = "Successfully marked archived as non-archived"
+                            this.errorMessage = null;
+                            this.loadFilteredResult();
+                        }else{
+                            this.successMessage = null;
+                            this.errorMessage = "Failed to mark archived as non-archived";
+                            if(result.message != null && result.message.nameEn != null && result.message.nameEn.trim() != ''){
+                                this.errorMessage = result.message.nameEn;
+                            }
+                        }
+                    },
+                    error => {
+                        this.errorMessage = "Failed to mark archived as non-archived";
+                        this.successMessage = null;
+                    }
+                );
+        }
+    }
+
 }
+

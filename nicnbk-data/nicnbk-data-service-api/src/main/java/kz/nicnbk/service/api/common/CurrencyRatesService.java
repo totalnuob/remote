@@ -9,6 +9,7 @@ import kz.nicnbk.service.dto.lookup.CurrencyRatesSearchParams;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by magzumov on 20.11.2017.
@@ -32,4 +33,6 @@ public interface CurrencyRatesService extends BaseService {
     boolean delete(Long id, String username);
 
     Double getUSDValueRateForDateAndCurrency(Date date, String currencyCode);
+
+    List<CurrencyRatesDto> getRatesEndOfMonthForDateRangeAndCurrencies(Date dateFrom, Date dateTo, Set<String> currencies);
 }

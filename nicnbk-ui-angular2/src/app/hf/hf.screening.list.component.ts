@@ -23,7 +23,6 @@ declare var $:any
 })
 export class HFScreeningListComponent extends CommonFormViewComponent{
 
-
     screenings: HedgeFundScreening[];
     searchParams = new HedgeFundScreeningSearchParams();
     searchResult = new HedgeFundScreeningSearchResults();
@@ -39,13 +38,11 @@ export class HFScreeningListComponent extends CommonFormViewComponent{
         private route: ActivatedRoute
     ){
         super(router);
-
         this.moduleAccessChecker = new ModuleAccessCheckerService;
 
         if(!this.moduleAccessChecker.checkAccessHedgeFunds()){
             this.router.navigate(['accessDenied']);
         }
-
         this.sub = this.route
             .params
             .subscribe(params => {
@@ -55,7 +52,7 @@ export class HFScreeningListComponent extends CommonFormViewComponent{
                     this.busy = this.screeningService.search(this.searchParams)
                         .subscribe(
                             searchResult  => {
-                                //console.log(searchResult);
+                                console.log(searchResult);
                                 this.screenings = searchResult.screenings;
                                 this.searchResult = searchResult;
                             },
@@ -79,23 +76,18 @@ export class HFScreeningListComponent extends CommonFormViewComponent{
             //defaultDate: new Date(),
             format: 'DD-MM-YYYY'
         });
-
     }
 
-
-
     search(page){
-
         this.searchParams.pageSize = 10;
         this.searchParams.page = page;
-
         this.searchParams.dateFrom = $('#dateFrom').val();
         this.searchParams.dateTo = $('#dateTo').val();
 
         this.busy = this.screeningService.search(this.searchParams)
             .subscribe(
                 searchResult  => {
-                    //console.log(searchResult);
+                    console.log(searchResult);
                     this.screenings = searchResult.screenings;
                     this.searchResult = searchResult;
                 },
@@ -121,4 +113,44 @@ export class HFScreeningListComponent extends CommonFormViewComponent{
         this.router.navigate(['/hf/screening/edit/', screeningId, { params }]);
     }
 
+    deleteScreening(id){
+        if(confirm("Are you sure want to delete screening?"){
+            this.busyGet = this.screeningService.deleteScreening(id)
+                .subscribe(
+                    result => {
+                        //console.log(result);
+                        if(result.status != null && result.status === 'SUCCESS'){
+                            this.successMessage = "Successfully deleted screening"
+                            this.errorMessage = null;
+                            this.busy = this.screeningService.search(this.searchParams)
+                                .subscribe(
+                                    searchResult  => {
+                                        console.log(searchResult);
+                                        this.screenings = searchResult.screenings;
+                                        this.searchResult = searchResult;
+                                    },
+                                    error =>  {
+                                        this.errorMessage = "Failed to search screening list (after deletion)"
+                                    }
+                                );
+                        }else{
+                            this.successMessage = null;
+                            this.errorMessage = "Failed to delete screening";
+                            if(result.message != null && result.message.nameEn != null && result.message.nameEn.trim() != ''){
+                                this.errorMessage = result.message.nameEn;
+                            }
+                        }
+                    },
+                    error => {
+                        console.log(error);
+                        this.errorMessage = "Failed to delete screening";
+                        this.successMessage = null;
+                        if(error.message != null ){
+                            this.errorMessage = error.message;
+                        }
+                    }
+
+                );
+        }
+    }
 }

@@ -2,6 +2,7 @@ package kz.nicnbk.repo.model.hf;
 
 import kz.nicnbk.repo.model.base.BaseEntity;
 import kz.nicnbk.repo.model.base.CreateUpdateBaseEntity;
+import kz.nicnbk.repo.model.common.Currency;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -11,11 +12,12 @@ import java.util.Date;
  */
 
 @Entity
-@Table(name = "hf_screening_filtered_result")
-public class HedgeFundScreeningFilteredResult extends CreateUpdateBaseEntity {
+@Table(name = "hf_screening_saved_results")
+public class HedgeFundScreeningSavedResults extends CreateUpdateBaseEntity {
 
-    private HedgeFundScreening screening;
+    private HedgeFundScreeningFilteredResult filteredResult;
 
+    /* Copied filter values for archived results*/
     private Double fundAUM;
     private Double managerAUM;
     private Integer trackRecord;
@@ -25,20 +27,52 @@ public class HedgeFundScreeningFilteredResult extends CreateUpdateBaseEntity {
 
     private String description;
 
-    public HedgeFundScreeningFilteredResult(){}
+    private int selectedLookbackReturn;
+    private int selectedLookbackAUM;
 
-    public HedgeFundScreeningFilteredResult(Long id){
+    private boolean archived;
+
+    public HedgeFundScreeningSavedResults(){}
+
+    public HedgeFundScreeningSavedResults(Long id){
         setId(id);
     }
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="screening_id", nullable = false)
-    public HedgeFundScreening getScreening() {
-        return screening;
+    @JoinColumn(name="filtered_result_id", nullable = false)
+    public HedgeFundScreeningFilteredResult getFilteredResult() {
+        return filteredResult;
     }
 
-    public void setScreening(HedgeFundScreening screening) {
-        this.screening = screening;
+    public void setFilteredResult(HedgeFundScreeningFilteredResult filteredResult) {
+        this.filteredResult = filteredResult;
+    }
+
+    @Column(name="selected_lookback_return")
+    public int getSelectedLookbackReturn() {
+        return selectedLookbackReturn;
+    }
+
+    public void setSelectedLookbackReturn(int selectedLookbackReturn) {
+        this.selectedLookbackReturn = selectedLookbackReturn;
+    }
+
+    @Column(name="selected_lookback_aum")
+    public int getSelectedLookbackAUM() {
+        return selectedLookbackAUM;
+    }
+
+    public void setSelectedLookbackAUM(int selectedLookbackAUM) {
+        this.selectedLookbackAUM = selectedLookbackAUM;
+    }
+
+    @Column(name="archived")
+    public boolean isArchived() {
+        return archived;
+    }
+
+    public void setArchived(boolean archived) {
+        this.archived = archived;
     }
 
     @Column(name="fund_aum")

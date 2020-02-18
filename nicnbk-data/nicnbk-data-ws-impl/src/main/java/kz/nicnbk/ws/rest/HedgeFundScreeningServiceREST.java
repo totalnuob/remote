@@ -5,6 +5,7 @@ import kz.nicnbk.service.api.authentication.TokenService;
 import kz.nicnbk.service.api.hf.HedgeFundScreeningService;
 import kz.nicnbk.service.dto.common.FileUploadResultDto;
 import kz.nicnbk.service.dto.common.ListResponseDto;
+import kz.nicnbk.service.dto.common.ResponseDto;
 import kz.nicnbk.service.dto.common.ResponseStatusType;
 import kz.nicnbk.service.dto.files.FilesDto;
 import kz.nicnbk.service.dto.hf.*;
@@ -61,7 +62,7 @@ public class HedgeFundScreeningServiceREST extends CommonServiceREST{
         String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
         String username = this.tokenService.decode(token).getUsername();
 
-        Long id = this.screeningService.save(screeningDto, username);
+        Long id = this.screeningService.saveScreening(screeningDto, username);
 
         return buildEntitySaveResponse(id);
     }
@@ -173,7 +174,6 @@ public class HedgeFundScreeningServiceREST extends CommonServiceREST{
     @RequestMapping(value = "/filteredResults/get/{id}", method = RequestMethod.GET)
     public ResponseEntity getFilteredResult(@PathVariable long id){
         HedgeFundScreeningFilteredResultDto dto = this.screeningService.getFilteredResultWithFundsInfo(id);
-
         return buildNonNullResponse(dto);
     }
 
@@ -293,9 +293,10 @@ public class HedgeFundScreeningServiceREST extends CommonServiceREST{
         return buildEntitySaveResponseEntity(saved);
     }
 
-    @RequestMapping(value="/scoring/export/{filteredResultId}/{lookbackAUM}//{lookbackReturn}", method= RequestMethod.GET)
+    @RequestMapping(value="/scoring/export/{type}/{filteredResultId}/{lookbackAUM}//{lookbackReturn}", method= RequestMethod.GET)
     @ResponseBody
-    public void exportFundList(@PathVariable(value="filteredResultId") Long filteredResultId,
+    public void exportFundList(@PathVariable(value = "type") int type,
+                               @PathVariable(value="filteredResultId") Long filteredResultId,
                              @PathVariable(value = "lookbackAUM") int lookbackAUM,
                              @PathVariable(value = "lookbackReturn") int lookbackReturn,
                              HttpServletResponse response) {
@@ -305,7 +306,11 @@ public class HedgeFundScreeningServiceREST extends CommonServiceREST{
 
         FilesDto filesDto = null;
         try{
-            filesDto = this.screeningService.getQualifiedFundListAsStream(filteredResultId, lookbackAUM, lookbackReturn);
+            if(type == 1) {
+                filesDto = this.screeningService.getQualifiedFundListAsStream(filteredResultId, lookbackAUM, lookbackReturn);
+            }else if(type == 2){
+                filesDto = this.screeningService.getUnqualifiedFundListAsStream(filteredResultId, lookbackAUM, lookbackReturn);
+            }
         }catch (IllegalStateException ex){
             filesDto = null;
         }
@@ -339,4 +344,66 @@ public class HedgeFundScreeningServiceREST extends CommonServiceREST{
             logger.error("(PeriodicReport) File export: failed to close input stream", e);
         }
     }
+
+    @PreAuthorize("hasRole('ROLE_HEDGE_FUND_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/filteredResults/saveResults", method = RequestMethod.POST)
+    public ResponseEntity<?> saveResults(@RequestBody HedgeFundScreeningSaveParamsDto saveParamsDto) {
+        // set creator
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
+
+        ResponseDto response = this.screeningService.saveResults(saveParamsDto, username);
+
+        return buildNonNullResponseWithStatus(response);
+    }
+
+    @PreAuthorize("hasRole('ROLE_HEDGE_FUND_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/filteredResults/deleteResults/{id}", method = RequestMethod.DELETE)
+    public ResponseEntity<?> deleteSavedResults(@PathVariable(value = "id") Long id) {
+        // set creator
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
+
+        //ResponseDto response = this.screeningService.deleteSavedResultsById(id, username);
+        ResponseDto response = this.screeningService.archiveSavedResultsById(id, username);
+
+        return buildNonNullResponseWithStatus(response);
+    }
+
+    @PreAuthorize("hasRole('ROLE_HEDGE_FUND_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/filteredResults/deleteFilteredResult/{id}", method = RequestMethod.DELETE)
+    public ResponseEntity<?> deleteFilteredResult(@PathVariable(value = "id") Long id) {
+        // set creator
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
+
+        ResponseDto response = this.screeningService.deleteFilteredResultById(id, username);
+
+        return buildNonNullResponseWithStatus(response);
+    }
+
+    @PreAuthorize("hasRole('ROLE_HEDGE_FUND_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
+    public ResponseEntity<?> deleteScreening(@PathVariable(value = "id") Long id) {
+        // set creator
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
+
+        ResponseDto response = this.screeningService.deleteScreeningById(id, username);
+
+        return buildNonNullResponseWithStatus(response);
+    }
+
+    @PreAuthorize("hasRole('ROLE_HEDGE_FUND_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/filteredResults/markNonArchived/{id}", method = RequestMethod.GET)
+    public ResponseEntity<?> markAsSavedResultNonArchived(@PathVariable(value = "id") Long id) {
+        // set creator
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
+
+        ResponseDto response = this.screeningService.markAsSavedResultNonArchived(id, username);
+
+        return buildNonNullResponseWithStatus(response);
+    }
+
 }

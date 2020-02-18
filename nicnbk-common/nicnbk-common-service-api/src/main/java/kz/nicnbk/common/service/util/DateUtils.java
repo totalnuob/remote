@@ -1,5 +1,7 @@
 package kz.nicnbk.common.service.util;
 
+import org.mockito.cglib.core.Local;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -292,6 +294,12 @@ public class DateUtils {
             dateEn = "0" + dateEn;
         }
         return dateEn;
+    }
+
+    public static String getDateShortMonthYearEnglishTextualDate(Date date){
+        String format = "MMM-yyyy";
+        SimpleDateFormat sdf = new SimpleDateFormat(format, Locale.ENGLISH);
+        return sdf.format(date);
     }
 
     public static boolean isJanuary(Date date){

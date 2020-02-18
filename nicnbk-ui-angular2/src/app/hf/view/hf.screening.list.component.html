@@ -83,6 +83,8 @@
                 <th>CREATED BY</th>
                 <th>UPDATED</th>
                 <th>UPDATED BY</th>
+                <th># of filters</th>
+                <th>&nbsp;</th>
             </tr>
             </thead>
 
@@ -90,14 +92,22 @@
 
             <tr *ngFor = "let screening of screenings" style="cursor: pointer">
                 <!--<td width="5%"></td>-->
-                <td width="30%"(click)="navigate(screening.id)">{{screening.date}}</td>
-                <td width="30%" (click)="navigate(screening.id)">{{screening.name}}</td>
-                <td width="10%" (click)="navigate(screening.id)">{{screening.creator}}</td>
-                <td width="10%" (click)="navigate(screening.id)">{{screening.updateDate}}</td>
-                <td width="10%" (click)="navigate(screening.id)">{{screening.updater}}</td>
-                <!--<td width="5%">-->
-                    <!--<a><i class="glyphicon glyphicon-file"></i></a>-->
-                <!--</td>-->
+                <td (click)="navigate(screening.id)">{{screening.date}}</td>
+                <td (click)="navigate(screening.id)">{{screening.name}}</td>
+                <td (click)="navigate(screening.id)">{{screening.creator}}</td>
+                <td (click)="navigate(screening.id)">{{screening.updateDate}}</td>
+                <td (click)="navigate(screening.id)">{{screening.updater}}</td>
+                <td (click)="navigate(screening.id)">
+                    {{screening.existingFilteredResults}}
+                </td>
+                <td>
+                    <button *ngIf="!screening.editable" [disabled]="true" class="btn btn-xs btn-default" (click)="navigate(screening.id)">
+                        <span class="glyphicon glyphicon-lock"></span>
+                    </button>
+                    <button *ngIf="screening.editable" [disabled]="screening.existingFilteredResults > 0" class="btn btn-danger btn-xs" (click)="deleteScreening(screening.id)">
+                        <span class="glyphicon glyphicon-trash"></span>
+                    </button>
+                </td>
             </tr>
             </tbody>
         </table>

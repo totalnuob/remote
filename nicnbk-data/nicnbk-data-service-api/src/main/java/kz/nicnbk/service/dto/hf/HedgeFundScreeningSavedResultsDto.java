@@ -1,20 +1,12 @@
-package kz.nicnbk.repo.model.hf;
+package kz.nicnbk.service.dto.hf;
+import kz.nicnbk.common.service.model.CreateUpdateBaseEntityDto;
 
-import kz.nicnbk.repo.model.base.BaseEntity;
-import kz.nicnbk.repo.model.base.CreateUpdateBaseEntity;
-
-import javax.persistence.*;
 import java.util.Date;
 
-/**
- * Created by magzumov on 04.07.2016.
- */
 
-@Entity
-@Table(name = "hf_screening_filtered_result")
-public class HedgeFundScreeningFilteredResult extends CreateUpdateBaseEntity {
+public class HedgeFundScreeningSavedResultsDto extends CreateUpdateBaseEntityDto {
 
-    private HedgeFundScreening screening;
+    private HedgeFundScreeningFilteredResultDto filteredResult;
 
     private Double fundAUM;
     private Double managerAUM;
@@ -22,26 +14,47 @@ public class HedgeFundScreeningFilteredResult extends CreateUpdateBaseEntity {
     private Integer lookbackReturns;
     private Integer lookbackAUM;
     private Date startDate;
+    private String startDateMonth;
 
     private String description;
 
-    public HedgeFundScreeningFilteredResult(){}
+    private int selectedLookbackReturn;
+    private int selectedLookbackAUM;
 
-    public HedgeFundScreeningFilteredResult(Long id){
-        setId(id);
+    private boolean archived;
+
+    public HedgeFundScreeningFilteredResultDto getFilteredResult() {
+        return filteredResult;
     }
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="screening_id", nullable = false)
-    public HedgeFundScreening getScreening() {
-        return screening;
+    public void setFilteredResult(HedgeFundScreeningFilteredResultDto filteredResult) {
+        this.filteredResult = filteredResult;
     }
 
-    public void setScreening(HedgeFundScreening screening) {
-        this.screening = screening;
+    public int getSelectedLookbackReturn() {
+        return selectedLookbackReturn;
     }
 
-    @Column(name="fund_aum")
+    public void setSelectedLookbackReturn(int selectedLookbackReturn) {
+        this.selectedLookbackReturn = selectedLookbackReturn;
+    }
+
+    public int getSelectedLookbackAUM() {
+        return selectedLookbackAUM;
+    }
+
+    public void setSelectedLookbackAUM(int selectedLookbackAUM) {
+        this.selectedLookbackAUM = selectedLookbackAUM;
+    }
+
+    public boolean isArchived() {
+        return archived;
+    }
+
+    public void setArchived(boolean archived) {
+        this.archived = archived;
+    }
+
     public Double getFundAUM() {
         return fundAUM;
     }
@@ -50,7 +63,6 @@ public class HedgeFundScreeningFilteredResult extends CreateUpdateBaseEntity {
         this.fundAUM = fundAUM;
     }
 
-    @Column(name="manager_aum")
     public Double getManagerAUM() {
         return managerAUM;
     }
@@ -59,7 +71,6 @@ public class HedgeFundScreeningFilteredResult extends CreateUpdateBaseEntity {
         this.managerAUM = managerAUM;
     }
 
-    @Column(name="track_record")
     public Integer getTrackRecord() {
         return trackRecord;
     }
@@ -68,7 +79,6 @@ public class HedgeFundScreeningFilteredResult extends CreateUpdateBaseEntity {
         this.trackRecord = trackRecord;
     }
 
-    @Column(name="lookback_returns")
     public Integer getLookbackReturns() {
         return lookbackReturns;
     }
@@ -77,7 +87,6 @@ public class HedgeFundScreeningFilteredResult extends CreateUpdateBaseEntity {
         this.lookbackReturns = lookbackReturns;
     }
 
-    @Column(name="lookback_aum")
     public Integer getLookbackAUM() {
         return lookbackAUM;
     }
@@ -86,7 +95,6 @@ public class HedgeFundScreeningFilteredResult extends CreateUpdateBaseEntity {
         this.lookbackAUM = lookbackAUM;
     }
 
-    @Column(name="start_date")
     public Date getStartDate() {
         return startDate;
     }
@@ -101,5 +109,13 @@ public class HedgeFundScreeningFilteredResult extends CreateUpdateBaseEntity {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getStartDateMonth() {
+        return startDateMonth;
+    }
+
+    public void setStartDateMonth(String startDateMonth) {
+        this.startDateMonth = startDateMonth;
     }
 }

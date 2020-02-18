@@ -22,6 +22,7 @@ export class HedgeFundScreeningService extends CommonService{
     private HF_SCREENING_GET_URL = this.HF_BASE_URL + "get/";
     private HF_SCREENING_SEARCH_URL = this.HF_BASE_URL + "search/";
     private HF_SCREENING_GET_ALL_URL = this.HF_BASE_URL + "getAll/";
+    private HF_SCREENING_DELETE_URL = this.HF_BASE_URL + "delete/";
 
     private HF_SCREENING_DATA_FILE_UPLOAD_URL = this.HF_BASE_URL + "file/upload/";
     private HF_SCREENING_UCITS_FILE_UPLOAD_URL = this.HF_BASE_URL + "file/ucits/upload/";
@@ -48,6 +49,11 @@ export class HedgeFundScreeningService extends CommonService{
     private HF_SCREENING_FILTERED_DELETE_ADDED_FUND_URL = this.HF_BASE_URL + "filteredResults/deleteAddedFund/";
     private HF_SCREENING_FILTERED_EXCLUDE_FUND_URL = this.HF_BASE_URL + "filteredResults/excludeFund/";
     private HF_SCREENING_FILTERED_INCLUDE_FUND_URL = this.HF_BASE_URL + "filteredResults/includeFund/";
+    private HF_SCREENING_FILTERED_SAVE_RESULTS_URL = this.HF_BASE_URL + "filteredResults/saveResults/";
+    private HF_SCREENING_FILTERED_DELETE_SAVED_RESULTS_URL = this.HF_BASE_URL + "filteredResults/deleteResults/";
+    private HF_SCREENING_FILTERED_RESULT_DELETE_URL = this.HF_BASE_URL + "filteredResults/deleteFilteredResult/";
+    private HF_SCREENING_FILTERED_MARK_NONARCHIVED_SAVED_RESULTS_URL = this.HF_BASE_URL + "filteredResults/markNonArchived/";
+
 
 
 
@@ -217,6 +223,38 @@ export class HedgeFundScreeningService extends CommonService{
         let body = JSON.stringify(fund);
 
         return this.http.post(this.HF_SCREENING_FILTERED_UPDATE_FUND_URL, body, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+    saveResults(saveParams){
+        let body = JSON.stringify(saveParams);
+
+        return this.http.post(this.HF_SCREENING_FILTERED_SAVE_RESULTS_URL, body, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+    deleteSavedResults(id: number){
+        return this.http.delete(this.HF_SCREENING_FILTERED_DELETE_SAVED_RESULTS_URL + id, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+    markAsSavedResultNonArchived(id: number){
+        return this.http.get(this.HF_SCREENING_FILTERED_MARK_NONARCHIVED_SAVED_RESULTS_URL + id, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+    deleteFilteredResult(id: number){
+        return this.http.delete(this.HF_SCREENING_FILTERED_RESULT_DELETE_URL + id, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+    deleteScreening(id: number){
+        return this.http.delete(this.HF_SCREENING_DELETE_URL + id, this.getOptionsWithCredentials())
             .map(this.extractData)
             .catch(this.handleErrorResponse);
     }

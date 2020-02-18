@@ -50,4 +50,7 @@ public interface HedgeFundScreeningParsedDataAUMRepository extends PagingAndSort
             "e2.screening.id=?1 AND e2.date >= ?2 AND e2.date <= ?3 AND e2.fundId in (?4))")
     List<HedgeFundScreeningParsedDataAUM> getLastAUMByFundIdList(Long screeningId, Date dateFrom, Date dateTo, Set<Long> fundIds);
 
+    @Query("SELECT DISTINCT e.returnsCurrency FROM HedgeFundScreeningParsedDataAUM e WHERE e.screening.id=?1")
+    List<String> getUniqueCurrencies(Long screeningId);
+
 }

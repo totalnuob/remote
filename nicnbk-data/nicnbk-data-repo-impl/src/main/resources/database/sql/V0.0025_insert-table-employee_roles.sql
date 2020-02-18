@@ -443,6 +443,13 @@ INSERT INTO public.employee_roles(employee_id, role_id)VALUES (68, 305); -- Look
 INSERT INTO public.employee_roles(employee_id, role_id)VALUES (68, 801); -- M2S2 Editor
 INSERT INTO public.employee_roles(employee_id, role_id)VALUES (68, 802); -- M2S2 Viewer
 
+-- Beibut
+INSERT INTO public.employee_roles(employee_id, role_id)VALUES (77, 301); -- User Edit
+INSERT INTO public.employee_roles(employee_id, role_id)VALUES (77, 777); -- HR Edit
+INSERT INTO public.employee_roles(employee_id, role_id)VALUES (77, 305); -- Lookup view
+INSERT INTO public.employee_roles(employee_id, role_id)VALUES (77, 801); -- M2S2 Editor
+INSERT INTO public.employee_roles(employee_id, role_id)VALUES (77, 802); -- M2S2 Viewer
+
 
 -- DEV
 -- Timur
