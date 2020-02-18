@@ -14,7 +14,7 @@ import {HedgeFundScreeningFilteredResult} from "./model/hf.screening.filtered.re
 declare var $:any
 
 @Component({
-    selector: 'hf-fund-search',
+    selector: 'hf-screening-filters',
     templateUrl: 'view/hf.screening.filters.component.html',
     styleUrls: [
         //'../../../public/css/...',

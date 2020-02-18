@@ -66,6 +66,7 @@ public class HedgeFundScreeningSavedResults extends CreateUpdateBaseEntity {
         this.selectedLookbackAUM = selectedLookbackAUM;
     }
 
+    @Column(name="archived")
     public boolean isArchived() {
         return archived;
     }

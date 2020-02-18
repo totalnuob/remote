@@ -11,4 +11,6 @@ import java.util.List;
 public interface HedgeFundScreeningSavedResultsRepository extends PagingAndSortingRepository<HedgeFundScreeningSavedResults, Long> {
 
     List<HedgeFundScreeningSavedResults> findByFilteredResultId(Long filteredResultId);
+
+    List<HedgeFundScreeningSavedResults> findByFilteredResultIdAndArchived(Long filteredResultId, boolean archived);
 }

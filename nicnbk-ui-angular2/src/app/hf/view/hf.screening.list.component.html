@@ -101,7 +101,9 @@
                     {{screening.existingFilteredResults}}
                 </td>
                 <td>
-                    &nbsp;<span *ngIf="!screening.editable" class="glyphicon glyphicon-lock" (click)="navigate(screening.id)"></span>
+                    <button *ngIf="!screening.editable" [disabled]="true" class="btn btn-xs btn-default" (click)="navigate(screening.id)">
+                        <span class="glyphicon glyphicon-lock"></span>
+                    </button>
                     <button *ngIf="screening.editable" [disabled]="screening.existingFilteredResults > 0" class="btn btn-danger btn-xs" (click)="deleteScreening(screening.id)">
                         <span class="glyphicon glyphicon-trash"></span>
                     </button>

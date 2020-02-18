@@ -21,7 +21,7 @@ public interface HedgeFundScreeningService extends BaseService {
     /* Number of elements per page */
     int DEFAULT_PAGE_SIZE = 20;
 
-    Long save(HedgeFundScreeningDto screeningDto, String username);
+    Long saveScreening(HedgeFundScreeningDto screeningDto, String username);
 
     HedgeFundScreeningDto get(Long id);
     List<HedgeFundScreeningDto> getAll();
@@ -85,6 +85,8 @@ public interface HedgeFundScreeningService extends BaseService {
     ResponseDto deleteFilteredResultById(Long id, String username);
 
     ResponseDto deleteScreeningById(Long id, String username);
+
+    ResponseDto markAsSavedResultNonArchived(Long savedResultId, String username);
 
 }
 

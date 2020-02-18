@@ -15,5 +15,5 @@ public interface HedgeFundScreeningSavedResultsBenchmarkRepository extends Pagin
     @Query("DELETE from HedgeFundScreeningSavedResultsBenchmark e WHERE e.savedResults.id=?1")
     void deleteBySavedResultsId(Long savedResultsId);
 
-    List<HedgeFundScreeningSavedResultsBenchmark> findBySavedResultsId(Long savedResultsId);
+    List<HedgeFundScreeningSavedResultsBenchmark> findBySavedResultsIdOrderByBenchmarkIdDescDateAsc(Long savedResultsId);
 }

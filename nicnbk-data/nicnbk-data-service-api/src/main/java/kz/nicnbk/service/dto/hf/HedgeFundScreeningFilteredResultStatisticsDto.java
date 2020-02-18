@@ -6,6 +6,7 @@ import kz.nicnbk.common.service.util.StringUtils;
 import kz.nicnbk.repo.model.hf.HedgeFundScreeningSavedResults;
 
 import java.util.Date;
+import java.util.List;
 
 
 /**
@@ -19,6 +20,8 @@ public class HedgeFundScreeningFilteredResultStatisticsDto implements BaseDto {
     private Integer[][] undecided;
 
     private HedgeFundScreeningFinalResultsDto finalResults;
+
+    private List<HedgeFundScreeningFinalResultsDto> archivedResults;
 
     private HedgeFundScreeningFilteredResultDto parameters;
 
@@ -68,6 +71,14 @@ public class HedgeFundScreeningFilteredResultStatisticsDto implements BaseDto {
 
     public void setFinalResults(HedgeFundScreeningFinalResultsDto finalResults) {
         this.finalResults = finalResults;
+    }
+
+    public List<HedgeFundScreeningFinalResultsDto> getArchivedResults() {
+        return archivedResults;
+    }
+
+    public void setArchivedResults(List<HedgeFundScreeningFinalResultsDto> archivedResults) {
+        this.archivedResults = archivedResults;
     }
 }
 

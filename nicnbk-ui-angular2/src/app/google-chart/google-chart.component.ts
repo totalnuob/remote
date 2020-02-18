@@ -1,6 +1,8 @@
 import { Component, OnInit} from '@angular/core';
 import {CommonFormViewComponent} from "../common/common.component";
+
 declare var google:any;
+
 @Component({
     selector: 'google-chart'
 })
@@ -8,7 +10,6 @@ export class GoogleChartComponent extends CommonFormViewComponent implements OnI
     private static googleLoaded:any;
 
     constructor(){
-        //console.log("GoogleChartComponent")
         super();
     }
 

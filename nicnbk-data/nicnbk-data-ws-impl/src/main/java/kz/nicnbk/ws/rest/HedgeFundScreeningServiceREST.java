@@ -62,7 +62,7 @@ public class HedgeFundScreeningServiceREST extends CommonServiceREST{
         String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
         String username = this.tokenService.decode(token).getUsername();
 
-        Long id = this.screeningService.save(screeningDto, username);
+        Long id = this.screeningService.saveScreening(screeningDto, username);
 
         return buildEntitySaveResponse(id);
     }
@@ -390,6 +390,18 @@ public class HedgeFundScreeningServiceREST extends CommonServiceREST{
         String username = this.tokenService.decode(token).getUsername();
 
         ResponseDto response = this.screeningService.deleteScreeningById(id, username);
+
+        return buildNonNullResponseWithStatus(response);
+    }
+
+    @PreAuthorize("hasRole('ROLE_HEDGE_FUND_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/filteredResults/markNonArchived/{id}", method = RequestMethod.GET)
+    public ResponseEntity<?> markAsSavedResultNonArchived(@PathVariable(value = "id") Long id) {
+        // set creator
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
+
+        ResponseDto response = this.screeningService.markAsSavedResultNonArchived(id, username);
 
         return buildNonNullResponseWithStatus(response);
     }

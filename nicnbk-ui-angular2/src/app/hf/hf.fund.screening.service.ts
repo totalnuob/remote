@@ -52,6 +52,9 @@ export class HedgeFundScreeningService extends CommonService{
     private HF_SCREENING_FILTERED_SAVE_RESULTS_URL = this.HF_BASE_URL + "filteredResults/saveResults/";
     private HF_SCREENING_FILTERED_DELETE_SAVED_RESULTS_URL = this.HF_BASE_URL + "filteredResults/deleteResults/";
     private HF_SCREENING_FILTERED_RESULT_DELETE_URL = this.HF_BASE_URL + "filteredResults/deleteFilteredResult/";
+    private HF_SCREENING_FILTERED_MARK_NONARCHIVED_SAVED_RESULTS_URL = this.HF_BASE_URL + "filteredResults/markNonArchived/";
+
+
 
 
 
@@ -234,6 +237,12 @@ export class HedgeFundScreeningService extends CommonService{
 
     deleteSavedResults(id: number){
         return this.http.delete(this.HF_SCREENING_FILTERED_DELETE_SAVED_RESULTS_URL + id, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+    markAsSavedResultNonArchived(id: number){
+        return this.http.get(this.HF_SCREENING_FILTERED_MARK_NONARCHIVED_SAVED_RESULTS_URL + id, this.getOptionsWithCredentials())
             .map(this.extractData)
             .catch(this.handleErrorResponse);
     }

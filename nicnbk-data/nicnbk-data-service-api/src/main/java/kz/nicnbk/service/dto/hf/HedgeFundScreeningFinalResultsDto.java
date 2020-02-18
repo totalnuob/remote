@@ -11,6 +11,8 @@ public class HedgeFundScreeningFinalResultsDto extends HedgeFundScreeningSavedRe
     private List<HedgeFundScreeningSavedResultFundsDto> unqualifiedFunds;
     private List<HedgeFundScreeningSavedResultFundsDto> undecidedFunds;
 
+    private List<HedgeFundScreeningSavedResultFundsDto> editedFunds;
+
     private List<HedgeFundScreeningSavedResultBenchmarkDto> benchmarks;
     private List<HedgeFundScreeningSavedResultCurrencyDto> currencyRates;
 
@@ -60,5 +62,13 @@ public class HedgeFundScreeningFinalResultsDto extends HedgeFundScreeningSavedRe
 
     public void setTop50qualifiedFunds(List<HedgeFundScreeningSavedResultFundsDto> top50qualifiedFunds) {
         this.top50qualifiedFunds = top50qualifiedFunds;
+    }
+
+    public List<HedgeFundScreeningSavedResultFundsDto> getEditedFunds() {
+        return editedFunds;
+    }
+
+    public void setEditedFunds(List<HedgeFundScreeningSavedResultFundsDto> editedFunds) {
+        this.editedFunds = editedFunds;
     }
 }

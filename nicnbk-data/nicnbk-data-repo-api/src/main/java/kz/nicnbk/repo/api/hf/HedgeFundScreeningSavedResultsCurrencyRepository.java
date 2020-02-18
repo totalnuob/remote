@@ -15,6 +15,6 @@ public interface HedgeFundScreeningSavedResultsCurrencyRepository extends Paging
     @Query("DELETE from HedgeFundScreeningSavedResultsCurrency e WHERE e.savedResults.id=?1")
     void deleteBySavedResultsId(Long savedResultsId);
 
-    List<HedgeFundScreeningSavedResultsCurrency> findBySavedResultsId(Long savedResultsId);
+    List<HedgeFundScreeningSavedResultsCurrency> findBySavedResultsIdOrderByCurrencyAscDateAsc(Long savedResultsId);
 
 }

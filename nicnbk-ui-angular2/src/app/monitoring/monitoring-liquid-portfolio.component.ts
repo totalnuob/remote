@@ -1,7 +1,7 @@
 import {Component, AfterViewInit, ViewChild} from "@angular/core";
 import {ActivatedRoute} from "@angular/router";
-import {CommonFormViewComponent} from "../common/common.component";
-import {CommonTableau} from "./common-tableau.component";
+//simport {CommonFormViewComponent} from "../common/common.component";
+//import {CommonTableau} from "./common-tableau.component";
 import {GoogleChartComponent} from "../google-chart/google-chart.component";
 import {MonitoringLiquidPortfolioService} from "./monitoring-liquid-portfolio.service";
 import {ModuleAccessCheckerService} from "../authentication/module.access.checker.service";
@@ -21,9 +21,6 @@ declare var $: any;
     providers: [MonitoringLiquidPortfolioService],
 })
 export class MonitoringLiquidPortfolioComponent extends GoogleChartComponent {
-    //ngAfterViewInit():void {
-    //    this.tableau_func()
-    //}
     private tableDate;
 
     private liquidPortfolioList = [];
@@ -40,6 +37,7 @@ export class MonitoringLiquidPortfolioComponent extends GoogleChartComponent {
         private monitoringLiquidPortfolioService: MonitoringLiquidPortfolioService,
         private downloadService: FileDownloadService,
     ) {
+
         super();
 
         this.myFiles = [];
