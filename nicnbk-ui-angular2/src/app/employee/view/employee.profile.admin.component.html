@@ -106,6 +106,13 @@
             </div>
             <label class="control-label col-sm-8"># failed login attempts: {{employee.failedLoginAttempts == null ? 0 : employee.failedLoginAttempts}}</label>
         </div>
+        <div class="row form-group">
+            <label class="control-label col-sm-2">MFA:</label>
+            <div class="col-sm-10">
+                <button *ngIf="employee.mfaEnabled == null || !employee.mfaEnabled" class="btn btn-xs btn-danger" (click)="employee.mfaEnabled = true" disabled>DISABLED</button>
+                <button *ngIf="employee.mfaEnabled != null && employee.mfaEnabled" class="btn btn-xs btn-success" (click)="employee.mfaEnabled = false" disabled>ENABLED</button>
+            </div>
+        </div>
         <hr style="border-top: 1px solid #B5AEAE"/>
         <div class="row form-group">
             <label class="control-label col-sm-2">Roles:</label>
