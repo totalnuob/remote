@@ -217,10 +217,7 @@ export class EmployeeProfileComponent extends CommonFormViewComponent implements
             .subscribe(
                 response => {
                     this.postAction("Successfully registered MFA", null);
-                    this.secret = "";
-                    this.secretQR = "";
-                    this.secretGoogleChart = "";
-                    this.otp = "";
+                    this.resetMfaFields();
                     this.employee.mfaEnabled = true;
                 },
                 (error:ErrorResponse) => {
@@ -232,5 +229,12 @@ export class EmployeeProfileComponent extends CommonFormViewComponent implements
                     }
                 }
             );
+    }
+
+    resetMfaFields() {
+        this.secret = "";
+        this.secretQR = "";
+        this.secretGoogleChart = "";
+        this.otp = "";
     }
 }

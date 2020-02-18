@@ -35,7 +35,7 @@
                aria-selected="false"
                class="date-tabs__link"
                [style.border-bottom-color]="activeTab === 'MFA' ? '#D9A158' : 'white'"
-               (click)="activeTab = 'MFA'">MFA</a>
+               (click)="activeTab = 'MFA'; resetMfaFields()">MFA</a>
         </li>
     </ul>
 
