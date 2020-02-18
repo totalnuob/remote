@@ -238,6 +238,10 @@ public class EmployeeServiceREST extends CommonServiceREST{
             return new ResponseEntity<>(null, null, HttpStatus.BAD_REQUEST);
         }
 
-        return new ResponseEntity<>(123, null, HttpStatus.OK);
+        if (this.employeeService.registerMfa(tokenUserInfo.getUsername(), registrationDto.getSecret(), registrationDto.getOtp())) {
+            return new ResponseEntity<>(123, null, HttpStatus.OK);
+        }
+
+        return new ResponseEntity<>(null, null, HttpStatus.BAD_REQUEST);
     }
 }

@@ -43,4 +43,6 @@ public interface EmployeeService extends BaseService {
     List<RoleDto> getAllRoles();
 
     List<DepartmentDto> getAllDepartments();
+
+    boolean registerMfa(String username, String secret, String otp);
 }

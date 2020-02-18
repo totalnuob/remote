@@ -494,6 +494,35 @@ public class EmployeeServiceImpl implements EmployeeService{
         return this.departmentEntityConverter.disassembleList(departments);
     }
 
+    @Override
+    public boolean registerMfa(String username, String secret, String otp) {
+
+        if (StringUtils.isEmpty(username) || StringUtils.isEmpty(secret) || StringUtils.isEmpty(otp)) {
+            return false;
+        }
+
+        try {
+            Employee employee = this.employeeRepository.findByUsername(username);
+
+            if (employee == null) {
+                return false;
+            }
+
+            TotpServiceImpl generator = new TotpServiceImpl(secret);
+            if (generator.verify(otp)) {
+                employee.setMfaEnabled(true);
+                employee.setSecret(secret);
+                this.employeeRepository.save(employee);
+                logger.info("Successfully registered MFA: id= " + employee.getId().longValue() + ", username=" + employee.getUsername());
+                return true;
+            }
+        } catch (Exception ex) {
+            logger.error("Failed to register MFA.", ex);
+        }
+
+        return false;
+    }
+
     private String generateSalt(){
         return HashUtils.generateRandomText();
     }
