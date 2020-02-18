@@ -221,6 +221,7 @@ export class EmployeeProfileComponent extends CommonFormViewComponent implements
                     this.secretQR = "";
                     this.secretGoogleChart = "";
                     this.otp = "";
+                    this.employee.mfaEnabled = true;
                 },
                 (error:ErrorResponse) => {
                     if (error && !error.isEmpty()) {
