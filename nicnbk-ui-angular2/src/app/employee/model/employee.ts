@@ -15,4 +15,6 @@ export class Employee {
     locked: boolean;
 
     roles: any[];
+
+    mfaEnabled: boolean;
 }

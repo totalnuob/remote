@@ -185,7 +185,7 @@
                 Learn more about this technology <a href="https://en.wikipedia.org/wiki/Multi-factor_authentication" target="_blank">here</a>.
                 <br/>
                 <br/>
-                <button type="button" class="btn btn-default" *ngIf="secret == ''" (click)="getSecret()">Get started</button>
+                <button type="button" class="btn btn-default" *ngIf="secret == ''" (click)="getSecret()">{{employee != null && employee.mfaEnabled == true ? 'Reset MFA' : 'Get started'}}</button>
                 <div *ngIf="secret != ''">
                     To set up MFA:
                     <ul>
