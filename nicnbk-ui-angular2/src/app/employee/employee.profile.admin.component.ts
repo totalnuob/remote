@@ -121,6 +121,7 @@ export class EmployeeProfileAdminComponent extends CommonFormViewComponent{
                                 this.employee.active = true;
                                 this.employee.locked = false;
                                 this.employee.failedLoginAttempts = 0;
+                                this.employee.mfaEnabled = false;
 
                                 console.log('New User creation');
                             }
@@ -198,7 +199,7 @@ export class EmployeeProfileAdminComponent extends CommonFormViewComponent{
 
         if(this.newPassword == this.newPasswordConfirm) {
             if(this.newPassword == '') {
-                this.busy = this.employeeService.save(this.employee)
+                this.busy = this.employeeService.saveAdmin(this.employee)
                     .subscribe(
                         response => {
                             this.employee.id = response.entityId;

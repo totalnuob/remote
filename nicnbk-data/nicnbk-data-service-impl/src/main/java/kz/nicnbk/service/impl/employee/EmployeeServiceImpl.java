@@ -163,65 +163,66 @@ public class EmployeeServiceImpl implements EmployeeService{
     }
 
     @Override
-    public EntitySaveResponseDto save(EmployeeDto employeeDto, String updater) {
-        EntitySaveResponseDto saveResponseDto = checkEmployeeProfile(employeeDto);
+    public EntitySaveResponseDto save(EmployeeFullDto employeeFullDto, String updater, Boolean isAdmin) {
+        EntitySaveResponseDto saveResponseDto = checkEmployeeProfile(employeeFullDto);
         if(saveResponseDto.getStatus() == null || saveResponseDto.getStatus().getCode().equalsIgnoreCase(ResponseStatusType.FAIL.getCode())){
             logger.error("Failed to save employee profile." + saveResponseDto.getMessage().getMessageText() + " [updater=" + updater + "]");
             return saveResponseDto;
-        }
-        boolean isAdmin = false;
-        EmployeeDto updaterEmployee = getEmployeeByUsername(updater);
-        if(updaterEmployee.getRoles() != null && !updaterEmployee.getRoles().isEmpty()){
-            for(BaseDictionaryDto role: updaterEmployee.getRoles()){
-                if(role.getCode().equalsIgnoreCase(UserRoles.ADMIN.getCode())){
-                    isAdmin = true;
-                    break;
-                }
-            }
         }
 
         try {
             Employee entity = null;
 
-            if(employeeDto.getId() == null){
-                entity = this.employeeEntityConverter.assemble(employeeDto);
-            }else{
-                entity = this.employeeRepository.findOne(employeeDto.getId());
+            if (employeeFullDto.getId() == null) {
+                if (isAdmin) {
+                    entity = this.employeeEntityConverter.assemble(employeeFullDto);
+                    entity.setLocked(employeeFullDto.getLocked());
+                    entity.setFailedLoginAttempts(employeeFullDto.getFailedLoginAttempts());
+                } else {
+                    logger.error("Failed to save employee profile");
+                    saveResponseDto.setErrorMessageEn("Failed to save employee profile");
+                    return saveResponseDto;
+                }
+            } else {
+                entity = this.employeeRepository.findOne(employeeFullDto.getId());
 
                 if(isAdmin){
-                    if(entity.getActive() != employeeDto.getActive()) {
+                    if(entity.getActive() != employeeFullDto.getActive()) {
                         this.tokenService.revokeUsername(entity.getUsername());
                     }
-                    entity.setActive(employeeDto.getActive());
+                    entity.setActive(employeeFullDto.getActive());
+                    entity.setLocked(employeeFullDto.getLocked());
+                    entity.setFailedLoginAttempts(employeeFullDto.getFailedLoginAttempts());
+                    entity.setMfaEnabled(employeeFullDto.getMfaEnabled());
                 }
 
-                entity.setFirstName(employeeDto.getFirstName());
-                entity.setLastName(employeeDto.getLastName());
-                entity.setBirthDate(employeeDto.getBirthDate());
-                entity.setPatronymic(employeeDto.getPatronymic());
+                entity.setFirstName(employeeFullDto.getFirstName());
+                entity.setLastName(employeeFullDto.getLastName());
+                entity.setBirthDate(employeeFullDto.getBirthDate());
+                entity.setPatronymic(employeeFullDto.getPatronymic());
 
             }
             Position position = null;
-            if(employeeDto.getPosition() != null && StringUtils.isNotEmpty(employeeDto.getPosition().getCode())){
-                position = this.positionRepository.findByCode(employeeDto.getPosition().getCode());
+            if(employeeFullDto.getPosition() != null && StringUtils.isNotEmpty(employeeFullDto.getPosition().getCode())){
+                position = this.positionRepository.findByCode(employeeFullDto.getPosition().getCode());
             }
             entity.setPosition(position);
 
-            if(isAdmin){
+            if (isAdmin) {
                 Set<Role> roles = new HashSet<>();
-                if(employeeDto.getRoles() != null) {
-                    for (BaseDictionaryDto dto: employeeDto.getRoles()) {
+                if(employeeFullDto.getRoles() != null) {
+                    for (BaseDictionaryDto dto: employeeFullDto.getRoles()) {
                         roles.add(this.roleRepository.findOne(dto.getId()));
                     }
                 }
-                if(!entity.getRoles().equals(roles)) {
+                if(entity.getRoles() == null || !entity.getRoles().equals(roles)) {
                     this.tokenService.revokeUsername(entity.getUsername());
                 }
                 entity.setRoles(roles);
             }
 
             Long id = this.employeeRepository.save(entity).getId();
-            logger.info("Successfully saved employee profile: id= " + entity.getId().longValue() + ", username=" + employeeDto.getUsername() + " [updater=" + updater + "]");
+            logger.info("Successfully saved employee profile: id= " + entity.getId().longValue() + ", username=" + employeeFullDto.getUsername() + " [updater=" + updater + "]");
             saveResponseDto.setSuccessMessageEn("Successfully saved employee profile");
             saveResponseDto.setEntityId(id);
             return saveResponseDto;
@@ -233,12 +234,12 @@ public class EmployeeServiceImpl implements EmployeeService{
     }
 
     @Override
-    public EntitySaveResponseDto saveAndChangePassword(EmployeeDto employeeDto, String password, String updater) {
-        EntitySaveResponseDto saveResponseDto = this.save(employeeDto, updater);
+    public EntitySaveResponseDto saveAndChangePassword(EmployeeFullDto employeeFullDto, String password, String updater) {
+        EntitySaveResponseDto saveResponseDto = this.save(employeeFullDto, updater, true);
         if(saveResponseDto.getStatus() == null || saveResponseDto.getStatus().getCode().equalsIgnoreCase(ResponseStatusType.FAIL.getCode())) {
             return saveResponseDto;
         }
-        if(employeeDto == null || !this.setPassword(employeeDto.getUsername(), password, updater)) {
+        if(employeeFullDto == null || !this.setPassword(employeeFullDto.getUsername(), password, updater)) {
             saveResponseDto.setErrorMessageEn("Employee profile was saved without the new password");
         }
         return saveResponseDto;
@@ -247,6 +248,11 @@ public class EmployeeServiceImpl implements EmployeeService{
     private EntitySaveResponseDto checkEmployeeProfile(EmployeeDto employeeDto){
         EntitySaveResponseDto saveResponseDto = new EntitySaveResponseDto();
         saveResponseDto.setStatus(ResponseStatusType.SUCCESS);
+
+        if (employeeDto == null) {
+            saveResponseDto.setErrorMessageEn("Error saving profile");
+            return saveResponseDto;
+        }
 
         if(StringUtils.isEmpty(employeeDto.getLastName())){
             saveResponseDto.setErrorMessageEn("Last name cannot be empty");

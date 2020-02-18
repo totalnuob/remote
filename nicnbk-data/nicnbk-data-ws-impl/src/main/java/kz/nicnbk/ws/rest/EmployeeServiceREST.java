@@ -87,11 +87,21 @@ public class EmployeeServiceREST extends CommonServiceREST{
 
     @PreAuthorize(" hasRole('ROLE_USER_PROFILE_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/save", method = RequestMethod.POST)
-    public ResponseEntity<?> save(@RequestBody EmployeeDto employeeDto) {
+    public ResponseEntity<?> save(@RequestBody EmployeeFullDto employeeFullDto) {
         String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
         String username = this.tokenService.decode(token).getUsername();
 
-        EntitySaveResponseDto saveResponseDto = this.employeeService.save(employeeDto, username);
+        EntitySaveResponseDto saveResponseDto = this.employeeService.save(employeeFullDto, username, false);
+        return buildEntitySaveResponse(saveResponseDto);
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/saveAdmin", method = RequestMethod.POST)
+    public ResponseEntity<?> saveAdmin(@RequestBody EmployeeFullDto employeeFullDto) {
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
+
+        EntitySaveResponseDto saveResponseDto = this.employeeService.save(employeeFullDto, username, true);
         return buildEntitySaveResponse(saveResponseDto);
     }
 
@@ -120,7 +130,7 @@ public class EmployeeServiceREST extends CommonServiceREST{
     @RequestMapping(value = "/saveAndChangePassword", method = RequestMethod.POST)
     public ResponseEntity<?> saveAndChangePassword(@RequestBody EmployeePasswordDto employeePasswordDto) {
 
-        EmployeeDto employeeDto = employeePasswordDto.getEmployeeDto();
+        EmployeeFullDto employeeFullDto = employeePasswordDto.getEmployeeFullDto();
         String password = employeePasswordDto.getPassword();
 
         if(StringUtils.isEmpty(password)) {
@@ -130,7 +140,7 @@ public class EmployeeServiceREST extends CommonServiceREST{
         String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
         String username = this.tokenService.decode(token).getUsername();
 
-        EntitySaveResponseDto saveResponseDto = this.employeeService.saveAndChangePassword(employeeDto, password, username);
+        EntitySaveResponseDto saveResponseDto = this.employeeService.saveAndChangePassword(employeeFullDto, password, username);
         return buildEntitySaveResponse(saveResponseDto);
     }
 
