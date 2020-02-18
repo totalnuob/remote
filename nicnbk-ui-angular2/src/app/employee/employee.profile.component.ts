@@ -221,12 +221,7 @@ export class EmployeeProfileComponent extends CommonFormViewComponent implements
                     this.employee.mfaEnabled = true;
                 },
                 (error:ErrorResponse) => {
-                    if (error && !error.isEmpty()) {
-                        this.processErrorMessage(error);
-                        console.log(error);
-                    }else {
-                        this.postAction(null, "Error registering MFA");
-                    }
+                    this.postAction(null, "Error registering MFA");
                 }
             );
     }
@@ -236,5 +231,10 @@ export class EmployeeProfileComponent extends CommonFormViewComponent implements
         this.secretQR = "";
         this.secretGoogleChart = "";
         this.otp = "";
+    }
+
+    resetMessages() {
+        this.errorMessage = null;
+        this.successMessage = null;
     }
 }

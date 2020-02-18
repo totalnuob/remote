@@ -35,7 +35,7 @@
                aria-selected="false"
                class="date-tabs__link"
                [style.border-bottom-color]="activeTab === 'MFA' ? '#D9A158' : 'white'"
-               (click)="activeTab = 'MFA'; resetMfaFields()">MFA</a>
+               (click)="activeTab = 'MFA'; resetMfaFields(); resetMessages()">MFA</a>
         </li>
     </ul>
 
@@ -197,19 +197,20 @@
                     </ul>
                     <img src="{{secretGoogleChart}}">
                     <br/>
-                    If you can't scan the barcode, enter the following key manually:
+                    If you can't scan the barcode, enter the following key <b>manually in the App</b>:
                     <br/>
                     <b>{{secret}}</b>
                     <br/>
                     <br/>
                     Enter the 6-digit code you see in the app
                     <form (ngSubmit)="registerMfa()">
-                        <div class="form-group input-group" style="width: 500px">
-                            <input class="form-control" type="text" name="otp" placeholder="6-digit code"
-                                   [(ngModel)]="otp"/>
-                        </div>
-                        <div>
-                            <button type="submit" class="btn btn-def btn-block" style="width: 500px">Submit</button>
+                        <div class="row">
+                            <div class="col-md-2">
+                                <input class="form-control" type="text" name="otp" placeholder="6-digit code" [(ngModel)]="otp"/>
+                            </div>
+                            <div class="col-md-1">
+                                <button type="submit" class="btn btn-success btn-block">Submit</button>
+                            </div>
                         </div>
                     </form>
                 </div>
