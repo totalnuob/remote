@@ -78,6 +78,7 @@ export class HFScreeningEditComponent extends CommonFormViewComponent implements
                             }
                         );
                 }else{
+                    this.screening.editable = true;
                 }
             });
 

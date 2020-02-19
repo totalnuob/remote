@@ -4913,57 +4913,6 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
             }
 
             if(previousRecords != null && !previousRecords.isEmpty()){
-
-                // UPDATE FORM
-//                int maxLineNumber = 0;
-//                for(ConsolidatedBalanceFormRecordDto dto: previousRecords){
-//                    if(dto.getLineNumber() != null && dto.getLineNumber() > maxLineNumber){
-//                        maxLineNumber = dto.getLineNumber();
-//                    }
-//                }
-//
-//                // 2. Update form
-//                if(maxLineNumber != 55) {
-//
-//                    // previous records map
-//                    Map<Integer, List<ConsolidatedKZTForm19RecordDto>> previousRecordsMap = new HashedMap();
-//                    int lineNumber = 0;
-//                    for(ConsolidatedKZTForm19RecordDto record: previousRecords){
-//                        if(record.getLineNumber() != null){
-//                            lineNumber = record.getLineNumber();
-//                        }
-//                        if(lineNumber > 0){
-//                            if(previousRecordsMap.get(lineNumber) == null){
-//                                List<ConsolidatedKZTForm19RecordDto> recordsList = new ArrayList<>();
-//                                recordsList.add(record);
-//                                previousRecordsMap.put(lineNumber, recordsList);
-//                            }else{
-//                                previousRecordsMap.get(lineNumber).add(record);
-//                            }
-//                        }
-//                    }
-//
-//                    List<ConsolidatedKZTForm19RecordDto> newPreviousPeriodRecords = getConsolidatedBalanceKZTForm19LineHeaders();
-//                    for(ConsolidatedKZTForm19RecordDto record: newPreviousPeriodRecords){
-//                        int oldLineNumber = record.getLineNumber() - 1;
-//                        if(previousRecordsMap.get(oldLineNumber) != null && previousRecordsMap.get(oldLineNumber).size() > 0){
-//                            for(ConsolidatedKZTForm19RecordDto dto: previousRecordsMap.get(oldLineNumber)) {
-//                                if(dto.getAccountNumber() == null && record.getAccountNumber() == null ||
-//                                        (dto.getAccountNumber() != null && record.getAccountNumber() != null &&
-//                                                dto.getAccountNumber().equalsIgnoreCase(record.getAccountNumber()) &&
-//                                        dto.getName().equalsIgnoreCase(record.getName()))) {
-//                                    record.setCurrentAccountBalance(dto.getCurrentAccountBalance());
-//                                    record.setTurnover(dto.getTurnover());
-//                                    record.setPreviousAccountBalance(dto.getPreviousAccountBalance());
-//                                }
-//                            }
-//
-//                        }
-//                    }
-//
-//                    previousRecords = newPreviousPeriodRecords;
-//                }
-
                 int index = 0;
                 for(ConsolidatedKZTForm19RecordDto record: currentRecords){
                     boolean previousRecordFound = false;
@@ -4973,7 +4922,8 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                             if(!DateUtils.isJanuary(currentReport.getReportDate())) {
                                 record.setPreviousAccountBalance(previousRecords.get(i).getCurrentAccountBalance());
                             }
-                            if(record.getCurrentAccountBalance() != null || record.getPreviousAccountBalance() != null) {
+                            if((record.getCurrentAccountBalance() != null && record.getCurrentAccountBalance().doubleValue() != 0.0)
+                                    || (record.getPreviousAccountBalance() != null && record.getPreviousAccountBalance().doubleValue() != 0.0)) {
                                 record.setTurnover(MathUtils.subtract(record.getCurrentAccountBalance(), record.getPreviousAccountBalance()));
                             }
                             previousRecordFound = true;
@@ -4994,7 +4944,8 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                             break;
                         }
                     }
-                    if(!found && previousRecord.getCurrentAccountBalance() != null && previousRecord.getCurrentAccountBalance().doubleValue() != 0.0){
+                    if(!found && previousRecord.getCurrentAccountBalance() != null && previousRecord.getCurrentAccountBalance().doubleValue() != 0.0 &&
+                            !DateUtils.isJanuary(currentReport.getReportDate())){
                         previousRecord.setPreviousAccountBalance(previousRecord.getCurrentAccountBalance());
                         previousRecord.setCurrentAccountBalance(null);
                         previousRecord.setTurnover(MathUtils.subtract(previousRecord.getCurrentAccountBalance(), previousRecord.getPreviousAccountBalance()));
@@ -5003,9 +4954,65 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                 }
 
                 currentRecords.addAll(previousToAdd);
-                Collections.sort(currentRecords);
+
+                // set totals
+                Map<Integer, ConsolidatedKZTForm19RecordDto> totalMap = new HashMap<>();
+                for(ConsolidatedKZTForm19RecordDto record: currentRecords){
+                    if(record.getLineNumber() != null && totalMap.get(record.getLineNumber()) == null){
+                        totalMap.put(record.getLineNumber(), new ConsolidatedKZTForm19RecordDto());
+                    }
+                    if(record.getAccountNumber() != null){
+                        ConsolidatedKZTForm19RecordDto totalRecord = totalMap.get(record.getLineNumber());
+                        totalRecord.setCurrentAccountBalance(MathUtils.add(totalRecord.getCurrentAccountBalance(), record.getCurrentAccountBalance()));
+                        totalRecord.setPreviousAccountBalance(MathUtils.add(totalRecord.getPreviousAccountBalance(), record.getPreviousAccountBalance()));
+                        totalRecord.setTurnover(MathUtils.add(totalRecord.getTurnover(), record.getTurnover()));
+                    }
+                }
+                for(ConsolidatedKZTForm19RecordDto record: currentRecords){
+                    if(record.getAccountNumber() == null && record.getLineNumber() != null && totalMap.get(record.getLineNumber()) != null){
+                        record.setPreviousAccountBalance(totalMap.get(record.getLineNumber()).getPreviousAccountBalance());
+                        record.setCurrentAccountBalance(totalMap.get(record.getLineNumber()).getCurrentAccountBalance());
+                        record.setTurnover(totalMap.get(record.getLineNumber()).getTurnover());
+                    }
+                }
+                for(ConsolidatedKZTForm19RecordDto record: currentRecords) {
+                    if (record.getAccountNumber() == null && record.getLineNumber() != null && record.getLineNumber() == 8) {
+                        record.setCurrentAccountBalance(totalMap.get(9).getCurrentAccountBalance());
+                        record.setTurnover(totalMap.get(9).getTurnover());
+                        record.setPreviousAccountBalance(totalMap.get(9).getPreviousAccountBalance());
+                        totalMap.put(8, record);
+                    } else if (record.getAccountNumber() == null && record.getLineNumber() != null && record.getLineNumber() == 23) {
+                        record.setCurrentAccountBalance(MathUtils.add(totalMap.get(24).getCurrentAccountBalance(), totalMap.get(27).getCurrentAccountBalance()));
+                        record.setTurnover(MathUtils.add(totalMap.get(24).getTurnover(), totalMap.get(27).getTurnover()));
+                        record.setPreviousAccountBalance(MathUtils.add(totalMap.get(24).getPreviousAccountBalance(), totalMap.get(27).getPreviousAccountBalance()));
+                        totalMap.put(23, record);
+                    } else if (record.getAccountNumber() == null && record.getLineNumber() != null && record.getLineNumber() == 30) {
+                        record.setCurrentAccountBalance(MathUtils.add(totalMap.get(31).getCurrentAccountBalance(), totalMap.get(32).getCurrentAccountBalance()));
+                        record.setTurnover(MathUtils.add(totalMap.get(31).getTurnover(), totalMap.get(32).getTurnover()));
+                        record.setPreviousAccountBalance(MathUtils.add(totalMap.get(31).getPreviousAccountBalance(), totalMap.get(32).getPreviousAccountBalance()));
+                        totalMap.put(30, record);
+                    } else if (record.getAccountNumber() == null && record.getLineNumber() != null && record.getLineNumber() == 43) {
+                        record.setCurrentAccountBalance(totalMap.get(44).getCurrentAccountBalance());
+                        record.setTurnover(totalMap.get(44).getTurnover());
+                        record.setPreviousAccountBalance(totalMap.get(44).getPreviousAccountBalance());
+                        totalMap.put(43, record);
+                    } else if (record.getAccountNumber() == null && record.getLineNumber() != null && record.getLineNumber() == 55) {
+                        //1, 8, 18, 23, 30, 33, 38, 43
+                        record.setCurrentAccountBalance(MathUtils.add(totalMap.get(1).getCurrentAccountBalance(), totalMap.get(8).getCurrentAccountBalance(),
+                                totalMap.get(18).getCurrentAccountBalance(),totalMap.get(23).getCurrentAccountBalance(), totalMap.get(30).getCurrentAccountBalance(),
+                                totalMap.get(33).getCurrentAccountBalance(), totalMap.get(38).getCurrentAccountBalance(), totalMap.get(43).getCurrentAccountBalance()));
+                        record.setTurnover(MathUtils.add(totalMap.get(1).getTurnover(), totalMap.get(8).getTurnover(),
+                                totalMap.get(18).getTurnover(),totalMap.get(23).getTurnover(), totalMap.get(30).getTurnover(),
+                                totalMap.get(33).getTurnover(), totalMap.get(38).getTurnover(), totalMap.get(43).getTurnover()));
+                        record.setPreviousAccountBalance(MathUtils.add(totalMap.get(1).getPreviousAccountBalance(), totalMap.get(8).getPreviousAccountBalance(),
+                                totalMap.get(18).getPreviousAccountBalance(),totalMap.get(23).getPreviousAccountBalance(), totalMap.get(30).getPreviousAccountBalance(),
+                                totalMap.get(33).getPreviousAccountBalance(), totalMap.get(38).getPreviousAccountBalance(), totalMap.get(43).getPreviousAccountBalance()));
+                        totalMap.put(55, record);
+                    }
+                }
             }
 
+            Collections.sort(currentRecords);
             responseDto.setRecords(currentRecords);
             return responseDto;
         }
@@ -5063,17 +5070,6 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
         Double record7313_010HF = 0.0;
         Double record7313_010PE = 0.0;
         Double record7313_010RE = 0.0;
-
-
-//        BigDecimal record6150_030HF = new BigDecimal("0");
-//        BigDecimal record6150_030PE = new BigDecimal("0");
-//        // TODO: doubles with MathUtils
-//        //Double record6150_030PE = 0.0;
-//        BigDecimal record6150_030RE = new BigDecimal("0");
-//        BigDecimal record7330_030HF = new BigDecimal("0");
-//        BigDecimal record7330_030PE = new BigDecimal("0");
-//        BigDecimal record7330_030RE = new BigDecimal("0");
-//        BigDecimal record7313_010 = new BigDecimal("0");
 
         List<ConsolidatedBalanceFormRecordDto> incomeExpenseUSDRecords = generateConsolidatedIncomeExpenseUSDForm(reportId);
         for(ConsolidatedBalanceFormRecordDto recordDto: incomeExpenseUSDRecords){
@@ -5312,14 +5308,6 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
             }
 
             if(previousRecords != null && !previousRecords.isEmpty()){
-
-//                // UPDATE FORM
-//                for(int i = previousRecords.size() -1; i >= 0; i--){
-//                    if(previousRecords.get(i).getAccountNumber() == null && previousRecords.get(i).getLineNumber() == 3){
-//                        previousRecords.get(i).setName("Всего (сумма строк 1, 2)");
-//                        break;
-//                    }
-//                }
                 int index = 0;
                 for(ConsolidatedKZTForm22RecordDto record: currentRecords){
                     boolean previousRecordFound = false;
@@ -5329,7 +5317,8 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                             if(!DateUtils.isJanuary(currentReport.getReportDate())) {
                                 record.setPreviousAccountBalance(previousRecords.get(i).getCurrentAccountBalance());
                             }
-                            if(record.getCurrentAccountBalance() != null || record.getPreviousAccountBalance() != null) {
+                            if((record.getCurrentAccountBalance() != null && record.getCurrentAccountBalance().doubleValue() != 0.0) ||
+                                    (record.getPreviousAccountBalance() != null && record.getPreviousAccountBalance().doubleValue() != 0.0)) {
                                 record.setTurnover(MathUtils.subtract(record.getCurrentAccountBalance(), record.getPreviousAccountBalance()));
                             }
                             previousRecordFound = true;
@@ -5351,7 +5340,8 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                             break;
                         }
                     }
-                    if(!found && previousRecord.getCurrentAccountBalance() != null && previousRecord.getCurrentAccountBalance().doubleValue() != 0.0){
+                    if(!found && previousRecord.getCurrentAccountBalance() != null && previousRecord.getCurrentAccountBalance().doubleValue() != 0.0 &&
+                            !DateUtils.isJanuary(currentReport.getReportDate())){
                         previousRecord.setPreviousAccountBalance(previousRecord.getCurrentAccountBalance());
                         previousRecord.setCurrentAccountBalance(null);
                         previousRecord.setTurnover(MathUtils.subtract(previousRecord.getCurrentAccountBalance(), previousRecord.getPreviousAccountBalance()));
