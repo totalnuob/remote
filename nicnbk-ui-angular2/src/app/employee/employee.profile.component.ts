@@ -208,8 +208,8 @@ export class EmployeeProfileComponent extends CommonFormViewComponent implements
         for (var i = 0; i < 32; i++) {
             this.secret += possible.charAt(Math.floor(Math.random() * possible.length));
         }
-        this.secretQR = 'otpauth://totp/' + localStorage.getItem("authenticatedUser") + '%3Fsecret%3D' + this.secret + '%26issuer%3DUNIC';
-        this.secretGoogleChart = 'https://chart.googleapis.com/chart?chs=300x300&cht=qr&chl=' + this.secretQR;
+        this.secretQR = 'otpauth://totp/' + localStorage.getItem("authenticatedUser") + '?secret=' + this.secret + '&issuer=UNIC';
+        this.secretGoogleChart = 'https://chart.googleapis.com/chart?chs=300x300&cht=qr&chl=' + encodeURIComponent(this.secretQR);
     }
 
     registerMfa() {
