@@ -30,6 +30,8 @@ import {TripMemoListComponent} from "./tripMemo/trip-memo-list.component";
 import {TripMemoEditComponent} from "./tripMemo/trip-memo-edit.component";
 import {MemoAttachmentDownloaderComponent} from "./m2s2/memo-attachment-downloader.component";
 
+
+import {MonitoringRiskHedgeFundComponent} from "./monitoring/monitoring-risk-hf.component";
 import {MonitoringPortfolioComponent} from "./monitoring/monitoring-portfolio.component";
 import {MonitoringHedgeFundsComponent} from "./monitoring/monitoring-hedge-funds.component";
 import {MonitoringLiquidPortfolioComponent} from "./monitoring/monitoring-liquid-portfolio.component";
@@ -157,7 +159,7 @@ import {MonitoringHedgeFundsEditComponent} from "./monitoring/monitoring-hedge-f
         MemoAttachmentDownloaderComponent, FileAttachmentDownloaderComponent,
         GeneralMemoEditComponent, PrivateEquityMemoEditComponent, HedgeFundsMemoEditComponent, RealEstateMemoEditComponent,InfrastructureMemoEditComponent,
         TripMemoListComponent, TripMemoEditComponent, RiskManagementAxiomaReportingComponent, MonitoringHedgeFundsComponent, MonitoringLiquidPortfolioComponent,
-        MonitoringMacroMonitorComponent, MonitoringPortfolioComponent, MonitoringPrivateEquityComponent, MonitoringPrivateEquityFundComponent,
+        MonitoringMacroMonitorComponent, MonitoringPortfolioComponent, MonitoringPrivateEquityComponent, MonitoringPrivateEquityFundComponent, MonitoringRiskHedgeFundComponent,
         MonitoringHedgeFunds2Component,MonitoringHedgeFundsEditComponent, MonitoringHedgeFunds2PrintComponent, MonitoringHFListComponent, MonitoringHFResearchComponent,
         MainNBReportingComponent, InputFileUploadNBReportingComponent,
 

@@ -16,6 +16,7 @@ import {GeneralMemoEditComponent} from "./m2s2/general-memo-edit.component";
 import {TripMemoListComponent} from "./tripMemo/trip-memo-list.component";
 import {TripMemoEditComponent} from "./tripMemo/trip-memo-edit.component";
 import {MonitoringPortfolioComponent} from "./monitoring/monitoring-portfolio.component";
+import {MonitoringRiskHedgeFundComponent} from "./monitoring/monitoring-risk-hf.component";
 import {MonitoringHedgeFundsComponent} from "./monitoring/monitoring-hedge-funds.component";
 import {MonitoringLiquidPortfolioComponent} from "./monitoring/monitoring-liquid-portfolio.component";
 import {MonitoringPrivateEquityComponent} from "./monitoring/monitoring-private-equity.component";
@@ -229,11 +230,11 @@ const routes: Routes  = [
         component: MonitoringPortfolioComponent,
         canActivate: [AuthGuard]
     },
-    //{
-    //    path: 'monitoring/hf',
-    //    component: MonitoringHedgeFundsComponent,
-    //    canActivate: [AuthGuard]
-    //},
+    {
+        path: 'monitoring/risk/hf',
+        component: MonitoringRiskHedgeFundComponent,
+        canActivate: [AuthGuard]
+    },
     {
         path: 'monitoring/liq',
         component: MonitoringLiquidPortfolioComponent,

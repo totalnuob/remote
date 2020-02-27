@@ -421,6 +421,11 @@
                                     <li><a [routerLink]="['/monitoring/hflist']" class="navigation__sublink"
                                            (click)="activeMenu = 'MONITORING'">HF Portfolio Updates</a>
                                     </li>
+                                    <li role="separator" class="divider"></li>
+                                    <li>
+                                        <a [routerLink]="['/monitoring/risk/hf']" class="navigation__sublink"
+                                           (click)="activeMenu = 'MONITORING'">Monthly Risk (HF)</a>
+                                    </li>
                                 </ul>
                             </li>
                             <li class="navigation__item dropdown" *ngIf="checkAvailable('MACROMONITOR')">

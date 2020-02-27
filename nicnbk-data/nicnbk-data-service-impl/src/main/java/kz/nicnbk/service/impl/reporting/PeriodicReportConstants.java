@@ -170,6 +170,7 @@ public final class PeriodicReportConstants {
     public static final String TERRA_AGREEMENT_DESC = "Limited Partnership Agreement Terra LP from 06.04.2018";
 
     public static final String INVESTMENT_IN_PORTFOLIO_FUNDS = "Investments in Portfolio Funds";
+    public static final String INVESTOR_SUBSCR_RECEIVED_IN_ADVANCE = "Investor Subscription Received in Advance";
     public static final String NET_CHANGE_UNREALIZED_GAINS_LOSSES = "Net Change in Unrealized Gains/Losses";
 
 

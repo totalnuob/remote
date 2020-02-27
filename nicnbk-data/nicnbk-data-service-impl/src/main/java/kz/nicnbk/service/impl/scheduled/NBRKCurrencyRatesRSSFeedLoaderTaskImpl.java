@@ -32,7 +32,7 @@ public class NBRKCurrencyRatesRSSFeedLoaderTaskImpl {
     @Autowired
     private CurrencyRatesService currencyRatesService;
 
-    @Scheduled(cron="0 57 9 * * *") // Every day at 7 am
+    @Scheduled(cron="0 0 7 * * *") // Every day at 7 am
     public void loadUSDCurrencyRates() {
         try {
             URL feedUrl = new URL("http://www.nationalbank.kz/rss/rates_all.xml");
@@ -47,6 +47,7 @@ public class NBRKCurrencyRatesRSSFeedLoaderTaskImpl {
                 if(entry.getTitle() != null && entry.getTitle().equalsIgnoreCase(CurrencyLookup.USD.getCode()) && entry.getDescription() != null &&
                         entry.getDescription().getValue() != null) {
                     CurrencyRatesDto currencyRatesDto = new CurrencyRatesDto();
+                    // TODO: change implementation, to get <pubDate></pubDate>
                     currencyRatesDto.setDate(new Date());
                     try{
                         Double value = Double.parseDouble(entry.getDescription().getValue());

@@ -27,13 +27,15 @@ export class FileDownloadService extends CommonService {
                 // If we get an HTTP status OK (200), save the file using fileSaver
                 if (xhr.readyState === 4) {
                     if (xhr.status === 200) {
-                        console.log("OK " + xhr.status);
                         resolve(JSON.parse("{\"message\" : \"OK\"}"));
                         var blob = new Blob([this.response], {type: this.response.type});
+                        var file_name = xhr.getResponseHeader("Content-Disposition").match(/filename=(.*?)$/)[1];
+                        if(fileName == null || fileName === ''){
+                            fileName = file_name;
+                        }
                         fileSaver.saveAs(blob, fileName);
                     }else {
                         console.log("Error - " + xhr.status);
-                        console.log(xhr);
                         reject(xhr.response);
                     }
                 }

@@ -13,6 +13,8 @@ import org.apache.commons.math3.util.MedianOf3PivotingStrategy;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -153,6 +155,13 @@ public class MathUtils {
         Double returnValue = subtract(scale,Math.pow(product.doubleValue(), divide(scale, 12.0, returns.length + 0.0)), 1.0);
         return (new BigDecimal(returnValue).setScale(scale, RoundingMode.HALF_UP)).doubleValue();
 
+    }
+
+    public static Double getSharpeRatio(int scale, double[] returns, double[] tbills){
+        Double annReturns = getAnnualizedReturn(returns, scale);
+        Double annTbills = getAnnualizedReturn(returns, scale);
+        Double std = getStandardDeviation(returns);
+        return MathUtils.divide(scale, MathUtils.subtract(scale, annReturns, annTbills), std);
     }
 
     public static Double getSortinoRatio(Double fundAnnualizedReturn, Double benchmarkAnnualizedReturn, double[] returns, int scale){
@@ -318,6 +327,24 @@ public class MathUtils {
         return standardDeviation.evaluate(values);
     }
 
+    public static Double getDownsideDeviation(double[] values){
+        if(values == null || values.length == 0){
+            return null;
+        }
+        List<Double> negatives = new ArrayList<>();
+        for(int i = 0; i < values.length; i++){
+            if(values[i] < 0){
+                negatives.add(values[i]);
+            }
+        }
+        double[] returns = new double[negatives.size()];
+        for(int i = 0; i < returns.length; i++){
+            returns[i] = negatives.get(i).doubleValue();
+        }
+        return getStandardDeviation(returns);
+
+    }
+
     public static Double getMean(double[] values){
         Mean mean = new Mean();
         return mean.evaluate(values);
@@ -387,6 +414,22 @@ public class MathUtils {
         double value = MathUtils.add(scale, previousCumulative, 1.0);
         value = MathUtils.multiply(scale, MathUtils.add(scale, currentValue, 1.0), value);
         return MathUtils.subtract(scale, value, 1.0);
+    }
+
+    public static Double getCumulativeReturn(int scale, Double[] returns){
+        if(returns == null || returns.length == 0){
+            return null;
+        }
+        Double cumulative = 1.0;
+        for(Double r: returns){
+            cumulative = MathUtils.multiply(scale, cumulative, MathUtils.add(scale, 1.0, r));
+        }
+        return MathUtils.subtract(scale, cumulative, 1.0);
+
+    }
+
+    public static Double getCumulativeReturn(Double[] returns){
+        return getCumulativeReturn(2, returns);
     }
 
     public static Double getCumulativeReturn(Double previousCumulative, Double currentValue){

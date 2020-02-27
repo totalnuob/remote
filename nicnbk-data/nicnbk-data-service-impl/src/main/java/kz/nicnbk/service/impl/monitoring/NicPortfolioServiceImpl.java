@@ -302,7 +302,7 @@ public class NicPortfolioServiceImpl implements NicPortfolioService {
                         InputStream inputStream = new FileInputStream(path+name);
                         excelFile.setInputStream(inputStream);
 
-                        setExportZipContent("file_" + String.valueOf(i) + ".xlsx", out, excelFile);
+                        setExportZipContent(excelFile.getOutputFileName(), out, excelFile);
                     }
 
                     out.close();

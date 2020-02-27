@@ -4037,7 +4037,7 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
         List<CurrencyRatesDto> currencyRates = this.currencyRatesService.getRatesEndOfMonthForDateRangeAndCurrencies(dateFrom, dateTo, currencies);
 
         // Benchmarks
-        String[] benchmarks = {BenchmarkLookup.T_BILLS.getCode(), BenchmarkLookup.S_AND_P.getCode()};
+        String[] benchmarks = {BenchmarkLookup.T_BILLS.getCode(), BenchmarkLookup.SNP_500_SPTR.getCode()};
         List<BenchmarkValueDto> benchmarkValues = this.benchmarkService.getBenchmarkValuesEndOfMonthForDateRangeAndTypes(dateFrom, dateTo, 10, benchmarks);
 
         // Save results
