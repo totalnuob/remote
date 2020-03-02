@@ -16,6 +16,7 @@ import {ROLE_LOOKUPS_EDIT} from "./roles.constants";
 import {ROLE_M2S2_EDIT} from "./roles.constants";
 import {ROLE_HR_DOCS_EDIT} from "./roles.constants";
 import {ROLE_HR_EDIT} from "./roles.constants";
+import {ROLE_LEGAL_EDIT} from "./roles.constants";
 import {ROLE_STRATEGY_EDIT} from "./roles.constants";
 import {ROLE_RISKS_EDIT} from "./roles.constants";
 
@@ -39,6 +40,10 @@ export class ModuleAccessCheckerService extends CommonService{
 
     public checkAccessHREditor(){
         return this.checkAccess(ROLE_HR_EDIT);
+    }
+
+    public checkAccessLegalEditor(){
+        return this.checkAccess(ROLE_LEGAL_EDIT);
     }
 
     public checkAccessEmployeeProfileEditor(){
@@ -162,7 +167,6 @@ export class ModuleAccessCheckerService extends CommonService{
      * Checks if current user roles (from localStorage) contain specified role or admin role.
      */
     private checkAccess(role){
-        //
         //TODO: this func gets called multiple times !!! try console.log("checkAccessPrivateEquity");
         if(this.roles != null && this.roles.length > 0){
             for(var i = 0; i < this.roles.length; i++){

@@ -7,7 +7,6 @@ import {NewsService} from "./news.service";
 import {NEWS_PAGE_SIZE} from "./news.constants";
 import {AuthenticationService} from "../authentication/authentication.service";
 
-//import '../../../public/js/star-rating/star-rating.min.js';
 import {Subscription} from 'rxjs';
 import {ModuleAccessCheckerService} from "../authentication/module.access.checker.service";
 import {ErrorResponse} from "../common/error-response";
@@ -20,10 +19,6 @@ declare var $: any
     selector: 'news-list',
     templateUrl: 'view/news-list.component.html',
     styleUrls: [
-        //'../../../public/css/star-rating/star-rating.min.css',
-        //'../../../public/css/star-rating/theme-krajee-fa.min.css',
-        //'../../../public/css/star-rating/theme-krajee-svg.min.css',
-        //'../../../public/css/star-rating/theme-krajee-uni.min.css',
     ],
     providers: [AuthenticationService],
     changeDetection: ChangeDetectionStrategy.Default // TODO: change to OnPush ??
@@ -59,9 +54,6 @@ export class NewsListComponent extends CommonFormViewComponent implements OnInit
     }
 
     ngOnInit(){
-        //TODO: exclude jQuery
-        //$('.rating').rating({min:1, max:10, step:1, size:'xs', showClear: false, showCaption: false}); }, 3000);
-
         // load news
         this.loadNews();
 
@@ -174,13 +166,7 @@ export class NewsListComponent extends CommonFormViewComponent implements OnInit
     getNewsById(id){
 
         this.selectedNews = null;
-        //let params = JSON.stringify(id);
         this.location.go('/news;params=' + id);
-        //console.log(this.router.url);
-
-        //this.router.navigate(['/news/',{ params }]);
-
-        //alert(id);
 
         this.newsService.getNewsById(id)
             .subscribe(

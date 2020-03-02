@@ -212,18 +212,23 @@ INSERT INTO public.employee_roles(employee_id, role_id)VALUES (30, 56); -- IC Me
 INSERT INTO public.employee_roles(employee_id, role_id)VALUES (30, 305); -- Lookupp view
 INSERT INTO public.employee_roles(employee_id, role_id)VALUES (30, 801); -- M2S2 Editor
 INSERT INTO public.employee_roles(employee_id, role_id)VALUES (30, 802); -- M2S2 Viewer
+INSERT INTO public.employee_roles(employee_id, role_id)VALUES (30, 901); -- Legal Editor
 
 -- Zhadyra
 INSERT INTO public.employee_roles(employee_id, role_id)VALUES (31, 56); -- IC Member
 INSERT INTO public.employee_roles(employee_id, role_id)VALUES (31, 305); -- Lookupp view
 INSERT INTO public.employee_roles(employee_id, role_id)VALUES (31, 801); -- M2S2 Editor
 INSERT INTO public.employee_roles(employee_id, role_id)VALUES (31, 802); -- M2S2 Viewer
+INSERT INTO public.employee_roles(employee_id, role_id)VALUES (31, 901); -- Legal Editor
+
 
 -- Aigerim
 --INSERT INTO public.employee_roles(employee_id, role_id)VALUES (73, 56); -- IC Member
 INSERT INTO public.employee_roles(employee_id, role_id)VALUES (73, 305); -- Lookupp view
 INSERT INTO public.employee_roles(employee_id, role_id)VALUES (73, 801); -- M2S2 Editor
 INSERT INTO public.employee_roles(employee_id, role_id)VALUES (73, 802); -- M2S2 Viewer
+INSERT INTO public.employee_roles(employee_id, role_id)VALUES (73, 901); -- Legal Editor
+
 
 -- TREASURY
 -- Yernar

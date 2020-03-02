@@ -113,6 +113,7 @@ import {HRDocsListComponent} from "./hr/hr-docs-list.component";
 import {EmployeeProfileEditComponent} from "./employee/employee.profile.edit.component";
 import {EmployeeProfileAdminComponent} from "./employee/employee.profile.admin.component";
 import {HRNewsEditComponent} from "./hr/hr-news-edit.component";
+import {LegalUpdateEditComponent} from "./legal/legal-update-edit.component";
 import {AdminMainComponent} from "./admin/admin.main.component";
 import {AdminUserManagementComponent} from "./admin/admin.user-management.component";
 import {MonitoringHedgeFundsEditComponent} from "./monitoring/monitoring-hedge-funds-edit.component";
@@ -699,6 +700,11 @@ const routes: Routes  = [
     {
         path: 'hr/docs',
         component: HRDocsListComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'legal/updates/edit/:id',
+        component: LegalUpdateEditComponent,
         canActivate: [AuthGuard]
     },
 
