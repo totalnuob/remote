@@ -21,7 +21,7 @@ export class LoginComponent implements OnInit{
         }
     }
 
-    public user = new User('','');
+    public user = new User('','', '');
     public errorMsg = '';
 
     //busy: Subscription;
@@ -58,7 +58,7 @@ export class LoginComponent implements OnInit{
                     location.reload();
                 },
                 error =>  {
-                    this.errorMsg = 'Failed to login';
+                    this.errorMsg = 'Failed to login! (Account will be blocked after three unsuccessful attempts)';
                 }
             );
     }

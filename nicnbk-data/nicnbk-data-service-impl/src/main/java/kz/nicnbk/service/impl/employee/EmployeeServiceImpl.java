@@ -16,11 +16,13 @@ import kz.nicnbk.service.api.authentication.TokenService;
 import kz.nicnbk.service.api.employee.EmployeeService;
 import kz.nicnbk.service.converter.employee.DepartmentEntityConverter;
 import kz.nicnbk.service.converter.employee.EmployeeEntityConverter;
+import kz.nicnbk.service.converter.employee.EmployeeFullEntityConverter;
 import kz.nicnbk.service.converter.employee.RoleEntityConverter;
 import kz.nicnbk.service.dto.authentication.UserRoles;
 import kz.nicnbk.service.dto.common.EntitySaveResponseDto;
 import kz.nicnbk.service.dto.common.ResponseStatusType;
 import kz.nicnbk.service.dto.employee.*;
+import kz.nicnbk.service.impl.authentication.TotpServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +50,9 @@ public class EmployeeServiceImpl implements EmployeeService{
 
     @Autowired
     private EmployeeEntityConverter employeeEntityConverter;
+
+    @Autowired
+    private EmployeeFullEntityConverter employeeFullEntityConverter;
 
     @Autowired
     private PositionRepository positionRepository;
@@ -108,6 +113,17 @@ public class EmployeeServiceImpl implements EmployeeService{
     }
 
     @Override
+    public EmployeeFullDto getFullEmployeeByUsername(String username) {
+        if(username != null) {
+            Employee employee = this.employeeRepository.findByUsername(username);
+            if (employee != null) {
+                return this.employeeFullEntityConverter.disassemble(employee);
+            }
+        }
+        return null;
+    }
+
+    @Override
     public EmployeePagedSearchResult search(EmployeeSearchParamsDto searchParams) {
         try {
             Page<Employee> entityPage = null;
@@ -147,65 +163,66 @@ public class EmployeeServiceImpl implements EmployeeService{
     }
 
     @Override
-    public EntitySaveResponseDto save(EmployeeDto employeeDto, String updater) {
-        EntitySaveResponseDto saveResponseDto = checkEmployeeProfile(employeeDto);
+    public EntitySaveResponseDto save(EmployeeFullDto employeeFullDto, String updater, Boolean isAdmin) {
+        EntitySaveResponseDto saveResponseDto = checkEmployeeProfile(employeeFullDto);
         if(saveResponseDto.getStatus() == null || saveResponseDto.getStatus().getCode().equalsIgnoreCase(ResponseStatusType.FAIL.getCode())){
             logger.error("Failed to save employee profile." + saveResponseDto.getMessage().getMessageText() + " [updater=" + updater + "]");
             return saveResponseDto;
-        }
-        boolean isAdmin = false;
-        EmployeeDto updaterEmployee = getEmployeeByUsername(updater);
-        if(updaterEmployee.getRoles() != null && !updaterEmployee.getRoles().isEmpty()){
-            for(BaseDictionaryDto role: updaterEmployee.getRoles()){
-                if(role.getCode().equalsIgnoreCase(UserRoles.ADMIN.getCode())){
-                    isAdmin = true;
-                    break;
-                }
-            }
         }
 
         try {
             Employee entity = null;
 
-            if(employeeDto.getId() == null){
-                entity = this.employeeEntityConverter.assemble(employeeDto);
-            }else{
-                entity = this.employeeRepository.findOne(employeeDto.getId());
+            if (employeeFullDto.getId() == null) {
+                if (isAdmin) {
+                    entity = this.employeeEntityConverter.assemble(employeeFullDto);
+                    entity.setLocked(employeeFullDto.getLocked());
+                    entity.setFailedLoginAttempts(employeeFullDto.getFailedLoginAttempts());
+                } else {
+                    logger.error("Failed to save employee profile");
+                    saveResponseDto.setErrorMessageEn("Failed to save employee profile");
+                    return saveResponseDto;
+                }
+            } else {
+                entity = this.employeeRepository.findOne(employeeFullDto.getId());
 
                 if(isAdmin){
-                    if(entity.getActive() != employeeDto.getActive()) {
+                    if(entity.getActive() != employeeFullDto.getActive()) {
                         this.tokenService.revokeUsername(entity.getUsername());
                     }
-                    entity.setActive(employeeDto.getActive());
+                    entity.setActive(employeeFullDto.getActive());
+                    entity.setLocked(employeeFullDto.getLocked());
+                    entity.setFailedLoginAttempts(employeeFullDto.getFailedLoginAttempts());
+                    entity.setMfaEnabled(employeeFullDto.getMfaEnabled());
                 }
 
-                entity.setFirstName(employeeDto.getFirstName());
-                entity.setLastName(employeeDto.getLastName());
-                entity.setBirthDate(employeeDto.getBirthDate());
-                entity.setPatronymic(employeeDto.getPatronymic());
+                entity.setFirstName(employeeFullDto.getFirstName());
+                entity.setLastName(employeeFullDto.getLastName());
+                entity.setBirthDate(employeeFullDto.getBirthDate());
+                entity.setPatronymic(employeeFullDto.getPatronymic());
 
             }
             Position position = null;
-            if(employeeDto.getPosition() != null && StringUtils.isNotEmpty(employeeDto.getPosition().getCode())){
-                position = this.positionRepository.findByCode(employeeDto.getPosition().getCode());
+            if(employeeFullDto.getPosition() != null && StringUtils.isNotEmpty(employeeFullDto.getPosition().getCode())){
+                position = this.positionRepository.findByCode(employeeFullDto.getPosition().getCode());
             }
             entity.setPosition(position);
 
-            if(isAdmin){
+            if (isAdmin) {
                 Set<Role> roles = new HashSet<>();
-                if(employeeDto.getRoles() != null) {
-                    for (BaseDictionaryDto dto: employeeDto.getRoles()) {
+                if(employeeFullDto.getRoles() != null) {
+                    for (BaseDictionaryDto dto: employeeFullDto.getRoles()) {
                         roles.add(this.roleRepository.findOne(dto.getId()));
                     }
                 }
-                if(!entity.getRoles().equals(roles)) {
+                if(entity.getRoles() == null || !entity.getRoles().equals(roles)) {
                     this.tokenService.revokeUsername(entity.getUsername());
                 }
                 entity.setRoles(roles);
             }
 
             Long id = this.employeeRepository.save(entity).getId();
-            logger.info("Successfully saved employee profile: id= " + entity.getId().longValue() + ", username=" + employeeDto.getUsername() + " [updater=" + updater + "]");
+            logger.info("Successfully saved employee profile: id= " + entity.getId().longValue() + ", username=" + employeeFullDto.getUsername() + " [updater=" + updater + "]");
             saveResponseDto.setSuccessMessageEn("Successfully saved employee profile");
             saveResponseDto.setEntityId(id);
             return saveResponseDto;
@@ -217,12 +234,12 @@ public class EmployeeServiceImpl implements EmployeeService{
     }
 
     @Override
-    public EntitySaveResponseDto saveAndChangePassword(EmployeeDto employeeDto, String password, String updater) {
-        EntitySaveResponseDto saveResponseDto = this.save(employeeDto, updater);
+    public EntitySaveResponseDto saveAndChangePassword(EmployeeFullDto employeeFullDto, String password, String updater) {
+        EntitySaveResponseDto saveResponseDto = this.save(employeeFullDto, updater, true);
         if(saveResponseDto.getStatus() == null || saveResponseDto.getStatus().getCode().equalsIgnoreCase(ResponseStatusType.FAIL.getCode())) {
             return saveResponseDto;
         }
-        if(employeeDto == null || !this.setPassword(employeeDto.getUsername(), password, updater)) {
+        if(employeeFullDto == null || !this.setPassword(employeeFullDto.getUsername(), password, updater)) {
             saveResponseDto.setErrorMessageEn("Employee profile was saved without the new password");
         }
         return saveResponseDto;
@@ -231,6 +248,11 @@ public class EmployeeServiceImpl implements EmployeeService{
     private EntitySaveResponseDto checkEmployeeProfile(EmployeeDto employeeDto){
         EntitySaveResponseDto saveResponseDto = new EntitySaveResponseDto();
         saveResponseDto.setStatus(ResponseStatusType.SUCCESS);
+
+        if (employeeDto == null) {
+            saveResponseDto.setErrorMessageEn("Error saving profile");
+            return saveResponseDto;
+        }
 
         if(StringUtils.isEmpty(employeeDto.getLastName())){
             saveResponseDto.setErrorMessageEn("Last name cannot be empty");
@@ -280,14 +302,20 @@ public class EmployeeServiceImpl implements EmployeeService{
                 if (employee.getActive() != null && !employee.getActive()) {
                     return null;
                 }
+                if (employee.getLocked() != null && employee.getLocked()) {
+                    this.failedLoginAttempt(employee);
+                    return null;
+                }
                 String salt = employee.getSalt();
                 String generatedPassword = generatePassword(password, salt);
                 if (employee.getPassword().equals(generatedPassword)) {
                     // authentication OK, return employee info
+                    this.successfulLoginAttempt(employee);
                     EmployeeDto employeeDto = this.employeeEntityConverter.disassemble(employee);
                     return employeeDto;
                 } else {
                     // authentication failed
+                    this.failedLoginAttempt(employee);
                     return null;
                 }
             }
@@ -295,6 +323,78 @@ public class EmployeeServiceImpl implements EmployeeService{
             logger.error("Employee search by username-password failed with error: username=" + username, ex);
         }
         return null;
+    }
+
+    @Override
+    public EmployeeDto findActiveByUsernamePasswordCode(String username, String password, String otp) {
+
+        if(StringUtils.isEmpty(username) || StringUtils.isEmpty(password)){
+            return null;
+        }
+
+        try {
+            Employee employee = this.employeeRepository.findByUsername(username);
+            if (employee != null) {
+                if (employee.getActive() != null && !employee.getActive()) {
+                    return null;
+                }
+                if (employee.getLocked() != null && employee.getLocked()) {
+                    this.failedLoginAttempt(employee);
+                    return null;
+                }
+                String salt = employee.getSalt();
+                String generatedPassword = generatePassword(password, salt);
+                if (employee.getPassword().equals(generatedPassword)) {
+                    if (employee.getMfaEnabled() == null || !employee.getMfaEnabled()) {
+                        this.successfulLoginAttempt(employee);
+                        return this.employeeEntityConverter.disassemble(employee);
+                    }
+
+                    if (!StringUtils.isEmpty(otp) && !StringUtils.isEmpty(employee.getSecret())) {
+                        TotpServiceImpl generator = new TotpServiceImpl(employee.getSecret());
+                        if (generator.verify(otp)) {
+                            this.successfulLoginAttempt(employee);
+                            return this.employeeEntityConverter.disassemble(employee);
+                        }
+                    }
+
+                    this.failedLoginAttempt(employee);
+                    return null;
+                } else {
+                    this.failedLoginAttempt(employee);
+                    return null;
+                }
+            }
+        }catch (Exception ex){
+            logger.error("Employee search by username-password-code failed with error: username=" + username, ex);
+        }
+        return null;
+    }
+
+    private Boolean successfulLoginAttempt(Employee employee) {
+        if (employee == null) {
+            return false;
+        }
+        employee.setFailedLoginAttempts(0);
+        employee.setLocked(false);
+        this.employeeRepository.save(employee);
+        return true;
+    }
+
+    private Boolean failedLoginAttempt(Employee employee) {
+        if (employee == null) {
+            return false;
+        }
+        if (employee.getFailedLoginAttempts() == null) {
+            employee.setFailedLoginAttempts(1);
+        } else {
+            employee.setFailedLoginAttempts(employee.getFailedLoginAttempts() + 1);
+        }
+        if (employee.getFailedLoginAttempts() >= 3) {
+            employee.setLocked(true);
+        }
+        this.employeeRepository.save(employee);
+        return true;
     }
 
     @Override
@@ -398,6 +498,35 @@ public class EmployeeServiceImpl implements EmployeeService{
             return null;
         }
         return this.departmentEntityConverter.disassembleList(departments);
+    }
+
+    @Override
+    public boolean registerMfa(String username, String secret, String otp) {
+
+        if (StringUtils.isEmpty(username) || StringUtils.isEmpty(secret) || StringUtils.isEmpty(otp)) {
+            return false;
+        }
+
+        try {
+            Employee employee = this.employeeRepository.findByUsername(username);
+
+            if (employee == null) {
+                return false;
+            }
+
+            TotpServiceImpl generator = new TotpServiceImpl(secret);
+            if (generator.verify(otp)) {
+                employee.setMfaEnabled(true);
+                employee.setSecret(secret);
+                this.employeeRepository.save(employee);
+                logger.info("Successfully registered MFA: id= " + employee.getId().longValue() + ", username=" + employee.getUsername());
+                return true;
+            }
+        } catch (Exception ex) {
+            logger.error("Failed to register MFA.", ex);
+        }
+
+        return false;
     }
 
     private String generateSalt(){

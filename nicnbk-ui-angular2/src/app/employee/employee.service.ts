@@ -16,12 +16,15 @@ export class EmployeeService extends CommonService{
     private EMPLOYEE_SEARCH_URL = this.EMPLOYEE_BASE_URL + "search/";
     private EMPLOYEE_GET_URL = this.EMPLOYEE_BASE_URL + "get/";
     private EMPLOYEE_SAVE_URL = this.EMPLOYEE_BASE_URL + "save/";
+    private EMPLOYEE_SAVE_ADMIN_URL = this.EMPLOYEE_BASE_URL + "saveAdmin/";
     private EMPLOYEE_SAVE_AND_CHANGE_PASSWORD_URL = this.EMPLOYEE_BASE_URL + "saveAndChangePassword/";
     private EMPLOYEE_GET_BY_USERNAME_URL = this.EMPLOYEE_BASE_URL + "getByUsername/";
+    private EMPLOYEE_GET_FULL_BY_USERNAME_URL = this.EMPLOYEE_BASE_URL + "getFullByUsername/";
     private EMPLOYEE_CHANGE_PASSWORD_URL = this.EMPLOYEE_BASE_URL + "changeSelfPassword/";
     private EMPLOYEE_POSITIONS_ALL_URL = this.EMPLOYEE_BASE_URL + "getAllPositions/";
     private EMPLOYEE_ROLES_ALL_URL = this.EMPLOYEE_BASE_URL + "getAllRoles/";
     private EMPLOYEE_DEPARTMENTS_ALL_URL = this.EMPLOYEE_BASE_URL + "getAllDepartments/";
+    private EMPLOYEE_REGISTER_MFA_URL = this.EMPLOYEE_BASE_URL + "registerMfa/";
 
 
     findAll(): Observable<any[]> {
@@ -49,6 +52,12 @@ export class EmployeeService extends CommonService{
     getEmployeeByUsername(username){
         //console.log(body);
         return this.http.get(this.EMPLOYEE_GET_BY_USERNAME_URL + username, this.getOptionsWithCredentials())
+            .map(this.extractDataList)
+            .catch(this.handleErrorResponse);
+    }
+
+    getFullEmployeeByUsername(username){
+        return this.http.get(this.EMPLOYEE_GET_FULL_BY_USERNAME_URL + username, this.getOptionsWithCredentials())
             .map(this.extractDataList)
             .catch(this.handleErrorResponse);
     }
@@ -85,10 +94,24 @@ export class EmployeeService extends CommonService{
             .catch(this.handleErrorResponse);
     }
 
+    saveAdmin(profile): Observable<any> {
+        var body = JSON.stringify(profile);
+        return this.http.post(this.EMPLOYEE_SAVE_ADMIN_URL, body, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
     saveAndChangePassword(profile, password): Observable<any> {
-        var body = JSON.stringify({employeeDto: profile, password: password});
+        var body = JSON.stringify({"employeeFullDto": profile, "password": password});
         // console.log(body);
         return this.http.post(this.EMPLOYEE_SAVE_AND_CHANGE_PASSWORD_URL, body, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+    registerMfa(secret, otp): Observable<any> {
+        var body = JSON.stringify({secret: secret, otp: otp});
+        return this.http.post(this.EMPLOYEE_REGISTER_MFA_URL, body, this.getOptionsWithCredentials())
             .map(this.extractData)
             .catch(this.handleErrorResponse);
     }

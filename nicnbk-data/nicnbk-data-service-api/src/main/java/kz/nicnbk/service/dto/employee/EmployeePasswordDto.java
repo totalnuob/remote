@@ -5,23 +5,23 @@ package kz.nicnbk.service.dto.employee;
  */
 public class EmployeePasswordDto {
 
-    private EmployeeDto employeeDto;
+    private EmployeeFullDto employeeFullDto;
     private String password;
 
     public EmployeePasswordDto() {
     }
 
-    public EmployeePasswordDto(EmployeeDto employeeDto, String password) {
-        this.employeeDto = employeeDto;
+    public EmployeePasswordDto(EmployeeFullDto employeeFullDto, String password) {
+        this.employeeFullDto = employeeFullDto;
         this.password = password;
     }
 
-    public EmployeeDto getEmployeeDto() {
-        return employeeDto;
+    public EmployeeFullDto getEmployeeFullDto() {
+        return employeeFullDto;
     }
 
-    public void setEmployeeDto(EmployeeDto employeeDto) {
-        this.employeeDto = employeeDto;
+    public void setEmployeeFullDto(EmployeeFullDto employeeFullDto) {
+        this.employeeFullDto = employeeFullDto;
     }
 
     public String getPassword() {
