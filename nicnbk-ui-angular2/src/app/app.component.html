@@ -367,7 +367,7 @@
                                 </li>
                                 <li class="navigation__item">
                                     <a [routerLink]="[getHomePageURLByType('admin')]" class="navigation__link" style="height: 25px; line-height: 25px"
-                                       [style.background-color]="activeBlock === 'admin' ? '#D9A158' : 'white'" (click)="activeBlock = 'admin'; activeMenu = 'ADMIN'">ADMIN</a>
+                                       [style.background-color]="activeBlock === 'admin' ? '#D9A158' : 'white'" (click)="activeBlock = 'admin'; activeMenu = 'ADMIN'" *ngIf="showAdmin()">ADMIN</a>
                                 </li>
                                 <a [routerLink]="['/profile/'  + getCurrentEmployeeId()]">
                                     <span class="glyphicon glyphicon-user" style="color: grey"></span>

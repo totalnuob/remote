@@ -8,6 +8,7 @@ import {Employee} from "./model/employee";
 import {cursorTo} from "readline";
 import {ModuleAccessCheckerService} from "../authentication/module.access.checker.service";
 import {EmployeesSearchParams} from "./model/employees-search-params";
+import {Subscription} from "../../../node_modules/rxjs";
 
 
 export class ChangePasswordCredentials {
@@ -26,6 +27,8 @@ declare var $:any
 })
 export class EmployeeProfileComponent extends CommonFormViewComponent implements OnInit{
 
+    busy: Subscription;
+
     activeTab = "PROFILE";
     public errorMessage;
     public successMessage;
@@ -33,6 +36,11 @@ export class EmployeeProfileComponent extends CommonFormViewComponent implements
     currentPassword: string;
     newPassword: string;
     newPasswordConfirm: string;
+
+    secret = "";
+    secretQR = "";
+    secretGoogleChart = "";
+    otp = "";
 
     private sub: any;
     //private employeeId: number;
@@ -192,5 +200,41 @@ export class EmployeeProfileComponent extends CommonFormViewComponent implements
                 " of " + this.employee.position.department.nameEn : "");
 
         }
+    }
+
+    getSecret() {
+        this.secret = '';
+        var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
+        for (var i = 0; i < 32; i++) {
+            this.secret += possible.charAt(Math.floor(Math.random() * possible.length));
+        }
+        this.secretQR = 'otpauth://totp/' + localStorage.getItem("authenticatedUser") + '?secret=' + this.secret + '&issuer=UNIC';
+        this.secretGoogleChart = 'https://chart.googleapis.com/chart?chs=300x300&cht=qr&chl=' + encodeURIComponent(this.secretQR);
+    }
+
+    registerMfa() {
+        this.busy = this.employeeService.registerMfa(this.secret, this.otp)
+            .subscribe(
+                response => {
+                    this.postAction("Successfully registered MFA", null);
+                    this.resetMfaFields();
+                    this.employee.mfaEnabled = true;
+                },
+                (error:ErrorResponse) => {
+                    this.postAction(null, "Error registering MFA");
+                }
+            );
+    }
+
+    resetMfaFields() {
+        this.secret = "";
+        this.secretQR = "";
+        this.secretGoogleChart = "";
+        this.otp = "";
+    }
+
+    resetMessages() {
+        this.errorMessage = null;
+        this.successMessage = null;
     }
 }

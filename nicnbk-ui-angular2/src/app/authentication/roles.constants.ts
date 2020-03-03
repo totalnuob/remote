@@ -41,3 +41,5 @@ export const ROLE_M2S2_EDIT = "ROLE_M2S2_EDITOR";
 
 
 export const ROLE_HR_DOCS_EDIT = "ROLE_HR_DOCS_EDITOR";
+
+export const ROLE_LEGAL_EDIT = "ROLE_LEGAL_EDITOR";

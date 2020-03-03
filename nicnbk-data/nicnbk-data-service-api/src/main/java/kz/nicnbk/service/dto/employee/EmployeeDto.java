@@ -22,6 +22,8 @@ public class EmployeeDto extends BaseEntityDto<Employee> {
     private String username;
     private Set<BaseDictionaryDto> roles;
 
+    private Boolean mfaEnabled;
+
     public String getLastName() {
         return lastName;
     }
@@ -85,5 +87,13 @@ public class EmployeeDto extends BaseEntityDto<Employee> {
 
     public void setPosition(PositionDto position) {
         this.position = position;
+    }
+
+    public Boolean getMfaEnabled() {
+        return mfaEnabled;
+    }
+
+    public void setMfaEnabled(Boolean mfaEnabled) {
+        this.mfaEnabled = mfaEnabled;
     }
 }

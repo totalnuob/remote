@@ -25,7 +25,7 @@
             <label class="control-label col-sm-2">Username*:</label>
             <div class="col-sm-10">
                 <input type="text" class="form-control" [(ngModel)]="employee.username" required #userName="ngModel" [disabled]="this.employee.id != null"/>
-                <div [hidden]="userName.valid || userName.pristine" class="alert alert-danger col-md-3">Enter username</div>
+                <div [hidden]="userName.valid || userName.pristine || this.employee.id != null" class="alert alert-danger col-md-3">Enter username</div>
             </div>
         </div>
         <div class="row form-group">
@@ -49,7 +49,7 @@
             </div>
         </div>
         <div class="row form-group">
-            <label class="control-label col-sm-2">Date of birth*:</label>
+            <label class="control-label col-sm-2">Date of birth:</label>
             <div class="col-sm-3">
                 <div class='input-group date col-md-2' id='birthDatePicker' style="width: 100%">
                     <input type="text" class="form-control" id="birthDate" name="birthDate" style="font-size: small" [(ngModel)]="employee.birthDate" #birthDate="ngModel"/>
@@ -96,6 +96,24 @@
             <label class="control-label col-sm-2"></label>
             <div class="col-sm-4">
                 <button class="btn btn-xs btn-default" (click)="newPassword = 'Qwerty123'; newPasswordConfirm = 'Qwerty123'">Use 'Qwerty123'</button>
+            </div>
+        </div>
+        <div class="row form-group">
+            <label class="control-label col-sm-2">Status:</label>
+            <div class="col-sm-2">
+                <button *ngIf="employee.locked == null || !employee.locked" class="btn btn-xs btn-success" (click)="employee.locked = true">UNLOCKED</button>
+                <button *ngIf="employee.locked != null && employee.locked" class="btn btn-xs btn-danger" (click)="employee.locked = false; employee.failedLoginAttempts = 0">LOCKED</button>
+            </div>
+            <label class="control-label col-sm-3"># failed login attempts: {{employee.failedLoginAttempts == null ? 0 : employee.failedLoginAttempts}}</label>
+            <!--<div class="col-sm-5">-->
+                <!--<button class="btn btn-xs btn-default" (click)="employee.failedLoginAttempts = 0">Reset counter</button>-->
+            <!--</div>-->
+        </div>
+        <div class="row form-group">
+            <label class="control-label col-sm-2">MFA:</label>
+            <div class="col-sm-10">
+                <button *ngIf="employee.mfaEnabled == null || !employee.mfaEnabled" class="btn btn-xs btn-danger" (click)="employee.mfaEnabled = true">DISABLED</button>
+                <button *ngIf="employee.mfaEnabled != null && employee.mfaEnabled" class="btn btn-xs btn-success" (click)="employee.mfaEnabled = false">ENABLED</button>
             </div>
         </div>
         <hr style="border-top: 1px solid #B5AEAE"/>

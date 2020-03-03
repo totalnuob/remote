@@ -122,6 +122,7 @@ import {HFResearchPageComponent} from "./hf/hf.research-page.component";
 import {MonitoringHFListComponent} from "./monitoring/monitoring-hedge-funds-list.component";
 import {MonitoringHFResearchComponent} from "./monitoring/monitoring-hedge-funds-research.component";
 import {HRNewsListComponent} from "./hr/hr-news-list.component";
+import {LegalUpdateEditComponent} from "./legal/legal-update-edit.component";
 import {HREmployeesListComponent} from "./hr/hr-employees-list.component";
 import {HRDocsListComponent} from "./hr/hr-docs-list.component";
 import {EmployeeProfileEditComponent} from "./employee/employee.profile.edit.component";
@@ -181,6 +182,7 @@ import {MonitoringHedgeFundsEditComponent} from "./monitoring/monitoring-hedge-f
         CorpMeetingsListComponent, CorpMeetingEditComponent,
         LookupValuesComponent, CurrencyRatesLookupValuesComponent, BenchmarkLookupValuesComponent,
         HRNewsListComponent, HRNewsEditComponent, HREmployeesListComponent, HRDocsListComponent,
+        LegalUpdateEditComponent,
         AdminMainComponent, AdminUserManagementComponent
     ],
     bootstrap: [ AppComponent ]

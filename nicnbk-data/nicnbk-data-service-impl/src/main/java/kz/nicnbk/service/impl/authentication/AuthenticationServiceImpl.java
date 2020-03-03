@@ -28,9 +28,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private EmployeeService employeeService;
 
     @Override
-    public AuthenticatedUserDto authenticate(String username, String password) {
+    public AuthenticatedUserDto authenticate(String username, String password, String otp) {
         try {
-            EmployeeDto employeeDto = employeeService.findActiveByUsernamePassword(username, password);
+            EmployeeDto employeeDto = employeeService.findActiveByUsernamePasswordCode(username, password, otp);
             if (employeeDto == null) {
                 logger.error("Failed to authenticate: username=" + username);
                 return null;
@@ -107,6 +107,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 return "ROLE_CORPMEETINGS_VIEWER";
             case "HR_EDIT":
                 return "ROLE_HR_EDITOR";
+            case "LEGAL_EDIT":
+                return "ROLE_LEGAL_EDITOR";
             case "USER_EDIT":
                 return "ROLE_USER_PROFILE_EDITOR";
             case "MONIT_VIEW":

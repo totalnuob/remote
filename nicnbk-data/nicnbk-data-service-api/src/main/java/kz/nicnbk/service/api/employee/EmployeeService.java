@@ -18,13 +18,17 @@ public interface EmployeeService extends BaseService {
 
     EmployeeDto getEmployeeByUsername(String username);
 
+    EmployeeFullDto getFullEmployeeByUsername(String username);
+
     EmployeePagedSearchResult search(EmployeeSearchParamsDto searchParams);
 
-    EntitySaveResponseDto save(EmployeeDto employeeDto, String updater);
+    EntitySaveResponseDto save(EmployeeFullDto employeeFullDto, String updater, Boolean isAdmin);
 
-    EntitySaveResponseDto saveAndChangePassword(EmployeeDto employeeDto, String password, String updater);
+    EntitySaveResponseDto saveAndChangePassword(EmployeeFullDto employeeFullDto, String password, String updater);
 
     EmployeeDto findActiveByUsernamePassword(String username, String password);
+
+    EmployeeDto findActiveByUsernamePasswordCode(String username, String password, String otp);
 
     EmployeeDto findByUsername(String username);
 
@@ -39,4 +43,6 @@ public interface EmployeeService extends BaseService {
     List<RoleDto> getAllRoles();
 
     List<DepartmentDto> getAllDepartments();
+
+    boolean registerMfa(String username, String secret, String otp);
 }

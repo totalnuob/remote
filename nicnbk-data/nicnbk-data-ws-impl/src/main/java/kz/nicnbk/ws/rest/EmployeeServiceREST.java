@@ -4,6 +4,7 @@ import kz.nicnbk.common.service.util.StringUtils;
 import kz.nicnbk.service.api.authentication.TokenService;
 import kz.nicnbk.service.api.employee.EmployeeService;
 import kz.nicnbk.service.dto.authentication.ChangePasswordCredentialsDto;
+import kz.nicnbk.service.dto.authentication.MfaRegistrationDto;
 import kz.nicnbk.service.dto.authentication.TokenUserInfo;
 import kz.nicnbk.service.dto.authentication.UserCredentialsDto;
 import kz.nicnbk.service.dto.common.EntitySaveResponseDto;
@@ -66,6 +67,18 @@ public class EmployeeServiceREST extends CommonServiceREST{
         }
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/getFullByUsername/{username}", method = RequestMethod.GET)
+    public ResponseEntity getFullEmployeeByUsername(@PathVariable String username){
+        EmployeeFullDto employeeFullDto = this.employeeService.getFullEmployeeByUsername(username);
+        if(employeeFullDto == null){
+            // error occurred
+            return new ResponseEntity<>(null, null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }else{
+            return new ResponseEntity<>(employeeFullDto, null, HttpStatus.OK);
+        }
+    }
+
     @RequestMapping(value = "/search", method = RequestMethod.POST)
     public ResponseEntity<?> search(@RequestBody EmployeeSearchParamsDto searchParams) {
         EmployeePagedSearchResult searchResult = this.employeeService.search(searchParams);
@@ -74,11 +87,21 @@ public class EmployeeServiceREST extends CommonServiceREST{
 
     @PreAuthorize(" hasRole('ROLE_USER_PROFILE_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/save", method = RequestMethod.POST)
-    public ResponseEntity<?> save(@RequestBody EmployeeDto employeeDto) {
+    public ResponseEntity<?> save(@RequestBody EmployeeFullDto employeeFullDto) {
         String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
         String username = this.tokenService.decode(token).getUsername();
 
-        EntitySaveResponseDto saveResponseDto = this.employeeService.save(employeeDto, username);
+        EntitySaveResponseDto saveResponseDto = this.employeeService.save(employeeFullDto, username, false);
+        return buildEntitySaveResponse(saveResponseDto);
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/saveAdmin", method = RequestMethod.POST)
+    public ResponseEntity<?> saveAdmin(@RequestBody EmployeeFullDto employeeFullDto) {
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
+
+        EntitySaveResponseDto saveResponseDto = this.employeeService.save(employeeFullDto, username, true);
         return buildEntitySaveResponse(saveResponseDto);
     }
 
@@ -107,7 +130,7 @@ public class EmployeeServiceREST extends CommonServiceREST{
     @RequestMapping(value = "/saveAndChangePassword", method = RequestMethod.POST)
     public ResponseEntity<?> saveAndChangePassword(@RequestBody EmployeePasswordDto employeePasswordDto) {
 
-        EmployeeDto employeeDto = employeePasswordDto.getEmployeeDto();
+        EmployeeFullDto employeeFullDto = employeePasswordDto.getEmployeeFullDto();
         String password = employeePasswordDto.getPassword();
 
         if(StringUtils.isEmpty(password)) {
@@ -117,7 +140,7 @@ public class EmployeeServiceREST extends CommonServiceREST{
         String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
         String username = this.tokenService.decode(token).getUsername();
 
-        EntitySaveResponseDto saveResponseDto = this.employeeService.saveAndChangePassword(employeeDto, password, username);
+        EntitySaveResponseDto saveResponseDto = this.employeeService.saveAndChangePassword(employeeFullDto, password, username);
         return buildEntitySaveResponse(saveResponseDto);
     }
 
@@ -214,5 +237,21 @@ public class EmployeeServiceREST extends CommonServiceREST{
         } else {
             return new ResponseEntity<>(departments, null, HttpStatus.OK);
         }
+    }
+
+    @RequestMapping(value = "/registerMfa", method = RequestMethod.POST)
+    public ResponseEntity registerMfa(@RequestBody MfaRegistrationDto registrationDto){
+        // get authentication
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        TokenUserInfo tokenUserInfo = this.tokenService.decode((String)authentication.getDetails());
+        if(tokenUserInfo == null || StringUtils.isEmpty(tokenUserInfo.getUsername())){
+            return new ResponseEntity<>(null, null, HttpStatus.BAD_REQUEST);
+        }
+
+        if (this.employeeService.registerMfa(tokenUserInfo.getUsername(), registrationDto.getSecret(), registrationDto.getOtp())) {
+            return new ResponseEntity<>(123, null, HttpStatus.OK);
+        }
+
+        return new ResponseEntity<>(null, null, HttpStatus.BAD_REQUEST);
     }
 }

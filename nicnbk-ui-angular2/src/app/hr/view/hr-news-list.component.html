@@ -1,3 +1,44 @@
+<!--<script inline="javascript" type="text/javascript">-->
+<!--    /*<![CDATA[*/-->
+<!--    $(document).on('hidden.bs.modal', function (e) {-->
+<!--    $(e.target).removeData('bs.modal');-->
+<!--    });-->
+<!--</script>-->
+
+<!--<head>-->
+<!--    <meta name="viewport" content="width=device-width, initial-scale=1">-->
+<!--    <style>-->
+<!--        .loader {-->
+<!--            margin-top: 5%;-->
+<!--            margin-right: auto;-->
+<!--            margin-left: auto;-->
+<!--            margin-bottom: 0;-->
+
+<!--            border-top: 16px solid #3498db;-->
+<!--            border-right: 16px solid #f3f3f3;-->
+<!--            border-left: 16px solid #f3f3f3;-->
+<!--            border-bottom: 16px solid #3498db;-->
+
+<!--            border-radius: 50%;-->
+
+<!--            width: 60px;-->
+<!--            height: 60px;-->
+<!--            -webkit-animation: spin 2s linear infinite; /* Safari */-->
+<!--            animation: spin 2s linear infinite;-->
+<!--        }-->
+
+<!--        /* Safari */-->
+<!--        @-webkit-keyframes spin {-->
+<!--            0% { -webkit-transform: rotate(0deg); }-->
+<!--            100% { -webkit-transform: rotate(360deg); }-->
+<!--        }-->
+
+<!--        @keyframes spin {-->
+<!--            0% { transform: rotate(0deg); }-->
+<!--            100% { transform: rotate(360deg); }-->
+<!--        }-->
+<!--    </style>-->
+<!--</head>-->
 
 <div class="container">
     <div class="row top-buffer" >
@@ -7,74 +48,170 @@
     </div>
 
     <div [ngBusy]="busy" class="row">
-        <div class="row withpadding">
-            <a [routerLink]="['/hr/news/edit/', 0 ]" class="btn btn-primary pull-right" *ngIf="canEdit()">Add News</a>
-        </div>
 
-        <div class="row">
-            <div id="news_content">
-                <div class="row withpadding" *ngFor = "let news of newsList">
-                    <div class="col-md-12">
-                        <div class="row">
-                            <h4 style="word-wrap: break-word;"><a data-toggle="modal" (click) = "getNewsById(news.id)" data-target="#newsModal" style="cursor: pointer">{{news.header}}</a></h4>
+        <ul role="tablist" class="date-tabs nav">
+            <li class="date-tabs__item"><a data-toggle="tab"
+                                           href="#NEWS_HR"
+                                           role="tab" aria-controls="NEWS_HR"
+                                           aria-selected="true"
+                                           class="date-tabs__link"
+                                           [style.border-bottom-color]="activeTab === 'NEWS_HR' ? '#D9A158' : 'white'"
+                                           (click)="activeTab = 'NEWS_HR'">NIC NEWS</a>
+            </li>
+            <li class="date-tabs__item"><a data-toggle="tab"
+                                           href="#LEGAL_UPDATES"
+                                           role="tab" aria-controls="LEGAL_UPDATES"
+                                           aria-selected="true"
+                                           class="date-tabs__link"
+                                           [style.border-bottom-color]="activeTab === 'LEGAL_UPDATES' ? '#D9A158' : 'white'"
+                                           (click)="activeTab = 'LEGAL_UPDATES'">LEGISLATION UPDATES</a>
+            </li>
+        </ul>
+        <div [ngBusy]="busy" class="tab-content">
+            <div id="NEWS_HR" role="tabpanel" aria-labelledby="NEWS_HR" [class]="activeTab ==='NEWS_HR' ? 'tab-pane active' : 'tab-pane'">
+                <div class="row">
+                    <div id="news_content">
+                        <div class="row withpadding">
+                            <a [routerLink]="['/hr/news/edit/', 0 ]" class="btn btn-primary pull-right" *ngIf="canEdit()">Add News</a>
                         </div>
-                        <div class="row">
-                            <h4 style="word-wrap: break-word"><small>{{news.subheader}}</small></h4>
-                        </div>
-                        <div class="row">
-                            <p style="word-wrap: break-word">{{news.shortContent}}</p>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-1">
-                                <a class="btn btn-info btn-sm" data-toggle="modal"
-                                   (click) = "getNewsById(news.id)" data-target="#newsModal">View</a>
+                        <div class="row withpadding" *ngFor = "let news of newsList">
+                            <div class="col-md-12">
+                                <div class="row">
+                                    <h4 style="word-wrap: break-word;"><a data-toggle="modal" (click) = "getNewsById(news.id)" data-target="#newsModal" style="cursor: pointer">{{news.header}}</a></h4>
+                                </div>
+                                <div class="row">
+                                    <h4 style="word-wrap: break-word"><small>{{news.subheader}}</small></h4>
+                                </div>
+                                <div class="row">
+                                    <p style="word-wrap: break-word">{{news.shortContent}}</p>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-1">
+                                        <a class="btn btn-info btn-sm" data-toggle="modal"
+                                           (click) = "getNewsById(news.id)" data-target="#newsModal">View</a>
+                                    </div>
+                                    <div class="col-md-1">
+                                        <a [routerLink]="['/hr/news/edit/', news.id]" class="btn btn-primary btn-sm" *ngIf="canEdit()" >Edit</a>
+                                    </div>
+                                    <!--<div class="col-md-1 pull-right">-->
+                                    <!--<span class="glyphicon glyphicon-user"></span> {{news.owner}}-->
+                                    <!--</div>-->
+                                </div>
+                                <div class="row">
+                                    <hr style="border-top: 1px solid #B5AEAE"/>
+                                </div>
                             </div>
-                            <div class="col-md-1">
-                                <a [routerLink]="['/hr/news/edit/', news.id]" class="btn btn-primary btn-sm" *ngIf="canEdit()" >Edit</a>
-                            </div>
-                            <!--<div class="col-md-1 pull-right">-->
-                            <!--<span class="glyphicon glyphicon-user"></span> {{news.owner}}-->
-                            <!--</div>-->
-                        </div>
-                        <div class="row">
-                            <hr style="border-top: 1px solid #B5AEAE"/>
                         </div>
                     </div>
-                </div>
-            </div>
-            <div class="row withpadding">
-                <div id="loadmoreajaxloader_general" style="display:none;" class="center-block">
-                </div>
-                <div id="moreBtn_general">
-                    <button class="btn btn-default" (click)="loadMore('GENERAL')" *ngIf="isShowMoreButton('GENERAL')">More</button>
-                    <div *ngIf="!isShowMoreButton('GENERAL')">No more posts to show</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="modal fade" id="newsModal" role="dialog">
-            <div class="modal-dialog" style="overflow-y: scroll; max-height:85%;  margin-top: 50px; margin-bottom:50px; width:65%;">
-                <div class="modal-content" style="background-color: #fff1e0">
-                    <div class="loader" *ngIf="selectedNews == null"></div>
                     <div class="row withpadding">
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                <h4><span class="label label-info" >{{selectedNews?.type}}</span></h4>
+                        <div id="loadmoreajaxloader_general" style="display:none;" class="center-block">
+                        </div>
+                        <div id="moreBtn_general">
+                            <button class="btn btn-default" (click)="loadMore()" *ngIf="isShowMoreButton()">More</button>
+                            <div *ngIf="!isShowMoreButton()">No more posts to show</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="LEGAL_UPDATES" role="tabpanel" aria-labelledby="LEGAL_UPDATES" [class]="activeTab ==='LEGAL_UPDATES' ? 'tab-pane active' : 'tab-pane'">
+                <div class="row">
+                    <div id="legal_updates_content">
+                        <div class="row withpadding">
+                            <a [routerLink]="['/legal/updates/edit/', 0 ]" class="btn btn-primary pull-right" *ngIf="canEditLegalUpdates()">Add News</a>
+                        </div>
+                        <div class="row withpadding" *ngFor = "let news of legalUpdatesList">
+                            <div class="col-md-12">
+                                <div class="row">
+                                    <h4 style="word-wrap: break-word;">
+                                        <a data-toggle="modal" (click)="getLegalUpdateById(news.id)" data-target="#newsModal" style="cursor: pointer">{{news.header}}</a>
+                                    </h4>
+                                </div>
+                                <div class="row">
+                                    <h4 style="word-wrap: break-word"><small>{{news.source}}</small></h4>
+                                </div>
+                                <div class="row">
+                                    <p style="word-wrap: break-word">{{news.shortContent}}</p>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-1">
+                                        <a class="btn btn-info btn-sm" data-toggle="modal"
+                                           (click) = "getLegalUpdateById(news.id)" data-target="#newsModal">View</a>
+                                    </div>
+                                    <div class="col-md-1">
+                                        <a [routerLink]="['/legal/updates/edit/', news.id]" class="btn btn-primary btn-sm" *ngIf="canEditLegalUpdates()" >Edit</a>
+                                    </div>
+                                    <!--<div class="col-md-1 pull-right">-->
+                                    <!--<span class="glyphicon glyphicon-user"></span> {{news.owner}}-->
+                                    <!--</div>-->
+                                </div>
+                                <div class="row">
+                                    <hr style="border-top: 1px solid #B5AEAE"/>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div class="modal-header">
-                        <!--<button type="button" class="close" data-dismiss="modal">&times;</button>-->
-                        <h3 class="modal-title"  style="word-wrap: break-word">{{selectedNews?.header}}</h3>
-                        <h4 style="word-wrap: break-word">
-                            <small>{{selectedNews?.subheader}}</small>
-                        </h4>
+                    <div class="row withpadding">
+                        <div id="loadmoreajaxloader_legal_updates" style="display:none;" class="center-block">
+                        </div>
+                        <div id="moreBtn_legal_updates">
+                            <button class="btn btn-default" (click)="loadMoreLegalUpdates()" *ngIf="isShowMoreButtonLegalUpdates()">More</button>
+                            <div *ngIf="!isShowMoreButtonLegalUpdates()">No more posts to show</div>
+                        </div>
                     </div>
-                    <div class="modal-body">
-                        <p style="word-wrap: break-word;" [innerHTML]="selectedNews?.content"></p>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal" (click)="closeNewsModal()">Close</button>
+                </div>
+
+<!--                <div class="modal fade" id="legalUpdatesModal" role="dialog">-->
+<!--                    <div class="modal-dialog" style="overflow-y: scroll; max-height:85%;  margin-top: 50px; margin-bottom:50px; width:65%;">-->
+<!--                        <div [ngBusy]="busyLegalUpdateModal" class="modal-content" style="background-color: #fff1e0">-->
+<!--                            <div class="loader" *ngIf="selectedLegalUpdates == null"></div>-->
+<!--                            <div class="row withpadding">-->
+<!--                                <div class="col-md-12">-->
+<!--                                    <div class="form-group">-->
+<!--                                        <h4><span class="label label-info">{{selectedLegalUpdates?.type}}</span></h4>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                            <div class="modal-header">-->
+<!--                                <h3 class="modal-title" style="word-wrap: break-word">{{selectedLegalUpdates?.header}}</h3>-->
+<!--                                <h4 style="word-wrap: break-word">-->
+<!--                                    <small>{{selectedLegalUpdates?.source}}</small>-->
+<!--                                </h4>-->
+<!--                            </div>-->
+<!--                            <div class="modal-body">-->
+<!--                                <p style="word-wrap: break-word;" [innerHTML]="selectedLegalUpdates?.content"></p>-->
+<!--                            </div>-->
+<!--                            <div class="modal-footer">-->
+<!--                                <button type="button" class="btn btn-default" data-dismiss="modal" (click)="closeLegalUpdatesModal()">Close</button>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+            </div>
+
+            <div class="modal fade" id="newsModal" role="dialog">
+                <div class="modal-dialog" style="overflow-y: scroll; max-height:85%;  margin-top: 50px; margin-bottom:50px; width:65%;">
+                    <div class="modal-content" style="background-color: #fff1e0">
+                        <div class="loader" *ngIf="selectedNews == null"></div>
+                        <div class="row withpadding">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <h4><span class="label label-info" >{{selectedNews?.type}}</span></h4>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-header">
+                            <!--<button type="button" class="close" data-dismiss="modal">&times;</button>-->
+                            <h3 class="modal-title"  style="word-wrap: break-word">{{selectedNews?.header}}</h3>
+                            <h4 style="word-wrap: break-word">
+                                <small>{{selectedNews?.subheader}}</small>
+                            </h4>
+                        </div>
+                        <div class="modal-body">
+                            <p style="word-wrap: break-word;" [innerHTML]="selectedNews?.content"></p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal" (click)="closeNewsModal()">Close</button>
+                        </div>
                     </div>
                 </div>
             </div>

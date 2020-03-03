@@ -1,7 +1,7 @@
-import { Component, NgModule } from '@angular/core';
+import { Component, NgModule, OnInit } from '@angular/core';
 import { } from '@angular/common';
 
-import { Router } from '@angular/router';
+import { Router, NavigationEnd } from '@angular/router';
 import {} from '@angular/http';
 
 import './rxjs-operators';
@@ -40,6 +40,7 @@ import {CorpMeetingService} from "./corpmeetings/corp-meetings.service";
 import {HedgeFundScreeningService} from "./hf/hf.fund.screening.service";
 import {HedgeFundScoringService} from "./hf/hf.fund.scoring.service";
 import {HRService} from "./hr/hr.service";
+import {LegalService} from "./legal/legal.service";
 import {MonitoringHedgeFundService} from "./monitoring/monitoring-hf.service";
 import {Subscription} from "../../node_modules/rxjs";
 import {VersionService} from "./common/version.service";
@@ -76,6 +77,7 @@ import {Version} from "./version/model/version";
         HedgeFundScreeningService,
         HedgeFundScoringService,
         HRService,
+        LegalService,
         HedgeFundScoringService,
         MonitoringHedgeFundService,
         VersionService
@@ -84,18 +86,13 @@ import {Version} from "./version/model/version";
 @NgModule({
     imports: [TextareaAutosize]
 })
-export class AppComponent {
+export class AppComponent implements OnInit{
 
     versionLatestVersion;
-
     versionList: Array<Version> = [];
-
     busy: Subscription;
-
     activeMenu;
-
     activeBlock = 'corp';
-
     //snow = true;
 
     private moduleAccessChecker: ModuleAccessCheckerService;
@@ -107,11 +104,31 @@ export class AppComponent {
     ){
         this.moduleAccessChecker = new ModuleAccessCheckerService;
         this.getVersion();
+
+/*
+// TODO: prepend component urls woth 'corp', 'invest', 'admin'
+        this._router.events.subscribe((e) => {
+          if (e instanceof NavigationEnd) {
+            //console.log(e.url);
+            this.initMenu(e.url);
+          }
+        });
+*/
+    }
+
+    ngOnInit(){
+    }
+
+    initMenu(url){
+        this.activeBlock = 'corp';
+        if(url.startsWith('/invest')){
+            this.activeBlock = 'invest';
+        }else if(url.startsWith('/admin')){
+            this.activeBlock = 'admin';
+        }
     }
 
     getVersion() {
-        console.log('Get version');
-
         this.busy = this.versionService.getVersion()
             .subscribe(
                 (response) => {

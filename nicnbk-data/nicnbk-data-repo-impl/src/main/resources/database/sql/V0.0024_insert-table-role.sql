@@ -35,3 +35,5 @@ INSERT INTO role(id, code, name_en, name_ru, name_kz) VALUES(777, 'HR_EDIT', 'HR
 INSERT INTO role(id, code, name_en, name_ru, name_kz) VALUES(801, 'M2S2_EDIT', 'M2S2 - Editor', '', '');
 INSERT INTO role(id, code, name_en, name_ru, name_kz) VALUES(802, 'M2S2_VIEW', 'M2S2 - Viewer', '', '');
 
+INSERT INTO role(id, code, name_en, name_ru, name_kz) VALUES(901, 'LEGAL_EDIT', 'Legal - Editor', '', '');
+

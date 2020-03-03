@@ -892,17 +892,27 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
         fundNamesHoder.setCurrentHFFundNameList((String[]) currentHFFundNames.toArray(new String[currentHFFundNames.size()]));
 
         // Real Estate
-        TerraCombinedDataHolderDto terraData = this.realEstateService.getTerraCombinedParsedData(reportId);
-        if(terraData != null && terraData.getSecuritiesCostRecords() != null && !terraData.getSecuritiesCostRecords().isEmpty()){
-            for(TerraSecuritiesCostRecordDto securitiesDto: terraData.getSecuritiesCostRecords()){
-                if((securitiesDto.getTotalSum() == null || !securitiesDto.getTotalSum().booleanValue()) && StringUtils.isNotEmpty(securitiesDto.getName())){
-                    currentREFundNames.add(securitiesDto.getName());
+//        TerraCombinedDataHolderDto terraData = this.realEstateService.getTerraCombinedParsedData(reportId);
+//        if(terraData != null && terraData.getSecuritiesCostRecords() != null && !terraData.getSecuritiesCostRecords().isEmpty()){
+//            for(TerraSecuritiesCostRecordDto securitiesDto: terraData.getSecuritiesCostRecords()){
+//                if((securitiesDto.getTotalSum() == null || !securitiesDto.getTotalSum().booleanValue()) && StringUtils.isNotEmpty(securitiesDto.getName())){
+//                    currentREFundNames.add(securitiesDto.getName());
+//                }
+//            }
+//        }
+        ListResponseDto terraGLResponse = this.realEstateService.getTerraGeneralLedgerFormData(reportId);
+        if(terraGLResponse != null) {
+            List<TerraGeneratedGeneralLedgerFormDto> records = terraGLResponse.getRecords();
+            if(records != null) {
+                for (TerraGeneratedGeneralLedgerFormDto terraRecord: records) {
+                    if(terraRecord.getShortName() != null){
+                        currentREFundNames.add(terraRecord.getShortName());
+                    }
                 }
             }
         }
 
         fundNamesHoder.setCurrentREFundNameList((String[]) currentREFundNames.toArray(new String[currentREFundNames.size()]));
-
 
         // PREVIOUS
         PeriodicReportDto currentReport = getPeriodicReport(reportId);
@@ -954,11 +964,22 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
         fundNamesHoder.setPreviousHFFundNameList((String[]) previousHFFundNames.toArray(new String[previousHFFundNames.size()]));
 
         // Real Estate
-        terraData = this.realEstateService.getTerraCombinedParsedData(previousReport.getId());
-        if(terraData != null && terraData.getSecuritiesCostRecords() != null && !terraData.getSecuritiesCostRecords().isEmpty()){
-            for(TerraSecuritiesCostRecordDto securitiesDto: terraData.getSecuritiesCostRecords()){
-                if((securitiesDto.getTotalSum() == null || !securitiesDto.getTotalSum().booleanValue()) && StringUtils.isNotEmpty(securitiesDto.getName())){
-                    previousREFundNames.add(securitiesDto.getName());
+//        terraData = this.realEstateService.getTerraCombinedParsedData(previousReport.getId());
+//        if(terraData != null && terraData.getSecuritiesCostRecords() != null && !terraData.getSecuritiesCostRecords().isEmpty()){
+//            for(TerraSecuritiesCostRecordDto securitiesDto: terraData.getSecuritiesCostRecords()){
+//                if((securitiesDto.getTotalSum() == null || !securitiesDto.getTotalSum().booleanValue()) && StringUtils.isNotEmpty(securitiesDto.getName())){
+//                    previousREFundNames.add(securitiesDto.getName());
+//                }
+//            }
+//        }
+        ListResponseDto terraPreviousGLResponse = this.realEstateService.getTerraGeneralLedgerFormData(previousReport.getId());
+        if(terraPreviousGLResponse != null) {
+            List<TerraGeneratedGeneralLedgerFormDto> records = terraPreviousGLResponse.getRecords();
+            if(records != null) {
+                for (TerraGeneratedGeneralLedgerFormDto terraRecord: records) {
+                    if(terraRecord.getShortName() != null){
+                        previousREFundNames.add(terraRecord.getShortName());
+                    }
                 }
             }
         }
