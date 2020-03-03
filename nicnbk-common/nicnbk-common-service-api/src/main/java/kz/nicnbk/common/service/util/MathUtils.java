@@ -159,9 +159,9 @@ public class MathUtils {
 
     public static Double getSharpeRatio(int scale, double[] returns, double[] tbills){
         Double annReturns = getAnnualizedReturn(returns, scale);
-        Double annTbills = getAnnualizedReturn(returns, scale);
-        Double std = getStandardDeviation(returns);
-        return MathUtils.divide(scale, MathUtils.subtract(scale, annReturns, annTbills), std);
+        Double annTbills = getAnnualizedReturn(tbills, scale);
+        Double annSTD = MathUtils.multiply(scale, getStandardDeviation(returns), Math.sqrt(12));
+        return MathUtils.divide(scale, MathUtils.subtract(scale, annReturns, annTbills), annSTD);
     }
 
     public static Double getSortinoRatio(Double fundAnnualizedReturn, Double benchmarkAnnualizedReturn, double[] returns, int scale){
@@ -398,10 +398,29 @@ public class MathUtils {
                 value = MathUtils.multiply(scale, MathUtils.add(scale, returns[i], 1.0), value);
                 cumulativeReturns[i] = MathUtils.subtract(scale, value, 1.0);
             }
-
         }
         return cumulativeReturns;
     }
+
+    public static double[] getCumulativeReturnsFromInitial(int scale, double[] returns, Double initial){
+        if(returns == null){
+            return null;
+        }
+        double[] cumulativeReturns = new double[returns.length];
+        Double previous = initial;
+        for(int i = 0; i < returns.length; i++){
+            Double value = MathUtils.multiply(scale, MathUtils.add(scale, returns[i], 1.0), previous);
+            cumulativeReturns[i] = value;
+
+            previous = value;
+        }
+        return cumulativeReturns;
+    }
+
+    public static double[] getCumulativeReturnsFromInitial(double[] returns, Double initial){
+        return getCumulativeReturnsFromInitial(returns, initial);
+    }
+
 
     public static Double[] getCumulativeReturns(Double[] returns){
         return getCumulativeReturns(2, returns);
@@ -434,6 +453,61 @@ public class MathUtils {
 
     public static Double getCumulativeReturn(Double previousCumulative, Double currentValue){
         return getCumulativeReturn(2, previousCumulative, currentValue);
+    }
+
+    public static WorstDrawdownDto getWorstDrawdown(int scale, double[] cumulativeReturns){
+        WorstDrawdownDto worstDDDto = new WorstDrawdownDto();
+        double[] calculatedValues = new double[cumulativeReturns.length];
+        if(cumulativeReturns != null && cumulativeReturns.length > 0) {
+            Double worstDrawdown = null;
+            for (int i = 0; i < cumulativeReturns.length; i++) {
+                Double minValue = null;
+                for (int j = i + 1; j < cumulativeReturns.length; j++) {
+                    if(minValue == null || cumulativeReturns[j] < minValue.doubleValue()){
+                        minValue = cumulativeReturns[j];
+                    }
+                }
+                if(minValue != null) {
+                    Double value = MathUtils.subtract(scale, MathUtils.divide(scale, minValue, cumulativeReturns[i]), 1.0);
+                    calculatedValues[i] = value;
+                    if (worstDrawdown == null || value.doubleValue() < worstDrawdown.doubleValue()) {
+                        worstDrawdown = value;
+                    }
+                }else{
+                    calculatedValues[i] = 0.0;
+                }
+            }
+            worstDDDto.setWorstDDValue(worstDrawdown);
+
+            Integer drawdownPeriod = null;
+            for (int i = 0; i < calculatedValues.length; i++) {
+                if(worstDrawdown.doubleValue() == calculatedValues[i]){
+                    double previous = worstDrawdown.doubleValue();
+                    for(int j = i - 1; j >= 0; j--){
+                        if(calculatedValues[j] >= previous){
+                            if(drawdownPeriod == null){
+                                drawdownPeriod = 0;
+                            }
+                            drawdownPeriod++;
+                            previous = calculatedValues[j];
+                        }else{
+                            break;
+                        }
+                    }
+                }
+            }
+            worstDDDto.setWorstDDPeriod(drawdownPeriod);
+
+            return worstDDDto;
+
+        }
+        return null;
+    }
+
+    public static Integer getRecoveryMonths(int scale, double[] returns){
+        if(returns != null && returns.length > 0) {
+        }
+        return null;
     }
 
 
@@ -478,7 +552,4 @@ public class MathUtils {
                 {0.27, 2.30}};
         System.out.println(calculateSlope(data));
     }
-
-
-
 }

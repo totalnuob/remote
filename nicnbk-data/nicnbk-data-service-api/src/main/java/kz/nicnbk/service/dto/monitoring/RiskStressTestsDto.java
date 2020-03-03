@@ -6,9 +6,16 @@ import kz.nicnbk.common.service.model.BaseDto;
  * Created by Pak on 20.06.2019.
  */
 
-public class MonitoringRiskHedgeFundStressTestRecordDto implements BaseDto {
+public class RiskStressTestsDto implements BaseDto {
     private String name;
     private Double value;
+
+    public RiskStressTestsDto(){}
+
+    public RiskStressTestsDto(String name, Double value){
+        this.name = name;
+        this.value = value;
+    }
 
     public String getName() {
         return name;

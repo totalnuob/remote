@@ -1,6 +1,6 @@
 package kz.nicnbk.ws.rest;
 
-import kz.nicnbk.service.api.riskmanagement.RiskManagementReportService;
+import kz.nicnbk.service.api.risk.RiskReportService;
 import kz.nicnbk.service.dto.riskmanagement.LiquidPortfolioReportDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class RiskManagementREST {
 
     @Autowired
-    private RiskManagementReportService reportService;
+    private RiskReportService reportService;
 
     @RequestMapping(value = "/liquidPortfolioReport", method = RequestMethod.GET)
     public LiquidPortfolioReportDto getLiquidPortfolioReport(){

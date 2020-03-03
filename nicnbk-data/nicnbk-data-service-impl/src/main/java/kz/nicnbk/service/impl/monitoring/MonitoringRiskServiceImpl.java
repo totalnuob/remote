@@ -2,12 +2,14 @@ package kz.nicnbk.service.impl.monitoring;
 
 import kz.nicnbk.common.service.util.DateUtils;
 import kz.nicnbk.common.service.util.MathUtils;
+import kz.nicnbk.common.service.util.WorstDrawdownDto;
 import kz.nicnbk.repo.model.lookup.BenchmarkLookup;
 import kz.nicnbk.service.api.benchmark.BenchmarkService;
 import kz.nicnbk.service.api.monitoring.MonitoringRiskService;
 import kz.nicnbk.service.api.monitoring.NicPortfolioService;
 import kz.nicnbk.service.api.reporting.PeriodicReportService;
 import kz.nicnbk.service.api.reporting.hedgefunds.HFGeneralLedgerBalanceService;
+import kz.nicnbk.service.api.risk.RiskStressTestsService;
 import kz.nicnbk.service.dto.benchmark.BenchmarkValueDto;
 import kz.nicnbk.service.dto.common.ListResponseDto;
 import kz.nicnbk.service.dto.common.ResponseStatusType;
@@ -40,10 +42,13 @@ public class MonitoringRiskServiceImpl implements MonitoringRiskService {
     @Autowired
     private BenchmarkService benchmarkService;
 
+    @Autowired
+    private RiskStressTestsService riskStressTestsService;
+
     @Override
     public MonitoringRiskHedgeFundReportDto getMonthlyHedgeFundReport(MonitoringRiskReportSearchParamsDto searchParamsDto) {
 
-        MonitoringRiskHedgeFundReportDto reportDto = getDummyMonthlyHedgeFundReport();
+        MonitoringRiskHedgeFundReportDto reportDto = new MonitoringRiskHedgeFundReportDto();//getDummyMonthlyHedgeFundReport();
 
         NicPortfolioResultDto nicPortfolioResultDto = this.nicPortfolioService.get();
 
@@ -69,12 +74,73 @@ public class MonitoringRiskServiceImpl implements MonitoringRiskService {
 
 
         // Performance summary
-        List<MonitoringRiskHedgeFundPerformanceRecordDto> performance12M = getHedgeFundsPerformanceSummary12M(searchParamsDto.getDate(), nicPortfolioResultDto);
+        Date dateTo = DateUtils.getLastDayOfCurrentMonth(searchParamsDto.getDate());
+        Date dateFrom12M = DateUtils.getLastDayOfCurrentMonth(DateUtils.moveDateByMonths(searchParamsDto.getDate(), -11));
+        ListResponseDto performance12MResponsePortfolio = null;
+        ListResponseDto performance12MResponseBenchmark = null;
+        if(nicPortfolioResultDto != null && nicPortfolioResultDto.getNicPortfolioDtoList() != null){
+            List<DateDoubleValue> values = new ArrayList<>();
+            for(NicPortfolioDto dto: nicPortfolioResultDto.getNicPortfolioDtoList()){
+                DateDoubleValue value = new DateDoubleValue(dto.getDate(), dto.getHedgeFundsMtd());
+                values.add(value);
+            }
+
+            performance12MResponsePortfolio = getHedgeFundsPerformanceSummary12M(dateFrom12M, dateTo, values, false);
+        }
+
+        List<BenchmarkValueDto> hfri12M = this.benchmarkService.getBenchmarkValuesForDatesAndType(dateFrom12M, dateTo, BenchmarkLookup.HFRI.getCode());
+        if(hfri12M != null && !hfri12M.isEmpty()){
+            List<DateDoubleValue> values = new ArrayList<>();
+            for(BenchmarkValueDto dto: hfri12M){
+                DateDoubleValue value = new DateDoubleValue(dto.getDate(), dto.getReturnValue());
+                values.add(value);
+            }
+
+            performance12MResponseBenchmark = getHedgeFundsPerformanceSummary12M(dateFrom12M, dateTo, values, true);
+        }
+
+        ListResponseDto mergedPerformance12MResponse = mergePerformanceResponses(performance12MResponsePortfolio, performance12MResponseBenchmark);
+        if(!mergedPerformance12MResponse.isStatusOK()){
+            reportDto.setPerformanceError(mergedPerformance12MResponse.getErrorMessageEn());
+        }
+        List<MonitoringRiskHedgeFundPerformanceRecordDto> performance12M = mergedPerformance12MResponse.getRecords();
         reportDto.setPerformance12M(performance12M);
+
+
+        // Performance since inception
+        Date dateFromSI = DateUtils.getLastDayOfCurrentMonth(DateUtils.getDate("31.08.2015"));
+        ListResponseDto performanceSIResponsePortfolio = null;
+        ListResponseDto performanceSIResponseBenchmark = null;
+        if(nicPortfolioResultDto != null && nicPortfolioResultDto.getNicPortfolioDtoList() != null){
+            List<DateDoubleValue> values = new ArrayList<>();
+            for(NicPortfolioDto dto: nicPortfolioResultDto.getNicPortfolioDtoList()){
+                DateDoubleValue value = new DateDoubleValue(dto.getDate(), dto.getHedgeFundsMtd());
+                values.add(value);
+            }
+
+            performanceSIResponsePortfolio = getHedgeFundsPerformanceSummary12M(dateFromSI, dateTo, values, false);
+        }
+
+        List<BenchmarkValueDto> hfriSI = this.benchmarkService.getBenchmarkValuesForDatesAndType(dateFromSI, dateTo, BenchmarkLookup.HFRI.getCode());
+        if(hfriSI != null && !hfriSI.isEmpty()){
+            List<DateDoubleValue> values = new ArrayList<>();
+            for(BenchmarkValueDto dto: hfriSI){
+                DateDoubleValue value = new DateDoubleValue(dto.getDate(), dto.getReturnValue());
+                values.add(value);
+            }
+
+            performanceSIResponseBenchmark = getHedgeFundsPerformanceSummary12M(dateFromSI, dateTo, values, true);
+        }
+
+        ListResponseDto mergedPerformanceSIResponse = mergePerformanceResponses(performanceSIResponsePortfolio, performanceSIResponseBenchmark);
+        if(!mergedPerformanceSIResponse.isStatusOK()){
+            reportDto.setPerformanceError(mergedPerformanceSIResponse.getErrorMessageEn());
+        }
+        List<MonitoringRiskHedgeFundPerformanceRecordDto> performanceSI = mergedPerformanceSIResponse.getRecords();
+        reportDto.setPerformanceSinceInception(performanceSI);
 
         // Market Sensitivity
         Date dateFromSinceInception = DateUtils.getDate("31.08.2015");
-        Date dateTo = DateUtils.getLastDayOfCurrentMonth(searchParamsDto.getDate());
         // MSCI
         ListResponseDto marketSensitivityMSCIResponse = getMarketSensitivity(BenchmarkLookup.MSCI_ACWI_IMI.getCode(), dateFromSinceInception, dateTo, nicPortfolioResultDto);
         if(!marketSensitivityMSCIResponse.isStatusOK()){
@@ -99,7 +165,54 @@ public class MonitoringRiskServiceImpl implements MonitoringRiskService {
         List<MonitoringRiskHedgeFundPortfolioVarDto> portfolioVars = portfolioVarResponse.getRecords();
         reportDto.setPortfolioVars(portfolioVars);
 
+        // Stress Tests
+        List<RiskStressTestsDto> stressTests = riskStressTestsService.getStressTestsByDate(searchParamsDto.getDate());
+        if(stressTests != null && !stressTests.isEmpty()){
+            reportDto.setStressTests(stressTests);
+        }
+
+        if(reportDto.getStatus() == null){
+            reportDto.setStatus(ResponseStatusType.SUCCESS);
+        }
         return reportDto;
+    }
+
+    private ListResponseDto mergePerformanceResponses(ListResponseDto portfolioResponse, ListResponseDto benchmarkResponse){
+        if(portfolioResponse == null){
+            return benchmarkResponse;
+        }else if(benchmarkResponse == null){
+            return portfolioResponse;
+        }else{
+            ListResponseDto mergedResponse = new ListResponseDto();
+            // Error messages
+            if(portfolioResponse.getErrorMessageEn() != null){
+                mergedResponse.appendErrorMessageEn(portfolioResponse.getErrorMessageEn());
+            }
+            if(benchmarkResponse.getErrorMessageEn() != null){
+                mergedResponse.appendErrorMessageEn(benchmarkResponse.getErrorMessageEn());
+            }
+            // Records
+            if(portfolioResponse.getRecords() != null && !portfolioResponse.getRecords().isEmpty()) {
+                mergedResponse.setRecords(portfolioResponse.getRecords());
+            }
+            if(benchmarkResponse.getRecords() != null && !benchmarkResponse.getRecords().isEmpty()){
+                if(mergedResponse.getRecords() == null || mergedResponse.getRecords().isEmpty()){
+                    mergedResponse.setRecords(benchmarkResponse.getRecords());
+                }else{
+                    // Add benchmark values to portfolio
+                    for(MonitoringRiskHedgeFundPerformanceRecordDto portfolioDto: (List<MonitoringRiskHedgeFundPerformanceRecordDto>) mergedResponse.getRecords()){
+                        for(MonitoringRiskHedgeFundPerformanceRecordDto benchmarkDto: (List<MonitoringRiskHedgeFundPerformanceRecordDto>) benchmarkResponse.getRecords()){
+                            if(portfolioDto.getName().equalsIgnoreCase(benchmarkDto.getName())){
+                                portfolioDto.setBenchmarkValue(benchmarkDto.getBenchmarkValue());
+                                portfolioDto.setBenchmarkValueTxt(benchmarkDto.getBenchmarkValueTxt());
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            return mergedResponse;
+        }
     }
 
     private ListResponseDto getHedgeFundPortfolioVars(Date date){
@@ -612,40 +725,46 @@ public class MonitoringRiskServiceImpl implements MonitoringRiskService {
     /* ****************************************************************************************************************/
 
     /* HEDGE FUNDS PERFORMANCE SUMMARY 12M ****************************************************************************/
-    private List<MonitoringRiskHedgeFundPerformanceRecordDto> getHedgeFundsPerformanceSummary12M(Date date, NicPortfolioResultDto nicPortfolioResultDto){
+    private ListResponseDto getHedgeFundsPerformanceSummary12M(Date dateFrom, Date dateTo, List<DateDoubleValue> returnValues, boolean isBenchmark){
+        int period = DateUtils.getMonthsChanged(dateFrom, dateTo);
+        ListResponseDto responseDto = new ListResponseDto();
         List<MonitoringRiskHedgeFundPerformanceRecordDto> performance = new ArrayList<>();
-        if(nicPortfolioResultDto != null && nicPortfolioResultDto.getNicPortfolioDtoList() != null){
-            Date dateTo = DateUtils.getLastDayOfCurrentMonth(date);
-            Date dateFrom = DateUtils.getLastDayOfCurrentMonth(DateUtils.moveDateByMonths(date, -11));
-            List<NicPortfolioDto> records12M = new ArrayList<>();
-            for(NicPortfolioDto nicPortfolioDto: nicPortfolioResultDto.getNicPortfolioDtoList()){
-                if(nicPortfolioDto.getHedgeFundsMtd() != null &&
-                        nicPortfolioDto.getDate().compareTo(dateFrom) >= 0 && nicPortfolioDto.getDate().compareTo(dateTo) <= 0){
-                    records12M.add(nicPortfolioDto);
+        if(returnValues != null && !returnValues.isEmpty()){
+            List<DateDoubleValue> records12M = new ArrayList<>();
+            List<DateDoubleValue> recordsSinceInception = new ArrayList<>();
+            for(DateDoubleValue value: returnValues){
+                if(value.getValue() != null){
+                    if(value.getDate().compareTo(dateFrom) >= 0 && value.getDate().compareTo(dateTo) <= 0){
+                        records12M.add(value);
+                    }
+                    recordsSinceInception.add(value);
                 }
             }
 
-            if(records12M.size() != 12){
+            if(records12M.size() != period){
                 String errorMessage = "Missing Hedge Funds MTD records for period [" + DateUtils.getDateFormatted(dateFrom) +
-                ", " + DateUtils.getDateFormatted(dateTo) + "]: expected 12, found " + records12M.size();
+                ", " + DateUtils.getDateFormatted(dateTo) + "]: expected " + period + ", found " + records12M.size();
                 logger.error(errorMessage);
-                // TODO: error message
-                return null;
+                responseDto.appendErrorMessageEn(errorMessage);
+                return responseDto;
             }
 
             Collections.sort(records12M);
-            //Collections.reverse(records12M);
-            double[] returns = new double[12];
+            double[] returns = new double[period];
             for(int i = 0; i < records12M.size(); i++){
-                returns[i] = records12M.get(i).getHedgeFundsMtd();
+                returns[i] = records12M.get(i).getValue();
+            }
+            double[] returnsSI = new double[recordsSinceInception.size()];
+            for(int i = 0; i < recordsSinceInception.size(); i++){
+                returnsSI[i] = recordsSinceInception.get(i).getValue();
             }
             List<BenchmarkValueDto> tbills = this.benchmarkService.getBenchmarkValuesForDatesAndType(dateFrom, dateTo, BenchmarkLookup.T_BILLS.getCode());
-            if(tbills == null || tbills.size() != 12){
+            if(tbills == null || tbills.size() != period){
                 String errorMessage = "Missing T-bills records for period [" + DateUtils.getDateFormatted(dateFrom) +
-                        ", " + DateUtils.getDateFormatted(dateTo) + "]: expected 12, found " + tbills.size();
+                        ", " + DateUtils.getDateFormatted(dateTo) + "]: expected " + period + ", found " + tbills.size();
                 logger.error(errorMessage);
-                // TODO: error message
-                return null;
+                responseDto.appendErrorMessageEn(errorMessage);
+                return responseDto;
             }
             double[] tbillsReturns = new double[tbills.size()];
             for(int i = 0; i < tbillsReturns.length; i++){
@@ -659,46 +778,143 @@ public class MonitoringRiskServiceImpl implements MonitoringRiskService {
             }
             // AnRoR
             Double annRoR = MathUtils.getAnnualizedReturn(returns, 18);
-            performance.add(new MonitoringRiskHedgeFundPerformanceRecordDto("Annualized Return", annRoR, null,
-                    MathUtils.multiply(4, annRoR, 100.0) + "%", null));
+            Double annRoR1 = isBenchmark ? null : annRoR;
+            Double annRoR2 = !isBenchmark ? null : annRoR;
+            performance.add(new MonitoringRiskHedgeFundPerformanceRecordDto("Annualized Return", annRoR1, annRoR2,
+                    annRoR1 != null ? (MathUtils.multiply(4, annRoR1, 100.0) + "%") : null,
+                    annRoR2 != null ? (MathUtils.multiply(4, annRoR2, 100.0) + "%") : null));
 
             // STD
             Double std = MathUtils.getStandardDeviation(returns);
-            Double AnnStd = MathUtils.multiply(18, std, Math.sqrt(12));
-            performance.add(new MonitoringRiskHedgeFundPerformanceRecordDto("Annualized Standard Deviation", AnnStd, null,
-                    MathUtils.multiply(4, AnnStd, 100.0) + "%", null));
+            if(std != null) {
+                Double annStd = MathUtils.multiply(18, std, Math.sqrt(12));
+                Double annStd1 = isBenchmark ? null : annStd;
+                Double annStd2 = !isBenchmark ? null : annStd;
+                performance.add(new MonitoringRiskHedgeFundPerformanceRecordDto("Ann Standard Deviation", annStd1, annStd2,
+                        annStd1 != null ? (MathUtils.multiply(4, annStd1, 100.0) + "%") : null,
+                        annStd2 != null ? (MathUtils.multiply(4, annStd2, 100.0) + "%") : null));
+            }
 
             // Downside Deviation
             Double downsideDeviation = MathUtils.getDownsideDeviation(returns);
-            performance.add(new MonitoringRiskHedgeFundPerformanceRecordDto("Downside Deviation", downsideDeviation, null,
-                    MathUtils.multiply(4, downsideDeviation, 100.0) + "%", null));
+            Double downsideDeviation1 = isBenchmark ? null : downsideDeviation;
+            Double downsideDeviation2 = !isBenchmark ? null : downsideDeviation;
+            performance.add(new MonitoringRiskHedgeFundPerformanceRecordDto("Downside Deviation", downsideDeviation1, downsideDeviation2,
+                    downsideDeviation1 != null ? (MathUtils.multiply(4, downsideDeviation1, 100.0) + "%") : null,
+                    downsideDeviation2 != null ? (MathUtils.multiply(4, downsideDeviation2, 100.0) + "%") : null));
 
             // Sharpe Ratio
             Double sharpeRatio = MathUtils.getSharpeRatio(18, returns, tbillsReturns);
-            performance.add(new MonitoringRiskHedgeFundPerformanceRecordDto("Sharpe Ratio", sharpeRatio, null,
-                    MathUtils.multiply(4, sharpeRatio, 100.0) + "%", null));
+            Double sharpeRatio1 = isBenchmark ? null : sharpeRatio;
+            Double sharpeRatio2 = !isBenchmark ? null : sharpeRatio;
+            performance.add(new MonitoringRiskHedgeFundPerformanceRecordDto("Sharpe Ratio", sharpeRatio1, sharpeRatio2,
+                    sharpeRatio1 != null ? MathUtils.add(sharpeRatio1, 0.0).toString() : null,
+                    sharpeRatio2 != null ? MathUtils.add(sharpeRatio2, 0.0).toString() : null));
 
             // Sortino
             Double annRoRTbills = MathUtils.getAnnualizedReturn(tbillsReturns, 18);
             Double sortino = MathUtils.getSortinoRatio(annRoR, annRoRTbills, returns, 18);
-            performance.add(new MonitoringRiskHedgeFundPerformanceRecordDto("Sortino Ratio", sortino, null,
-                    MathUtils.add(2, sortino, 0.0).toString(), null));
+            Double sortino1 = isBenchmark ? null : sortino;
+            Double sortino2 = !isBenchmark ? null : sortino;
+            performance.add(new MonitoringRiskHedgeFundPerformanceRecordDto("Sortino Ratio", sortino1, sortino2,
+                    sortino1 != null ? MathUtils.add(sortino1, 0.0).toString() : null,
+                    sortino2 != null ? MathUtils.add(sortino2, 0.0).toString() : null));
+
+            // Worst Drawdown
+            double[] cumulativeReturnsSI = MathUtils.getCumulativeReturnsFromInitial(18, returnsSI, 1.0);
+            double[] cumulativeReturns12M = new double[returns.length];
+            int j = 0;
+            for(int i = 0; i < recordsSinceInception.size(); i++){
+                if(recordsSinceInception.get(i).getDate().compareTo(dateFrom) >= 0 && recordsSinceInception.get(i).getDate().compareTo(dateTo) <= 0){
+                    if(j < cumulativeReturns12M.length) {
+                        cumulativeReturns12M[j] = cumulativeReturnsSI[i];
+                        j++;
+                    }else{
+                        // TODO: error?
+                    }
+                }
+            }
+            if(j != period){
+                String errorMessage = "Missing calculated value added monthly return for period [" + DateUtils.getDateFormatted(dateFrom) +
+                        ", " + DateUtils.getDateFormatted(dateTo) + "]: expected " + period + ", found " + tbills.size();
+                logger.error(errorMessage);
+                responseDto.appendErrorMessageEn(errorMessage);
+                return responseDto;
+            }
+            WorstDrawdownDto worstDDDto = MathUtils.getWorstDrawdown(18, cumulativeReturns12M);
+            WorstDrawdownDto worstDDDto1 = isBenchmark ? null : worstDDDto;
+            WorstDrawdownDto worstDDDto2 = !isBenchmark ? null : worstDDDto;
+            performance.add(new MonitoringRiskHedgeFundPerformanceRecordDto("Worst DD",
+                    worstDDDto1 != null && worstDDDto1.getWorstDDValue() != null ? worstDDDto1.getWorstDDValue() : null,
+                    worstDDDto2 != null && worstDDDto2.getWorstDDValue() != null ? worstDDDto2.getWorstDDValue() : null,
+                    worstDDDto1 != null && worstDDDto1.getWorstDDValue() != null ? (MathUtils.multiply(4, worstDDDto1.getWorstDDValue(), 100.0) + "%") : null,
+                    worstDDDto2 != null && worstDDDto2.getWorstDDValue() != null ? (MathUtils.multiply(4, worstDDDto2.getWorstDDValue(), 100.0) + "%") : null));
+
+            // Worst DD Period
+            performance.add(new MonitoringRiskHedgeFundPerformanceRecordDto("Worst DD Duration (months)",
+                    worstDDDto1 != null && worstDDDto1.getWorstDDPeriod() != null ? MathUtils.add(worstDDDto1.getWorstDDPeriod(), 0.0) : null,
+                    worstDDDto2 != null && worstDDDto2.getWorstDDPeriod() != null ? MathUtils.add(worstDDDto2.getWorstDDPeriod(), 0.0) : null,
+                    worstDDDto1 != null && worstDDDto1.getWorstDDPeriod() != null ? worstDDDto1.getWorstDDPeriod().toString() : null,
+                    worstDDDto2 != null && worstDDDto2.getWorstDDPeriod() != null ? worstDDDto2.getWorstDDPeriod().toString() : null));
+
+            // Recovery Months
+            Integer recoveryMonths = MathUtils.getRecoveryMonths(18, returns);
+            Integer recoveryMonths1 = isBenchmark ? null : recoveryMonths;
+            Integer recoveryMonths2 = !isBenchmark ? null : recoveryMonths;
+            performance.add(new MonitoringRiskHedgeFundPerformanceRecordDto("Recovery (months)",
+                    recoveryMonths1 != null ? MathUtils.add(recoveryMonths1, 0.0) : null,
+                    recoveryMonths2 != null ? MathUtils.add(recoveryMonths2, 0.0) : null,
+                    recoveryMonths1 != null ? recoveryMonths1.toString() : null,
+                    recoveryMonths2 != null ? recoveryMonths2.toString() : null));
 
             // Positive & Negative Months
             int positives = 0;
             int negatives = 0;
+            Double negativeSum = 0.0;
+            Double positiveSum = 0.0;
             for(int i = 0; i < returns.length; i++){
-                positives += returns[i] >= 0 ? 1 : 0;
-                negatives += returns[i] < 0 ? 1 : 0;
+                if(returns[i] >= 0){
+                    positives += 1;
+                    positiveSum = MathUtils.add(positiveSum, returns[i]);
+                }else{
+                    negatives += 1;
+                    negativeSum = MathUtils.add(negativeSum, returns[i]);
+                }
             }
-            performance.add(new MonitoringRiskHedgeFundPerformanceRecordDto("Positive Months", MathUtils.divide(positives + 0.0, returns.length + 0.0), null,
-                    MathUtils.multiply(2, 100.0, MathUtils.divide(positives + 0.0, returns.length + 0.0)) + "%", null));
+            performance.add(new MonitoringRiskHedgeFundPerformanceRecordDto("Positive Months",
+                    !isBenchmark ? MathUtils.divide(positives + 0.0, returns.length + 0.0) : null,
+                    isBenchmark ? MathUtils.divide(positives + 0.0, returns.length + 0.0) : null,
+                    !isBenchmark ? MathUtils.multiply(2, 100.0, MathUtils.divide(positives + 0.0, returns.length + 0.0)) + "%" : null,
+                    isBenchmark ? MathUtils.multiply(2, 100.0, MathUtils.divide(positives + 0.0, returns.length + 0.0)) + "%" : null));
 
-            performance.add(new MonitoringRiskHedgeFundPerformanceRecordDto("Negative Months", MathUtils.divide(negatives + 0.0, returns.length + 0.0), null,
-                    MathUtils.multiply(2, 100.0, MathUtils.divide(negatives + 0.0, returns.length + 0.0)) + "%", null));
+            performance.add(new MonitoringRiskHedgeFundPerformanceRecordDto("Negative Months",
+                    !isBenchmark ? MathUtils.divide(negatives + 0.0, returns.length + 0.0) : null,
+                    isBenchmark ? MathUtils.divide(negatives + 0.0, returns.length + 0.0) : null,
+                    !isBenchmark ? MathUtils.multiply(2, 100.0, MathUtils.divide(negatives + 0.0, returns.length + 0.0)) + "%" : null,
+                    isBenchmark ? MathUtils.multiply(2, 100.0, MathUtils.divide(negatives + 0.0, returns.length + 0.0)) + "%" : null));
 
+            // Gain Loss ratio
+            Double gainLossRatio = null;
+            Double gainLossRatio1 = null;
+            Double gainLossRatio2 = null;
+            if(negatives > 0 && negativeSum != 0.0) {
+                Double positiveAvg = MathUtils.divide(18, positiveSum, positives + 0.0);
+                Double negativeAvg = MathUtils.divide(18, negativeSum, negatives + 0.0);
+
+                gainLossRatio = Math.abs(MathUtils.divide(18, positiveAvg, negativeAvg));
+                gainLossRatio1 = !isBenchmark ? gainLossRatio : null;
+                gainLossRatio2 = isBenchmark ? gainLossRatio : null;
+
+            }
+            performance.add(new MonitoringRiskHedgeFundPerformanceRecordDto("Gain/Loss Ratio",gainLossRatio1, gainLossRatio2,
+                    !isBenchmark ? MathUtils.add(0.0, gainLossRatio).toString() : null,
+                    isBenchmark ? MathUtils.add(0.0, gainLossRatio).toString() : null));
         }
-        return performance;
+        responseDto.setRecords(performance);
+        if(responseDto.getStatus() == null){
+            responseDto.setStatus(ResponseStatusType.SUCCESS);
+        }
+        return responseDto;
     }
     /* ****************************************************************************************************************/
 
@@ -803,9 +1019,9 @@ public class MonitoringRiskServiceImpl implements MonitoringRiskService {
         }
         report.setPerformanceSinceInception(performanceSinceInception);
 
-        List<MonitoringRiskHedgeFundStressTestRecordDto> stressTests = new ArrayList<>();
+        List<RiskStressTestsDto> stressTests = new ArrayList<>();
         for(int i = 0; i < 10; i++){
-            MonitoringRiskHedgeFundStressTestRecordDto dto = new MonitoringRiskHedgeFundStressTestRecordDto();
+            RiskStressTestsDto dto = new RiskStressTestsDto();
             dto.setName("Russian Debt/LTCM Crisis 1998");
             dto.setValue(-0.0246);
             stressTests.add(dto);
@@ -813,5 +1029,38 @@ public class MonitoringRiskServiceImpl implements MonitoringRiskService {
         report.setStressTests(stressTests);
 
         return report;
+    }
+
+    private class DateDoubleValue implements Comparable{
+        private Date date;
+        private Double value;
+
+        public DateDoubleValue(){}
+
+        public DateDoubleValue(Date date, Double value){
+            this.date = date;
+            this.value = value;
+        }
+
+        public Date getDate() {
+            return date;
+        }
+
+        public void setDate(Date date) {
+            this.date = date;
+        }
+
+        public Double getValue() {
+            return value;
+        }
+
+        public void setValue(Double value) {
+            this.value = value;
+        }
+
+        @Override
+        public int compareTo(Object o) {
+            return this.date.compareTo(((DateDoubleValue) o).date);
+        }
     }
 }

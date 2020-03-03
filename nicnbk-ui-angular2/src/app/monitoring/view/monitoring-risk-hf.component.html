@@ -147,6 +147,12 @@
 
     <!-- PERFORMANCE SUMMARY -->
     <div class="row" [hidden]="selectedDateMonitoringInfo == null">
+        <div class="alert alert-danger small" *ngIf="selectedDateMonitoringInfo?.performanceError != null">
+            <span>{{selectedDateMonitoringInfo?.performanceError}}</span>
+        </div>
+        <div class="alert alert-warning small" *ngIf="selectedDateMonitoringInfo?.performanceWarning != null">
+            <span>* {{selectedDateMonitoringInfo.performanceWarning}}</span>
+        </div>
         <div class="col-md-12">
             <div class="col-md-6">
                 <table class="table table-hover table-responsive table-condensed">
@@ -160,7 +166,9 @@
                     <tbody>
                         <tr *ngFor="let performance of selectedDateMonitoringInfo?.performance12M">
                             <td>{{performance.name}}</td>
-                            <td>{{performance.portfolioValueTxt}}</td>
+                            <td>{{performance.portfolioValueTxt}}
+<!--                                <span data-toggle="tooltip">{{performance.portfolioValue | percent : '1.2'}}</span>-->
+                            </td>
                             <td>{{performance.benchmarkValueTxt}}</td>
                         </tr>
                     </tbody>
@@ -178,8 +186,9 @@
                     <tbody>
                         <tr *ngFor="let performance of selectedDateMonitoringInfo?.performanceSinceInception">
                             <td>{{performance.name}}</td>
-                            <td>{{performance.portfolioValue | percent: '1.2' }}</td>
-                            <td>{{performance.benchmarkValue | percent: '1.2' }}</td>
+                            <td>{{performance.portfolioValueTxt}}
+                            </td>
+                            <td>{{performance.benchmarkValueTxt}}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -198,7 +207,7 @@
             </thead>
             <tbody>
                 <tr *ngFor="let item of selectedDateMonitoringInfoStressTests; let i = index"
-                    [style.font-weight]="i % 2 == 1 ? 'bold' : ''" [style.text-align]="i % 2 == 1 ? 'center' : ''">
+                    [style.font-weight]="i % 2 == 1 ? 'bold' : ''" [style.text-align]="'center'">
                     <td>{{item[0]}}</td>
                     <td>{{item[1]}}</td>
                     <td>{{item[2]}}</td>

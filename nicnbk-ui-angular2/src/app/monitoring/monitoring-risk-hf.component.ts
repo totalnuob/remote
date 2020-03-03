@@ -49,7 +49,7 @@ export class MonitoringRiskHedgeFundComponent extends GoogleChartComponent {
     }
 
     getAllDates(){
-        return ["30-11-2019", "31-10-2019", '30-09-2019'];
+        return ["31-12-2019", "30-11-2019", "31-10-2019", '30-09-2019'];
     }
 
     drawMarketSensitivitiesSinceInceptionMSCI(){
@@ -147,6 +147,7 @@ export class MonitoringRiskHedgeFundComponent extends GoogleChartComponent {
 
     selectDate(value){
         this.selectedDate = value;
+        this.selectedDateMonitoringInfoStressTests = null;
         this.busy = this.monitoringRiskHFService.getMonthlyHFRiskReport(value)
             .subscribe(
                 monitoringData => {
@@ -176,6 +177,8 @@ export class MonitoringRiskHedgeFundComponent extends GoogleChartComponent {
                                 stressTestsNameItem.push(this.selectedDateMonitoringInfo.stressTests[i].name);
                                 stressTestsValueItem.push(this.selectedDateMonitoringInfo.stressTests[i].value);
                             }
+                            console.log(stressTestsNames);
+                            console.log(stressTestsValues);
                             this.selectedDateMonitoringInfoStressTests = [];
                             for(var i = 0; i < stressTestsNames.length; i++){
                                 this.selectedDateMonitoringInfoStressTests.push(stressTestsNames[i]);

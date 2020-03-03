@@ -33,7 +33,7 @@ public class MonitoringRiskHedgeFundReportDto extends ResponseDto {
     private String performanceWarning;
     private String performanceError;
 
-    private List<MonitoringRiskHedgeFundStressTestRecordDto> stressTests;
+    private List<RiskStressTestsDto> stressTests;
     private String stressTestsWarning;
     private String stressTestsError;
 
@@ -101,11 +101,11 @@ public class MonitoringRiskHedgeFundReportDto extends ResponseDto {
         this.performanceSinceInception = performanceSinceInception;
     }
 
-    public List<MonitoringRiskHedgeFundStressTestRecordDto> getStressTests() {
+    public List<RiskStressTestsDto> getStressTests() {
         return stressTests;
     }
 
-    public void setStressTests(List<MonitoringRiskHedgeFundStressTestRecordDto> stressTests) {
+    public void setStressTests(List<RiskStressTestsDto> stressTests) {
         this.stressTests = stressTests;
     }
 
