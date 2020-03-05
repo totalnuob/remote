@@ -8,9 +8,11 @@ import kz.nicnbk.service.api.m2s2.*;
 import kz.nicnbk.service.dto.authentication.TokenUserInfo;
 import kz.nicnbk.service.dto.files.FilesDto;
 import kz.nicnbk.service.dto.m2s2.*;
+import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,7 +20,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.InputStream;
+import java.io.*;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -29,6 +32,8 @@ import java.util.Set;
 @PreAuthorize("hasRole('ROLE_M2S2_VIEWER') OR hasRole('ROLE_M2S2_EDITOR') OR hasRole('ROLE_ADMIN')")
 @RequestMapping("/m2s2")
 public class MemoServiceREST extends CommonServiceREST {
+
+    private static final Logger logger = LoggerFactory.getLogger(MemoServiceREST.class);
 
     @Autowired
     private MeetingMemoService memoService;
@@ -50,6 +55,9 @@ public class MemoServiceREST extends CommonServiceREST {
     @Autowired
     private TokenService tokenService;
 
+    @Autowired
+    private ExportMemoListService exportMemoListService;
+
 
     @RequestMapping(value = "/search", method = RequestMethod.POST)
     public ResponseEntity<?> search(@RequestBody MemoSearchParamsExtended searchParams){
@@ -61,6 +69,29 @@ public class MemoServiceREST extends CommonServiceREST {
         }else{
             // error occurred
             return new ResponseEntity<>(null, null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @RequestMapping(value = "/export", method = RequestMethod.POST)
+    public void download(@RequestBody MemoSearchParamsExtended searchParams,
+                                             HttpServletResponse response){
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
+        MemoPagedSearchResult searchResult = memoService.search(searchParams, username);
+        if (searchResult.getTotalElements() > searchParams.getPageSize()) {
+            searchParams.setPageSize((int) searchResult.getTotalElements());
+            searchResult = memoService.search(searchParams, username);
+        }
+        List<MeetingMemoDto> list = searchResult.getMemos();
+
+        try {
+            response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+            response.setHeader("Content-disposition", "attachment;");
+            ByteArrayInputStream stream = exportMemoListService.excelExport(list);
+            IOUtils.copy(stream, response.getOutputStream());
+            response.flushBuffer();
+        } catch (IOException e) {
+            logger.error("IO Exception");
         }
     }
 

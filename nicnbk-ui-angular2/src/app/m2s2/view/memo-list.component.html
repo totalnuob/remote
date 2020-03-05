@@ -104,7 +104,10 @@
                 <br/>
                 <div class="row">
                     <div class="col-md-12">
-                        <button type="button" class="btn btn-success pull-right" (click)="search()">Search</button>
+                        <div class="btn-toolbar pull-right">
+                            <button type="button" class="btn btn-success" (click)="search()">Search</button>
+                            <button type="button" class="btn btn-success" (click)="export()">Export into excel</button>
+                        </div>
                     </div>
                 </div>
         </div>
