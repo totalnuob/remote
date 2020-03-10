@@ -54,24 +54,18 @@ public class ExportMemoListServiceImpl implements ExportMemoListService {
             headerCellStyle.setFont(headerFont);
 
             Row headerRow = sheet.createRow(0);
-
-            for (int i = 0; i < columns.length - 3; i++) {
-                Cell cell = headerRow.createCell(i);
-                cell.setCellValue(columns[i]);
-                cell.setCellStyle(headerCellStyle);
-            }
+            populateHeaderRow(columns, headerCellStyle, headerRow);
 
             CellStyle dateCellStyle = workbook.createCellStyle();
             dateCellStyle.setDataFormat(creationHelper.createDataFormat().getFormat("dd-MM-yyyy"));
 
             int rowNum = 1;
-
             for (MeetingMemoDto memo:list) {
                 Row row = sheet.createRow(rowNum++);
                 populateCells(dateCellStyle, memo, row);
             }
 
-            for (int i = 0; i < columns.length; i++) {
+            for (int i = 0; i < columns.length - 3; i++) {
                 sheet.autoSizeColumn(i);
             }
 
@@ -84,21 +78,17 @@ public class ExportMemoListServiceImpl implements ExportMemoListService {
         }
     }
 
+    private void populateHeaderRow(String[] columns, CellStyle headerCellStyle, Row headerRow) {
+        for (int i = 0; i < columns.length; i++) {
+            Cell cell = headerRow.createCell(i);
+            cell.setCellValue(columns[i]);
+            cell.setCellStyle(headerCellStyle);
+        }
+    }
+
     private void populateCells(CellStyle dateCellStyle, MeetingMemoDto memo, Row row) {
         Cell memoTypeCell = row.createCell(0);
-        if (memo.getMemoType() == 1) {
-            memoTypeCell.setCellValue("General");
-        } else if (memo.getMemoType() == 2) {
-            memoTypeCell.setCellValue("PE");
-        } else if (memo.getMemoType() == 3) {
-            memoTypeCell.setCellValue("HF");
-        } else if (memo.getMemoType() == 4) {
-            memoTypeCell.setCellValue("RE");
-        } else if (memo.getMemoType() == 5) {
-            memoTypeCell.setCellValue("INFR");
-        } else {
-            memoTypeCell.setCellValue("");
-        }
+        populateMemoTypeCell(memo, memoTypeCell);
 
         row.createCell(1).setCellValue(memo.getMeetingType());
         row.createCell(2).setCellValue(memo.getFirmName());
@@ -145,92 +135,74 @@ public class ExportMemoListServiceImpl implements ExportMemoListService {
         summaryCell.setCellValue(getSummary(memo.getMemoType(), memo.getId()));
     }
 
+    private void populateMemoTypeCell(MeetingMemoDto memo, Cell memoTypeCell) {
+        if (memo.getMemoType() == 1) {
+            memoTypeCell.setCellValue("General");
+        } else if (memo.getMemoType() == 2) {
+            memoTypeCell.setCellValue("PE");
+        } else if (memo.getMemoType() == 3) {
+            memoTypeCell.setCellValue("HF");
+        } else if (memo.getMemoType() == 4) {
+            memoTypeCell.setCellValue("RE");
+        } else if (memo.getMemoType() == 5) {
+            memoTypeCell.setCellValue("INFR");
+        } else {
+            memoTypeCell.setCellValue("");
+        }
+    }
+
     private String getAttendees(int type, Long id) {
         String result = "";
         switch (type) {
             case MeetingMemo.GENERAL_DISCRIMINATOR:
                 GeneralMeetingMemoDto generalMemo = generalMemoService.get(id);
                 Set<EmployeeDto> generalEmployeeSet = generalMemo.getAttendeesNIC();
-                if (!generalEmployeeSet.isEmpty()) {
-                    result = result + "NIC Attendees: \n";
-                    for (EmployeeDto employee : generalEmployeeSet) {
-                        result = result + EmployeeService.getEmployeeById(employee.getId()).toString() + "\n";
-                    }
-                }
-                if (generalMemo.getAttendeesNICOther() != null) {
-                    result = result + "Other NIC Attendees: \n" + generalMemo.getAttendeesNICOther() + "\n";
-                }
-                if (generalMemo.getAttendeesOther() != null) {
-                    result = result + "Other Party Attendees: \n" + generalMemo.getAttendeesOther() + "\n";
-                }
+                result = generateAttendeesString(result, generalEmployeeSet, generalMemo.getAttendeesNICOther(), generalMemo.getAttendeesOther());
                 return result;
             case MeetingMemo.PE_DISCRIMINATOR:
                 PrivateEquityMeetingMemoDto PEMemo = PEmemoService.get(id);
                 Set<EmployeeDto> PEemployeeSet = PEMemo.getAttendeesNIC();
-                if (!PEemployeeSet.isEmpty()) {
-                    result = result + "NIC Attendees: \n";
-                    for (EmployeeDto employee : PEemployeeSet) {
-                        result = result + EmployeeService.getEmployeeById(employee.getId()).toString() + "\n";
-                    }
-                }
-                if (PEMemo.getAttendeesNICOther() != null) {
-                    result = result + "Other NIC Attendees: \n" + PEMemo.getAttendeesNICOther() + "\n";
-                }
-                if (PEMemo.getAttendeesOther() != null) {
-                    result = result + "Other Party Attendees: \n" + PEMemo.getAttendeesOther() + "\n";
-                }
+                result = generateAttendeesString(result, PEemployeeSet, PEMemo.getAttendeesNICOther(), PEMemo.getAttendeesOther());
                 return result;
             case MeetingMemo.HF_DISCRIMINATOR:
                 HedgeFundsMeetingMemoDto HFMemo = HFmemoService.get(id);
                 Set<EmployeeDto> HFemployeeSet = HFMemo.getAttendeesNIC();
-                if (!HFemployeeSet.isEmpty()) {
-                    result = result + "NIC Attendees: \n";
-                    for (EmployeeDto employee : HFemployeeSet) {
-                        result = result + EmployeeService.getEmployeeById(employee.getId()).toString() + "\n";
-                    }
-                }
-                if (HFMemo.getAttendeesNICOther() != null) {
-                    result = result + "Other NIC Attendees: \n" + HFMemo.getAttendeesNICOther() + "\n";
-                }
-                if (HFMemo.getAttendeesOther() != null) {
-                    result = result + "Other Party Attendees: \n" + HFMemo.getAttendeesOther() + "\n";
-                }
+                result = generateAttendeesString(result, HFemployeeSet, HFMemo.getAttendeesNICOther(), HFMemo.getAttendeesOther());
                 return result;
             case MeetingMemo.RE_DISCRIMINATOR:
                 RealEstateMeetingMemoDto REMemo = REmemoService.get(id);
                 Set<EmployeeDto> REemployeeSet = REMemo.getAttendeesNIC();
-                if (!REemployeeSet.isEmpty()) {
-                    result = result + "NIC Attendees: \n";
-                    for (EmployeeDto employee : REemployeeSet) {
-                        result = result + EmployeeService.getEmployeeById(employee.getId()).toString() + "\n";
-                    }
-                }
-                if (REMemo.getAttendeesNICOther() != null) {
-                    result = result + "Other NIC Attendees: \n" + REMemo.getAttendeesNICOther() + "\n";
-                }
-                if (REMemo.getAttendeesOther() != null) {
-                    result = result + "Other Party Attendees: \n" + REMemo.getAttendeesOther() + "\n";
-                }
+                result = generateAttendeesString(result, REemployeeSet, REMemo.getAttendeesNICOther(), REMemo.getAttendeesOther());
                 return result;
             case MeetingMemo.INFR_DISCRIMINATOR:
                 InfrastructureMeetingMemoDto infrMemo = INFRmemoService.get(id);
                 Set<EmployeeDto> infrEmployeeSet = infrMemo.getAttendeesNIC();
-                if (!infrEmployeeSet.isEmpty()) {
-                    result = result + "NIC Attendees: \n";
-                    for (EmployeeDto employee : infrEmployeeSet) {
-                        result = result + EmployeeService.getEmployeeById(employee.getId()).toString() + "\n";
-                    }
-                }
-                if (infrMemo.getAttendeesNICOther() != null) {
-                    result = result + "Other NIC Attendees: \n" + infrMemo.getAttendeesNICOther() + "\n";
-                }
-                if (infrMemo.getAttendeesOther() != null) {
-                    result = result + "Other Party Attendees: \n" + infrMemo.getAttendeesOther() + "\n";
-                }
+                result = generateAttendeesString(result, infrEmployeeSet, infrMemo.getAttendeesNICOther(), infrMemo.getAttendeesOther());
                 return result;
             default:
                 return result;
         }
+    }
+
+    private String generateAttendeesString(String result, Set<EmployeeDto> employeeSet, String attendeesNICOther, String attendeesOther) {
+        if (!employeeSet.isEmpty()) {
+            result = result + "NIC Attendees: \n";
+            for (EmployeeDto employee : employeeSet) {
+                result = concatNICAttendees(result, employee);
+            }
+        }
+        if (attendeesNICOther != null) {
+            result = result + "Other NIC Attendees: \n" + attendeesNICOther + "\n";
+        }
+        if (attendeesOther != null) {
+            result = result + "Other Party Attendees: \n" + attendeesOther + "\n";
+        }
+        return result;
+    }
+
+    private String concatNICAttendees(String result, EmployeeDto employee) {
+        result = result.concat(EmployeeService.getEmployeeById(employee.getId()).toString() + "\n");
+        return result;
     }
 
     private String getSummary(int type, Long id) {
@@ -238,15 +210,8 @@ public class ExportMemoListServiceImpl implements ExportMemoListService {
         switch (type) {
             case MeetingMemo.GENERAL_DISCRIMINATOR:
                 GeneralMeetingMemoDto generalMemo = generalMemoService.get(id);
-                if (generalMemo.getTopic1() != null) {
-                    result = result + "Topic 1: " + generalMemo.getTopic1() + "\n";
-                }
-                if (generalMemo.getTopic2() != null) {
-                    result = result + "Topic 2: " + generalMemo.getTopic2() + "\n";
-                }
-                if (generalMemo.getTopic3() != null) {
-                    result = result + "Topic 3: " + generalMemo.getTopic3() + "\n";
-                }
+                result = generateSummary(result, generalMemo.getTopic1(), "Topic 1: ", generalMemo.getTopic2(),
+                        "Topic 2: ", generalMemo.getTopic3(), "Topic 3: ");
                 return result;
             case MeetingMemo.PE_DISCRIMINATOR:
                 PrivateEquityMeetingMemoDto PEMemo = PEmemoService.get(id);
@@ -262,30 +227,16 @@ public class ExportMemoListServiceImpl implements ExportMemoListService {
                 return result;
             case MeetingMemo.RE_DISCRIMINATOR:
                 RealEstateMeetingMemoDto REMemo = REmemoService.get(id);
-                if (REMemo.getTeamNotes() != null) {
-                    result = result + "GP and Team: " + REMemo.getTeamNotes() + "\n";
-                }
-                if (REMemo.getTrackRecordNotes() != null) {
-                    result = result + "Track Record: " + REMemo.getTrackRecordNotes() + "\n";
-                }
-                if (REMemo.getStrategyNotes() != null) {
-                    result = result + "Strategy: " + REMemo.getStrategyNotes() + "\n";
-                }
+                result = generateSummary(result, REMemo.getTeamNotes(), "GP and Team: ", REMemo.getTrackRecordNotes(),
+                        "Track Record: ", REMemo.getStrategyNotes(), "Strategy: ");
                 if (REMemo.getOtherNotes() != null) {
                     result = result + "Other Info: " + REMemo.getOtherNotes() + "\n";
                 }
                 return result;
             case MeetingMemo.INFR_DISCRIMINATOR:
                 InfrastructureMeetingMemoDto infrMemo = INFRmemoService.get(id);
-                if (infrMemo.getTeamNotes() != null) {
-                    result = result + "GP and Team: " + infrMemo.getTeamNotes() + "\n";
-                }
-                if (infrMemo.getTrackRecordNotes() != null) {
-                    result = result + "Track Record: " + infrMemo.getTrackRecordNotes() + "\n";
-                }
-                if (infrMemo.getStrategyNotes() != null) {
-                    result = result + "Strategy: " + infrMemo.getStrategyNotes() + "\n";
-                }
+                result = generateSummary(result, infrMemo.getTeamNotes(), "GP and Team: ", infrMemo.getTrackRecordNotes(),
+                        "Track Record: ", infrMemo.getStrategyNotes(), "Strategy: ");
                 if (infrMemo.getOtherNotes() != null) {
                     result = result + "Other Info: " + infrMemo.getOtherNotes() + "\n";
                 }
@@ -293,6 +244,19 @@ public class ExportMemoListServiceImpl implements ExportMemoListService {
             default:
                 return result;
         }
+    }
+
+    private String generateSummary(String result, String summary1, String s, String summary2, String s2, String summary3, String s3) {
+        if (summary1 != null) {
+            result = result + s + summary1 + "\n";
+        }
+        if (summary2 != null) {
+            result = result + s2 + summary2 + "\n";
+        }
+        if (summary3 != null) {
+            result = result + s3 + summary3 + "\n";
+        }
+        return result;
     }
 
 }
