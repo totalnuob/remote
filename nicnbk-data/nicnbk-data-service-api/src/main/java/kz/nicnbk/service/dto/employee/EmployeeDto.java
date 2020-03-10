@@ -86,4 +86,8 @@ public class EmployeeDto extends BaseEntityDto<Employee> {
     public void setPosition(PositionDto position) {
         this.position = position;
     }
+
+    public String toString() {
+        return this.firstName + " " + this.lastName;
+    }
 }
