@@ -775,7 +775,8 @@ public class PeriodicReportPEServiceImpl implements PeriodicReportPEService {
                     record.setGLAccountBalance(investment.getEditedFairValue() != null ? investment.getEditedFairValue() : accountBalance);
 
 
-                    if(!madeEditable && investment.getTrancheType() != null &&
+                    if(!madeEditable && investment.getTrancheType() != null && record.getGLAccountBalance() != null &&
+                            record.getGLAccountBalance().doubleValue() != 0.0 &&
                             (investment.getTrancheType().getCode().equalsIgnoreCase(PETrancheTypeLookup.TARRAGON_A.getCode()) ||
                             investment.getTrancheType().getCode().equalsIgnoreCase(PETrancheTypeLookup.TARRAGON_A2.getCode()))){
                         record.setEditable(true);
