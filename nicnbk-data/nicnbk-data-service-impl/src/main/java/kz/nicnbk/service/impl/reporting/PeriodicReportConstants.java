@@ -84,6 +84,12 @@ public final class PeriodicReportConstants {
     public static final String PARSE_SINGULAR_ITD_HEADER_REDEMPTIONS = "ITD Reds";
     public static final String PARSE_SINGULAR_ITD_HEADER_CLOSING_BALANCE = "Closing Balance";
 
+    public static final String PARSE_SINGULAR_ITD_HRS_HEADER_PERIOD = "Period";
+    public static final String PARSE_SINGULAR_ITD_HRS_HEADER_MANAGER_FUND = "Manager Fund";
+    public static final String PARSE_SINGULAR_ITD_HRS_HEADER_PORTFOLIO = "Portfolio";
+    public static final String PARSE_SINGULAR_ITD_HRS_HEADER_NET_CONTRIBUTION = "Net Contribution";
+    public static final String PARSE_SINGULAR_ITD_HRS_HEADER_ENDING_BALANCE = "Ending Balance";
+
     /* SINGULARITY GENERAL LEDGER V2 ******************************************************************************************************/
     public static final String PARSE_SINGULAR_GL_V2_HEADER_PORTFOLIO_ACRONYM = "Portfolio Acronym";
     public static final String PARSE_SINGULAR_GL_V2_HEADER_GROUP_CATEGORY = "GL FS Group Category";

@@ -187,6 +187,10 @@ public class DateUtils {
         cal.set(Calendar.YEAR, getYear(date));
         cal.set(Calendar.DAY_OF_MONTH, 1);// This is necessary to get proper results
         cal.set(Calendar.DATE, cal.getActualMaximum(Calendar.DATE));
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
         //System.out.println(cal.getTime());
         return cal.getTime();
     }
@@ -198,6 +202,10 @@ public class DateUtils {
         cal.set(Calendar.YEAR, getYear(date));
         cal.set(Calendar.DAY_OF_MONTH, 1);// This is necessary to get proper results
         cal.set(Calendar.DATE, cal.getActualMaximum(Calendar.DATE));
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
         //System.out.println(cal.getTime());
         return cal.getTime();
     }
@@ -223,6 +231,10 @@ public class DateUtils {
         cal.set(Calendar.YEAR, getYear(date));
         cal.set(Calendar.DAY_OF_MONTH, 1);// This is necessary to get proper results
         cal.set(Calendar.DATE, cal.getActualMinimum(Calendar.DATE));
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
         //System.out.println(cal.getTime());
         return cal.getTime();
     }
@@ -234,6 +246,10 @@ public class DateUtils {
         cal.set(Calendar.YEAR, getYear(date));
         cal.set(Calendar.DAY_OF_MONTH, 1);// This is necessary to get proper results
         cal.set(Calendar.DATE, cal.getActualMaximum(Calendar.DATE));
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
         //System.out.println(cal.getTime());
         return cal.getTime();
     }
@@ -249,6 +265,10 @@ public class DateUtils {
         cal.set(Calendar.YEAR, getYear(date));
         cal.set(Calendar.DAY_OF_MONTH, 1);// This is necessary to get proper results
         cal.set(Calendar.DATE, getDay(date) + 1);
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
         //System.out.println(cal.getTime());
         return cal.getTime();
     }

@@ -10,6 +10,7 @@ import kz.nicnbk.repo.model.lookup.FileTypeLookup;
 import kz.nicnbk.repo.model.reporting.*;
 import kz.nicnbk.repo.model.reporting.hedgefunds.ReportingHFGeneralLedgerBalance;
 import kz.nicnbk.repo.model.reporting.hedgefunds.ReportingHFITD;
+import kz.nicnbk.repo.model.reporting.hedgefunds.ReportingHFITDHistorical;
 import kz.nicnbk.repo.model.reporting.hedgefunds.ReportingHFNOAL;
 import kz.nicnbk.repo.model.reporting.privateequity.*;
 import kz.nicnbk.repo.model.reporting.realestate.ReportingREBalanceSheet;
@@ -2803,6 +2804,9 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
     private FileUploadResultDto parseSingularITD(FilesDto filesDto, Long reportId) throws ExcelFileParseException {
         List<SingularityITDRecordDto> sheet1Records = new ArrayList<>();
         List<SingularityITDRecordDto> sheet2Records = new ArrayList<>();
+
+        List<SingularityITDHistoricalRecordDto> sheet3Records = new ArrayList<>();
+        List<SingularityITDHistoricalRecordDto> sheet4Records = new ArrayList<>();
         try {
 
             /* PARSE EXCEL (RAW) *******************************************************************************/
@@ -2815,9 +2819,25 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
 
             sheet1Records.addAll(sheet2Records);
 
+            // Historical
+            Iterator<Row> rowIteratorHRS1 = getRowIterator(filesDto, 2);
+            sheet3Records = parseSingularITDHistoricalSheetRaw(rowIteratorHRS1, 1);
+
+            Iterator<Row> rowIteratorHRS2 = getRowIterator(filesDto, 3);
+            sheet4Records = parseSingularITDHistoricalSheetRaw(rowIteratorHRS2, 2);
+
+            sheet3Records.addAll(sheet4Records);
+
             /* SAVE TO DB **************************************************************************************/
-            List<ReportingHFITD> entities = this.hfITDService.assembleList(sheet1Records, reportId);
-            boolean saved = this.hfITDService.save(entities);
+
+            boolean saved  = this.hfITDService.updateHRS(sheet3Records, reportId);
+
+            if(saved) {
+                List<ReportingHFITD> entities = this.hfITDService.assembleList(sheet1Records, reportId);
+                saved = this.hfITDService.save(entities);
+            }else{
+                logger.error("Error saving 'Singularity ITD' file parsed data into database - HRS data");
+            }
 
             if(saved){
                 String successMessage = "Successfully processed the file - Singularity ITD";
@@ -2875,24 +2895,89 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
                     }
                     final String profitLossHeader = PeriodicReportConstants.PARSE_SINGULAR_ITD_HEADER_PROFIT_LOSS;
                     if(headers.get(profitLossHeader) != null){
-                        //String value = ExcelUtils.getTextValueFromAnyCell(row.getCell(headers.get(profitLossHeader).intValue()));
-                        //Double doubleValue = MathUtils.getDouble(value);
                         Double doubleValue = ExcelUtils.getDoubleValueFromCell(row.getCell(headers.get(profitLossHeader).intValue()));
                         record.setProfitLoss(doubleValue);
                     }
                     final String redemptionsHeader = PeriodicReportConstants.PARSE_SINGULAR_ITD_HEADER_REDEMPTIONS;
                     if(headers.get(redemptionsHeader) != null){
-                        //String value = ExcelUtils.getTextValueFromAnyCell(row.getCell(headers.get(redemptionsHeader).intValue()));
-                        //Double doubleValue = MathUtils.getDouble(value);
                         Double doubleValue = ExcelUtils.getDoubleValueFromCell(row.getCell(headers.get(redemptionsHeader).intValue()));
                         record.setRedemptions(doubleValue);
                     }
                     final String closingBalanceHeader = PeriodicReportConstants.PARSE_SINGULAR_ITD_HEADER_CLOSING_BALANCE;
                     if(headers.get(closingBalanceHeader) != null){
-                        //String value = ExcelUtils.getTextValueFromAnyCell(row.getCell(headers.get(closingBalanceHeader).intValue()));
-                        //Double doubleValue = MathUtils.getDouble(value);
                         Double doubleValue = ExcelUtils.getDoubleValueFromCell(row.getCell(headers.get(closingBalanceHeader).intValue()));
                         record.setClosingBalance(doubleValue);
+                    }
+                    record.setTranche(tranche);
+                    if(!record.isEmpty()){
+                        records.add(record);
+                    }
+                }
+                rowNum++;
+            }
+        }
+        return records;
+    }
+
+    private List<SingularityITDHistoricalRecordDto> parseSingularITDHistoricalSheetRaw(Iterator<Row> rowIterator, int tranche){
+        List<SingularityITDHistoricalRecordDto> records = new ArrayList<>();
+        if(rowIterator != null) {
+            int rowNum = 0;
+            Map<String, Integer> headers = new HashMap<>();
+            while (rowIterator.hasNext()) { // each row
+                Row row = rowIterator.next();
+                if(rowNum == 0){
+                    // First row, must contain table header
+                    Iterator<Cell> cellIterator = row.cellIterator();
+                    while(cellIterator != null && cellIterator.hasNext()){
+                        Cell cell = cellIterator.next();
+                        if(StringUtils.isNotEmpty(cell.getStringCellValue()) && headers.get(cell.getStringCellValue()) == null) {
+                            headers.put(cell.getStringCellValue(), cell.getColumnIndex());
+                        }else{
+                            // skip empty cells
+                        }
+                    }
+                    if(headers.isEmpty()){
+                        return null;
+                    }
+                }else{
+                    SingularityITDHistoricalRecordDto record = new SingularityITDHistoricalRecordDto();
+
+                    final String periodHeader = PeriodicReportConstants.PARSE_SINGULAR_ITD_HRS_HEADER_PERIOD;
+                    if(headers.get(periodHeader) != null){
+                        String value = ExcelUtils.getTextValueFromAnyCell(row.getCell(headers.get(periodHeader).intValue()));
+                        if(value != null && value.split("-").length == 2){
+                            String[] valueSplit = value.split("-");
+                            try {
+                                Date date = DateUtils.getLastDayOfCurrentMonth(DateUtils.getDate("01." + valueSplit[1] + "." + valueSplit[0]));
+                                record.setDate(date);
+                            }catch (Exception ex){
+                                String errorMessage = "Failed to parse Singular ITD HRS (tranche " + tranche +
+                                        "): error parsing date from '" + value + "'";
+                                logger.error(errorMessage, ex);
+                                throw new ExcelFileParseException(errorMessage);
+                            }
+                        }
+                    }
+                    final String managerFundHeader = PeriodicReportConstants.PARSE_SINGULAR_ITD_HRS_HEADER_MANAGER_FUND;
+                    if(headers.get(managerFundHeader) != null){
+                        String value = ExcelUtils.getTextValueFromAnyCell(row.getCell(headers.get(managerFundHeader).intValue()));
+                        record.setFundName(value != null ? value.trim() : value);
+                    }
+                    final String portfolioHeader = PeriodicReportConstants.PARSE_SINGULAR_ITD_HRS_HEADER_PORTFOLIO;
+                    if(headers.get(portfolioHeader) != null){
+                        String value = ExcelUtils.getTextValueFromAnyCell(row.getCell(headers.get(portfolioHeader).intValue()));
+                        record.setPortfolio(value != null ? value.trim() : value);
+                    }
+                    final String netContributionHeader = PeriodicReportConstants.PARSE_SINGULAR_ITD_HRS_HEADER_NET_CONTRIBUTION;
+                    if(headers.get(netContributionHeader) != null){
+                        Double doubleValue = ExcelUtils.getDoubleValueFromCell(row.getCell(headers.get(netContributionHeader).intValue()));
+                        record.setNetContribution(doubleValue);
+                    }
+                    final String endingBalanceHeader = PeriodicReportConstants.PARSE_SINGULAR_ITD_HRS_HEADER_ENDING_BALANCE;
+                    if(headers.get(endingBalanceHeader) != null){
+                        Double doubleValue = ExcelUtils.getDoubleValueFromCell(row.getCell(headers.get(endingBalanceHeader).intValue()));
+                        record.setEndingBalance(doubleValue);
                     }
                     record.setTranche(tranche);
                     if(!record.isEmpty()){
