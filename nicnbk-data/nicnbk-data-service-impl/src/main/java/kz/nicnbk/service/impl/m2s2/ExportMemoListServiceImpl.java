@@ -73,7 +73,7 @@ public class ExportMemoListServiceImpl implements ExportMemoListService {
             workbook.write(outputStream);
             return new ByteArrayInputStream(outputStream.toByteArray());
         } catch (IOException ex) {
-            logger.error("IOException occured");
+            logger.error("IOException occurred");
             return null;
         }
     }

@@ -106,7 +106,6 @@
                     <div class="col-md-12">
                         <div class="btn-toolbar pull-right">
                             <button type="button" class="btn btn-success" (click)="search()">Search</button>
-                            <button type="button" class="btn btn-success" (click)="export()">Export into excel</button>
                         </div>
                     </div>
                 </div>
@@ -123,6 +122,13 @@
                     </li>
                     <li><a *ngIf="memoSearchResult.showPageTo < memoSearchResult.totalPages" (click)="search(memoSearchResult.showPageTo + 1)">&raquo;</a></li>
                 </ul>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="btn-toolbar pull-right">
+                        <button type="button" class="btn btn-primary" (click)="export()">Export into excel</button>
+                    </div>
+                </div>
             </div>
             <table [ngBusy]="busy" class="table table-hover">
                 <thead>
@@ -165,6 +171,13 @@
                 </tr>
                 </tbody>
             </table>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="btn-toolbar pull-right">
+                        <button type="button" class="btn btn-primary" (click)="export()">Export into excel</button>
+                    </div>
+                </div>
+            </div>
             <div class="row pull-right">
                 <ul class="pagination" *ngIf="memoSearchResult?.showPageFrom > 0">
                     <li><a *ngIf="memoSearchResult?.showPageFrom > 1" (click)="search(memoSearchResult.showPageFrom - 1)">&laquo;</a></li>
