@@ -1195,7 +1195,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                 recordDto.setCurrentAccountBalance(lineNumber == 32 || lineNumber == 47 || lineNumber == 51 ||
                         (recordDto.getAccountNumber() != null && (recordDto.getAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_3013_010) ||
                                 recordDto.getAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_3383_010)))
-                        ? 0 - nickMFRecord.getAccountBalance() : nickMFRecord.getAccountBalance());
+                        ? MathUtils.subtract(0.0, nickMFRecord.getAccountBalance()) : nickMFRecord.getAccountBalance());
 
                 //recordDto.setPreviousAccountBalance();
                 records.add(recordDto);
@@ -1248,7 +1248,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                         (recordDto.getAccountNumber() != null && (recordDto.getAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_3013_010) ||
                                 recordDto.getAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_3383_010) ||
                                 recordDto.getAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_3053_060)))
-                        ? 0 - singularRecord.getGLAccountBalance() : singularRecord.getGLAccountBalance());
+                        ? MathUtils.subtract(0.0, singularRecord.getGLAccountBalance()) : singularRecord.getGLAccountBalance());
                 //recordDto.setPreviousAccountBalance();
                 records.add(recordDto);
                 if(StringUtils.isNotEmpty(recordDto.getAccountNumber()) && recordDto.getLineNumber() != null && recordDto.getCurrentAccountBalance() != null){
@@ -1293,7 +1293,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                         (recordDto.getAccountNumber() != null && (recordDto.getAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_3013_010) ||
                                 recordDto.getAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_3383_010)) ||
                                 (recordDto.getAccountNumber() != null && recordDto.getAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_3053_060)))
-                        ? 0 - tarragonRecord.getGLAccountBalance() : tarragonRecord.getGLAccountBalance());
+                        ? MathUtils.subtract(0.0, tarragonRecord.getGLAccountBalance()) : tarragonRecord.getGLAccountBalance());
                 //recordDto.setPreviousAccountBalance();
                 records.add(recordDto);
 
@@ -1346,7 +1346,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                 recordDto.setCurrentAccountBalance(lineNumber == 32 || lineNumber == 47  || lineNumber == 51 || lineNumber == 41 ||
                         (recordDto.getAccountNumber() != null && (recordDto.getAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_3013_010) ||
                                 recordDto.getAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_3383_010)))
-                        ? 0 - terraRecord.getGLAccountBalance() : terraRecord.getGLAccountBalance());
+                        ? MathUtils.subtract(0.0, terraRecord.getGLAccountBalance()) : terraRecord.getGLAccountBalance());
                 //recordDto.setPreviousAccountBalance();
                 records.add(recordDto);
 
@@ -1593,7 +1593,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                 }
                 //recordDto.setOtherEntityName();
                 recordDto.setCurrentAccountBalance(lineNumber == 6 || lineNumber == 7  || lineNumber == 8 || lineNumber == 11 || lineNumber == 13 || lineNumber == 16
-                        ? 0 - nickMFRecord.getAccountBalance() : nickMFRecord.getAccountBalance());
+                        ? MathUtils.subtract(0.0, nickMFRecord.getAccountBalance()) : nickMFRecord.getAccountBalance());
                 //recordDto.setPreviousAccountBalance();
                 records.add(recordDto);
                 if(StringUtils.isNotEmpty(recordDto.getAccountNumber()) && recordDto.getLineNumber() != null && recordDto.getCurrentAccountBalance() != null){
@@ -1621,7 +1621,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                 }
                 recordDto.setOtherEntityName(singularRecord.getAcronym());
                 recordDto.setCurrentAccountBalance(lineNumber == 6 || lineNumber == 7  || lineNumber == 8 || lineNumber == 11 || lineNumber == 13 || lineNumber == 16
-                        ? 0 - singularRecord.getGLAccountBalance() : singularRecord.getGLAccountBalance());
+                        ? MathUtils.subtract(0.0, singularRecord.getGLAccountBalance()) : singularRecord.getGLAccountBalance());
                 //recordDto.setPreviousAccountBalance();
                 records.add(recordDto);
                 if(StringUtils.isNotEmpty(recordDto.getAccountNumber()) && recordDto.getLineNumber() != null && recordDto.getCurrentAccountBalance() != null){
@@ -1648,7 +1648,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                 }
                 recordDto.setOtherEntityName(tarragonRecord.getAcronym());
                 recordDto.setCurrentAccountBalance(lineNumber == 6 || lineNumber == 7  || lineNumber == 8 || lineNumber == 11 || lineNumber == 13 || lineNumber == 16
-                        ? 0 - tarragonRecord.getGLAccountBalance() : tarragonRecord.getGLAccountBalance());
+                        ? MathUtils.subtract(0.0, tarragonRecord.getGLAccountBalance()) : tarragonRecord.getGLAccountBalance());
                 //recordDto.setPreviousAccountBalance();
                 records.add(recordDto);
                 if(StringUtils.isNotEmpty(recordDto.getAccountNumber()) && recordDto.getLineNumber() != null && recordDto.getCurrentAccountBalance() != null){
@@ -1675,7 +1675,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                 }
                 recordDto.setOtherEntityName(terraRecord.getAcronym());
                 recordDto.setCurrentAccountBalance(lineNumber == 6 || lineNumber == 7  || lineNumber == 8 || lineNumber == 11 || lineNumber == 13 || lineNumber == 16
-                        ? 0 - terraRecord.getGLAccountBalance() : terraRecord.getGLAccountBalance());
+                        ? MathUtils.subtract(0.0, terraRecord.getGLAccountBalance()) : terraRecord.getGLAccountBalance());
                 //recordDto.setPreviousAccountBalance();
                 records.add(recordDto);
                 if(StringUtils.isNotEmpty(recordDto.getAccountNumber()) && recordDto.getLineNumber() != null && recordDto.getCurrentAccountBalance() != null){
