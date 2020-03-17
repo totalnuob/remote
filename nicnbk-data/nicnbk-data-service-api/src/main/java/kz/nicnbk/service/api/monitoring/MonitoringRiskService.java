@@ -5,6 +5,8 @@ import kz.nicnbk.service.dto.monitoring.LiquidPortfolioResultDto;
 import kz.nicnbk.service.dto.monitoring.MonitoringRiskHedgeFundReportDto;
 import kz.nicnbk.service.dto.monitoring.MonitoringRiskReportSearchParamsDto;
 
+import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -14,4 +16,6 @@ import java.util.Set;
 public interface MonitoringRiskService {
 
     MonitoringRiskHedgeFundReportDto getMonthlyHedgeFundReport(MonitoringRiskReportSearchParamsDto searchParamsDto);
+
+    List<Date> getDateList();
 }

@@ -401,6 +401,21 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
     }
 
     @Override
+    public PeriodicReportDto findMostRecentReport() {
+        List<PeriodicReportDto> allReports = getAllPeriodicReports();
+        if(allReports != null && !allReports.isEmpty()){
+            PeriodicReportDto mostRecentReport = null;
+            for(PeriodicReportDto report: allReports){
+                if(mostRecentReport == null || mostRecentReport.getReportDate().before(report.getReportDate())){
+                    mostRecentReport = report;
+                }
+            }
+            return mostRecentReport;
+        }
+        return null;
+    }
+
+    @Override
     public boolean safeDeleteFile(Long fileId, String username) {
         try{
             PeriodicReportFiles periodicReportFiles = this.periodicReportFilesRepository.getEntityByFileId(fileId);

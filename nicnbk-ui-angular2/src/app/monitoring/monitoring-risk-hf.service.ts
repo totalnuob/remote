@@ -8,6 +8,7 @@ import {Http} from "@angular/http";
 export class MonitoringRiskHedgeFundService extends CommonService {
     private MONITORING_RISK_BASE_URL = DATA_APP_URL + "monitoring/risk/";
     private MONITORING_RISK_MONTHLY_HF_GET_URL = this.MONITORING_RISK_BASE_URL + "hfMonthly/";
+    private MONITORING_RISK_MONTHLY_HF_AVAILABLE_DATES_GET_URL = this.MONITORING_RISK_BASE_URL + "dateList/";
 
     constructor(
         private uploadService: FileUploadService,
@@ -21,5 +22,11 @@ export class MonitoringRiskHedgeFundService extends CommonService {
         return this.http.post(this.MONITORING_RISK_MONTHLY_HF_GET_URL, body, this.getOptionsWithCredentials())
             .map(this.extractData)
             .catch(this.handleErrorResponse);
+    }
+
+    getAvailableDates(){
+        return this.http.get(this.MONITORING_RISK_MONTHLY_HF_AVAILABLE_DATES_GET_URL, this.getOptionsWithCredentials())
+                .map(this.extractData)
+                .catch(this.handleErrorResponse);
     }
 }

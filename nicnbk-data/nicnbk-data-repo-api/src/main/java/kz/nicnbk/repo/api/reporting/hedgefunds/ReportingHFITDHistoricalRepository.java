@@ -18,7 +18,13 @@ public interface ReportingHFITDHistoricalRepository extends PagingAndSortingRepo
     List<ReportingHFITDHistorical> getEntitiesByReportIdAndTranche(Long reportId, int tranche);
 
     //@Query("SELECT e from ReportingHFITDHistorical e where e.report.id=?1 AND e.tranche=?2")
-    ReportingHFITDHistorical findByDateAndFundNameAndPortfolio(Date date, String fundName, String portfolio);
+    List<ReportingHFITDHistorical>findByReportId(Long reportId);
+
+//    @Query("SELECT e from ReportingHFITDHistorical e where e.report.reportDate<=?1")
+//    List<ReportingHFITDHistorical> getEntitiesBeforeReportDate(Date date);
+
+    //@Query("SELECT e from ReportingHFITDHistorical e where e.report.id=?1 AND e.tranche=?2")
+    List<ReportingHFITDHistorical> findByDateAndFundNameAndPortfolio(Date date, String fundName, String portfolio);
 
     @Modifying
     @Transactional

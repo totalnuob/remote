@@ -2,6 +2,7 @@ package kz.nicnbk.service.impl.monitoring;
 
 import kz.nicnbk.common.service.util.DateUtils;
 import kz.nicnbk.common.service.util.MathUtils;
+import kz.nicnbk.common.service.util.StringUtils;
 import kz.nicnbk.common.service.util.WorstDrawdownDto;
 import kz.nicnbk.repo.model.lookup.BenchmarkLookup;
 import kz.nicnbk.service.api.benchmark.BenchmarkService;
@@ -15,10 +16,7 @@ import kz.nicnbk.service.dto.benchmark.BenchmarkValueDto;
 import kz.nicnbk.service.dto.common.ListResponseDto;
 import kz.nicnbk.service.dto.common.ResponseStatusType;
 import kz.nicnbk.service.dto.monitoring.*;
-import kz.nicnbk.service.dto.reporting.ConsolidatedReportRecordHolderDto;
-import kz.nicnbk.service.dto.reporting.PeriodicReportDto;
-import kz.nicnbk.service.dto.reporting.SingularityGeneralLedgerBalanceRecordDto;
-import kz.nicnbk.service.dto.reporting.SingularityITDHistoricalRecordDto;
+import kz.nicnbk.service.dto.reporting.*;
 import kz.nicnbk.service.impl.reporting.PeriodicReportConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +29,7 @@ import java.util.*;
 public class MonitoringRiskServiceImpl implements MonitoringRiskService {
 
     private static final Logger logger = LoggerFactory.getLogger(MonitoringRiskServiceImpl.class);
+    public static final Date SINGULAR_PORTFOLIO_START_DATE = DateUtils.getDate("31.08.2015");
 
     @Autowired
     private PeriodicReportService periodicReportService;
@@ -59,15 +58,15 @@ public class MonitoringRiskServiceImpl implements MonitoringRiskService {
 
         // Top fund allocations
         ListResponseDto topFundAllocationsResponse = getHedgeFundsTopAllocations(searchParamsDto.getDate());
+        if(topFundAllocationsResponse != null) {
+            reportDto.setTopFundAllocationsWarning(topFundAllocationsResponse.getWarningMessageEn());
 
-        // TODO: warning
-        //reportDto.setTopFundAllocationsWarning("Calculations done on Preliminary data");
-
-        if(!topFundAllocationsResponse.isStatusOK()){
-            reportDto.setTopFundAllocationsError(topFundAllocationsResponse.getErrorMessageEn());
+            if(!topFundAllocationsResponse.isStatusOK()){
+                reportDto.setTopFundAllocationsError(topFundAllocationsResponse.getErrorMessageEn());
+            }
+            List<MonitoringRiskHedgeFundFundAllocationDto> topFundAllocations = topFundAllocationsResponse.getRecords();
+            reportDto.setTopFundAllocations(topFundAllocations);
         }
-        List<MonitoringRiskHedgeFundFundAllocationDto> topFundAllocations = topFundAllocationsResponse.getRecords();
-        reportDto.setTopFundAllocations(topFundAllocations);
 
         // Factor Betas
         ListResponseDto factorBetasResponse = getHedgeFundsFactorBetas(searchParamsDto.getDate(),nicPortfolioResultDto);
@@ -86,18 +85,20 @@ public class MonitoringRiskServiceImpl implements MonitoringRiskService {
         if(nicPortfolioResultDto != null && nicPortfolioResultDto.getNicPortfolioDtoList() != null){
             List<DateDoubleValue> values = new ArrayList<>();
             for(NicPortfolioDto dto: nicPortfolioResultDto.getNicPortfolioDtoList()){
-                DateDoubleValue value = new DateDoubleValue(dto.getDate(), dto.getHedgeFundsMtd());
+                DateDoubleValue value = new DateDoubleValue(DateUtils.getLastDayOfCurrentMonth(dto.getDate()), dto.getHedgeFundsMtd());
                 values.add(value);
             }
 
             performance12MResponsePortfolio = getHedgeFundsPerformanceSummary(dateFrom12M, dateTo, values, false);
         }
 
-        List<BenchmarkValueDto> hfri12M = this.benchmarkService.getBenchmarkValuesForDatesAndType(dateFrom12M, dateTo, BenchmarkLookup.HFRI.getCode());
+
+        String[] benchmarkCodesHFRI = {BenchmarkLookup.HFRI.getCode()};
+        List<BenchmarkValueDto> hfri12M = this.benchmarkService.getBenchmarkValuesEndOfMonthForDateRangeAndTypes(dateFrom12M, dateTo, 10, benchmarkCodesHFRI);
         if(hfri12M != null && !hfri12M.isEmpty()){
             List<DateDoubleValue> values = new ArrayList<>();
             for(BenchmarkValueDto dto: hfri12M){
-                DateDoubleValue value = new DateDoubleValue(dto.getDate(), dto.getReturnValue());
+                DateDoubleValue value = new DateDoubleValue(DateUtils.getLastDayOfCurrentMonth(dto.getDate()), dto.getReturnValue());
                 values.add(value);
             }
 
@@ -113,24 +114,24 @@ public class MonitoringRiskServiceImpl implements MonitoringRiskService {
 
 
         // Performance since inception
-        Date dateFromSI = DateUtils.getLastDayOfCurrentMonth(DateUtils.getDate("31.08.2015"));
+        Date dateFromSI = DateUtils.getLastDayOfCurrentMonth(SINGULAR_PORTFOLIO_START_DATE);
         ListResponseDto performanceSIResponsePortfolio = null;
         ListResponseDto performanceSIResponseBenchmark = null;
         if(nicPortfolioResultDto != null && nicPortfolioResultDto.getNicPortfolioDtoList() != null){
             List<DateDoubleValue> values = new ArrayList<>();
             for(NicPortfolioDto dto: nicPortfolioResultDto.getNicPortfolioDtoList()){
-                DateDoubleValue value = new DateDoubleValue(dto.getDate(), dto.getHedgeFundsMtd());
+                DateDoubleValue value = new DateDoubleValue(DateUtils.getLastDayOfCurrentMonth(dto.getDate()), dto.getHedgeFundsMtd());
                 values.add(value);
             }
 
             performanceSIResponsePortfolio = getHedgeFundsPerformanceSummary(dateFromSI, dateTo, values, false);
         }
 
-        List<BenchmarkValueDto> hfriSI = this.benchmarkService.getBenchmarkValuesForDatesAndType(dateFromSI, dateTo, BenchmarkLookup.HFRI.getCode());
+        List<BenchmarkValueDto> hfriSI = this.benchmarkService.getBenchmarkValuesEndOfMonthForDateRangeAndTypes(dateFromSI, dateTo, 10, benchmarkCodesHFRI);
         if(hfriSI != null && !hfriSI.isEmpty()){
             List<DateDoubleValue> values = new ArrayList<>();
             for(BenchmarkValueDto dto: hfriSI){
-                DateDoubleValue value = new DateDoubleValue(dto.getDate(), dto.getReturnValue());
+                DateDoubleValue value = new DateDoubleValue(DateUtils.getLastDayOfCurrentMonth(dto.getDate()), dto.getReturnValue());
                 values.add(value);
             }
 
@@ -139,15 +140,15 @@ public class MonitoringRiskServiceImpl implements MonitoringRiskService {
 
         ListResponseDto mergedPerformanceSIResponse = mergePerformanceResponses(performanceSIResponsePortfolio, performanceSIResponseBenchmark);
         if(!mergedPerformanceSIResponse.isStatusOK()){
-            reportDto.setPerformanceError(mergedPerformanceSIResponse.getErrorMessageEn());
+            String performanceError = reportDto.getPerformanceError();
+            reportDto.setPerformanceError((StringUtils.isNotEmpty(performanceError) ? performanceError : "") + mergedPerformanceSIResponse.getErrorMessageEn());
         }
         List<MonitoringRiskHedgeFundPerformanceRecordDto> performanceSI = mergedPerformanceSIResponse.getRecords();
         reportDto.setPerformanceSinceInception(performanceSI);
 
         // Market Sensitivity
-        Date dateFromSinceInception = DateUtils.getDate("31.08.2015");
         // MSCI
-        ListResponseDto marketSensitivityMSCIResponse = getMarketSensitivity(BenchmarkLookup.MSCI_ACWI_IMI.getCode(), dateFromSinceInception, dateTo, nicPortfolioResultDto);
+        ListResponseDto marketSensitivityMSCIResponse = getMarketSensitivity(BenchmarkLookup.MSCI_ACWI_IMI.getCode(), dateFromSI, dateTo, nicPortfolioResultDto);
         if(!marketSensitivityMSCIResponse.isStatusOK()){
             reportDto.setMarketSensitivityError(marketSensitivityMSCIResponse.getErrorMessageEn());
         }
@@ -155,7 +156,7 @@ public class MonitoringRiskServiceImpl implements MonitoringRiskService {
         reportDto.setMarketSensitivitesMSCI(marketSensitivitesMSCIRecords);
 
         // Barclays Global Agg
-        ListResponseDto marketSensitivityBarclaysGlobalResponse = getMarketSensitivity(BenchmarkLookup.GLOBAL_FI.getCode(), dateFromSinceInception, dateTo, nicPortfolioResultDto);
+        ListResponseDto marketSensitivityBarclaysGlobalResponse = getMarketSensitivity(BenchmarkLookup.GLOBAL_FI.getCode(), dateFromSI, dateTo, nicPortfolioResultDto);
         if(!marketSensitivityBarclaysGlobalResponse.isStatusOK()){
             reportDto.setMarketSensitivityError(marketSensitivityBarclaysGlobalResponse.getErrorMessageEn());
         }
@@ -174,12 +175,30 @@ public class MonitoringRiskServiceImpl implements MonitoringRiskService {
         List<RiskStressTestsDto> stressTests = riskStressTestsService.getStressTestsByDate(searchParamsDto.getDate());
         if(stressTests != null && !stressTests.isEmpty()){
             reportDto.setStressTests(stressTests);
+        }else{
+            reportDto.setStressTestsError("Missing stress tests data for selected period. ");
         }
 
         if(reportDto.getStatus() == null){
             reportDto.setStatus(ResponseStatusType.SUCCESS);
         }
         return reportDto;
+    }
+
+    @Override
+    public List<Date> getDateList() {
+        Date mostRecentDate = this.nicPortfolioService.getMostRecentDate();
+        if(mostRecentDate != null){
+            List<Date> dates = new ArrayList<>();
+            Date date = SINGULAR_PORTFOLIO_START_DATE;
+            while(date.compareTo(mostRecentDate) <= 0){
+                dates.add(DateUtils.getLastDayOfCurrentMonth(date));
+                date = DateUtils.getLastDayOfNextMonth(date);
+            }
+            Collections.reverse(dates);
+            return dates;
+        }
+        return null;
     }
 
     private ListResponseDto mergePerformanceResponses(ListResponseDto portfolioResponse, ListResponseDto benchmarkResponse){
@@ -189,6 +208,7 @@ public class MonitoringRiskServiceImpl implements MonitoringRiskService {
             return portfolioResponse;
         }else{
             ListResponseDto mergedResponse = new ListResponseDto();
+            mergedResponse.setStatus(ResponseStatusType.SUCCESS);
             // Error messages
             if(portfolioResponse.getErrorMessageEn() != null){
                 mergedResponse.appendErrorMessageEn(portfolioResponse.getErrorMessageEn());
@@ -241,7 +261,8 @@ public class MonitoringRiskServiceImpl implements MonitoringRiskService {
     private ListResponseDto getMarketSensitivity(String benchmarkCode, Date dateFrom, Date dateTo, NicPortfolioResultDto nicPortfolioResultDto){
         ListResponseDto responseDto = new ListResponseDto();
         List<MonitoringRiskHedgeFundMarketSensitivityRecordDto> records = new ArrayList<>();
-        List<BenchmarkValueDto> benchmarks = this.benchmarkService.getBenchmarkValuesForDatesAndType(dateFrom, dateTo, benchmarkCode);
+        String[] benchmarkCodes = {benchmarkCode};
+        List<BenchmarkValueDto> benchmarks = this.benchmarkService.getBenchmarkValuesEndOfMonthForDateRangeAndTypes(dateFrom, dateTo, 10, benchmarkCodes);
         if(benchmarks == null || benchmarks.isEmpty()){
             String errorMessage = "Failed to calculate market sensitivity: '" + benchmarkCode + "' benchmarks missing. ";
             logger.error(errorMessage);
@@ -250,7 +271,8 @@ public class MonitoringRiskServiceImpl implements MonitoringRiskService {
             int monthDiff = DateUtils.getMonthsChanged(dateFrom, dateTo);
             if(benchmarks.size() != monthDiff){
                 String errorMessage = "Failed to calculate market sensitivity: '" + benchmarkCode + "' benchmarks for period [" +
-                        DateUtils.getDateFormatted(dateFrom) + ", " + DateUtils.getDateFormatted(dateTo) + "] expected " + monthDiff + ", found " + benchmarks.size() + ". ";
+                        DateUtils.getDateFormatted(dateFrom) + ", " + DateUtils.getDateFormatted(dateTo) + "] missing - " +
+                        "expected " + monthDiff + ", found " + benchmarks.size() + ". ";
                 logger.error(errorMessage);
                 responseDto.appendErrorMessageEn(errorMessage);
                 return responseDto;
@@ -258,7 +280,8 @@ public class MonitoringRiskServiceImpl implements MonitoringRiskService {
             List<NicPortfolioDto> periodReturns = new ArrayList<>();
             if(nicPortfolioResultDto != null && nicPortfolioResultDto.getNicPortfolioDtoList() != null) {
                 for (NicPortfolioDto dto : nicPortfolioResultDto.getNicPortfolioDtoList()) {
-                    if (dto.getDate().compareTo(dateFrom) >= 0 && dto.getDate().compareTo(dateTo) <= 0) {
+                    Date portfolioReturnDateEndMonth = DateUtils.getLastDayOfCurrentMonth(dto.getDate());
+                    if (portfolioReturnDateEndMonth.compareTo(dateFrom) >= 0 && portfolioReturnDateEndMonth.compareTo(dateTo) <= 0) {
                         periodReturns.add(dto);
                     }
                 }
@@ -443,10 +466,17 @@ public class MonitoringRiskServiceImpl implements MonitoringRiskService {
     /* TOP HEDGE FUNDS ALLOCATIONS ************************************************************************************/
     private ListResponseDto getHedgeFundsTopAllocations(Date date){
         ListResponseDto responseDto = new ListResponseDto();
-        List< SingularityITDHistoricalRecordDto> itdHRSRecords = this.hfitdService.getHistoricalData();
+        SingularityITDHistoricalRecordHolderDto itdHRSRecordsHolder = this.hfitdService.getHistoricalData(date);
         Map<String, Map<Date, SingularityITDHistoricalRecordDto>> itdHRSMap = new HashMap<>();
-        if(itdHRSRecords != null && !itdHRSRecords.isEmpty()){
-            for(SingularityITDHistoricalRecordDto dto: itdHRSRecords){
+        if(itdHRSRecordsHolder != null && !itdHRSRecordsHolder.isEmpty()){
+            boolean sameDate = itdHRSRecordsHolder.getReportDate() != null && itdHRSRecordsHolder.getReportDate().compareTo(date) == 0;
+            if(!sameDate){
+                String warningMessage = "Funds NaV for selected period (" + DateUtils.getDateFormatted(date) +
+                        ") calculated using final/updated data ('ITD Investment data' file as of " + DateUtils.getDateFormatted(itdHRSRecordsHolder.getReportDate()) + "). ";
+                responseDto.appendWarningMessageEn(warningMessage);
+                logger.info("Monitoring HF Risk Report (monthly): " + warningMessage);
+            }
+            for(SingularityITDHistoricalRecordDto dto: itdHRSRecordsHolder.getRecords()){
                 if(itdHRSMap != null) {
                     if (itdHRSMap.get(dto.getFundName()) == null) {
                         itdHRSMap.put(dto.getFundName(), new HashMap<Date, SingularityITDHistoricalRecordDto>());
@@ -468,13 +498,19 @@ public class MonitoringRiskServiceImpl implements MonitoringRiskService {
             }
         }
         if(itdHRSMap.isEmpty()){
-            String errorMessage = "Missing Hedge Funds NAV data (ITD Investment Data file)";
+            String errorMessage = "Missing Hedge Funds NAV data (ITD Investment Data file). ";
             logger.error(errorMessage);
             responseDto.appendErrorMessageEn(errorMessage);
             return responseDto;
         }
         List<MonitoringRiskHedgeFundFundAllocationDto> valueList = new ArrayList<>();
         Double totalNav = getHedgeFundTotalNav(date);
+        if(totalNav == null){
+            // missing data
+            String errorMessage = "Missing data for total Singularity NAV calculation - 'General Ledger' file for selected period. ";
+            logger.error(errorMessage);
+            responseDto.appendErrorMessageEn(errorMessage);
+        }
         int month = DateUtils.getMonth(date) + 1;
         int year = DateUtils.getYear(date);
         int quarter = (month % 3) == 0 ? (month / 3) : (month / 3 + 1);
@@ -611,7 +647,7 @@ public class MonitoringRiskServiceImpl implements MonitoringRiskService {
         // Dates
         Date dateTo = DateUtils.getLastDayOfCurrentMonth(date);
         Date dateFrom12M = DateUtils.getLastDayOfCurrentMonth(DateUtils.moveDateByMonths(date, -11));
-        Date dateFromSinceInception = DateUtils.getDate("31.08.2015");
+        Date dateFromSinceInception = SINGULAR_PORTFOLIO_START_DATE;
         // Benchmarks map
         Map<String, List<BenchmarkValueDto>> benchmarksMap = getBenchmarksMap(dateFromSinceInception, dateFrom12M, dateTo);
 
@@ -667,37 +703,36 @@ public class MonitoringRiskServiceImpl implements MonitoringRiskService {
 
     private Double getHedgeFundsFactorBeta(Date dateFrom, Date dateTo, String benchmarkName, List<BenchmarkValueDto> tbills,
                                            List<BenchmarkValueDto> benchmarks, NicPortfolioResultDto nicPortfolioResultDto){
-        //List<BenchmarkValueDto> tbills = this.benchmarkService.getBenchmarkValuesForDatesAndType(dateFrom, dateTo, BenchmarkLookup.T_BILLS.getCode());
         int monthDiff = DateUtils.getMonthsChanged(dateFrom, dateTo);
         if (tbills == null || tbills.size() != monthDiff) {
             String errorMessage = "Failed to calculate Factor Betas (" + benchmarkName + "): missing T-bills records for period [" + DateUtils.getDateFormatted(dateFrom) +
-                    ", " + DateUtils.getDateFormatted(dateTo) + "]: expected " + monthDiff + ", found " + tbills.size();
+                    ", " + DateUtils.getDateFormatted(dateTo) + "]: expected " + monthDiff + ", found " + tbills.size() + ". ";
             logger.error(errorMessage);
             throw new IllegalArgumentException(errorMessage);
         }
-        //List<BenchmarkValueDto> hfri = this.benchmarkService.getBenchmarkValuesForDatesAndType(dateFrom, dateTo, BenchmarkLookup.HFRI.getCode());
         if (benchmarks == null || benchmarks.size() != monthDiff) {
             String errorMessage = "Failed to calculate Factor Betas (" + benchmarkName + "): missing " + benchmarkName + " records for period [" + DateUtils.getDateFormatted(dateFrom) +
-                    ", " + DateUtils.getDateFormatted(dateTo) + "]: expected " + monthDiff + ", found " + benchmarks.size();
+                    ", " + DateUtils.getDateFormatted(dateTo) + "]: expected " + monthDiff + ", found " + benchmarks.size() + ". ";
             logger.error(errorMessage);
             throw new IllegalArgumentException(errorMessage);
         }
         if (nicPortfolioResultDto == null || nicPortfolioResultDto.getNicPortfolioDtoList() == null || nicPortfolioResultDto.getNicPortfolioDtoList().isEmpty()) {
             String errorMessage = "Failed to calculate Factor Betas (" + benchmarkName + "): missing Singularity returns for period [" + DateUtils.getDateFormatted(dateFrom) +
-                    ", " + DateUtils.getDateFormatted(dateTo) + "]";
+                    ", " + DateUtils.getDateFormatted(dateTo) + "]. ";
             logger.error(errorMessage);
             throw new IllegalArgumentException(errorMessage);
         }else{
             List<NicPortfolioDto> records12M = new ArrayList<>();
             for(NicPortfolioDto nicPortfolioDto: nicPortfolioResultDto.getNicPortfolioDtoList()){
+                Date nicPortfolioDateLastOfMonth = DateUtils.getLastDayOfCurrentMonth(nicPortfolioDto.getDate());
                 if(nicPortfolioDto.getHedgeFundsMtd() != null &&
-                        nicPortfolioDto.getDate().compareTo(dateFrom) >= 0 && nicPortfolioDto.getDate().compareTo(dateTo) <= 0){
+                        nicPortfolioDateLastOfMonth.compareTo(dateFrom) >= 0 && nicPortfolioDateLastOfMonth.compareTo(dateTo) <= 0){
                     records12M.add(nicPortfolioDto);
                 }
             }
             if(records12M.size() != monthDiff){
                 String errorMessage = "Failed to calculate Factor Betas (" + benchmarkName + "): missing Singularity returns for period [" + DateUtils.getDateFormatted(dateFrom) +
-                        ", " + DateUtils.getDateFormatted(dateTo) + "]: expected " + monthDiff + ", found " + records12M.size();
+                        ", " + DateUtils.getDateFormatted(dateTo) + "]: expected " + monthDiff + ", found " + records12M.size() + ". ";
                 logger.error(errorMessage);
                 throw new IllegalArgumentException(errorMessage);
             }
@@ -734,8 +769,9 @@ public class MonitoringRiskServiceImpl implements MonitoringRiskService {
     private Map<String, List<BenchmarkValueDto>> getBenchmarksMap(Date dateFromSinceInception, Date dateFrom12M, Date dateTo){
         Map<String, List<BenchmarkValueDto>> map = new HashMap<>();
         for(BenchmarkLookup lookup: BenchmarkLookup.values()){
-            List<BenchmarkValueDto> benchmark12M = this.benchmarkService.getBenchmarkValuesForDatesAndType(dateFrom12M, dateTo, lookup.getCode());
-            List<BenchmarkValueDto> benchmarkSI = this.benchmarkService.getBenchmarkValuesForDatesAndType(dateFromSinceInception, dateTo, lookup.getCode());
+            String[] benchmarks = {lookup.getCode()};
+            List<BenchmarkValueDto> benchmark12M = this.benchmarkService.getBenchmarkValuesEndOfMonthForDateRangeAndTypes(dateFrom12M, dateTo, 10, benchmarks);
+            List<BenchmarkValueDto> benchmarkSI = this.benchmarkService.getBenchmarkValuesEndOfMonthForDateRangeAndTypes(dateFromSinceInception, dateTo, 10, benchmarks);
             map.put(lookup.getCode(), benchmark12M);
             map.put(lookup.getCode() + "_SI", benchmarkSI);
         }
@@ -761,8 +797,8 @@ public class MonitoringRiskServiceImpl implements MonitoringRiskService {
             }
 
             if(recordsForPeriod.size() != period){
-                String errorMessage = "Missing Hedge Funds MTD records for period [" + DateUtils.getDateFormatted(dateFrom) +
-                ", " + DateUtils.getDateFormatted(dateTo) + "]: expected " + period + ", found " + recordsForPeriod.size();
+                String errorMessage = "Missing " + (isBenchmark ? "HFRI returns " : "Hedge Funds MTD records") + " for period [" + DateUtils.getDateFormatted(dateFrom) +
+                ", " + DateUtils.getDateFormatted(dateTo) + "]: expected " + period + ", found " + recordsForPeriod.size() + ". ";
                 logger.error(errorMessage);
                 responseDto.appendErrorMessageEn(errorMessage);
                 return responseDto;
@@ -777,10 +813,11 @@ public class MonitoringRiskServiceImpl implements MonitoringRiskService {
             for(int i = 0; i < recordsSinceInception.size(); i++){
                 returnsSI[i] = recordsSinceInception.get(i).getValue();
             }
-            List<BenchmarkValueDto> tbills = this.benchmarkService.getBenchmarkValuesForDatesAndType(dateFrom, dateTo, BenchmarkLookup.T_BILLS.getCode());
+            String[] benchmarkCodes = {BenchmarkLookup.T_BILLS.getCode()};
+            List<BenchmarkValueDto> tbills = this.benchmarkService.getBenchmarkValuesEndOfMonthForDateRangeAndTypes(dateFrom, dateTo, 10, benchmarkCodes);
             if(tbills == null || tbills.size() != period){
                 String errorMessage = "Missing T-bills records for period [" + DateUtils.getDateFormatted(dateFrom) +
-                        ", " + DateUtils.getDateFormatted(dateTo) + "]: expected " + period + ", found " + tbills.size();
+                        ", " + DateUtils.getDateFormatted(dateTo) + "]: expected " + period + ", found " + tbills.size() + ". ";
                 logger.error(errorMessage);
                 responseDto.appendErrorMessageEn(errorMessage);
                 return responseDto;
@@ -855,7 +892,7 @@ public class MonitoringRiskServiceImpl implements MonitoringRiskService {
             }
             if(j != period){
                 String errorMessage = "Missing calculated value added monthly return for period [" + DateUtils.getDateFormatted(dateFrom) +
-                        ", " + DateUtils.getDateFormatted(dateTo) + "]: expected " + period + ", found " + tbills.size();
+                        ", " + DateUtils.getDateFormatted(dateTo) + "]: expected " + period + ", found " + tbills.size() + ". ";
                 logger.error(errorMessage);
                 responseDto.appendErrorMessageEn(errorMessage);
                 return responseDto;
@@ -932,7 +969,7 @@ public class MonitoringRiskServiceImpl implements MonitoringRiskService {
                 Double positiveAvg = MathUtils.divide(18, positiveSum, positives + 0.0);
                 Double negativeAvg = MathUtils.divide(18, negativeSum, negatives + 0.0);
 
-                gainLossRatio = Math.abs(MathUtils.divide(18, positiveAvg, negativeAvg));
+                gainLossRatio = MathUtils.abs(MathUtils.divide(18, positiveAvg, negativeAvg));
                 gainLossRatio1 = !isBenchmark ? gainLossRatio : null;
                 gainLossRatio2 = isBenchmark ? gainLossRatio : null;
 

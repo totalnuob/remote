@@ -2830,7 +2830,8 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
 
             /* SAVE TO DB **************************************************************************************/
 
-            boolean saved  = this.hfITDService.updateHRS(sheet3Records, reportId);
+            List<ReportingHFITDHistorical> entitiesHRS = this.hfITDService.assembleListHRS(sheet3Records, reportId);
+            boolean saved  = this.hfITDService.saveHRS(entitiesHRS);
 
             if(saved) {
                 List<ReportingHFITD> entities = this.hfITDService.assembleList(sheet1Records, reportId);

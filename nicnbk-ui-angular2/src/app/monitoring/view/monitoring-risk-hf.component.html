@@ -24,7 +24,7 @@
             <div class="col-md-2">
                 <select (change)="selectDate($event.target.value)" [(ngModel)]="selectedDate" id="selectedDate" class="form-control"
                     style="margin-top: 10px; margin-bottom: 10px;">
-                    <option *ngFor="let item of getAllDates()" [value]="item">{{item}}</option>
+                    <option *ngFor="let item of availableDates" [value]="item">{{item}}</option>
                 </select>
             </div>
         </div>
@@ -147,11 +147,13 @@
 
     <!-- PERFORMANCE SUMMARY -->
     <div class="row" [hidden]="selectedDateMonitoringInfo == null">
-        <div class="alert alert-danger small" *ngIf="selectedDateMonitoringInfo?.performanceError != null">
-            <span>{{selectedDateMonitoringInfo?.performanceError}}</span>
-        </div>
-        <div class="alert alert-warning small" *ngIf="selectedDateMonitoringInfo?.performanceWarning != null">
-            <span>* {{selectedDateMonitoringInfo.performanceWarning}}</span>
+        <div class="col-md-12">
+            <div class="alert alert-danger small" *ngIf="selectedDateMonitoringInfo?.performanceError != null">
+                <span>{{selectedDateMonitoringInfo?.performanceError}}</span>
+            </div>
+            <div class="alert alert-warning small" *ngIf="selectedDateMonitoringInfo?.performanceWarning != null">
+                <span>* {{selectedDateMonitoringInfo.performanceWarning}}</span>
+            </div>
         </div>
         <div class="col-md-12">
             <div class="col-md-6">
@@ -199,6 +201,14 @@
 
     <!-- STRESS TESTS -->
     <div class="row" [hidden]="selectedDateMonitoringInfo == null">
+        <div class="col-md-12">
+            <div class="alert alert-danger small" *ngIf="selectedDateMonitoringInfo?.stressTestsError != null">
+                <span>{{selectedDateMonitoringInfo?.stressTestsError}}</span>
+            </div>
+            <div class="alert alert-warning small" *ngIf="selectedDateMonitoringInfo?.stressTestsWarning != null">
+                <span>* {{selectedDateMonitoringInfo.stressTestsWarning}}</span>
+            </div>
+        </div>
         <table class="table table-hover table-responsive table-condensed">
             <thead>
                 <tr style="background-color: #3664ab; color: white;">

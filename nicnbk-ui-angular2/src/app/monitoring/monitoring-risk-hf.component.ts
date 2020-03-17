@@ -10,6 +10,8 @@ import {ErrorResponse} from "../common/error-response";
 import {ModuleAccessCheckerService} from "../authentication/module.access.checker.service";
 import {FileDownloadService} from "../common/file.download.service";
 import {DATA_APP_URL} from "../common/common.service.constants";
+import {Observable} from 'rxjs/Observable';
+import 'rxjs/add/observable/forkJoin';
 
 declare var google:any;
 declare var $: any;
@@ -25,6 +27,8 @@ export class MonitoringRiskHedgeFundComponent extends GoogleChartComponent {
     private moduleAccessChecker = new ModuleAccessCheckerService;
     busy: Subscription;
 
+    availableDates: any[];
+
     selectedDate;
     selectedDateMonitoringInfo;
     selectedDateMonitoringInfoStressTests;
@@ -34,10 +38,21 @@ export class MonitoringRiskHedgeFundComponent extends GoogleChartComponent {
     ){
         super();
 
-        var dates = this.getAllDates();
-        if(dates != null && dates.length > 0){
-            this.selectDate(dates[0]);
-        }
+         Observable.forkJoin(
+                    // Load dates
+                    this.monitoringRiskHFService.getAvailableDates()
+                    )
+                    .subscribe(
+                        ([data]) => {
+                            this.availableDates = data;
+                            if(this.availableDates != null && this.availableDates.length > 0){
+                                this.selectDate(this.availableDates[0]);
+                            }
+                        },
+                        (error) => {
+                            this.errorMessage = "Error loading dates list.";
+                            this.successMessage = null;
+                        });
     }
 
     drawGraph(){
@@ -46,10 +61,6 @@ export class MonitoringRiskHedgeFundComponent extends GoogleChartComponent {
             this.drawMarketSensitivitiesSinceInceptionMSCI();
             this.drawMarketSensitivitiesSinceInceptionBarclaysGblAgg();
         }
-    }
-
-    getAllDates(){
-        return ["31-12-2019", "30-11-2019", "31-10-2019", '30-09-2019'];
     }
 
     drawMarketSensitivitiesSinceInceptionMSCI(){

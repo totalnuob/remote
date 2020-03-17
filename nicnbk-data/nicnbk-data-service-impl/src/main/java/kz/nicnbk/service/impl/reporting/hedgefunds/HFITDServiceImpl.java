@@ -1,5 +1,6 @@
 package kz.nicnbk.service.impl.reporting.hedgefunds;
 
+import kz.nicnbk.common.service.util.DateUtils;
 import kz.nicnbk.common.service.util.MathUtils;
 import kz.nicnbk.repo.api.reporting.hedgefunds.ReportingHFITDHistoricalRepository;
 import kz.nicnbk.repo.api.reporting.hedgefunds.ReportingHFITDRepository;
@@ -7,22 +8,18 @@ import kz.nicnbk.repo.model.reporting.PeriodicReport;
 import kz.nicnbk.repo.model.reporting.hedgefunds.ReportingHFITD;
 import kz.nicnbk.repo.model.reporting.hedgefunds.ReportingHFITDHistorical;
 import kz.nicnbk.repo.model.reporting.hedgefunds.ReportingHFNOAL;
+import kz.nicnbk.service.api.reporting.PeriodicReportService;
 import kz.nicnbk.service.api.reporting.hedgefunds.HFITDService;
 import kz.nicnbk.service.converter.reporting.ReportingHFITDHistoricalRecordConverter;
 import kz.nicnbk.service.converter.reporting.ReportingHFITDRecordConverter;
-import kz.nicnbk.service.dto.reporting.ConsolidatedReportRecordHolderDto;
-import kz.nicnbk.service.dto.reporting.PeriodicReportDto;
-import kz.nicnbk.service.dto.reporting.SingularityITDHistoricalRecordDto;
-import kz.nicnbk.service.dto.reporting.SingularityITDRecordDto;
+import kz.nicnbk.service.dto.reporting.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.Period;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class HFITDServiceImpl implements HFITDService {
@@ -41,6 +38,9 @@ public class HFITDServiceImpl implements HFITDService {
     @Autowired
     private ReportingHFITDHistoricalRepository historicalITDRepository;
 
+    @Autowired
+    private PeriodicReportService periodicReportService;
+
     @Override
     public ReportingHFITD assemble(SingularityITDRecordDto dto) {
         return dto != null ? this.converter.assemble(dto): null;
@@ -57,8 +57,8 @@ public class HFITDServiceImpl implements HFITDService {
         return null;
     }
 
-    //@Override
-    private List<ReportingHFITDHistorical> assembleListHRS(List<SingularityITDHistoricalRecordDto> dtoList, Long reportId) {
+    @Override
+    public List<ReportingHFITDHistorical> assembleListHRS(List<SingularityITDHistoricalRecordDto> dtoList, Long reportId) {
         if(dtoList != null && !dtoList.isEmpty()){
             for(SingularityITDHistoricalRecordDto dto: dtoList){
                 dto.setPeriodicReport(new PeriodicReportDto(reportId));
@@ -74,23 +74,25 @@ public class HFITDServiceImpl implements HFITDService {
         List<SingularityITDHistoricalRecordDto> dtoToSave = new ArrayList<>();
         if(dtoList != null && !dtoList.isEmpty()){
             for(SingularityITDHistoricalRecordDto dto: dtoList){
-                // find matching entity
-                ReportingHFITDHistorical entity =
+                // find matching entities
+                List<ReportingHFITDHistorical> entities =
                         this.historicalITDRepository.findByDateAndFundNameAndPortfolio(dto.getDate(), dto.getFundName(), dto.getPortfolio());
-                if(entity != null){
+                if(entities != null && !entities.isEmpty()){
                     // check if changed
-                    boolean same = dto.getNetContribution() != null && entity.getNetContribution() != null ?
-                            (dto.getNetContribution().doubleValue() == entity.getNetContribution().doubleValue()) :
-                            dto.getNetContribution() == null && entity.getNetContribution() == null ? true : false;
-                    same = same && (dto.getEndingBalance() != null && entity.getEndingBalance() != null ?
-                            (dto.getEndingBalance().doubleValue() == entity.getEndingBalance().doubleValue()) :
-                            dto.getEndingBalance() == null && entity.getEndingBalance() == null ? true : false);
-                    if(!same){
-                        entity.setNetContribution(dto.getNetContribution());
-                        entity.setEndingBalance(dto.getEndingBalance());
-                        entity.setReport(new PeriodicReport(reportId));
-                        entity.setUpdateDate(new Date());
-                        entitiesToSave.add(entity);
+                    for(ReportingHFITDHistorical entity: entities){
+                        boolean same = dto.getNetContribution() != null && entity.getNetContribution() != null ?
+                                (dto.getNetContribution().doubleValue() == entity.getNetContribution().doubleValue()) :
+                                dto.getNetContribution() == null && entity.getNetContribution() == null ? true : false;
+                        same = same && (dto.getEndingBalance() != null && entity.getEndingBalance() != null ?
+                                (dto.getEndingBalance().doubleValue() == entity.getEndingBalance().doubleValue()) :
+                                dto.getEndingBalance() == null && entity.getEndingBalance() == null ? true : false);
+                        if(!same){
+                            entity.setNetContribution(dto.getNetContribution());
+                            entity.setEndingBalance(dto.getEndingBalance());
+                            entity.setReport(new PeriodicReport(reportId));
+                            entity.setUpdateDate(new Date());
+                            entitiesToSave.add(entity);
+                        }
                     }
                 }else{
                     dtoToSave.add(dto);
@@ -120,8 +122,8 @@ public class HFITDServiceImpl implements HFITDService {
         }
     }
 
-    //@Override
-    private boolean saveHRS(List<ReportingHFITDHistorical> entities) {
+    @Override
+    public boolean saveHRS(List<ReportingHFITDHistorical> entities) {
         try{
             if(entities != null && !entities.isEmpty()) {
                 this.historicalITDRepository.save(entities);
@@ -162,6 +164,7 @@ public class HFITDServiceImpl implements HFITDService {
     public boolean deleteByReportId(Long reportId) {
         try {
             this.repository.deleteByReportId(reportId);
+            this.historicalITDRepository.deleteByReportId(reportId);
             return true;
         }catch (Exception ex){
             logger.error("Error deleting ReportingHFITD records with report id=" + reportId);
@@ -170,14 +173,42 @@ public class HFITDServiceImpl implements HFITDService {
     }
 
     @Override
-    public List<SingularityITDHistoricalRecordDto> getHistoricalData() {
+    public SingularityITDHistoricalRecordHolderDto getHistoricalData(Date date) {
+        Date reportDate = date;
+        SingularityITDHistoricalRecordHolderDto holder = new SingularityITDHistoricalRecordHolderDto();
         List<SingularityITDHistoricalRecordDto> dtoList = new ArrayList<>();
-        List<ReportingHFITDHistorical> entities = this.historicalITDRepository.getAll();
-        if(entities != null){
-            for(ReportingHFITDHistorical entity: entities){
-                dtoList.add(this.historicalITDConverter.disassemble(entity));
+        if(dtoList.isEmpty()){
+            PeriodicReportDto currentPeriodicReport = this.periodicReportService.findReportByReportDate(date);
+            if(currentPeriodicReport != null){
+                List<ReportingHFITDHistorical> entities = this.historicalITDRepository.findByReportId(currentPeriodicReport.getId());
+                if(entities != null && !entities.isEmpty()){
+                    for(ReportingHFITDHistorical entity: entities){
+                        dtoList.add(this.historicalITDConverter.disassemble(entity));
+                    }
+                }
             }
         }
-        return dtoList;
+        if(dtoList.isEmpty()){
+            reportDate = null;
+            PeriodicReportDto mostRecentReport = this.periodicReportService.findMostRecentReport();
+            if(mostRecentReport != null){
+                reportDate = mostRecentReport.getReportDate();
+                while(reportDate.compareTo(date) >= 0){
+                    PeriodicReportDto reportDto = this.periodicReportService.findReportByReportDate(reportDate);
+                    List<ReportingHFITDHistorical> entities = this.historicalITDRepository.findByReportId(reportDto.getId());
+                    if(entities != null && !entities.isEmpty()){
+                        for(ReportingHFITDHistorical entity: entities){
+                            dtoList.add(this.historicalITDConverter.disassemble(entity));
+                        }
+                        break;
+                    }
+                    reportDate = DateUtils.getLastDayOfPreviousMonth(reportDate);
+                }
+            }
+        }
+
+        holder.setRecords(dtoList);
+        holder.setReportDate(dtoList.isEmpty() ? null : reportDate);
+        return holder;
     }
 }

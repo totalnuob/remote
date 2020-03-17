@@ -552,6 +552,10 @@ public class MathUtils {
         return null;
     }
 
+    public static Double abs(Double value){
+        return value != null ? Math.abs(value) : null;
+    }
+
 
     public static void main (String[] args){
         testSlope1();
