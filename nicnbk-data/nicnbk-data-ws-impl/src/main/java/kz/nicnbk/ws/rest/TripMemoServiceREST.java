@@ -3,11 +3,15 @@ package kz.nicnbk.ws.rest;
 import kz.nicnbk.repo.model.lookup.FileTypeLookup;
 import kz.nicnbk.service.api.authentication.TokenService;
 import kz.nicnbk.service.api.files.FileService;
+import kz.nicnbk.service.api.tripmemo.ExportTripMemoListService;
 import kz.nicnbk.service.api.tripmemo.TripMemoService;
 import kz.nicnbk.service.dto.files.FilesDto;
 import kz.nicnbk.service.dto.tripmemo.TripMemoDto;
 import kz.nicnbk.service.dto.tripmemo.TripMemoPagedSearchResult;
 import kz.nicnbk.service.dto.tripmemo.TripMemoSearchParamsDto;
+import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +20,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -25,6 +33,7 @@ import java.util.Set;
 @RestController
 @RequestMapping("/bt")
 public class TripMemoServiceREST extends CommonServiceREST{
+    private static final Logger logger = LoggerFactory.getLogger(MemoServiceREST.class);
 
     @Autowired
     private TripMemoService tripMemoService;
@@ -34,6 +43,9 @@ public class TripMemoServiceREST extends CommonServiceREST{
 
     @Autowired
     private TokenService tokenService;
+
+    @Autowired
+    private ExportTripMemoListService exportTripMemoListService;
 
 
     @RequestMapping(value = "/search", method = RequestMethod.POST)
@@ -111,5 +123,26 @@ public class TripMemoServiceREST extends CommonServiceREST{
     private ResponseEntity getFiles(@PathVariable("tripMemoId") long tripMemoId){
         Set<FilesDto> files = this.tripMemoService.getAttachments(tripMemoId);
         return buildNonNullResponse(files);
+    }
+
+    @RequestMapping(value = "/export", method = RequestMethod.POST)
+    public void download(@RequestBody TripMemoSearchParamsDto searchParams,
+                         HttpServletResponse response) {
+        TripMemoPagedSearchResult searchResult = tripMemoService.search(searchParams);
+        if (searchResult.getTotalElements() > searchParams.getPageSize()) {
+            searchParams.setPageSize((int) searchResult.getTotalElements());
+            searchResult = tripMemoService.search(searchParams);
+        }
+        List<TripMemoDto> list = searchResult.getTripMemos();
+
+        try {
+            response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+            response.setHeader("Content-disposition", "attachment;");
+            ByteArrayInputStream stream = exportTripMemoListService.excelExport(list);
+            IOUtils.copy(stream, response.getOutputStream());
+            response.flushBuffer();
+        } catch (IOException e) {
+            logger.error("IO Exception");
+        }
     }
 }
