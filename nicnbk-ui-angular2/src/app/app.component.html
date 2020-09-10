@@ -444,8 +444,8 @@
                                     <li><a [routerLink]="['/hf/managerSearch']" class="navigation__sublink" (click)="activeMenu = 'HEDGE_FUNDS'">Manager Search</a></li>
                                     <li *ngIf="showHedgeFundsEditor()"><a [routerLink]="['/hf/managerProfile/0']" class="navigation__sublink" (click)="activeMenu = 'HEDGE_FUNDS'">New Manager</a></li>
                                     <li role="separator" class="divider"></li>
-                                    <li *ngIf="showHedgeFundsEditor()"><a [routerLink]="['/hf/screening/']" class="navigation__sublink" (click)="activeMenu = 'HEDGE_FUNDS'">Scoring </a></li>
-                                    <li><a [routerLink]="['/hf/research']" class="navigation__sublink" (click)="activeMenu = 'HEDGE_FUNDS'">Research</a></li>
+                                    <li *ngIf="showHedgeFunds()"><a [routerLink]="['/hf/screening/']" class="navigation__sublink" (click)="activeMenu = 'HEDGE_FUNDS'">Scoring </a></li>
+                                    <li *ngIf="showHedgeFundsEditor()"><a [routerLink]="['/hf/research']" class="navigation__sublink" (click)="activeMenu = 'HEDGE_FUNDS'">Research</a></li>
                                 </ul>
                             </li>
                             <li class="navigation__item dropdown" *ngIf="checkAvailable('REPORTING')">
