@@ -243,7 +243,7 @@ public class HedgeFundScreeningServiceREST extends CommonServiceREST{
     }
 
     @Deprecated
-    @PreAuthorize("hasRole('ROLE_HEDGE_FUND_VIEWER') OR hasRole('ROLE_HEDGE_FUND_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_HEDGE_FUND_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/filteredResults/updateManagerAUM/", method = RequestMethod.POST)
     public ResponseEntity updateManagerAUM(@RequestBody List<HedgeFundScreeningParsedDataDto> fundList){
         String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
@@ -253,7 +253,7 @@ public class HedgeFundScreeningServiceREST extends CommonServiceREST{
         return buildNonNullResponse(saved);
     }
 
-    @PreAuthorize("hasRole('ROLE_HEDGE_FUND_VIEWER') OR hasRole('ROLE_HEDGE_FUND_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_HEDGE_FUND_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/filteredResults/updateFund/", method = RequestMethod.POST)
     public ResponseEntity updateFund(@RequestBody HedgeFundScreeningParsedDataDto fund){
         String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
@@ -263,7 +263,7 @@ public class HedgeFundScreeningServiceREST extends CommonServiceREST{
         return buildEntitySaveResponseEntity(saved);
     }
 
-    @PreAuthorize("hasRole('ROLE_HEDGE_FUND_VIEWER') OR hasRole('ROLE_HEDGE_FUND_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_HEDGE_FUND_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/filteredResults/deleteAddedFund/", method = RequestMethod.POST)
     public ResponseEntity deleteAddedFund(@RequestBody HedgeFundScreeningParsedDataDto fund){
         String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
@@ -273,7 +273,7 @@ public class HedgeFundScreeningServiceREST extends CommonServiceREST{
         return buildEntitySaveResponseEntity(saved);
     }
 
-    @PreAuthorize("hasRole('ROLE_HEDGE_FUND_VIEWER') OR hasRole('ROLE_HEDGE_FUND_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_HEDGE_FUND_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/filteredResults/excludeFund/", method = RequestMethod.POST)
     public ResponseEntity excludeParsedFund(@RequestBody HedgeFundScreeningParsedDataDto fund){
         String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
@@ -283,7 +283,7 @@ public class HedgeFundScreeningServiceREST extends CommonServiceREST{
         return buildEntitySaveResponseEntity(saved);
     }
 
-    @PreAuthorize("hasRole('ROLE_HEDGE_FUND_VIEWER') OR hasRole('ROLE_HEDGE_FUND_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_HEDGE_FUND_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/filteredResults/includeFund/", method = RequestMethod.POST)
     public ResponseEntity includeParsedFund(@RequestBody HedgeFundScreeningParsedDataDto fund){
         String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
