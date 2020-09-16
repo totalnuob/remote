@@ -27,7 +27,7 @@ import java.util.Date;
 public class NBRKCurrencyRatesRSSFeedLoaderTaskImpl {
 
     private static final Logger logger = LoggerFactory.getLogger(NBRKCurrencyRatesRSSFeedLoaderTaskImpl.class);
-    public static final String JOBNAME = "SYSTEM_USER";
+    private static final String JOBNAME = "SYSTEM_USER";
 
     @Autowired
     private CurrencyRatesService currencyRatesService;
@@ -37,8 +37,8 @@ public class NBRKCurrencyRatesRSSFeedLoaderTaskImpl {
         try {
             URL feedUrl = new URL("http://www.nationalbank.kz/rss/rates_all.xml");
 
-            System.setProperty("http.proxyHost", "10.10.163.253");
-            System.setProperty("http.proxyPort", "8080");
+            //System.setProperty("http.proxyHost", "10.10.163.253");
+            //System.setProperty("http.proxyPort", "8080");
 
             SyndFeedInput input = new SyndFeedInput();
             SyndFeed feed = input.build(new XmlReader(feedUrl));
