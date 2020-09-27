@@ -3053,8 +3053,11 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
             });
 
             // Add funds that have no AUM data, but have investor manager (strategy) AUM
+            List<HedgeFundScreeningParsedDataDto> excludedFundsAll = new ArrayList<>();
+            excludedFundsAll.addAll(excludedFunds);
+            excludedFundsAll.addAll(autoExcludedFunds);
             getFundsByStrategyAUMWithoutFundAUM(params, type, strategyAUMByInvestorName, parsedData, fundAUMMap,
-                    parsedDataMapByFundId, missingCurrencyInvestors, excludedFunds);
+                    parsedDataMapByFundId, missingCurrencyInvestors, excludedFundsAll);
 
             List<HedgeFundScreeningFundAUMDto> values = new ArrayList<>(fundAUMMap.values());
             // Added funds
