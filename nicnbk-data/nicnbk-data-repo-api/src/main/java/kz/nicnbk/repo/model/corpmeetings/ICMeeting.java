@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Created by zhambyl on 04-Aug-16.
+ * Created by magzumov.
  */
 
 @Entity

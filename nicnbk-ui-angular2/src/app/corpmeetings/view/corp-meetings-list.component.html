@@ -1,3 +1,120 @@
+<style>
+	h1.title {
+		font-family: 'Roboto', sans-serif;
+		font-weight: 900;
+	}
+	.calendar {
+		margin: 0px 40px;
+	}
+	.popover.calendar-event-popover {
+		font-family: 'Roboto', sans-serif;
+		font-size: 12px;
+		color: rgb(120, 120, 120);
+		border-radius: 2px;
+		max-width: 300px;
+	}
+	.popover.calendar-event-popover h4 {
+		font-size: 14px;
+		font-weight: 900;
+	}
+	.popover.calendar-event-popover .location,
+	.popover.calendar-event-popover .datetime {
+		font-size: 14px;
+		font-weight: 700;
+		margin-bottom: 5px;
+	}
+	.popover.calendar-event-popover .location > span,
+	.popover.calendar-event-popover .datetime > span {
+		margin-right: 10px;
+	}
+	.popover.calendar-event-popover .space,
+	.popover.calendar-event-popover .attending {
+		margin-top: 10px;
+		padding-bottom: 5px;
+		border-bottom: 1px solid rgb(160, 160, 160);
+		font-weight: 700;
+	}
+	.popover.calendar-event-popover .space > .pull-right,
+	.popover.calendar-event-popover .attending > .pull-right {
+		font-weight: 400;
+	}
+	.popover.calendar-event-popover .attending {
+		margin-top: 5px;
+		font-size: 18px;
+		padding: 0px 10px 5px;
+	}
+	.popover.calendar-event-popover .attending img {
+		border-radius: 50%;
+		width: 40px;
+	}
+	.popover.calendar-event-popover .attending span.attending-overflow {
+		display: inline-block;
+		width: 40px;
+		background-color: rgb(200, 200, 200);
+		border-radius: 50%;
+		padding: 8px 0px 7px;
+		text-align: center;
+	}
+	.popover.calendar-event-popover .attending > .pull-right {
+		font-size: 28px;
+	}
+	.popover.calendar-event-popover a.btn {
+		margin-top: 10px;
+		width: 100%;
+		border-radius: 3px;
+	}
+	[data-toggle="calendar"] > .row > .calendar-day {
+		font-family: 'Roboto', sans-serif;
+		width: 14.28571428571429%;
+		border: 1px solid rgb(235, 235, 235);
+		border-right-width: 0px;
+		border-bottom-width: 0px;
+		min-height: 120px;
+	}
+	[data-toggle="calendar"] > .row > .calendar-day.calendar-no-current-month {
+		color: rgb(200, 200, 200);
+	}
+	[data-toggle="calendar"] > .row > .calendar-day:last-child {
+		border-right-width: 1px;
+	}
+
+	[data-toggle="calendar"] > .row:last-child > .calendar-day {
+		border-bottom-width: 1px;
+	}
+
+	.calendar-day > time {
+		position: absolute;
+		display: block;
+		bottom: 0px;
+		left: 0px;
+		font-size: 12px;
+		font-weight: 300;
+		width: 100%;
+		padding: 10px 10px 3px 0px;
+		text-align: right;
+	}
+	.calendar-day > .events {
+		cursor: pointer;
+	}
+	.calendar-day > .events > .event h4 {
+		font-size: 9px;
+		font-weight: 600;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		margin-bottom: 3px;
+	}
+	.calendar-day > .events > .event > .desc,
+	.calendar-day > .events > .event > .location,
+	.calendar-day > .events > .event > .datetime,
+	.calendar-day > .events > .event > .attending {
+		display: none;
+	}
+	.calendar-day > .events > .event > .progress {
+		height: 10px;
+	}
+</style>
+
 <div class="container">
     <div class="col-md-12">
         <div class="row">
@@ -26,12 +143,12 @@
 
         <ul role="tablist" class="date-tabs nav">
             <li class="date-tabs__item"><a data-toggle="tab"
-                                           href="#IC_TOPICS"
-                                           role="tab" aria-controls="IC_TOPICS"
+                                           href="#UPCOMING"
+                                           role="tab" aria-controls="UPCOMING"
                                            aria-selected="true"
                                            class="date-tabs__link"
-                                           [style.border-bottom-color]="activeTab === 'IC_TOPICS' ? '#D9A158' : 'white'"
-                                           (click)="searchICMeetingTopics(0)">IC TOPICS</a>
+                                           [style.border-bottom-color]="activeTab === 'UPCOMING' ? '#D9A158' : 'white'"
+                                           (click)="searchICMeetingUpcomingEvents()">UPCOMING</a>
             </li>
             <li class="date-tabs__item"><a data-toggle="tab"
                                            href="#IC_LIST"
@@ -41,12 +158,46 @@
                                            [style.border-bottom-color]="activeTab === 'IC_LIST' ? '#D9A158' : 'white'"
                                            (click)="searchIC(0)">IC LIST</a>
             </li>
+            <li class="date-tabs__item"><a data-toggle="tab"
+                                           href="#IC_TOPICS"
+                                           role="tab" aria-controls="IC_TOPICS"
+                                           aria-selected="false"
+                                           class="date-tabs__link"
+                                           [style.border-bottom-color]="activeTab === 'IC_TOPICS' ? '#D9A158' : 'white'"
+                                           (click)="searchICMeetingTopics(0)">IC TOPICS</a>
+            </li>
+
         </ul>
 
         <br/>
 
         <div class="tab-content">
-            <div id="IC_TOPICS" role="tabpanel" aria-labelledby="IC_TOPICS" class="tab-pane active">
+            <div id="UPCOMING" role="tabpanel" aria-labelledby="UPCOMING" class="tab-pane active">
+                <h1 class="title text-center"> {{upcomingEventMonth}} </h1>
+                <div class="calendar" data-toggle="calendar">
+                    <div class="row" *ngFor = "let week of upcomingEventsCalendar">
+                        <div [ngClass]="!day.isCurrentMonth ? 'col-xs-12 calendar-day calendar-no-current-month' : 'col-xs-12 calendar-day' "
+                             *ngFor = "let day of week" >
+                            <time datetime="day.date">{{day.day}}</time>
+                            <div class="events" *ngFor = "let event of day.events" >
+                                <div class="event">
+                                    <h4><span class="glyphicon glyphicon-exclamation-sign">&nbsp;</span>{{event.name}}</h4>
+                                    <div class="desc">
+                                        <p>{{event.description}}</p>
+                                    </div>
+<!--                                    <div class="location"> <span class="glyphicon glyphicon-map-marker"></span> State St and Rt 5, Erie, Pa.</div>-->
+                                    <div class="datetime"> <span class="glyphicon glyphicon-time"></span> {{event.time}}</div>
+                                    <div class="attending">
+                                        <span>TM</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br/>
+            </div>
+            <div id="IC_TOPICS" role="tabpanel" aria-labelledby="IC_TOPICS" class="tab-pane">
                 <div class="row withpadding">
                     <a *ngIf="canCreateNewTopic()" [routerLink]="['/corpMeetings/edit/',0 ]" class="btn btn-primary pull-right">NEW</a>
                 </div>
