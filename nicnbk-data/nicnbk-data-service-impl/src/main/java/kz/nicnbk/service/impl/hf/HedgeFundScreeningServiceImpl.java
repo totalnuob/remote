@@ -2930,6 +2930,19 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
                     if(editedFund.isExcluded()){
                        continue;
                     }
+                    if(autoExcludedFunds != null) {
+                        boolean autoExcluded = false;
+                        for (HedgeFundScreeningParsedDataDto fundDto : autoExcludedFunds) {
+                            if (editedFund.getFundId() != null && fundDto.getFundId() != null &&
+                                    editedFund.getFundId().longValue() == fundDto.getFundId().longValue()) {
+                                autoExcluded = true;
+                                break;
+                            }
+                        }
+                        if(autoExcluded){
+                            continue;
+                        }
+                    }
                     if(editedFund.getEditedFundAUM() != null && editedFund.getEditedFundAUM().doubleValue() > 0){
                         if(uniqueFundsAUM.get(editedFund.getFundId()) == null){
                             HedgeFundScreeningFundAUMDto fundAUMDto = new HedgeFundScreeningFundAUMDto();
