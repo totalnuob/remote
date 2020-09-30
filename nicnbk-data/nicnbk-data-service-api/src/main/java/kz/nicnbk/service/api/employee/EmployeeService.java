@@ -14,6 +14,8 @@ public interface EmployeeService extends BaseService {
 
     List<EmployeeDto> findAll();
 
+    List<EmployeeDto> findICMembers();
+
     EmployeeDto getEmployeeById(Long empoyeeId);
 
     EmployeeDto getEmployeeByUsername(String username);

@@ -48,6 +48,7 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
     upcomingEventMonth;
     upcomingEvents = [];
     upcomingEventsCalendar = [];
+    selectedEvent = {};
 
     icTopicSearchParams = new ICMeetingTopicSearchParams();
     icTopics = [];
@@ -181,49 +182,42 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
         this.activeTab = "UPCOMING";
         this.upcomingEventMonth = "SEPTEMBER 2020";
 
-
-
-        this.upcomingEvents = [];
-
-        let e = new UpcomingEvent();
-        e.name = "Test 1";
-        e.description = "This is a test upcoming event";
-        e.date = "03.09.2020";
-        e.time = "10:30";
-        this.upcomingEvents.push(e);
-
-        let e2 = new UpcomingEvent();
-        e2.name = "Test 2";
-        e2.description = "This is a test upcoming event 22222";
-        e.date = "14.09.2020";
-        e.time = "11:30";
-        this.upcomingEvents.push(e2);
-
-        //console.log(this.upcomingEvents);
-
-
         this.upcomingEventsCalendar = [];
         this.upcomingEventsCalendar.push([{date: "31-08-2020", day: "31", isCurrentMonth: false, events: []},
-        {date: "01-09-2020", day: "01", isCurrentMonth: true, events: []}, {date: "02-09-2020", day: "02", isCurrentMonth: true, events: [
-        {name: "IC Meeting question submission due date", desctiption: "This is a test 1 event"},
-        {name: "IC Meeting question submission due date", desctiption: "This is a test 1 event"},
-        {name: "IC Meeting question submission due date", desctiption: "This is a test 2 event"}]},
+        {date: "01-09-2020", day: "01", isCurrentMonth: true, events: []}, {date: "02-09-2020", day: "02", isToday: true, isCurrentMonth: true, events: [
+        {name: "IC Meeting question submission due date", description: "This is a test 1 event"},
+        {name: "IC Meeting question submission due date", description: "This is a test 1 event"},
+        {name: "IC Meeting question submission due date", description: "This is a test 2 event"}]},
         {date: "03-09-2020", day: "03", isCurrentMonth: true, events: []},
-        {date: "04-09-2020", day: "04", isCurrentMonth: true, events: []}, {date: "05-09-2020", day: "05", isCurrentMonth: true, events: []}, {date: "06-09-2020", day: "06", isCurrentMonth: true, events: []}, ]);
+        {date: "04-09-2020", day: "04", isCurrentMonth: true, events: []}, {date: "05-09-2020", day: "05", isCurrentMonth: true, isWeekend: true, events: []}, {date: "06-09-2020", day: "06", isCurrentMonth: true, isWeekend: true, events: []}, ]);
         this.upcomingEventsCalendar.push([{date: "07-09-2020", day: "07", isCurrentMonth: true, events: []},
                 {date: "08-09-2020", day: "08", isCurrentMonth: true, events: []}, {date: "09-09-2020", day: "09", isCurrentMonth: true, events: []}, {date: "10-09-2020", day: "10", isCurrentMonth: true, events: []},
-                {date: "11-09-2020", day: "11", isCurrentMonth: true, events: []}, {date: "12-09-2020", day: "12", isCurrentMonth: true, events: []}, {date: "13-09-2020", day: "13", isCurrentMonth: true, events: []}, ]);
+                {date: "11-09-2020", day: "11", isCurrentMonth: true, events: []}, {date: "12-09-2020", day: "12", isCurrentMonth: true, isWeekend: true, events: []}, {date: "13-09-2020", day: "13", isCurrentMonth: true, isWeekend: true, events: []}, ]);
         this.upcomingEventsCalendar.push([{date: "14-09-2020", day: "14", isCurrentMonth: true, events: []},
                 {date: "15-09-2020", day: "15", isCurrentMonth: true, events: []}, {date: "16-09-2020", day: "16", isCurrentMonth: true, events: []}, {date: "17-09-2020", day: "17", isCurrentMonth: true, events: []},
-                {date: "18-09-2020", day: "18", isCurrentMonth: true, events: []}, {date: "19-09-2020", day: "19", isCurrentMonth: true, events: []}, {date: "20-09-2020", day: "20", isCurrentMonth: true, events: []}, ]);
-        this.upcomingEventsCalendar.push([{date: "21-09-2020", day: "21", isCurrentMonth: true, events: [{name: "IC Meeting #258", desctiption: "IC MEETINGS IS YO"}]},
+                {date: "18-09-2020", day: "18", isCurrentMonth: true, events: []}, {date: "19-09-2020", day: "19", isCurrentMonth: true, isWeekend: true, events: []}, {date: "20-09-2020", day: "20", isCurrentMonth: true, isWeekend: true, events: []}, ]);
+        this.upcomingEventsCalendar.push([{date: "21-09-2020", day: "21", isCurrentMonth: true, events: [{name: "IC Meeting #258", description: "IC MEETINGS IS YO"}]},
                 {date: "22-09-2020", day: "22", isCurrentMonth: true, events: []}, {date: "23-09-2020", day: "23", isCurrentMonth: true, events: []}, {date: "24-09-2020", day: "24", isCurrentMonth: true, events: []},
-                {date: "25-09-2020", day: "25", isCurrentMonth: true, events: []}, {date: "26-09-2020", day: "26", isCurrentMonth: true, events: []}, {date: "27-09-2020", day: "27", isCurrentMonth: true, events: []}, ]);
+                {date: "25-09-2020", day: "25", isCurrentMonth: true, events: []}, {date: "26-09-2020", day: "26", isCurrentMonth: true, isWeekend: true, events: []}, {date: "27-09-2020", day: "27", isCurrentMonth: true, isWeekend: true, events: []}, ]);
         this.upcomingEventsCalendar.push([{date: "26-09-2020", day: "26", isCurrentMonth: true, events: []},
                 {date: "27-09-2020", day: "27", isCurrentMonth: true, events: []}, {date: "28-09-2020", day: "28", isCurrentMonth: true, events: []}, {date: "29-09-2020", day: "29", isCurrentMonth: true, events: []},
-                {date: "30-09-2020", day: "30", isCurrentMonth: true, events: []}, {date: "01-10-2020", day: "01", isCurrentMonth: true, events: []}, {date: "02-10-2020", day: "02", isCurrentMonth: true, events: []}, ]);
+                {date: "30-09-2020", day: "30", isCurrentMonth: true, events: []}, {date: "01-10-2020", day: "01", isCurrentMonth: false, isWeekend: true, events: []}, {date: "02-10-2020", day: "02", isCurrentMonth: false, isWeekend: true, events: []}, ]);
 
         console.log(this.upcomingEventsCalendar);
+    }
+
+
+    showEvent(event){
+        this.selectedEvent = event;
+        console.log(event);
+    }
+    getCalendarDayClass(day){
+        let classes = 'col-xs-12';
+        classes = !day.isWeekend ? classes + ' calendar-day' : classes + ' calendar-day-weekend';
+        classes = !day.isCurrentMonth ? classes + ' calendar-no-current-month' : classes;
+        classes = day.isToday ? classes + ' calendar-day-today' : classes;
+        //console.log(classes);
+        return classes;
     }
 
     searchICMeetingTopics(page){

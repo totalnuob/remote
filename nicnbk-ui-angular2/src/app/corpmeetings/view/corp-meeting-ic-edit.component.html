@@ -1,0 +1,90 @@
+<div class="container">
+    <div class="row withpadding" style="position: relative; min-height: 80px;">
+        <div [ngBusy]="busy">
+            <div class="row top-buffer" >
+                <div class="col-md-12">
+                    <ol class="breadcrumb">
+                        <li>
+                            <span *ngIf="this.breadcrumbParams != null"><a [routerLink]="['/corpMeetings', {params: this.breadcrumbParams}]">IC List</a></span>
+                            <span *ngIf="this.breadcrumbParams == null"><a [routerLink]="['/corpMeetings']">IC List</a></span>
+                        </li>
+                        <li class="active">IC Edit</li>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="row top-buffer" >
+                <div class="alert alert-danger" *ngIf="errorMessage != null"><span>{{errorMessage}}</span>
+                </div>
+                <div class="alert alert-info" *ngIf="successMessage != null"><span>{{successMessage}}</span>
+                </div>
+            </div>
+
+            <div>
+                <form (ngSubmit)="save()" #ICEditForm="ngForm" class="well span">
+                    <fieldset [disabled]="!canEdit()">
+                        <div class="row top-buffer">
+                            <div class="col-md-2">
+                                <label class="control-label" for="icDate">Date </label>
+                                <div class='input-group date col-md-2' id='icDate' style="width: 100%">
+                                    <input type="text" class="form-control" id="icDateValue" name="icDate" [(ngModel)]="ic.date"/>
+                                    <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </span>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="control-label" for="icTime">Time </label>
+                                <div class='input-group datetime col-md-3' id='icTime' style="width: 100%">
+                                    <input type='text' class="form-control" id="icTimeValue" name="icTime" [(ngModel)]="ic.time"/>
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-time"></span>
+                                        </span>
+                                </div>
+                            </div>
+                            <div class="col-md-3 form-group form-horizontal">
+                                <label class="control-label" for="icNumber">Number </label>
+                                <input type="text" class="form-control" placeholder="IC Number..."
+                                       id="icNumber" name="icNumber" [(ngModel)]="ic.number" required #name="ngModel"/>
+                            </div>
+                        </div>
+                        <div class="row top-buffer withpadding">
+                            <label class="control-label">Attendees:</label>
+                            <table class="condensed-table small">
+                                <tbody>
+                                    <tr *ngFor="let icMember of attendeesList; let i = index">
+                                        <td style="text-align: right;">
+                                            <input type="checkbox" name="icMemberPresence" (click)="checkICMember(icMember)"
+                                                   [(ngModel)]="icMember.present"/>
+                                        </td>
+                                        <td style="text-align: right;">{{i+1}}. &nbsp;</td>
+                                        <td>{{icMember.name}}</td>
+                                        <td>
+                                            <select class="small" [disabled]="icMember.present" style="display:inline; font-size: smaller" name="absenceReason">
+                                                <option>---</option>
+                                                <option value="SICK_LEAVE">Sick Leave</option>
+                                                <option value="VACATION">Vacation</option>
+                                                <option value="BIZ_TRIP">Business Trip</option>
+                                                <option value="OTHER">Other</option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="row top-buffer">
+                            <div class="col-md-12">
+                                <button type="button" class="btn btn-danger pull-left" name="deleteIC" (click)="deleteICMeeting()" *ngIf="canEdit() && ic != null && ic.id != null">Delete</button>
+                                <button type="submit" class="btn btn-success pull-right" name="saveICMeeting" *ngIf="canEdit()">Save</button>
+                            </div>
+                        </div>
+                    </fieldset>
+                </form>
+
+            </div>
+        </div>
+    </div>
+    <br>
+    <br>
+    <br>
+</div>

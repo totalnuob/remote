@@ -65,20 +65,43 @@
 	}
 	[data-toggle="calendar"] > .row > .calendar-day {
 		font-family: 'Roboto', sans-serif;
-		width: 14.28571428571429%;
-		border: 1px solid rgb(235, 235, 235);
+		width: 18%;/*14.28571428571429%;*/
+		border: 1px solid #bdbbbb;
 		border-right-width: 0px;
 		border-bottom-width: 0px;
 		min-height: 120px;
 	}
+	[data-toggle="calendar"] > .row > .calendar-day-weekend {
+		font-family: 'Roboto', sans-serif;
+		width: 5%;
+		border: 1px solid #bdbbbb;
+		border-right-width: 0px;
+		border-bottom-width: 0px;
+		min-height: 120px;
+		background-color: #8080801f;
+	}
+
+	[data-toggle="calendar"] > .row > .calendar-day-today {
+		background-color: #d6e5fd;
+	}
+
 	[data-toggle="calendar"] > .row > .calendar-day.calendar-no-current-month {
+		color: rgb(200, 200, 200);
+	}
+	[data-toggle="calendar"] > .row > .calendar-day-weekend.calendar-no-current-month {
 		color: rgb(200, 200, 200);
 	}
 	[data-toggle="calendar"] > .row > .calendar-day:last-child {
 		border-right-width: 1px;
 	}
+	[data-toggle="calendar"] > .row > .calendar-day-weekend:last-child {
+		border-right-width: 1px;
+	}
 
 	[data-toggle="calendar"] > .row:last-child > .calendar-day {
+		border-bottom-width: 1px;
+	}
+	[data-toggle="calendar"] > .row:last-child > .calendar-day-weekend {
 		border-bottom-width: 1px;
 	}
 
@@ -93,9 +116,22 @@
 		padding: 10px 10px 3px 0px;
 		text-align: right;
 	}
+	.calendar-day-weekend > time {
+		position: absolute;
+		display: block;
+		bottom: 0px;
+		left: 0px;
+		font-size: 12px;
+		font-weight: 300;
+		width: 100%;
+		padding: 10px 10px 3px 0px;
+		text-align: right;
+	}
+
 	.calendar-day > .events {
 		cursor: pointer;
 	}
+
 	.calendar-day > .events > .event h4 {
 		font-size: 9px;
 		font-weight: 600;
@@ -166,22 +202,20 @@
                                            [style.border-bottom-color]="activeTab === 'IC_TOPICS' ? '#D9A158' : 'white'"
                                            (click)="searchICMeetingTopics(0)">IC TOPICS</a>
             </li>
-
         </ul>
-
-        <br/>
-
         <div class="tab-content">
             <div id="UPCOMING" role="tabpanel" aria-labelledby="UPCOMING" class="tab-pane active">
                 <h1 class="title text-center"> {{upcomingEventMonth}} </h1>
                 <div class="calendar" data-toggle="calendar">
                     <div class="row" *ngFor = "let week of upcomingEventsCalendar">
-                        <div [ngClass]="!day.isCurrentMonth ? 'col-xs-12 calendar-day calendar-no-current-month' : 'col-xs-12 calendar-day' "
-                             *ngFor = "let day of week" >
+                        <div [ngClass]="getCalendarDayClass(day)"
+                             *ngFor = "let day of week">
                             <time datetime="day.date">{{day.day}}</time>
                             <div class="events" *ngFor = "let event of day.events" >
-                                <div class="event">
-                                    <h4><span class="glyphicon glyphicon-exclamation-sign">&nbsp;</span>{{event.name}}</h4>
+                                <div class="event" data-toggle="modal" data-target="#eventModal">
+                                    <span (click)="showEvent(event)">
+                                        <h4><span class="glyphicon glyphicon-exclamation-sign">&nbsp;</span>{{event.name}}</h4>
+                                    </span>
                                     <div class="desc">
                                         <p>{{event.description}}</p>
                                     </div>
@@ -311,7 +345,8 @@
             </div>
             <div id="IC_LIST" role="tabpanel" aria-labelledby="IC_LIST" class="tab-pane">
                 <div class="row withpadding">
-                    <a class="btn btn-primary pull-right" data-toggle="modal" data-target="#newICModal" (click)="editICMeeting(null)">NEW</a>
+<!--                    <a class="btn btn-primary pull-right" data-toggle="modal" data-target="#newICModal" (click)="editICMeeting(null)">NEW</a>-->
+                    <a [routerLink]="['/corpMeetings/ic/edit/', 0 ]" class="btn btn-primary pull-right">NEW IC</a>
                 </div>
                 <br/>
 
@@ -551,6 +586,22 @@
                                 <button type="button" *ngIf="uploadProtocolFile != null" class="btn btn-primary pull-right" [disabled]="uploadProtocolFile == null" (click)="saveProtocolAttachment()">Save</button>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="eventModal" role="dialog" tabindex="-1">
+            <div class="modal-dialog" style=" min-height: 800px; max-height:85%;  margin-top: 100px; margin-bottom:50px; width:50%;">
+                <div class="modal-content">
+                    <div [ngBusy]="busyModal" class="modal-body">
+                        <h4>{{selectedEvent?.name}}</h4>
+                        <div class="desc">
+                            <p>{{selectedEvent?.description}}</p>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default pull-right" data-dismiss="modal">Close</button>
                     </div>
                 </div>
             </div>
