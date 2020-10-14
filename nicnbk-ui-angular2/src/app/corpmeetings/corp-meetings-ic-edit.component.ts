@@ -45,6 +45,11 @@ export class CorpMeetingICEditComponent extends CommonFormViewComponent implemen
 
     public attendeesList = [];
 
+    @ViewChild('inviteesSelect')
+    private inviteesSelect;
+
+    public inviteesList = [];
+
     private breadcrumbParams: string;
     private searchParams = new ICMeetingTopicSearchParams();
 
@@ -77,14 +82,18 @@ export class CorpMeetingICEditComponent extends CommonFormViewComponent implemen
 
         Observable.forkJoin(
             // Load lookups
-            this.employeeService.findICMembers()
-            this.corpMeetingService.getAllICMeetings(),
-            this.lookupService.getICMeetingTopicTypes()
+            this.employeeService.findICMembers(),
+            this.employeeService.findAll(),
+            //this.corpMeetingService.getAllICMeetings(),
+            //this.lookupService.getICMeetingTopicTypes()
             )
             .subscribe(
-                ([data]) => {
-                    data.forEach(element => {
+                ([data1, data2]) => {
+                    data1.forEach(element => {
                         this.attendeesList.push({id: element.id, name: element.firstName + " " + element.lastName, present: true});
+                    });
+                    data2.forEach(element => {
+                        this.inviteesList.push({id: element.id, text: element.firstName + " " + element.lastName});
                     });
 
                     this.sub = this.route
@@ -173,13 +182,17 @@ export class CorpMeetingICEditComponent extends CommonFormViewComponent implemen
         //console.log('Removed value is: ', value);
     }
 
-    public refreshAttendeesNIC(value:any):void {
+    public refreshInvitees(value:any):void {
         this.ic.attendees = value;
     }
 
-    /*checkICMember(member){
+
+    checkICMember(member){
         member.present = !member.present;
-    }*/
+        if(member.present){
+            // clear reason
+        }
+    }
 
     public canEdit(){
         if(this.icMeetingTopic.type == null || this.icMeetingTopic.id == null){

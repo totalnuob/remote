@@ -1,25 +1,24 @@
 package kz.nicnbk.ws.rest;
 
-import kz.nicnbk.common.service.model.BaseDictionaryDto;
-import kz.nicnbk.repo.model.employee.Employee;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import kz.nicnbk.repo.model.lookup.FileTypeLookup;
 import kz.nicnbk.service.api.authentication.TokenService;
 import kz.nicnbk.service.api.corpmeetings.CorpMeetingService;
 import kz.nicnbk.service.api.employee.EmployeeService;
-import kz.nicnbk.service.api.files.FileService;
-import kz.nicnbk.service.dto.authentication.UserRoles;
 import kz.nicnbk.service.dto.common.EntitySaveResponseDto;
 import kz.nicnbk.service.dto.corpmeetings.*;
-import kz.nicnbk.service.dto.employee.EmployeeDto;
 import kz.nicnbk.service.dto.files.FilesDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -113,18 +112,30 @@ public class CorpMeetingsServiceREST extends CommonServiceREST{
     }
 
     @PreAuthorize(corpMeetingsRole)
-    @RequestMapping(value = "/ICMeetingTopic/save", method = RequestMethod.POST)
-    public ResponseEntity<?> saveICMeetingTopic(@RequestBody ICMeetingTopicDto dto) {
+    @RequestMapping(value = "/ICMeetingTopic/save", method = RequestMethod.POST,
+            consumes = { MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE })
+    public ResponseEntity<?> saveICMeetingTopic(
+            @RequestPart("data") String data,
+            @ModelAttribute("file") MultipartFile[] files
+    ) {
 
         String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
         String username = this.tokenService.decode(token).getUsername();
 
-        if(!this.corpMeetingService.checkUserRolesForICMeetingTopicByTypeAndUsername(dto.getType(), username, true)){
-            return buildUnauthorizedResponse();
+        // TODO: deserialize string
+        ObjectMapper objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+                ;
+        try {
+            ICMeetingTopicDto icMeetingTopicDto = objectMapper.readValue(data, ICMeetingTopicDto.class);
+            EntitySaveResponseDto saveResponseDto = this.corpMeetingService.saveICMeetingTopic(icMeetingTopicDto, username);
+            return buildEntitySaveResponse(saveResponseDto);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-
-        EntitySaveResponseDto saveResponseDto = this.corpMeetingService.saveICMeetingTopic(dto, username);
-        return buildEntitySaveResponse(saveResponseDto);
+        return buildUnauthorizedResponse();
+//        if(!this.corpMeetingService.checkUserRolesForICMeetingTopicByTypeAndUsername(dto.getType(), username, true)){
+//            return buildUnauthorizedResponse();
+//        }
     }
 
     @PreAuthorize(corpMeetingsRole)

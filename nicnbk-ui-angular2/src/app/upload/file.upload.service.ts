@@ -40,4 +40,36 @@ export class FileUploadService {
             xhr.send(formData);
         });
     }
+
+    public postJsonWithFiles (url: string, params: string[], body: string, files: File[]): Observable<any> {
+        console.log(body);
+            return Observable.create(observer => {
+                let formData: FormData = new FormData(),
+                    xhr: XMLHttpRequest = new XMLHttpRequest();
+                formData.append('data', JSON.stringify(body));
+                for (let i = 0; i < files.length; i++) {
+                    formData.append("file", files[i].file, "_filename");
+                }
+                xhr.withCredentials = true;
+                xhr.onreadystatechange = () => {
+                    if (xhr.readyState === 4) {
+                        if (xhr.status === 200) {
+                            observer.next(JSON.parse(xhr.response));
+                            observer.complete();
+                        } else {
+                            observer.error(xhr.response);
+                        }
+                    }
+                };
+
+                xhr.upload.onprogress = (event) => {
+                    //this.progress = Math.round(event.loaded / event.total * 100);
+                    //this.progressObserver.next(this.progress);
+                };
+                xhr.open('POST', url, true);
+                // add custom header for preflight CORS call
+                xhr.setRequestHeader('X-PREFLIGHT', 'preflight');
+                xhr.send(formData);
+            });
+        }
 }

@@ -45,17 +45,28 @@
                             <div class="col-md-3 form-group form-horizontal">
                                 <label class="control-label" for="icNumber">Number </label>
                                 <input type="text" class="form-control" placeholder="IC Number..."
-                                       id="icNumber" name="icNumber" [(ngModel)]="ic.number" required #name="ngModel"/>
+                                       id="icNumber" name="icNumber" [(ngModel)]="ic.number" #name="ngModel"/>
+                            </div>
+                            <div class="col-md-3 form-group form-horizontal">
+                                <label class="control-label" for="icNumber">Place </label>
+                                <select class=" form-control small" style="display:inline; font-size: smaller" name="place">
+                                    <option value="OFFICE">в здании АО «Национальная инвестиционная корпорация Национального Банка Казахстана»,
+                                        находящемся по адресу: г. Нур - Султан, проспект Мәңгілік ел 57 А, 5 - й этаж.</option>
+                                    <option value="WEBEX">Webex Meeting</option>
+                                    <option value="OTHER">Other</option>
+                                </select>
                             </div>
                         </div>
+
                         <div class="row top-buffer withpadding">
-                            <label class="control-label">Attendees:</label>
-                            <table class="condensed-table small">
+                            <div class="col-md-4">
+                                <label class="control-label">Attendees:</label>
+                                <table class="condensed-table small">
                                 <tbody>
                                     <tr *ngFor="let icMember of attendeesList; let i = index">
                                         <td style="text-align: right;">
                                             <input type="checkbox" name="icMemberPresence" (click)="checkICMember(icMember)"
-                                                   [(ngModel)]="icMember.present"/>
+                                                   [checked]="icMember.present"/>
                                         </td>
                                         <td style="text-align: right;">{{i+1}}. &nbsp;</td>
                                         <td>{{icMember.name}}</td>
@@ -71,6 +82,26 @@
                                     </tr>
                                 </tbody>
                             </table>
+                            </div>
+                            <div class="col-md-8">
+                                <label class="control-label col-md-2">Invitees:</label>
+                                <div class="col-md-6" *ngIf="inviteesList?.length > 0">
+                                    <ng-select #inviteesSelect [initData]="ic.invitees"
+                                               [multiple]="true"
+                                               [items]="inviteesList"
+                                               (data)="refreshInvitees($event)"
+                                               (selected)="selected($event)"
+                                               (removed)="removed($event)"
+                                               placeholder="No invitee selected"></ng-select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr style="border-top: 1px solid #B5AEAE">
+
+                        <div class="row top-buffer withpadding">
+                            <h4>Questions</h4>
+
                         </div>
                         <div class="row top-buffer">
                             <div class="col-md-12">

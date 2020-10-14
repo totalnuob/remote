@@ -4,6 +4,7 @@ import kz.nicnbk.service.api.base.BaseService;
 import kz.nicnbk.service.dto.common.EntitySaveResponseDto;
 import kz.nicnbk.service.dto.corpmeetings.*;
 import kz.nicnbk.service.dto.files.FilesDto;
+import kz.nicnbk.service.dto.files.NamedFilesDto;
 
 import java.util.List;
 import java.util.Set;
@@ -45,12 +46,13 @@ public interface CorpMeetingService extends BaseService {
 
     Set<FilesDto> saveICMeetingTopicAttachments(Long topicId, Set<FilesDto> attachments, String username);
 
-    Set<FilesDto> getICMeetingTopicAttachments(Long id);
+    Set<NamedFilesDto> getICMeetingTopicAttachments(Long id);
 
     boolean safeDeleteICMeetingTopic(Long id, String username);
 
     boolean safeDeleteICMeetingTopicAttachment(Long topicId, Long fileId, String username);
 
+    @Deprecated
     boolean checkUserRolesForICMeetingTopicByTypeAndUsername(String type, String username, boolean editing);
 
     /* IC MEETING *****************************************************************************************************/

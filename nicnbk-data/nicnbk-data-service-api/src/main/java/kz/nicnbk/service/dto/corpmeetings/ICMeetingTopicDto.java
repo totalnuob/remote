@@ -1,15 +1,13 @@
 package kz.nicnbk.service.dto.corpmeetings;
 
-import kz.nicnbk.common.service.model.BaseDictionaryDto;
 import kz.nicnbk.common.service.model.CreateUpdateBaseEntityDto;
-import kz.nicnbk.repo.model.corpmeetings.ICMeeting;
 import kz.nicnbk.repo.model.corpmeetings.ICMeetingTopic;
+import kz.nicnbk.service.dto.common.EmployeeApproveDto;
+import kz.nicnbk.service.dto.employee.EmployeeDto;
 import kz.nicnbk.service.dto.files.FilesDto;
-import org.springframework.format.annotation.DateTimeFormat;
+import kz.nicnbk.service.dto.files.NamedFilesDto;
+import org.springframework.web.multipart.MultipartFile;
 
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -19,14 +17,18 @@ import java.util.Set;
 public class ICMeetingTopicDto extends CreateUpdateBaseEntityDto<ICMeetingTopic> {
 
     private ICMeetingDto icMeeting;
-    private String shortName;
-    private String longDescription;
+    private String name;
+    private String description;
     private String decision;
-    private String type;
+    private Set<EmployeeApproveDto> decisionApproveList;
 
-    private Set<FilesDto> materials;
+    private Set<NamedFilesDto> materials;
+    private Set<FilesDto> explanatoryNote;
 
     private List<String> tags;
+
+    @Deprecated
+    private String type;
 
     public ICMeetingDto getIcMeeting() {
         return icMeeting;
@@ -36,28 +38,36 @@ public class ICMeetingTopicDto extends CreateUpdateBaseEntityDto<ICMeetingTopic>
         this.icMeeting = icMeeting;
     }
 
-    public String getShortName() {
-        return shortName;
+    public String getName() {
+        return name;
     }
 
-    public void setShortName(String shortName) {
-        this.shortName = shortName;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getLongDescription() {
-        return longDescription;
+    public String getDescription() {
+        return description;
     }
 
-    public void setLongDescription(String longDescription) {
-        this.longDescription = longDescription;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    public Set<FilesDto> getMaterials() {
+    public Set<NamedFilesDto> getMaterials() {
         return materials;
     }
 
-    public void setMaterials(Set<FilesDto> materials) {
+    public void setMaterials(Set<NamedFilesDto> materials) {
         this.materials = materials;
+    }
+
+    public Set<FilesDto> getExplanatoryNote() {
+        return explanatoryNote;
+    }
+
+    public void setExplanatoryNote(Set<FilesDto> explanatoryNote) {
+        this.explanatoryNote = explanatoryNote;
     }
 
     public List<String> getTags() {
@@ -82,6 +92,14 @@ public class ICMeetingTopicDto extends CreateUpdateBaseEntityDto<ICMeetingTopic>
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public Set<EmployeeApproveDto> getDecisionApproveList() {
+        return decisionApproveList;
+    }
+
+    public void setDecisionApproveList(Set<EmployeeApproveDto> decisionApproveList) {
+        this.decisionApproveList = decisionApproveList;
     }
 }
 

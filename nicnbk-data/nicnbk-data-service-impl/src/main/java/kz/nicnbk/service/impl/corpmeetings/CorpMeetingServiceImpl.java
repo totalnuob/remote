@@ -15,11 +15,11 @@ import kz.nicnbk.service.converter.corpmeetings.ICMeetingTopicEntityConverter;
 import kz.nicnbk.service.converter.corpmeetings.ICMeetingsEntityConverter;
 import kz.nicnbk.service.dto.authentication.UserRoles;
 import kz.nicnbk.service.dto.common.EntitySaveResponseDto;
-import kz.nicnbk.service.dto.common.ListResponseDto;
 import kz.nicnbk.service.dto.common.ResponseStatusType;
 import kz.nicnbk.service.dto.corpmeetings.*;
 import kz.nicnbk.service.dto.employee.EmployeeDto;
 import kz.nicnbk.service.dto.files.FilesDto;
+import kz.nicnbk.service.dto.files.NamedFilesDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -256,7 +256,7 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
                 saveResponseDto.setErrorMessageEn(errorMessage);
                 return saveResponseDto;
             }
-            if(StringUtils.isEmpty(dto.getShortName())){
+            if(StringUtils.isEmpty(dto.getName())){
                 String errorMessage = "Error saving IC Meeting Topic: short name required";
                 logger.error(errorMessage);
                 saveResponseDto.setErrorMessageEn(errorMessage);
@@ -328,17 +328,20 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
     }
 
     @Override
-    public Set<FilesDto> getICMeetingTopicAttachments(Long id){
+    public Set<NamedFilesDto> getICMeetingTopicAttachments(Long id){
         try {
             List<ICMeetingTopicFiles> entities = icMeetingTopicFilesRepository.getFilesByMeetingId(id);
 
-            Set<FilesDto> files = new HashSet<>();
+            Set<NamedFilesDto> files = new HashSet<>();
             if (entities != null) {
                 for (ICMeetingTopicFiles icMeetingTopicFiles : entities) {
                     FilesDto fileDto = new FilesDto();
                     fileDto.setId(icMeetingTopicFiles.getFile().getId());
                     fileDto.setFileName(icMeetingTopicFiles.getFile().getFileName());
-                    files.add(fileDto);
+                    NamedFilesDto namedFilesDto = new NamedFilesDto();
+                    namedFilesDto.setFile(fileDto);
+                    namedFilesDto.setName("????");
+                    files.add(namedFilesDto);
                 }
             }
             return files;
@@ -394,6 +397,7 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
         return false;
     }
 
+    @Deprecated
     public boolean checkUserRolesForICMeetingTopicByTypeAndUsername(String type, String username, boolean editing){
         EmployeeDto updaterDto = this.employeeService.findByUsername(username);
         if(updaterDto == null || updaterDto.getRoles() == null || updaterDto.getRoles().isEmpty()){

@@ -111,11 +111,22 @@ export class CorpMeetingService extends CommonService {
             .catch(this.handleErrorResponse);
     }
 
-    saveICMeetingTopic(entity){
-        let body = JSON.stringify(entity);
-        return this.http.post(this.IC_MEETING_TOPIC_SAVE_URL, body, this.getOptionsWithCredentials())
+
+    saveICMeetingTopic(entity, files){
+        const formData = new FormData();
+        formData.append('data', JSON.stringify(entity));
+        for (let i = 0; i < files.length; i++) {
+            formData.append("file", files[i].file);
+        }
+        return this.http.post(this.IC_MEETING_TOPIC_SAVE_URL, formData, this.getHeadersMultipartOptionsWithCredentials())
             .map(this.extractData)
             .catch(this.handleErrorResponse);
+    }
+
+
+
+    saveICMeetingTopicWithFiles(entity, files){
+        return this.uploadService.postJsonWithFiles(this.IC_MEETING_TOPIC_SAVE_URL, [], entity, files);
     }
 
     saveICMeeting(entity){
@@ -125,6 +136,10 @@ export class CorpMeetingService extends CommonService {
             .map(this.extractData)
             .catch(this.handleErrorResponse);
     }
+
+    postFiles(meetingId, params, files){
+            return this.uploadService.postFiles(this.MEETING_ATTACHMENT_UPLOAD_URL + meetingId, [], files, null);
+        }
 
     deleteICMeeting(id){
         return this.http.post(this.IC_MEETINGS_DELETE_URL + id, null, this.getOptionsWithCredentials())
