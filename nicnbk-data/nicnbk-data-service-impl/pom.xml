@@ -168,6 +168,11 @@
             <version>1.0.0.M1</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>com.bloombergblp</groupId>
+            <artifactId>blpapi</artifactId>
+            <version>3.15.2-1</version>
+        </dependency>
     </dependencies>
 
 
