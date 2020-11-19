@@ -115,40 +115,29 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
                     //data1.forEach(element => {
                     //    this.icMeetingTopicTypes.push(element);
                     //});
-
                     this.sub = this.route
                         .params
                         .subscribe(params => {
+                            //console.log(params);
                             var page = 0;
-                            if (params['params'] != null) {
-                                this.icTopicSearchParams = JSON.parse(params['params']);
-
+                            this.activeTab = params['activeTab'];
+                            if (params['icMeetingParams'] != null) {
+                                // TODO: !!!!
+                                this.icMeetingsSearchParams = JSON.parse(params['icMeetingParams']);
+                            }
+                            if(this.activeTab === 'IC_LIST'){
+                                this.searchIC(page);
+                            }else if(this.activeTab === 'IC_TOPICS'){
                                 $('#fromDate').val(this.icTopicSearchParams.dateFrom);
                                 $('#toDate').val(this.icTopicSearchParams.dateTo);
 
                                 page = this.icTopicSearchParams.page > 0 ? this.icTopicSearchParams.page : 0;
-                                //this.busy = this.corpMeetingService.searchICMeetingTopics(this.icTopicSearchParams)
-                                //    .subscribe(
-                                //        (searchResult:ICMeetingTopicSearchResults) => {
-                                //            this.icTopics = searchResult.icMeetingTopics;
-                                //            this.icTopicSearchResult = searchResult;
-                                //        },
-                                //        error => this.errorMessage = "Failed to search IC meeting topics"
-                                //    );
-                            } else {
-
+                                this.searchICMeetingTopics(page)
+                            }else{
+                                this.searchICMeetingUpcomingEvents();
                             }
-                            if(this.icMeetingTopicTypes != null && this.icMeetingTopicTypes.length == 1){
-                                for(var i = 0; i < this.icMeetingTopicTypes.length; i++){
-                                    if(this.icMeetingTopicTypes[i].code != 'NONE'){
-                                        this.icTopicSearchParams.type = this.icMeetingTopicTypes[i].code;
-                                    }
-                                }
-                            }
-                            this.searchICMeetingUpcomingEvents();
                         });
                 });
-
     }
 
     ngOnInit():any {
@@ -253,10 +242,10 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
             );
     }
 
-    navigate(meetingId){
+    navigate(topicId){
         this.icTopicSearchParams.path = '/corpMeetings';
         let params = JSON.stringify(this.icTopicSearchParams);
-        this.router.navigate(['/corpMeetings/edit/', meetingId, { params }]);
+        this.router.navigate(['/corpMeetings/edit/', topicId, { params }]);
     }
 
     clearSearchForm(){
@@ -340,17 +329,13 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
     }
 
     editICMeeting(icMeeting){
-        this.modalErrorMessage = null;
-        this.modalSuccessMessage = null;
-        if(icMeeting == null){
-            this.icMeeting = new ICMeeting();
-        }else {
-            this.icMeeting = icMeeting;
-        }
+        let params = JSON.stringify(this.icMeetingsSearchParams);
+        this.router.navigate(['/corpMeetings/ic/edit/', icMeeting.id, { params }]);
     }
 
     deleteICMeeting(icMeeting){
-        if(confirm("Are you sure want to delete?")) {
+        alert("TODO");
+        /*if(confirm("Are you sure want to delete?")) {
             this.busy = this.corpMeetingService.deleteICMeeting(icMeeting.id)
                 .subscribe(
                     (resposne) => {
@@ -363,7 +348,13 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
                         this.postAction(this.successMessage, this.errorMessage)
                     }
                 );
-        }
+        }*/
+    }
+    canEditICMeeting(icMeeting){
+        return this.moduleAccessChecker.checkAccessICMeetingsEdit();
+    }
+    canDeleteICMeeting(icMeeting){
+        return true;
     }
 
     showAddProtocolModal(icMeeting){
@@ -448,4 +439,106 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
         return (this.moduleAccessChecker.checkAccessAdmin() || this.moduleAccessChecker.checkAccessCorpMeetingsView());
     }
 
+    canViewIC(){
+        return this.moduleAccessChecker.checkAccessICMeetingsView();
+    }
+
+    canViewICTopics(){
+        return this.moduleAccessChecker.checkAccessICMeetingTopicsView();
+    }
+
+    getTopicClassByStatus(topic){
+        //console.log(topic);
+        if(topic.status != null){
+            if(topic.status === 'DRAFT'){
+                return 'label label-default';
+            }
+            if(topic.status === 'CLOSED'){
+                return 'label label-danger';
+            }
+            if(topic.status === 'LOCKED FOR IC'){
+                return 'label label-primary';
+            }
+            if(topic.status === 'TO BE FINALIZED'){
+                return 'label label-info';
+            }
+            if(topic.status === 'FINALIZED'){
+                return 'label label-success';
+            }
+            if(topic.status === 'UNDER REVIEW'){
+                return 'label label-warning';
+            }
+            if(topic.status === 'READY' || topic.status === 'APPROVEDs'){
+                return 'label label-success';
+            }
+        }
+        return 'label label-default';
+    }
+
+    /*getTopicStatus(topic){
+        if(!topic.published){
+            return 'DRAFT';
+        }else if(topic.closed){
+            return 'CLOSED';
+        }else{
+            // Check if sent to IC
+            if(topic.icMeeting.lockedByDeadline){
+                return 'LOCKED FOR IC';
+            }
+
+            // Check if to be finalized after IC
+            if(topic.icMeeting.unlockedForFinalize){
+                return 'TO BE FINALIZED';
+            }
+
+            if(topic.approveList == null || topic.approveList.length == 0){
+                return 'READY';
+            }else{
+                for(var i = 0; i < topic.approveList.length; i++){
+                    if(!topic.approveList[i].approved){
+                        return 'UNDER REVIEW';
+                    }
+                }
+                // Approved
+                return 'APPROVED';
+            }
+        }
+    }*/
+
+
+     getICClassByStatus(ic){
+        //console.log(ic);
+        if(ic.status === 'CLOSED'){
+            return 'label label-danger';
+        }else{
+            // Check if sent to IC
+            if(ic.status === 'LOCKED FOR IC'){
+                return 'label label-primary';
+            }
+            // Check if to be finalized after IC
+            if(ic.status === 'TO BE FINALIZED'){
+                return 'label label-info';
+            }
+            if(ic.status === 'FINALIZED'){
+                return 'label label-success';
+            }
+            return 'label label-default';
+        }
+    }
+
+    /*getICStatus(ic: ICMeeting){
+        if(ic.closed){
+            return 'CLOSED';
+        }else{
+            // Check if sent to IC
+            if(ic.lockedByDeadline){
+                return 'LOCKED FOR IC';
+            }
+            // Check if to be finalized after IC
+            if(ic.unlockedForFinalize){
+                return 'TO BE FINALIZED';
+            }
+            return 'OPEN';
+        }
+    }*/
 }

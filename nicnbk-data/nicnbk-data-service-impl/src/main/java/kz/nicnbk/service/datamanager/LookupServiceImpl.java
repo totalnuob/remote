@@ -3,6 +3,7 @@ package kz.nicnbk.service.datamanager;
 import kz.nicnbk.common.service.model.BaseDictionaryDto;
 import kz.nicnbk.common.service.util.PaginationUtils;
 import kz.nicnbk.common.service.util.StringUtils;
+import kz.nicnbk.repo.api.corpmeetings.ICMeetingVoteRepository;
 import kz.nicnbk.repo.api.lookup.*;
 import kz.nicnbk.repo.api.lookup.CurrencyRepository;
 import kz.nicnbk.repo.api.lookup.GeographyRepository;
@@ -18,8 +19,7 @@ import kz.nicnbk.repo.model.base.BaseTypeEntity;
 import kz.nicnbk.repo.model.base.BaseTypeEntityImpl;
 import kz.nicnbk.repo.model.benchmark.Benchmark;
 import kz.nicnbk.repo.model.common.*;
-import kz.nicnbk.repo.model.corpmeetings.CorpMeetingType;
-import kz.nicnbk.repo.model.corpmeetings.ICMeetingTopicType;
+import kz.nicnbk.repo.model.corpmeetings.*;
 import kz.nicnbk.repo.model.files.FilesType;
 import kz.nicnbk.repo.model.hf.*;
 import kz.nicnbk.repo.model.m2s2.MeetingArrangedBy;
@@ -167,6 +167,15 @@ public class LookupServiceImpl implements LookupService {
 
     @Autowired
     private RETrancheTypeRepository reTrancheTypeRepository;
+
+    @Autowired
+    private ICMeetingAttendeeAbsenceTypeRepository icMeetingAttendeeAbsenceTypeRepository;
+
+    @Autowired
+    private ICMeetingPlaceTypeRepository icMeetingPlaceTypeRepository;
+
+    @Autowired
+    private ICMeetingVoteTypeRepository icMeetingVoteTypeRepository;
 
     @Autowired
     private TerraNICChartOfAccountsRepository terraNICChartOfAccountsRepository;
@@ -335,6 +344,12 @@ public class LookupServiceImpl implements LookupService {
                 return (T) this.peTrancheTypeRepository.findByCode(code);
             }else if(clazz.equals(RETrancheType.class)){
                 return (T) this.reTrancheTypeRepository.findByCode(code);
+            }else if(clazz.equals(ICMeetingAttendeeAbsenceType.class)){
+                return (T) this.icMeetingAttendeeAbsenceTypeRepository.findByCode(code);
+            }else if(clazz.equals(ICMeetingPlaceType.class)){
+                return (T) this.icMeetingPlaceTypeRepository.findByCode(code);
+            }else if(clazz.equals(ICMeetingVoteType.class)){
+                return (T) this.icMeetingVoteTypeRepository.findByCode(code);
             }else{
                 logger.error("Failed to load lookups for clazz=" + clazz + ", code=" + code);
             }
@@ -2529,6 +2544,59 @@ public class LookupServiceImpl implements LookupService {
         }
         return null;
     }
+
+    @Override
+    public List<BaseDictionaryDto> getICMeetingAbsenceTypes() {
+        try {
+            List<BaseDictionaryDto> dtoList = new ArrayList<>();
+            Iterator<ICMeetingAttendeeAbsenceType> iterator = this.icMeetingAttendeeAbsenceTypeRepository.findAll().iterator();
+            while (iterator.hasNext()) {
+                ICMeetingAttendeeAbsenceType entity = iterator.next();
+                BaseDictionaryDto dto = disassemble(entity);
+                dtoList.add(dto);
+            }
+            return dtoList;
+        } catch (Exception ex) {
+            logger.error("Failed to load lookup: ICMeetingAttendeeAbsenceType", ex);
+        }
+        return null;
+    }
+
+    @Override
+    public List<BaseDictionaryDto> getICMeetingPlaceTypes() {
+        try {
+            List<BaseDictionaryDto> dtoList = new ArrayList<>();
+            Iterator<ICMeetingPlaceType> iterator = this.icMeetingPlaceTypeRepository.findAll().iterator();
+            while (iterator.hasNext()) {
+                ICMeetingPlaceType entity = iterator.next();
+                BaseDictionaryDto dto = disassemble(entity);
+                dtoList.add(dto);
+            }
+            return dtoList;
+        } catch (Exception ex) {
+            logger.error("Failed to load lookup: ICMeetingPlaceType", ex);
+        }
+        return null;
+    }
+
+    @Override
+    public List<BaseDictionaryDto> getICMeetingVoteTypes() {
+        try {
+            List<BaseDictionaryDto> dtoList = new ArrayList<>();
+            Iterator<ICMeetingVoteType> iterator = this.icMeetingVoteTypeRepository.findAll().iterator();
+            while (iterator.hasNext()) {
+                ICMeetingVoteType entity = iterator.next();
+                BaseDictionaryDto dto = disassemble(entity);
+                dtoList.add(dto);
+            }
+            return dtoList;
+        } catch (Exception ex) {
+            logger.error("Failed to load lookup: ICMeetingVoteType", ex);
+        }
+        return null;
+    }
+
+
 
     private boolean checkDeletableMatchingSingularityAccountNumber(String accountNumber){
         if(accountNumber == null){

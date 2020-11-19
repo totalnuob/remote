@@ -3,6 +3,7 @@ package kz.nicnbk.service.api.corpmeetings;
 import kz.nicnbk.service.api.base.BaseService;
 import kz.nicnbk.service.dto.common.EntitySaveResponseDto;
 import kz.nicnbk.service.dto.corpmeetings.*;
+import kz.nicnbk.service.dto.employee.EmployeeDto;
 import kz.nicnbk.service.dto.files.FilesDto;
 import kz.nicnbk.service.dto.files.NamedFilesDto;
 
@@ -19,6 +20,8 @@ public interface CorpMeetingService extends BaseService {
 
     /* Number of elements per page */
     int DEFAULT_PAGE_SIZE = 20;
+
+    public static final int IC_MEETING_DEADLINE_DAYS = 2;
 
 
 //    @Deprecated
@@ -38,39 +41,74 @@ public interface CorpMeetingService extends BaseService {
 
 
     /* IC MEETING TOPIC ***********************************************************************************************/
-    EntitySaveResponseDto saveICMeetingTopic(ICMeetingTopicDto dto, String updater);
+    EntitySaveResponseDto saveICMeetingTopic(ICMeetingTopicDto dto, FilesDto explanatoryNote, List<FilesDto> filesDtoSet,  String updater);
 
-    ICMeetingTopicDto getICMeetingTopic(Long id);
+    EntitySaveResponseDto saveICMeetingTopicUpdate(ICMeetingTopicUpdateDto dto, FilesDto explanatoryNote, List<FilesDto> filesDtoSet,  String updater);
 
-    ICMeetingTopicsPagedSearchResult searchICMeetingTopics(ICMeetingTopicsSearchParamsDto searchParams, String username);
+    ICMeetingTopicDto getICMeetingTopic(Long id, String username);
 
-    Set<FilesDto> saveICMeetingTopicAttachments(Long topicId, Set<FilesDto> attachments, String username);
+    EntitySaveResponseDto approveICMeetingTopic(Long id, String username);
 
-    Set<NamedFilesDto> getICMeetingTopicAttachments(Long id);
+    List<EmployeeDto> getAvailableApproveList();
+
+    ICMeetingTopicDto getICMeetingTopicByExplanatoryFileId(Long id);
+
+    ICMeetingTopicDto getICMeetingTopicByMaterialFileId(Long id);
+
+    ICMeetingTopicsPagedSearchResult searchICMeetingTopics(ICMeetingTopicsSearchParamsDto searchParams);
+
+    List<ICMeetingTopicDto> getICMeetingTopicsByMeetingId(Long id, String username);
+
+    List<ICMeetingTopicDto> getLimitedICMeetingTopicsByMeetingId(Long id);
+
+    //Set<FilesDto> saveICMeetingTopicAttachments(Long topicId, Set<FilesDto> attachments, String username);
+
+    List<NamedFilesDto> getICMeetingTopicAttachments(Long id, Boolean update);
+
+    boolean checkViewICMeetingTopicByTopicIdAndUsername(Long id, String username);
 
     boolean safeDeleteICMeetingTopic(Long id, String username);
 
     boolean safeDeleteICMeetingTopicAttachment(Long topicId, Long fileId, String username);
+
+    boolean deleteICMeetingTopicExplanatoryNote(Long topicId, String username);
+
+    boolean deleteICMeetingTopicExplanatoryNoteUpd(Long topicId, String username);
 
     @Deprecated
     boolean checkUserRolesForICMeetingTopicByTypeAndUsername(String type, String username, boolean editing);
 
     /* IC MEETING *****************************************************************************************************/
 
-    EntitySaveResponseDto saveICMeeting(ICMeetingDto icMeetingDto, String updater);
+    EntitySaveResponseDto saveICMeeting(ICMeetingDto icMeetingDto, FilesDto agendaFile, String updater);
 
     Set<FilesDto> saveICMeetingProtocol(Long meetingId, Set<FilesDto> attachments, String username);
 
-    ICMeetingDto getICMeeting(Long id);
+    ICMeetingDto getICMeeting(Long id, String username);
 
     boolean safeDeleteICMeeting(Long id, String username);
 
+    boolean closeICMeeting(Long id, String username);
+
+    boolean reopenICMeeting(Long id, String username);
+
+    boolean unlockICMeetingForFinalize(Long id, String username);
+
+    boolean saveICMeetingVotes(ICMeetingVoteDto votes, String username);
+
     ICMeetingsPagedSearchResult searchICMeetings(ICMeetingsSearchParamsDto searchParams);
 
-    List<ICMeetingDto> getAllICMeetings();
+    List<ICMeetingDto> getAllICMeetingsShort();
 
     boolean safeDeleteICMeetingProtocolAttachment(Long meetingId, Long fileId, String username);
 
     Set<FilesDto> getICMeetingAttachments(Long id);
+
+    FilesDto getICMeetingAgendaFileStream(Long icMeetingId, String username);
+    FilesDto getICMeetingProtocolFileStream(Long icMeetingId, String username);
+    FilesDto getICMeetingBulletinFileStream(Long icMeetingId, String username);
+
+
+    boolean deleteICMeetingAgenda(Long icMeetingId, String username);
 
 }

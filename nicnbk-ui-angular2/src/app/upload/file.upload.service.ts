@@ -41,14 +41,22 @@ export class FileUploadService {
         });
     }
 
-    public postJsonWithFiles (url: string, params: string[], body: string, files: File[]): Observable<any> {
-        console.log(body);
+    public postJsonWithFiles (url: string, params: string[], body: string, files: FileEntity[], files_name: string,
+                                    exp_notes: File[], exp_notes_name: string): Observable<any> {
             return Observable.create(observer => {
                 let formData: FormData = new FormData(),
                     xhr: XMLHttpRequest = new XMLHttpRequest();
                 formData.append('data', JSON.stringify(body));
-                for (let i = 0; i < files.length; i++) {
-                    formData.append("file", files[i].file, "_filename");
+
+                for (let i = 0; files != null && i < files.length; i++) {
+                    //console.log(files_name);
+                    //console.log(files[i]);
+                    formData.append(files_name, files[i]);
+                }
+                for (let j = 0; exp_notes != null && j < exp_notes.length; j++) {
+                    //console.log(exp_notes_name);
+                    //console.log(exp_notes[j]);
+                    formData.append(exp_notes_name, exp_notes[j]);
                 }
                 xhr.withCredentials = true;
                 xhr.onreadystatechange = () => {

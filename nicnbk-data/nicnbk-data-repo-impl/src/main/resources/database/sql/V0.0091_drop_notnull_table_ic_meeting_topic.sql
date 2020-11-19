@@ -1,0 +1,1 @@
+ALTER TABLE ic_meeting_topic ALTER COLUMN type_id DROP NOT NULL;

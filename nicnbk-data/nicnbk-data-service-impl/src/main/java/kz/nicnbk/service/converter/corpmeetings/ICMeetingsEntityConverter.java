@@ -1,6 +1,9 @@
 package kz.nicnbk.service.converter.corpmeetings;
 
+import kz.nicnbk.common.service.util.DateUtils;
 import kz.nicnbk.repo.model.corpmeetings.ICMeeting;
+import kz.nicnbk.repo.model.corpmeetings.ICMeetingPlaceType;
+import kz.nicnbk.service.api.corpmeetings.CorpMeetingService;
 import kz.nicnbk.service.converter.dozer.BaseDozerEntityConverter;
 import kz.nicnbk.service.datamanager.LookupService;
 import kz.nicnbk.service.dto.corpmeetings.ICMeetingDto;
@@ -8,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -19,6 +23,9 @@ public class ICMeetingsEntityConverter extends BaseDozerEntityConverter<ICMeetin
     @Autowired
     private LookupService lookupService;
 
+    @Autowired
+    private CorpMeetingService corpMeetingService;
+
     @Override
     public ICMeeting assemble(ICMeetingDto dto) {
         if (dto == null) {
@@ -26,11 +33,37 @@ public class ICMeetingsEntityConverter extends BaseDozerEntityConverter<ICMeetin
         }
 
         ICMeeting entity = super.assemble(dto);
+        if(dto.getPlace() != null){
+            ICMeetingPlaceType place = this.lookupService.findByTypeAndCode(ICMeetingPlaceType.class, dto.getPlace());
+            entity.setPlace(place);
+        }
         return entity;
     }
 
     @Override
     public ICMeetingDto disassemble(ICMeeting entity) {
+        if (entity == null) {
+            return null;
+        }
+        ICMeetingDto dto = super.disassemble(entity); //mapper.map(entity, TripMemoDto.class);
+
+        // creator
+        if(entity.getCreator() != null){
+            dto.setCreator(entity.getCreator().getUsername());
+        }
+
+        // updater
+        if(entity.getUpdater() != null){
+            dto.setUpdater(entity.getUpdater().getUsername());
+        }
+        if(entity.getPlace() != null){
+            dto.setPlace(entity.getPlace().getCode());
+        }
+
+        return dto;
+    }
+
+    public ICMeetingDto disassembleLimited(ICMeeting entity) {
         if (entity == null) {
             return null;
         }

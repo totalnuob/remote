@@ -3,10 +3,13 @@ package kz.nicnbk.ws.rest;
 import kz.nicnbk.common.service.model.BaseDictionaryDto;
 import kz.nicnbk.repo.model.lookup.FileTypeLookup;
 import kz.nicnbk.service.api.authentication.TokenService;
+import kz.nicnbk.service.api.corpmeetings.CorpMeetingService;
 import kz.nicnbk.service.api.employee.EmployeeService;
 import kz.nicnbk.service.api.files.FileService;
 import kz.nicnbk.service.dto.authentication.UserRoles;
+import kz.nicnbk.service.dto.corpmeetings.ICMeetingTopicDto;
 import kz.nicnbk.service.dto.employee.EmployeeDto;
+import kz.nicnbk.service.dto.employee.RoleDto;
 import kz.nicnbk.service.dto.files.FilesDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +18,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -39,6 +41,9 @@ public class GenereicFileServiceREST {
 
     @Autowired
     private EmployeeService employeeService;
+
+    @Autowired
+    private CorpMeetingService corpMeetingService;
 
     @RequestMapping(value="/download/{fileType}/{id}", method= RequestMethod.GET)
     @ResponseBody
@@ -99,17 +104,11 @@ public class GenereicFileServiceREST {
         if(filesDto != null && filesDto.getType() != null){
             if(filesDto.getType().equalsIgnoreCase(FileTypeLookup.IC_PROTOCOL.getCode())){
                 // IC PROTOCOL
-                EmployeeDto employeeDto = this.employeeService.findByUsername(username);
-                if(employeeDto.getRoles() != null && !employeeDto.getRoles().isEmpty()){
-                    // Check rights
-                    for(BaseDictionaryDto role: employeeDto.getRoles()){
-                        if(role.getCode().equalsIgnoreCase(UserRoles.ADMIN.getCode()) ||
-                                role.getCode().equalsIgnoreCase(UserRoles.IC_MEMBER.getCode())){
-                            return true;
-                        }
-                    }
-                }
-                return false;
+                return checkICProtocol(username);
+            }else if(filesDto.getType().equalsIgnoreCase(FileTypeLookup.IC_EXPLANATORY_NOTE.getCode())){
+                return checkICMeetingTopicExplanatoryNoteReadAccess(fileId, username);
+            }else if(filesDto.getType().equalsIgnoreCase(FileTypeLookup.IC_MATERIALS.getCode())){
+                return checkICMeetingTopicMaterialsReadAccess(fileId, username);
             }else if(filesDto.getType().equalsIgnoreCase(FileTypeLookup.HR_DOCS.getCode())){
                 // HR DOCS
                 return true;
@@ -130,6 +129,76 @@ public class GenereicFileServiceREST {
                 // Other files types?
                 // TODO
                 return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean checkICProtocol(String username){
+        EmployeeDto employeeDto = this.employeeService.findByUsername(username);
+        if(employeeDto.getRoles() != null && !employeeDto.getRoles().isEmpty()){
+            // Check rights
+            for(BaseDictionaryDto role: employeeDto.getRoles()){
+                if(role.getCode().equalsIgnoreCase(UserRoles.ADMIN.getCode()) ||
+                        role.getCode().equalsIgnoreCase(UserRoles.IC_MEMBER.getCode())){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean checkICMeetingTopicMaterialsReadAccess(Long fileId, String username){
+        EmployeeDto employeeDto = this.employeeService.findByUsername(username);
+        if(employeeDto != null && employeeDto.getRoles() != null && !employeeDto.getRoles().isEmpty()){
+            for(BaseDictionaryDto role: employeeDto.getRoles()){
+                if(role.getCode().equalsIgnoreCase(UserRoles.ADMIN.getCode()) ||
+                        role.getCode().equalsIgnoreCase(UserRoles.IC_MEMBER.getCode())){
+                    return true;
+                }else if(role.getCode().equalsIgnoreCase(UserRoles.IC_TOPIC_EDIT.getCode()) ||
+                        role.getCode().equalsIgnoreCase(UserRoles.IC_TOPIC_VIEW.getCode()) ||
+                        role.getCode().equalsIgnoreCase(UserRoles.IC_TOPIC_RESTR.getCode())){
+                    // check department
+                    ICMeetingTopicDto icMeetingTopic = this.corpMeetingService.getICMeetingTopicByMaterialFileId(fileId);
+                    if(icMeetingTopic != null && icMeetingTopic.getDepartment() != null){
+                        if(icMeetingTopic.getDepartment() != null){
+                            int topicDeptId = icMeetingTopic.getDepartment().getId();
+                            int editorDeptId = employeeDto.getPosition() != null && employeeDto.getPosition().getDepartment() != null ?
+                                    employeeDto.getPosition().getDepartment().getId() : 0;
+                            if (topicDeptId != 0 && topicDeptId == editorDeptId) {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean checkICMeetingTopicExplanatoryNoteReadAccess(Long fileId, String username){
+        EmployeeDto employeeDto = this.employeeService.findByUsername(username);
+        if(employeeDto != null && employeeDto.getRoles() != null && !employeeDto.getRoles().isEmpty()){
+            for(BaseDictionaryDto role: employeeDto.getRoles()){
+                if(role.getCode().equalsIgnoreCase(UserRoles.ADMIN.getCode()) ||
+                        role.getCode().equalsIgnoreCase(UserRoles.IC_MEMBER.getCode())){
+                    return true;
+                }else if(role.getCode().equalsIgnoreCase(UserRoles.IC_TOPIC_EDIT.getCode()) ||
+                        role.getCode().equalsIgnoreCase(UserRoles.IC_TOPIC_VIEW.getCode()) ||
+                        role.getCode().equalsIgnoreCase(UserRoles.IC_TOPIC_RESTR.getCode())){
+                    // check department
+                    ICMeetingTopicDto icMeetingTopic = this.corpMeetingService.getICMeetingTopicByExplanatoryFileId(fileId);
+                    if(icMeetingTopic != null && icMeetingTopic.getDepartment() != null){
+                        if(icMeetingTopic.getDepartment() != null){
+                            int topicDeptId = icMeetingTopic.getDepartment().getId();
+                            int editorDeptId = employeeDto.getPosition() != null && employeeDto.getPosition().getDepartment() != null ?
+                                    employeeDto.getPosition().getDepartment().getId() : 0;
+                            if (topicDeptId != 0 && topicDeptId == editorDeptId) {
+                                return true;
+                            }
+                        }
+                    }
+                }
             }
         }
         return false;

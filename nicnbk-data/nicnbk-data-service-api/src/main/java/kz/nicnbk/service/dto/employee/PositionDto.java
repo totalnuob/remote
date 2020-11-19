@@ -7,11 +7,11 @@ import kz.nicnbk.common.service.model.BaseDictionaryDto;
  */
 public class PositionDto extends BaseDictionaryDto {
 
-    private BaseDictionaryDto department;
+    private DepartmentDto department;
 
     public PositionDto(){}
 
-    public PositionDto(Integer id, String code, String nameRu, String nameEn, String nameKz, BaseDictionaryDto department){
+    public PositionDto(Integer id, String code, String nameRu, String nameEn, String nameKz, DepartmentDto department){
         setId(id);
         setCode(code);
         setNameEn(nameEn);
@@ -20,11 +20,11 @@ public class PositionDto extends BaseDictionaryDto {
         setDepartment(department);
     }
 
-    public BaseDictionaryDto getDepartment() {
+    public DepartmentDto getDepartment() {
         return department;
     }
 
-    public void setDepartment(BaseDictionaryDto department) {
+    public void setDepartment(DepartmentDto department) {
         this.department = department;
     }
 }

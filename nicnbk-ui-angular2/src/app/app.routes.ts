@@ -85,6 +85,7 @@ import {MonitoringHedgeFunds2PrintComponent} from "./monitoring/monitoring-hedge
 import {CorpMeetingsListComponent} from "./corpmeetings/corp-meetings-list.component";
 import {CorpMeetingEditComponent} from "./corpmeetings/corp-meetings-edit.component";
 import {CorpMeetingICEditComponent} from "./corpmeetings/corp-meetings-ic-edit.component";
+import {LookupValuesCorpMeetingsComponent} from "./corpmeetings/lookup-values-corp-meetings.component";
 import {TerraGeneralLedgerBalanceNBReportingComponent} from "./reporting/terra.general.ledger.balance.nb.reporting.component";
 import {TerraGeneratedFormNBReportingComponent} from "./reporting/terra.generated.form.nb.reporting.component";
 import {TerraCombinedNBReportingComponent} from "./reporting/terra.combined.nb.reporting.component";
@@ -668,6 +669,11 @@ const routes: Routes  = [
     {
         path: 'corpMeetings/ic/edit/:id',
         component: CorpMeetingICEditComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'corpMeetings/lookupValues',
+        component: LookupValuesCorpMeetingsComponent,
         canActivate: [AuthGuard]
     },
 

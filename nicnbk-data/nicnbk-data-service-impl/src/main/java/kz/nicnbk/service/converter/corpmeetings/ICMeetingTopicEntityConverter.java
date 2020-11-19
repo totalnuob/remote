@@ -1,15 +1,10 @@
 package kz.nicnbk.service.converter.corpmeetings;
 
-import kz.nicnbk.common.service.util.StringUtils;
-import kz.nicnbk.repo.model.corpmeetings.CorpMeeting;
-import kz.nicnbk.repo.model.corpmeetings.CorpMeetingType;
-import kz.nicnbk.repo.model.corpmeetings.ICMeetingTopic;
-import kz.nicnbk.repo.model.corpmeetings.ICMeetingTopicType;
+import kz.nicnbk.repo.model.corpmeetings.*;
 import kz.nicnbk.repo.model.tag.Tag;
 import kz.nicnbk.service.api.tag.TagService;
 import kz.nicnbk.service.converter.dozer.BaseDozerEntityConverter;
 import kz.nicnbk.service.datamanager.LookupService;
-import kz.nicnbk.service.dto.corpmeetings.CorpMeetingDto;
 import kz.nicnbk.service.dto.corpmeetings.ICMeetingTopicDto;
 import kz.nicnbk.service.dto.tag.TagDto;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,28 +31,37 @@ public class ICMeetingTopicEntityConverter extends BaseDozerEntityConverter<ICMe
             return null;
         }
 
+        if(dto.getSpeaker() != null && dto.getSpeaker().getId() == null){
+            dto.setSpeaker(null);
+        }
+        if(dto.getExecutor() != null && dto.getExecutor().getId() == null){
+            dto.setExecutor(null);
+        }
+
         ICMeetingTopic entity = super.assemble(dto);
 
-        if(entity.getIcMeeting() != null && entity.getIcMeeting().getId() == null){
+        if(dto.getIcMeeting() != null &&
+                (dto.getIcMeeting().getId() == null || dto.getIcMeeting().getId().longValue() == 0)){
             entity.setIcMeeting(null);
         }
 
-        // type
-        // type
-        if(StringUtils.isNotEmpty(dto.getType())){
-            ICMeetingTopicType type = lookupService.findByTypeAndCode(ICMeetingTopicType.class, dto.getType());
-            entity.setType(type);
+        if(entity.getApproveList() != null && !entity.getApproveList().isEmpty()){
+            for(ICMeetingTopicApproval approval: entity.getApproveList()){
+                approval.setIcMeetingTopic(entity);
+            }
         }
 
         // Tags
         if(dto.getTags() != null && !dto.getTags().isEmpty()){
             List<Tag> tags = new ArrayList<>();
             for(String tagName: dto.getTags()){
-                TagDto tagDto = this.tagService.findByName(tagName);
+                // TODO: refactor type as enum
+                TagDto tagDto = this.tagService.findByNameAndTypeCode(tagName, "IC");
                 if(tagDto != null){
                     tags.add(new Tag(tagDto.getId(), tagName));
                 }else {
-                    tags.add(new Tag(null, tagName));
+                    // do not add
+                    //tags.add(new Tag(null, tagName));
                 }
             }
             entity.setTags(tags);
@@ -79,13 +83,8 @@ public class ICMeetingTopicEntityConverter extends BaseDozerEntityConverter<ICMe
         }
 
         // updater
-        if(entity.getUpdater() != null){
+        if(entity.getUpdater() != null) {
             dto.setUpdater(entity.getUpdater().getUsername());
-        }
-
-        // type
-        if(entity.getType() != null){
-            dto.setType(entity.getType().getCode());
         }
 
         // Tags

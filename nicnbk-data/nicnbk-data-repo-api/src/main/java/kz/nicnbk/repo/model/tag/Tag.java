@@ -2,6 +2,7 @@ package kz.nicnbk.repo.model.tag;
 
 import kz.nicnbk.repo.model.base.BaseEntity;
 import kz.nicnbk.repo.model.base.DataConstraints;
+import kz.nicnbk.repo.model.common.TagType;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -15,6 +16,7 @@ import java.util.Date;
 public class Tag extends BaseEntity {
 
     private String name;
+    private TagType type;
 
     public Tag(){}
 
@@ -30,5 +32,15 @@ public class Tag extends BaseEntity {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "type_id")
+    public TagType getType() {
+        return type;
+    }
+
+    public void setType(TagType type) {
+        this.type = type;
     }
 }

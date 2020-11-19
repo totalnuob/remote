@@ -10,6 +10,7 @@ import kz.nicnbk.service.dto.authentication.UserCredentialsDto;
 import kz.nicnbk.service.dto.common.EntitySaveResponseDto;
 import kz.nicnbk.service.dto.employee.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -48,6 +49,28 @@ public class EmployeeServiceREST extends CommonServiceREST{
     @RequestMapping(value = "/findICMembers", method = RequestMethod.GET)
     public ResponseEntity findICMembers(){
         List<EmployeeDto> employees = this.employeeService.findICMembers();
+        if(employees == null){
+            // error occurred
+            return new ResponseEntity<>(null, null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }else{
+            return new ResponseEntity<>(employees, null, HttpStatus.OK);
+        }
+    }
+
+    @RequestMapping(value = "/findByDepartmentAndActive/{departmentId}", method = RequestMethod.GET)
+    public ResponseEntity findByDepartmentAndActive(@PathVariable int departmentId){
+        List<EmployeeDto> employees = this.employeeService.findByDepartmentAndActive(departmentId);
+        if(employees == null){
+            // error occurred
+            return new ResponseEntity<>(null, null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }else{
+            return new ResponseEntity<>(employees, null, HttpStatus.OK);
+        }
+    }
+
+    @RequestMapping(value = "/findUsersWithRole/{role}", method = RequestMethod.GET)
+    public ResponseEntity findUsersWithRole(@PathVariable String role){
+        List<EmployeeDto> employees = this.employeeService.findUsersWithRole(role);
         if(employees == null){
             // error occurred
             return new ResponseEntity<>(null, null, HttpStatus.INTERNAL_SERVER_ERROR);

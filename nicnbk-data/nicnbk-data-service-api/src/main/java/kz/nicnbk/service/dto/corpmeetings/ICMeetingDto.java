@@ -1,8 +1,9 @@
 package kz.nicnbk.service.dto.corpmeetings;
 
 import kz.nicnbk.common.service.model.CreateUpdateBaseEntityDto;
-import kz.nicnbk.repo.model.corpmeetings.CorpMeeting;
+import kz.nicnbk.common.service.util.DateUtils;
 import kz.nicnbk.repo.model.corpmeetings.ICMeeting;
+import kz.nicnbk.service.api.corpmeetings.CorpMeetingService;
 import kz.nicnbk.service.dto.employee.EmployeeDto;
 import kz.nicnbk.service.dto.files.FilesDto;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -11,22 +12,34 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Created by magzumov on 04-Aug-16.
  */
 public class ICMeetingDto extends CreateUpdateBaseEntityDto<ICMeeting> implements Comparable {
 
+    public static final String OPEN = "OPEN";
+    public static final String LOCKED_FOR_IC = "LOCKED FOR IC";
+    public static final String TO_BE_FINALIZED = "TO BE FINALIZED";
+    public static final String FINALIZED = "FINALIZED";
+    public static final String CLOSED = "CLOSED";
+    public static final String DELETED = "DELETED";
+
     private String number;
     @Temporal(TemporalType.DATE)
     @DateTimeFormat(pattern="dd-MM-yyyy")
     private Date date;
-    private Boolean closed;
-    private int numberOfTopics;
+    private String time;
+    private String place;
 
-    private Long protocolFileId;
-    private String protocolFileName;
+    private List<ICMeetingAttendeesDto> attendees;
+    private List<EmployeeDto> invitees;
+    private List<ICMeetingTopicDto> topics;
+    private FilesDto agenda;
+
+    private Boolean unlockedForFinalize;
+    private Boolean closed;
+    private Boolean deleted;
 
     public String getNumber() {
         return number;
@@ -52,28 +65,69 @@ public class ICMeetingDto extends CreateUpdateBaseEntityDto<ICMeeting> implement
         this.closed = closed;
     }
 
-    public Long getProtocolFileId() {
-        return protocolFileId;
+    public String getTime() {
+        return time;
     }
 
-    public void setProtocolFileId(Long protocolFileId) {
-        this.protocolFileId = protocolFileId;
+    public void setTime(String time) {
+        this.time = time;
     }
 
-    public String getProtocolFileName() {
-        return protocolFileName;
+    public String getPlace() {
+        return place;
     }
 
-    public void setProtocolFileName(String protocolFileName) {
-        this.protocolFileName = protocolFileName;
+    public void setPlace(String place) {
+        this.place = place;
     }
 
-    public int getNumberOfTopics() {
-        return numberOfTopics;
+    public List<ICMeetingAttendeesDto> getAttendees() {
+        return attendees;
     }
 
-    public void setNumberOfTopics(int numberOfTopics) {
-        this.numberOfTopics = numberOfTopics;
+    public void setAttendees(List<ICMeetingAttendeesDto> attendees) {
+        this.attendees = attendees;
+    }
+
+    public List<EmployeeDto> getInvitees() {
+        return invitees;
+    }
+
+    public void setInvitees(List<EmployeeDto> invitees) {
+        this.invitees = invitees;
+    }
+
+    //    public Long getProtocolFileId() {
+//        return protocolFileId;
+//    }
+//
+//    public void setProtocolFileId(Long protocolFileId) {
+//        this.protocolFileId = protocolFileId;
+//    }
+//
+//    public String getProtocolFileName() {
+//        return protocolFileName;
+//    }
+//
+//    public void setProtocolFileName(String protocolFileName) {
+//        this.protocolFileName = protocolFileName;
+//    }
+
+
+    public List<ICMeetingTopicDto> getTopics() {
+        return topics;
+    }
+
+    public void setTopics(List<ICMeetingTopicDto> topics) {
+        this.topics = topics;
+    }
+
+    public FilesDto getAgenda() {
+        return agenda;
+    }
+
+    public void setAgenda(FilesDto agenda) {
+        this.agenda = agenda;
     }
 
     @Override
@@ -84,6 +138,71 @@ public class ICMeetingDto extends CreateUpdateBaseEntityDto<ICMeeting> implement
         }else{
             return 0;
         }
+    }
+
+    public boolean isLockedByDeadline() {
+        // check date
+        if(this.date != null){
+            Date icDate = DateUtils.getDateWithTime(this.date, (this.time !=null ? this.time : "00:00"));
+            if(icDate != null) {
+                Date deadLine = DateUtils.moveDateByHours(icDate, -CorpMeetingService.IC_MEETING_DEADLINE_DAYS, true);
+                try {
+                    if (deadLine.before(new Date())) {
+                        // cannot edit
+                        return true;
+                    }
+                } catch (NumberFormatException ex) {
+                }
+            }
+        }
+        return false;
+    }
+
+    public String getStatus(){
+        if(this.deleted != null && this.deleted.booleanValue()){
+            return DELETED;
+        }else if(this.closed != null && this.closed.booleanValue()){
+            return CLOSED;
+        }else{
+            // Check if sent to IC
+            if(isLockedByDeadline() && (this.unlockedForFinalize == null || !this.unlockedForFinalize.booleanValue())){
+                return LOCKED_FOR_IC;
+            }
+            // Check if to be finalized after IC
+            if(isLockedByDeadline() && this.unlockedForFinalize != null && this.unlockedForFinalize.booleanValue()){
+                boolean notFinalized = false;
+                if(this.topics != null && !this.topics.isEmpty()){
+                    for(ICMeetingTopicDto topic: this.topics){
+                        if(topic.getStatus() == null || !topic.getStatus().equalsIgnoreCase(FINALIZED)){
+                            notFinalized = true;
+                            break;
+                        }
+                    }
+                }
+                if(notFinalized) {
+                    return TO_BE_FINALIZED;
+                }else{
+                    return FINALIZED;
+                }
+            }
+            return OPEN;
+        }
+    }
+
+    public Boolean getUnlockedForFinalize() {
+        return unlockedForFinalize;
+    }
+
+    public void setUnlockedForFinalize(Boolean unlockedForFinalize) {
+        this.unlockedForFinalize = unlockedForFinalize;
+    }
+
+    public Boolean getDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(Boolean deleted) {
+        this.deleted = deleted;
     }
 }
 

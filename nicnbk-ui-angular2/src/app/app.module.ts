@@ -99,6 +99,7 @@ import {MonitoringHedgeFunds2PrintComponent} from "./monitoring/monitoring-hedge
 import {CorpMeetingsListComponent} from "./corpmeetings/corp-meetings-list.component";
 import {CorpMeetingEditComponent} from "./corpmeetings/corp-meetings-edit.component";
 import {CorpMeetingICEditComponent} from "./corpmeetings/corp-meetings-ic-edit.component";
+import {LookupValuesCorpMeetingsComponent} from "./corpmeetings/lookup-values-corp-meetings.component";
 import {TerraGeneralLedgerBalanceNBReportingComponent} from "./reporting/terra.general.ledger.balance.nb.reporting.component";
 import {TerraGeneratedFormNBReportingComponent} from "./reporting/terra.generated.form.nb.reporting.component";
 import {TerraCombinedNBReportingComponent} from "./reporting/terra.combined.nb.reporting.component";
@@ -180,7 +181,7 @@ import {MonitoringHedgeFundsEditComponent} from "./monitoring/monitoring-hedge-f
         ConsolidatedKZTForm1NBReportingComponent, ReserveCalculationFormNBReportingComponent,ConsolidatedKZTForm2NBReportingComponent, ConsolidatedKZTForm19NBReportingComponent, ConsolidatedKZTForm22NBReportingComponent,
         ConsolidatedKZTForm3NBReportingComponent, ConsolidatedKZTForm6NBReportingComponent,
         AccessDeniedComponent, MMEditComponent, MMViewComponent,NotFoundComponent,
-        CorpMeetingsListComponent, CorpMeetingEditComponent, CorpMeetingICEditComponent,
+        CorpMeetingsListComponent, CorpMeetingEditComponent, CorpMeetingICEditComponent,LookupValuesCorpMeetingsComponent,
         LookupValuesComponent, CurrencyRatesLookupValuesComponent, BenchmarkLookupValuesComponent,
         HRNewsListComponent, HRNewsEditComponent, HREmployeesListComponent, HRDocsListComponent,
         LegalUpdateEditComponent,

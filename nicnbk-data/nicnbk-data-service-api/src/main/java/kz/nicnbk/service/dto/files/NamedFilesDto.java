@@ -6,6 +6,13 @@ public class NamedFilesDto {
     private FilesDto file;
     private String name;
 
+    public NamedFilesDto(){}
+
+    public NamedFilesDto(FilesDto file, String name){
+        this.file = file;
+        this.name = name;
+    }
+
     public FilesDto getFile() {
         return file;
     }

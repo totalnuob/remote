@@ -138,12 +138,12 @@ export class AppComponent implements OnInit{
                         this.versionList[i].collapsed = (i != 0);
                     }
 
-                    console.log(this.versionList);
+                    //console.log(this.versionList);
 
                     if(this.versionList.length > 0) {
                         var a = this.versionList[0].description[0].split(" ");
                         this.versionLatestVersion = a[a.length - 1];
-                        console.log('Version: ' + this.versionLatestVersion);
+                        //console.log('Version: ' + this.versionLatestVersion);
                     } else {
                         this.versionLatestVersion = '0.0.0';
                         console.log('Get version: Error');

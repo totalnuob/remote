@@ -12,4 +12,5 @@ export class CorpMeeting{
 
     status: string;
     longDescription: string;
+
 }

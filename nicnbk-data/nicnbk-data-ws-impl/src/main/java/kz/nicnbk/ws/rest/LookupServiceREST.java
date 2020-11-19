@@ -4,6 +4,7 @@ import kz.nicnbk.common.service.model.BaseDictionaryDto;
 import kz.nicnbk.service.api.authentication.TokenService;
 import kz.nicnbk.service.api.benchmark.BenchmarkService;
 import kz.nicnbk.service.api.common.CurrencyRatesService;
+import kz.nicnbk.service.api.tag.TagService;
 import kz.nicnbk.service.datamanager.LookupService;
 import kz.nicnbk.service.dto.benchmark.BenchmarkValueDto;
 import kz.nicnbk.service.dto.common.EntityListSaveResponseDto;
@@ -12,6 +13,7 @@ import kz.nicnbk.service.dto.lookup.*;
 import kz.nicnbk.service.dto.reporting.*;
 import kz.nicnbk.service.dto.reporting.realestate.TerraNICReportingChartOfAccountsDto;
 import kz.nicnbk.service.dto.strategy.StrategyDto;
+import kz.nicnbk.service.dto.tag.TagDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -31,6 +33,9 @@ public class LookupServiceREST extends CommonServiceREST{
 
     @Autowired
     private LookupService lookupService;
+
+    @Autowired
+    private TagService tagService;
 
     @Autowired
     private TokenService tokenService;
@@ -449,5 +454,39 @@ public class LookupServiceREST extends CommonServiceREST{
     public ResponseEntity getAllICMeetingTopicTypes(){
         List<BaseDictionaryDto> lookups = this.lookupService.getICMeetingTopicTypes();
         return buildNonNullResponse(lookups);
+    }
+
+    @RequestMapping(value = "/ICMeetingAbsenceTypes", method = RequestMethod.GET)
+    public ResponseEntity getAllICMeetingAbsenceTypes(){
+        List<BaseDictionaryDto> lookups = this.lookupService.getICMeetingAbsenceTypes();
+        return buildNonNullResponse(lookups);
+    }
+
+    @RequestMapping(value = "/ICMeetingPlaceTypes", method = RequestMethod.GET)
+    public ResponseEntity getAllICMeetingPlaceTypes(){
+        List<BaseDictionaryDto> lookups = this.lookupService.getICMeetingPlaceTypes();
+        return buildNonNullResponse(lookups);
+    }
+
+    @RequestMapping(value = "/ICMeetingVoteTypes", method = RequestMethod.GET)
+    public ResponseEntity getAllICMeetingVoteTypes(){
+        List<BaseDictionaryDto> lookups = this.lookupService.getICMeetingVoteTypes();
+        return buildNonNullResponse(lookups);
+    }
+
+    @RequestMapping(value = "/TagsByType/{type}", method = RequestMethod.GET)
+    public ResponseEntity getTagsByType(@PathVariable String type){
+        List<TagDto> lookups = this.tagService.findByTypeCode(type);
+        return buildNonNullResponse(lookups);
+    }
+
+    @RequestMapping(value = "/Tags/save", method = RequestMethod.POST)
+    public ResponseEntity saveTag(@RequestBody TagDto tagDto){
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
+
+        // TODO: check rights by user role and tag type
+        EntitySaveResponseDto saveResponse = this.tagService.save(tagDto, username);
+        return buildEntitySaveResponse(saveResponse);
     }
 }

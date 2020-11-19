@@ -9,9 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  *  Common REST Service class.
@@ -193,6 +191,30 @@ public abstract class CommonServiceREST {
             return null;
         }
     }
+
+    public List<FilesDto> buildFilesListDtoFromMultipart(MultipartFile[] files, String fileType){
+        List<FilesDto> filesDtoSet = new ArrayList<>();
+        if(files != null && files.length > 0) {
+            for (MultipartFile file : files) {
+                FilesDto filesDto = new FilesDto();
+                filesDto.setType(fileType);
+                filesDto.setFileName(file.getOriginalFilename());
+                filesDto.setMimeType(file.getContentType());
+                filesDto.setSize(file.getSize());
+                try {
+                    filesDto.setBytes(file.getBytes());
+                } catch (IOException ex) {
+                    logger.error("Files upload failed: io exception", ex);
+                }
+                filesDtoSet.add(filesDto);
+            }
+            return filesDtoSet;
+        }else{
+            return null;
+        }
+    }
+
+
 
     public ResponseEntity<?> buildFileUploadResultResponseEntity(FileUploadResultDto fileUploadResultDto){
         if(fileUploadResultDto == null || fileUploadResultDto.getStatus() == null  || fileUploadResultDto.getStatus() == ResponseStatusType.FAIL){
