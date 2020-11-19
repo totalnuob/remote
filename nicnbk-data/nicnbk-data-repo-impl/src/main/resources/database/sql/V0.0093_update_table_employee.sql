@@ -1,7 +1,7 @@
 UPDATE employees SET lastname_ru='Таджияков', firstname_ru='Галымжан', patronymic_ru='Бисенгалиевич' WHERE lastname='Tajiyakov';
 UPDATE employees SET lastname_ru='Рысбеков', firstname_ru='Серикжан', patronymic_ru='Данасултанович' WHERE lastname='Rysbekov';
 UPDATE employees SET lastname_ru='Бектемисов', firstname_ru='Галым', patronymic_ru='Бектемисов' WHERE lastname='Bektemissov';
-UPDATE employees SET lastname_ru='Кумарбеков'AND firstname_ru='Амир', patronymic_ru='Кумарбеков' WHERE lastname='Kumarbekov';
+UPDATE employees SET lastname_ru='Кумарбеков', firstname_ru='Амир', patronymic_ru='Кумарбеков' WHERE lastname='Kumarbekov';
 
 UPDATE employees SET lastname_ru='Айтмырза', firstname_ru='Рано', patronymic_ru='Кенжебайкызы' WHERE lastname='Aitmyrza';
 UPDATE employees SET lastname_ru='Кожумов', firstname_ru='Ильяс', patronymic_ru='Х' WHERE lastname='Kozhumov';

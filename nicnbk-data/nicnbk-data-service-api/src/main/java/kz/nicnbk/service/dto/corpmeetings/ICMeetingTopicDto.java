@@ -292,7 +292,7 @@ public class ICMeetingTopicDto extends CreateUpdateBaseEntityDto<ICMeetingTopic>
         if(this.decisionUpd != null && this.publishedUpd){
             return decisionUpd;
         }
-        return this.decisionUpd;
+        return this.decision;
     }
 
     public Integer getMaterialsCount() {

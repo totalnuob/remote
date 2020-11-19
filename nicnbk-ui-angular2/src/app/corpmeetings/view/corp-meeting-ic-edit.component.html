@@ -222,7 +222,7 @@
                                     <td>1.</td>
                                     <td>Agenda</td>
                                     <td (click)="exportAgenda()">
-                                        <img src="../../../../public/img/ms_word.png" height="25" width="25"/>
+                                        <img src="../../../../public/img/ms_word.png" height="25" width="25" *ngIf="icMeeting.id > 0"/>
                                     </td>
 <!--                                    <td>-->
 <!--                                        <div *ngIf="icMeeting.agenda == null && canEdit()" align="center">-->
@@ -255,7 +255,7 @@
                                     <td>2.</td>
                                     <td>Protocol</td>
                                     <td (click)="exportProtocol()">
-                                        <img src="../../../../public/img/ms_word.png" height="25" width="25"/>
+                                        <img src="../../../../public/img/ms_word.png" height="25" width="25" *ngIf="icMeeting.id > 0"/>
                                     </td>
 <!--                                    <td>-->
 <!--                                        <div *ngIf="icMeeting.protocol == null && canEdit()" align="center">-->
@@ -288,7 +288,7 @@
                                     <td>3.</td>
                                     <td>Bulletin</td>
                                     <td (click)="exportBulletin()">
-                                        <img src="../../../../public/img/ms_word.png" height="25" width="25"/>
+                                        <img src="../../../../public/img/ms_word.png" height="25" width="25" *ngIf="icMeeting.id > 0"/>
                                     </td>
                                     <td>
                                         &nbsp;

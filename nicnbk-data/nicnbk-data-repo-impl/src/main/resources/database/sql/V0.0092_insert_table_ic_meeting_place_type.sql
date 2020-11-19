@@ -1,2 +1,2 @@
-}INSERT INTO ic_meeting_place_type(id, code, name_en, name_kz, name_ru)
+INSERT INTO ic_meeting_place_type(id, code, name_en, name_kz, name_ru)
 VALUES(1, 'OFFICE', '', '', 'в здании АО «Национальная инвестиционная корпорация Национального Банка Казахстана»,находящемся по адресу: г. Нур - Султан, проспект Мәңгілік ел 57 А, 5 - й этаж.');
