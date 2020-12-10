@@ -15,6 +15,8 @@ import kz.nicnbk.repo.model.lookup.corpmeetings.ICMeetingTopicTypeLookup;
 import kz.nicnbk.service.api.corpmeetings.CorpMeetingService;
 import kz.nicnbk.service.api.employee.EmployeeService;
 import kz.nicnbk.service.api.files.FileService;
+import kz.nicnbk.service.api.notification.NotificationService;
+import kz.nicnbk.service.api.tag.TagService;
 import kz.nicnbk.service.converter.corpmeetings.ICMeetingTopicEntityConverter;
 import kz.nicnbk.service.converter.corpmeetings.ICMeetingsEntityConverter;
 import kz.nicnbk.service.datamanager.LookupService;
@@ -26,6 +28,7 @@ import kz.nicnbk.service.dto.corpmeetings.*;
 import kz.nicnbk.service.dto.employee.EmployeeDto;
 import kz.nicnbk.service.dto.files.FilesDto;
 import kz.nicnbk.service.dto.files.NamedFilesDto;
+import kz.nicnbk.service.dto.notification.NotificationDto;
 import org.apache.poi.xwpf.usermodel.*;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
@@ -110,6 +113,15 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
 
     @Autowired
     private ICMeetingInviteesRepository icMeetingInviteesRepository;
+
+    //@Autowired
+    //private ICMeetingTopicTagsRepository topicTagsRepository;
+
+    @Autowired
+    private NotificationService notificationService;
+
+    @Autowired
+    private TagService tagService;
 
     @Autowired
     private ICMeetingsEntityConverter icMeetingsEntityConverter;
@@ -299,6 +311,7 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
 
 
     /* IC MEETING TOPIC ***********************************************************************************************/
+    //@Transactional
     @Override
     public EntitySaveResponseDto saveICMeetingTopic(ICMeetingTopicDto dto, FilesDto explanatoryNote,
                                                     List<FilesDto> filesDtoSet, String updater) {
@@ -333,12 +346,9 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
                     return saveResponseDto;
                 }
                 ICMeetingTopic currentEntity = this.icMeetingTopicRepository.findOne(dto.getId());
-                boolean icMeetingChanged = entity.getIcMeeting() != null && currentEntity.getIcMeeting() == null;
-                icMeetingChanged = icMeetingChanged || entity.getIcMeeting() == null && currentEntity.getIcMeeting() != null;
-                if(!icMeetingChanged && entity.getIcMeeting() != null && currentEntity.getIcMeeting() != null){
-                    icMeetingChanged = entity.getIcMeeting().getId().longValue() != currentEntity.getIcMeeting().getId().longValue();
-                }
-                if(icMeetingChanged){
+                boolean icOrderReset = entity.getIcMeeting() == null || (entity.getIcMeeting() != null && currentEntity.getIcMeeting() != null &&
+                        entity.getIcMeeting().getId().longValue() != currentEntity.getIcMeeting().getId().longValue());
+                if(icOrderReset){
                     entity.setIcOrder(null);
                 }
                 // set update date
@@ -366,6 +376,24 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
                 // RESET APPROVALS
                 if(entity.getId() != null) {
                     resetApprovals = true;
+                }
+            }
+
+            if(dto.getIcMeeting() != null){
+                ICMeetingTopic currentEntity = this.icMeetingTopicRepository.findOne(dto.getId());
+                if(currentEntity.getExplanatoryNote() == null && explanatoryNote == null){
+                    String errorMessage = "Error saving IC meeting topic: When IC Meeting selected, Explanatory Note is required";
+                    logger.error(errorMessage);
+                    saveResponseDto = new EntitySaveResponseDto();
+                    saveResponseDto.setErrorMessageEn(errorMessage);
+                    return saveResponseDto;
+                }
+                if(dto.getSpeaker() == null){
+                    String errorMessage = "Error saving IC meeting topic: When IC Meeting selected, Speaker is required";
+                    logger.error(errorMessage);
+                    saveResponseDto = new EntitySaveResponseDto();
+                    saveResponseDto.setErrorMessageEn(errorMessage);
+                    return saveResponseDto;
                 }
             }
 
@@ -421,6 +449,8 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
             logger.info(dto.getId() == null ? "IC meeting topic created: " + entity.getId() + ", by " + entity.getCreator().getUsername() :
                     "IC meeting topic updated: " + entity.getId() + ", by " + updater);
 
+            // TODO: Check Transactional behavior !!
+
             // Materials
             List<NamedFilesDto> existingMaterials = new ArrayList<>();
             if(dto.getUploadMaterials() != null && !dto.getUploadMaterials().isEmpty() && filesDtoSet != null &&
@@ -446,6 +476,28 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
             // uploaded/existing files renaming
             saveICMeetingTopicAttachments(entity.getId(),
                     (filesDtoSet != null && !filesDtoSet.isEmpty() ? existingMaterials : dto.getMaterials()), false, updater);
+
+            // Tags
+//            if(dto.getTags() != null && !dto.getTags().isEmpty()){
+//                if(dto.getId() != null) {
+//                    this.topicTagsRepository.deleteByICMeetingTopicId(dto.getId());
+//                }
+//                for(String tag: dto.getTags()){
+//                    ICMeetingTopicTags tagEntity = new ICMeetingTopicTags();
+//                    tagEntity.setIcMeetingTopic(entity);
+//                    TagDto tagDto = this.tagService.findByNameAndTypeCode(tag, TagTypes.IC.getCode());
+//                    if(tagDto != null) {
+//                        tagEntity.setTag(new Tag(tagDto.getId()));
+//                    }
+//                    tagEntity.setCreator(entity.getUpdater());
+//                    tagEntity.setCreationDate(new Date());
+//                    this.topicTagsRepository.save(tagEntity);
+//                }
+//            }else{
+//                if(dto.getId() != null) {
+//                    this.topicTagsRepository.deleteByICMeetingTopicId(dto.getId());
+//                }
+//            }
 
             if(resetApprovals){
                 resetICMeetingTopicApprovals(entity.getId());
@@ -613,21 +665,7 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
     }
 
     private boolean isICMeetingLockedByDeadline(ICMeeting icMeeting){
-        // check date
-        if(icMeeting.getDate() != null){
-            Date icDate = DateUtils.getDateWithTime(icMeeting.getDate(), (icMeeting.getTime() !=null ? icMeeting.getTime() : "00:00"));
-            if(icDate != null) {
-                Date deadLine = DateUtils.moveDateByHours(icDate, -CorpMeetingService.IC_MEETING_DEADLINE_DAYS, true);
-                try {
-                    if (deadLine.before(new Date())) {
-                        // cannot edit
-                        return true;
-                    }
-                } catch (NumberFormatException ex) {
-                }
-            }
-        }
-        return false;
+        return ICMeetingDto.isICMeetingLockedByDeadline(icMeeting.getDate());
     }
 
     private void resetICMeetingTopicApprovals(Long icMeetingTopicId){
@@ -707,6 +745,17 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
                 }
                 dto.setApproveList(approveList);
             }
+            // set tags
+//            List<ICMeetingTopicTags> topicTags = this.topicTagsRepository.findByIcMeetingTopicId(id);
+//            if(topicTags != null && !topicTags.isEmpty()){
+//                if(dto.getTags() == null){
+//                    dto.setTags(new ArrayList<>());
+//                }
+//                for(ICMeetingTopicTags topicTag: topicTags){
+//                    dto.getTags().add(topicTag.getTag().getName());
+//                }
+//            }
+
             return dto;
         }catch(Exception ex){
             logger.error("Error loading corp meeting: " + id, ex);
@@ -887,6 +936,57 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
         return false;
     }
 
+    private boolean checkEditableICMeetingTopicMaterialsByTopicIdAndUsername(Long id, String username){
+        if(id == null || id.longValue() == 0){
+            // new topic
+            return true;
+        }
+        try {
+            ICMeetingTopicDto topicDto = getICMeetingTopic(id, username);
+            if(topicDto != null){
+                if(topicDto.getIcMeeting() != null && topicDto.getIcMeeting().getClosed() != null &&
+                        topicDto.getIcMeeting().getClosed().booleanValue()){
+                    return false;
+                }
+                if(topicDto.getIcMeeting() != null && topicDto.getIcMeeting().getDeleted() != null &&
+                        topicDto.getIcMeeting().getDeleted().booleanValue()){
+                    return false;
+                }
+                if(topicDto.getDeleted() != null && topicDto.getDeleted().booleanValue()){
+                    return false;
+                }
+                EmployeeDto editor = this.employeeService.findByUsername(username);
+                if(editor.getRoles() != null && !editor.getRoles().isEmpty()){
+                    for(BaseDictionaryDto role: editor.getRoles()){
+                        if(role.getCode().equalsIgnoreCase(UserRoles.ADMIN.getCode()) ||
+                                role.getCode().equalsIgnoreCase(UserRoles.IC_ADMIN.getCode())){
+                            return true;
+                        }
+                    }
+                }
+                if (topicDto.getIcMeeting() != null && topicDto.getIcMeeting().isLockedByDeadline()) {
+                    if(topicDto.getIcMeeting() != null && topicDto.getIcMeeting().getUnlockedForFinalize() != null &&
+                    topicDto.getIcMeeting().getUnlockedForFinalize().booleanValue()){
+                        return true;
+                    }else {
+                        return false;
+                    }
+                }
+                // Check same dept
+                int creatorDeptId = topicDto.getDepartment() != null ? topicDto.getDepartment().getId() : 0;
+                int editorDeptId = editor != null && editor.getPosition() != null &&
+                        editor.getPosition().getDepartment() != null ? editor.getPosition().getDepartment().getId() : 0;
+
+                if(creatorDeptId != 0 && creatorDeptId == editorDeptId){
+                    return true;
+                }
+            }
+        }catch(Exception ex){
+            logger.error("Error checking IC meeting topic editable: id =" + id, ex);
+        }
+        return false;
+    }
+
     private boolean checkEditableICMeetingTopicUpdateByTopicIdAndUsername(Long id, String username){
         if(id == null || id.longValue() == 0){
             // new topic
@@ -992,6 +1092,43 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
         return allowedCodes.isEmpty() ? null : allowedCodes;
     }
 
+    private void createNotificationICMeetingTopicEdited(ICMeetingTopicDto topic){
+
+        // TODO: check what type of changes? (if not important then skip)
+        // TODO: check if user has unread similar notifications?
+
+        if(topic != null && topic.getPublished() != null && topic.getPublished().booleanValue() && topic.getIcMeeting() != null){
+            // published with IC Meeting
+            // 1. IC Members
+
+            // 2. Approve list
+        }
+    }
+
+    private void createNotificationICMeetingTopicApproval(ICMeetingTopicDto topic, String approvedBy, boolean approved){
+        if(topic != null && topic.getPublished() != null && topic.getPublished().booleanValue() && topic.getIcMeeting() != null){
+            // published with IC Meeting
+            EmployeeDto executor = topic.getExecutor();
+            EmployeeDto speaker = topic.getSpeaker();
+            String topicName = StringUtils.isNotEmpty(topic.getName()) ?
+                    ("'" + topic.getName().substring(0, Math.min(30,topic.getName().length())) + (topic.getName().length() > 30 ? "...'": "'")) : "";
+            String notificationMessage = "IC Meeting Topic " + topicName + " has been " + (approved ? "approved": "dis-approved") + " by " + approvedBy
+                    +" [" + DateUtils.getDateFormattedWithTime(new Date()) +"]";
+            if(executor != null) {
+                NotificationDto notificationDto = new NotificationDto();
+                notificationDto.setName(notificationMessage);
+                notificationDto.setEmployee(executor);
+                this.notificationService.save(notificationDto);
+            }
+            if(speaker != null) {
+                NotificationDto notificationDto = new NotificationDto();
+                notificationDto.setName(notificationMessage);
+                notificationDto.setEmployee(speaker);
+                this.notificationService.save(notificationDto);
+            }
+        }
+    }
+
     @Override
     public ICMeetingTopicsPagedSearchResult searchICMeetingTopics(ICMeetingTopicsSearchParamsDto searchParams) {
         try {
@@ -1083,6 +1220,10 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
                         if(approvalEntity != null){
                             approvalEntity.setApproved(true);
                             this.icMeetingTopicApprovalRepository.save(approvalEntity);
+                            // notification
+                            createNotificationICMeetingTopicApproval(icMeetingTopic, username, true);
+
+                            logger.info("IC Meeting topic with id=" + icMeetingTopic.getId().longValue() + " has been approved by " + username);
                             responseDto.setStatus(ResponseStatusType.SUCCESS);
                             return responseDto;
                         }else{
@@ -1100,6 +1241,56 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
             return responseDto;
         }
         String errorMessage = "Error approving IC Meeting Topic: employee not found in approval list. ";
+        logger.error(errorMessage + "Topic id=" + id.longValue() + ", username=[" + username + "]");
+        responseDto.setErrorMessageEn(errorMessage);
+        return responseDto;
+    }
+
+    @Override
+    public EntitySaveResponseDto cancelApproveICMeetingTopic(Long id, String username){
+        EntitySaveResponseDto responseDto = new EntitySaveResponseDto();
+        EmployeeDto employeeDto = this.employeeService.findByUsername(username);
+
+        if(employeeDto != null){
+            if(!checkApprovableICMeetingTopicByTopicIdAndUsername(id, username)){
+                String errorMessage = "Error cancelling approve IC Meeting Topic: forbidden. ";
+                logger.error(errorMessage + "Topic id=" + id.longValue() + ", username=[" + username + "]");
+                responseDto.setErrorMessageEn(errorMessage);
+                return responseDto;
+            }
+
+            ICMeetingTopicDto icMeetingTopic = getICMeetingTopic(id, username);
+            if(icMeetingTopic.getApproveList() != null){
+                for(EmployeeApproveDto approval: icMeetingTopic.getApproveList()){
+                    if(approval.getEmployee() != null && approval.getEmployee().getId().longValue() ==
+                            employeeDto.getId().longValue()){
+                        //approve
+                        ICMeetingTopicApproval approvalEntity =
+                                this.icMeetingTopicApprovalRepository.findByIcMeetingTopicIdAndEmployeeId(id, employeeDto.getId());
+                        if(approvalEntity != null){
+                            approvalEntity.setApproved(false);
+                            this.icMeetingTopicApprovalRepository.save(approvalEntity);
+                            // notification
+                            createNotificationICMeetingTopicApproval(icMeetingTopic, username, false);
+
+                            logger.info("IC Meeting topic with id=" + icMeetingTopic.getId().longValue() + " has been dis-approved by " + username);
+                            responseDto.setStatus(ResponseStatusType.SUCCESS);
+                            return responseDto;
+                        }else{
+                            String errorMessage = "Error dis-approving IC Meeting Topic: employee not found in approval list. ";
+                            logger.error(errorMessage + "Topic id=" + id.longValue() + ", username=[" + username + "]");
+                            responseDto.setErrorMessageEn(errorMessage);
+                            return responseDto;
+                        }
+                    }
+                }
+            }
+
+        }else{
+            responseDto.setErrorMessageEn("Failed to dis-approve IC Meeting Topic: user not found '" + username + "'");
+            return responseDto;
+        }
+        String errorMessage = "Error dis-approving IC Meeting Topic: employee not found in approval list. ";
         logger.error(errorMessage + "Topic id=" + id.longValue() + ", username=[" + username + "]");
         responseDto.setErrorMessageEn(errorMessage);
         return responseDto;
@@ -1273,7 +1464,7 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
                         return false;
                     }
                 }else {
-                    if (!checkEditableICMeetingTopicByTopicIdAndUsername(topicId, username)) {
+                    if (!checkEditableICMeetingTopicMaterialsByTopicIdAndUsername(topicId, username)) {
                         String errorMessage = "Error deleting IC Meeting Topic Attachment: entity not editable";
                         logger.error(errorMessage);
                         return false;
@@ -1311,6 +1502,10 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
             if(entity != null){
                 if(entity.getIcMeeting() != null && entity.getIcMeeting().getClosed() != null &&
                         entity.getIcMeeting().getClosed().booleanValue()){
+                    return false;
+                }
+                if(entity.getIcMeeting() != null && entity.getIcMeeting().getDeleted() != null &&
+                        entity.getIcMeeting().getDeleted().booleanValue()){
                     return false;
                 }
                 if(entity.getDeleted() != null && entity.getDeleted().booleanValue()){
@@ -1416,7 +1611,7 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
 
 
     /* IC MEETING *****************************************************************************************************/
-    //@Transactional
+    @Transactional
     @Override
     public EntitySaveResponseDto saveICMeeting(ICMeetingDto icMeetingDto, FilesDto agendaFile, String updater) {
         EntitySaveResponseDto saveResponseDto = new EntitySaveResponseDto();
@@ -1424,25 +1619,21 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
             ICMeeting entity = icMeetingsEntityConverter.assemble(icMeetingDto);
             if(icMeetingDto.getId() == null){ // CREATE
                 EmployeeDto employee = this.employeeService.findByUsername(updater);
-                // set creator
                 entity.setCreator(new Employee(employee.getId()));
             }else{ // UPDATE
-                // set creator
                 if(icMeetingDto != null && !checkEditableICMeeting(icMeetingDto, updater)){
                     String errorMessage = "Error saving IC Meeting with id " + icMeetingDto.getId().longValue() + ": entity not editable";
                     logger.error(errorMessage);
                     saveResponseDto.setErrorMessageEn(errorMessage);
                     return saveResponseDto;
                 }
-                ICMeeting currentEntity = this.icMeetingsRepository.findOne(icMeetingDto.getId());
-                Employee creator = currentEntity.getCreator();
-                entity.setCreator(creator);
-                // set creation date
-                Date creationDate = currentEntity.getCreationDate();
-                entity.setCreationDate(creationDate);
-                // set update date
+                ICMeetingDto existing = getICMeeting(icMeetingDto.getId(), updater);
+                if(existing.getCreator() != null) {
+                    EmployeeDto creator = this.employeeService.findByUsername(existing.getCreator());
+                    entity.setCreator(new Employee(creator.getId()));
+                }
+                entity.setCreationDate(existing.getCreationDate());
                 entity.setUpdateDate(new Date());
-                // set updater
                 EmployeeDto updatedby = this.employeeService.findByUsername(updater);
                 entity.setUpdater(new Employee(updatedby.getId()));
             }
@@ -1487,61 +1678,21 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
 
             entity = icMeetingsRepository.save(entity);
 
+
+            // TODO: Transactional behavior !!!!! CHECK !
+
             // save attendees
-            if(icMeetingDto.getAttendees() != null && !icMeetingDto.getAttendees().isEmpty()){
-                List<ICMeetingAttendees> attendees = new ArrayList<>();
-                for(ICMeetingAttendeesDto dto: icMeetingDto.getAttendees()){
-                    ICMeetingAttendees attendee = new ICMeetingAttendees();
-                    attendee.setIcMeeting(entity);
-                    attendee.setEmployee(new Employee(dto.getEmployee().getId()));
-                    attendee.setPresent(dto.isPresent());
-                    if(!dto.isPresent()) {
-                        if (dto.getAbsenceType() != null && dto.getAbsenceType() != null) {
-                            ICMeetingAttendeeAbsenceType absenceType = this.lookupService.findByTypeAndCode(ICMeetingAttendeeAbsenceType.class, dto.getAbsenceType());
-                            if(absenceType == null) {
-                                // TODO: check transactions
-                                saveResponseDto.setErrorMessageEn("Failed to save IC Meeting: attendees not present must have reason specified");
-                                return saveResponseDto;
-                            }
-                            attendee.setAbsenceType(absenceType);
-                        }
-                    }else{
-                        attendee.setAbsenceType(null);
-                    }
-                    attendees.add(attendee);
-                }
-                this.icMeetingAttendeesRepository.deleteByICMeetingId(entity.getId());
-                this.icMeetingAttendeesRepository.save(attendees);
-            }else{
-                // clear all existing
-                this.icMeetingAttendeesRepository.deleteByICMeetingId(entity.getId());
+            saveResponseDto = saveICMeetingAttendees(icMeetingDto.getAttendees(), entity.getId());
+            if(!saveResponseDto.isStatusOK()){
+                return saveResponseDto;
             }
+
 
             // save invitees
-            if(icMeetingDto.getInvitees() != null && !icMeetingDto.getInvitees().isEmpty()){
-                List<ICMeetingInvitees> invitees = new ArrayList<>();
-                for(EmployeeDto employeeDto: icMeetingDto.getInvitees()){
-                    if(employeeDto.getId() != null) {
-                        ICMeetingInvitees invitee = new ICMeetingInvitees();
-                        invitee.setIcMeeting(entity);
-                        invitee.setEmployee(new Employee(employeeDto.getId()));
-                        invitees.add(invitee);
-                    }
-                }
-                this.icMeetingInviteesRepository.deleteByICMeetingId(entity.getId());
-                this.icMeetingInviteesRepository.save(invitees);
-            }else{
-                // clear all existing
-                this.icMeetingInviteesRepository.deleteByICMeetingId(entity.getId());
-            }
+            saveICMeetingInvitees(icMeetingDto.getInvitees(), entity.getId());
 
             // Update ic topics order
-            if(icMeetingDto.getTopics() != null && !icMeetingDto.getTopics().isEmpty()){
-                for(ICMeetingTopicDto topicDto: icMeetingDto.getTopics()){
-                    // update order
-                    this.icMeetingTopicRepository.updateICOrder(topicDto.getId(), topicDto.getIcOrder());
-                }
-            }
+            updateICMeetingTopicsOrder(icMeetingDto.getTopics());
 
             logger.info(icMeetingDto.getId() == null ? "IC meeting created: " + entity.getId() + ", by " + entity.getCreator().getUsername() :
                     "IC meeting updated: " + entity.getId() + ", by " + updater);
@@ -1553,6 +1704,79 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
             saveResponseDto.setErrorMessageEn("Error saving IC meeting: " + (icMeetingDto != null && icMeetingDto.getId() != null ? icMeetingDto.getId() : "new"));
             return saveResponseDto;
         }
+    }
+
+    private void updateICMeetingTopicsOrder(List<ICMeetingTopicDto> topics){
+        if(topics != null && !topics.isEmpty()){
+            int i = 1;
+            for(ICMeetingTopicDto topicDto: topics){
+                // update order
+                if(topicDto.getId() != null) {
+                    ICMeetingTopic topic = this.icMeetingTopicRepository.findOne(topicDto.getId());
+                    if (topic != null) {
+                        topic.setIcOrder(i);
+                        i++;
+                        this.icMeetingTopicRepository.save(topic);
+                    }
+                    //this.icMeetingTopicRepository.updateICOrder(topicDto.getId(), i);
+                    //i++;
+                }
+            }
+        }
+    }
+
+    private void saveICMeetingInvitees(List<EmployeeDto> invitees, Long icMeetingId){
+        if(invitees != null && !invitees.isEmpty()){
+            List<ICMeetingInvitees> entities = new ArrayList<>();
+            for(EmployeeDto employeeDto: invitees){
+                if(employeeDto.getId() != null) {
+                    ICMeetingInvitees entity = new ICMeetingInvitees();
+                    entity.setIcMeeting(new ICMeeting(icMeetingId));
+                    entity.setEmployee(new Employee(employeeDto.getId()));
+                    entities.add(entity);
+                }
+            }
+            this.icMeetingInviteesRepository.deleteByICMeetingId(icMeetingId);
+            this.icMeetingInviteesRepository.save(entities);
+        }else{
+            // clear all existing
+            this.icMeetingInviteesRepository.deleteByICMeetingId(icMeetingId);
+        }
+
+    }
+
+    private EntitySaveResponseDto saveICMeetingAttendees(List<ICMeetingAttendeesDto> attendees, Long icMeetingId){
+        EntitySaveResponseDto saveResponseDto = new EntitySaveResponseDto();
+        if(attendees != null && !attendees.isEmpty()){
+            List<ICMeetingAttendees> entities = new ArrayList<>();
+            for(ICMeetingAttendeesDto dto: attendees){
+                ICMeetingAttendees entity = new ICMeetingAttendees();
+                entity.setIcMeeting(new ICMeeting(icMeetingId));
+                entity.setEmployee(new Employee(dto.getEmployee().getId()));
+                entity.setPresent(dto.isPresent());
+                if(!dto.isPresent()) {
+                    if (dto.getAbsenceType() != null && dto.getAbsenceType() != null) {
+                        ICMeetingAttendeeAbsenceType absenceType = this.lookupService.findByTypeAndCode(ICMeetingAttendeeAbsenceType.class, dto.getAbsenceType());
+                        if(absenceType == null) {
+                            // TODO: check transactions
+                            saveResponseDto.setErrorMessageEn("Failed to save IC Meeting: attendees not present must have reason specified");
+                            return saveResponseDto;
+                        }
+                        entity.setAbsenceType(absenceType);
+                    }
+                }else{
+                    entity.setAbsenceType(null);
+                }
+                entities.add(entity);
+            }
+            this.icMeetingAttendeesRepository.deleteByICMeetingId(icMeetingId);
+            this.icMeetingAttendeesRepository.save(entities);
+        }else{
+            // clear all existing
+            this.icMeetingAttendeesRepository.deleteByICMeetingId(icMeetingId);
+        }
+        saveResponseDto.setStatus(ResponseStatusType.SUCCESS);
+        return saveResponseDto;
     }
 
     @Override
@@ -1673,7 +1897,26 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
             dto.setTopics(getLimitedICMeetingTopicsByMeetingId(id));
             Collections.sort(dto.getTopics());
 
-            // voting
+            // closeable
+            boolean closeable = true;
+            if(dto.getTopics() != null && !dto.getTopics().isEmpty()){
+                for(ICMeetingTopicDto topic: dto.getTopics()){
+                    int attendingICMembersNum = 0;
+                    if(dto.getAttendees() != null && !dto.getAttendees().isEmpty()){
+                        for(ICMeetingAttendeesDto attendeesDto: dto.getAttendees()){
+                            attendingICMembersNum += (attendeesDto.isPresent() ? 1 : 0);
+                        }
+                    }
+                    if(topic.getVotes() == null || topic.getVotes().isEmpty() || topic.getVotes().size() != attendingICMembersNum){
+                        closeable = false;
+                        break;
+                    }
+                }
+            }else{
+                // TODO: closeable ?
+                //closeable = true;
+            }
+            dto.setCloseable(closeable);
 
             return dto;
         }catch(Exception ex){
@@ -1891,6 +2134,49 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
             }
         }
         Collections.sort(dtoList);
+        return dtoList;
+    }
+
+    @Override
+    public List<ICMeetingDto> getICMeetingsWithDeadline(Date date) {
+        List<ICMeetingDto> dtoList = new ArrayList<>();
+        Date dateFrom = DateUtils.getDateWithTime(DateUtils.moveDateByDays(date, CorpMeetingService.IC_MEETING_DEADLINE_DAYS + 1), "00:00");
+        Date dateTo = DateUtils.getDateWithTime(DateUtils.moveDateByDays(dateFrom, CorpMeetingService.IC_MEETING_DEADLINE_DAYS + 1), "23:59");
+        List<ICMeeting> icMeetings = this.icMeetingsRepository.getOpenICMeetingsWithinDates(dateFrom, dateTo);
+        if(icMeetings != null && !icMeetings.isEmpty()){
+            for(ICMeeting entity: icMeetings){
+                //ICMeetingDto dto = this.icMeetingsEntityConverter.disassemble(entity);
+                ICMeetingDto dto = new ICMeetingDto();
+                dto.setId(entity.getId());
+                dto.setDate(entity.getDate());
+                dto.setNumber(entity.getNumber());
+
+                // set topics
+                List<ICMeetingTopic> topicEntities = icMeetingTopicRepository.findByICMeetingIdNotDeleted(entity.getId());
+                if(topicEntities != null) {
+                    List<ICMeetingTopicDto> topics = new ArrayList<>();
+                    for(ICMeetingTopic topicEntity: topicEntities) {
+                        ICMeetingTopicDto topic = new ICMeetingTopicDto();
+                        topic.setName(topicEntity.getName());
+                        if(topicEntity.getSpeaker() != null) {
+                            EmployeeDto speaker = new EmployeeDto();
+                            speaker.setId(topicEntity.getSpeaker().getId());
+                            topic.setSpeaker(speaker);
+                        }
+                        if(topicEntity.getExecutor() != null) {
+                            EmployeeDto executor = new EmployeeDto();
+                            executor.setId(topicEntity.getExecutor().getId());
+                            topic.setExecutor(executor);
+                        }
+                        topics.add(topic);
+                    }
+                    dto.setTopics(topics);
+                }
+
+                dtoList.add(dto);
+            }
+        }
+        //Collections.sort(dtoList);
         return dtoList;
     }
 

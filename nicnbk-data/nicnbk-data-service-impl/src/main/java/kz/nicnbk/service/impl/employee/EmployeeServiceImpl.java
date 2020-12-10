@@ -89,6 +89,22 @@ public class EmployeeServiceImpl implements EmployeeService{
     }
 
     @Override
+    public List<EmployeeDto> findActiveAll(){
+        try {
+            List<EmployeeDto> dtoList = new ArrayList<>();
+            Iterator<Employee> entities = this.employeeRepository.findAll(new Sort(Sort.Direction.ASC, "firstName")).iterator();
+            while (entities.hasNext()) {
+                EmployeeDto employeeDto = this.employeeEntityConverter.disassemble(entities.next());
+                dtoList.add(employeeDto);
+            }
+            return dtoList;
+        }catch (Exception ex){
+            logger.error("Failed to load full employee list", ex);
+        }
+        return null;
+    }
+
+    @Override
     public List<EmployeeDto> findICMembers(){
         try {
             List<EmployeeDto> dtoList = findEmployeesByRoleCode(UserRoles.IC_MEMBER.getCode());

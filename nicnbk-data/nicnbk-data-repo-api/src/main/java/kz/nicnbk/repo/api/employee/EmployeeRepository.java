@@ -27,5 +27,8 @@ public interface EmployeeRepository extends PagingAndSortingRepository<Employee,
     @Query("SELECT e FROM  Employee e " )
     Page<Employee> findAll(Pageable pageable);
 
+    @Query("SELECT e FROM  Employee e WHERE e.active=true" )
+    List<Employee> findActiveAll();
+
     List<Employee> findByPositionDepartmentIdAndActive(int departmentId, boolean active);
 }

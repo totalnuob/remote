@@ -7,6 +7,7 @@ import kz.nicnbk.service.dto.employee.EmployeeDto;
 import kz.nicnbk.service.dto.files.FilesDto;
 import kz.nicnbk.service.dto.files.NamedFilesDto;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -21,7 +22,8 @@ public interface CorpMeetingService extends BaseService {
     /* Number of elements per page */
     int DEFAULT_PAGE_SIZE = 20;
 
-    public static final int IC_MEETING_DEADLINE_DAYS = 2;
+    public static final int IC_MEETING_DEADLINE_DAYS = 1;
+    public static final String IC_MEETING_DEADLINE_HOURS = "15:00";
 
 
 //    @Deprecated
@@ -48,6 +50,8 @@ public interface CorpMeetingService extends BaseService {
     ICMeetingTopicDto getICMeetingTopic(Long id, String username);
 
     EntitySaveResponseDto approveICMeetingTopic(Long id, String username);
+
+    EntitySaveResponseDto cancelApproveICMeetingTopic(Long id, String username);
 
     List<EmployeeDto> getAvailableApproveList();
 
@@ -99,6 +103,8 @@ public interface CorpMeetingService extends BaseService {
     ICMeetingsPagedSearchResult searchICMeetings(ICMeetingsSearchParamsDto searchParams);
 
     List<ICMeetingDto> getAllICMeetingsShort();
+
+    List<ICMeetingDto> getICMeetingsWithDeadline(Date date);
 
     boolean safeDeleteICMeetingProtocolAttachment(Long meetingId, Long fileId, String username);
 

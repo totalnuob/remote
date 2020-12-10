@@ -44,6 +44,7 @@ import {LegalService} from "./legal/legal.service";
 import {MonitoringHedgeFundService} from "./monitoring/monitoring-hf.service";
 import {Subscription} from "../../node_modules/rxjs";
 import {VersionService} from "./common/version.service";
+import {NotificationService} from "./notification/notification.service";
 import {Version} from "./version/model/version";
 
 
@@ -80,7 +81,8 @@ import {Version} from "./version/model/version";
         LegalService,
         HedgeFundScoringService,
         MonitoringHedgeFundService,
-        VersionService
+        VersionService,
+        NotificationService
     ]
 })
 @NgModule({
@@ -91,19 +93,25 @@ export class AppComponent implements OnInit{
     versionLatestVersion;
     versionList: Array<Version> = [];
     busy: Subscription;
+    notificationsBusy: Subscription;
     activeMenu;
     activeBlock = 'corp';
     //snow = true;
+
+    authenticatedUserNotifications = [];
 
     private moduleAccessChecker: ModuleAccessCheckerService;
 
     constructor(
         private authenticationService: AuthenticationService,
         private _router: Router,
+        private notificationService: NotificationService,
         private versionService: VersionService,
     ){
         this.moduleAccessChecker = new ModuleAccessCheckerService;
         this.getVersion();
+
+        this.loadUserNotification();
 
 /*
 // TODO: prepend component urls woth 'corp', 'invest', 'admin'
@@ -117,6 +125,8 @@ export class AppComponent implements OnInit{
     }
 
     ngOnInit(){
+        //setInterval(this.loadUserNotification(), 60000, "Load notifications every minute");
+        setInterval(()=> { this.loadUserNotification() }, 60000);
     }
 
     initMenu(url){
@@ -126,6 +136,20 @@ export class AppComponent implements OnInit{
         }else if(url.startsWith('/admin')){
             this.activeBlock = 'admin';
         }
+    }
+
+    loadUserNotification(){
+        this.busy = this.notificationService.getUserNotifications()
+            .subscribe(
+                (response) => {
+                    //console.log(response);
+                    this.authenticatedUserNotifications = response;
+                },
+                error => {
+                    console.log(response);
+                    console.log('Error loading user notifications');
+                }
+            )
     }
 
     getVersion() {
@@ -307,6 +331,51 @@ export class AppComponent implements OnInit{
             return "admin/main";
         }
         return null;
+    }
+
+    showNotifications(){
+        //alert("Danger!");
+    }
+
+    getNotifications(){
+        //return [];
+        //return [{'id': 1, 'name': 'Notification 1', 'status': 'NEW'}];
+        return this.authenticatedUserNotifications;
+    }
+
+    closeNotification(notification){
+        if(notification != null && notification.id > 0){
+            this.notificationsBusy = this.notificationService.closeUserNotification(notification.id)
+                .subscribe(
+                    (response) => {
+                        for(var i = 0; this.authenticatedUserNotifications != null && i < this.authenticatedUserNotifications.length; i++) {
+                            if(this.authenticatedUserNotifications[i] === notification) {
+                                this.authenticatedUserNotifications.splice(i, 1);
+                            }
+                        }
+                    },
+                    error => {
+                        console.log(response);
+                        console.log('Error closing user notification');
+                    }
+                )
+        }
+    }
+
+    closeNotificationsModal(){
+    }
+
+    closeAllNotifications(){
+        this.notificationsBusy = this.notificationService.closeUserNotificationsAll()
+            .subscribe(
+                (response) => {
+                    this.authenticatedUserNotifications = [];
+                },
+                error => {
+                    console.log(response);
+                    console.log('Error closing user notifications (ALL)');
+                }
+            )
     }
 }
 

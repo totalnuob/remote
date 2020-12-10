@@ -20,13 +20,16 @@ import java.util.Set;
  */
 public interface ICMeetingTopicRepository extends PagingAndSortingRepository<ICMeetingTopic, Long> {
 
-    @Query("select DISTINCT e from ICMeetingTopic e LEFT JOIN e.icMeeting ic LEFT JOIN e.tags tags LEFT JOIN e.approveList approve " +
+    @Query("SELECT DISTINCT e from ICMeetingTopic e LEFT JOIN e.tags tags LEFT JOIN e.icMeeting ic LEFT JOIN e.approveList approve " +
             "LEFT JOIN approve.employee emp LEFT JOIN approve.employee.position pos LEFT JOIN approve.employee.position.department dep where " +
             " (e.icMeeting.id is null OR (e.icMeeting.date >= :dateFrom AND e.icMeeting.date <= :dateTo)) " +
             " AND (:searchText='' OR (LOWER(e.name) LIKE CONCAT('%', :searchText, '%')) " +
+            " OR (LOWER(e.nameUpd) LIKE CONCAT('%', :searchText,'%')) " +
             " OR (LOWER(e.description) LIKE CONCAT('%', :searchText,'%')) " +
             " OR (LOWER(e.decision) LIKE CONCAT('%', :searchText,'%')) " +
-            " OR (LOWER(tags.name) LIKE CONCAT('%', :searchText,'%'))) " +
+            " OR (LOWER(e.decisionUpd) LIKE CONCAT('%', :searchText,'%')) " +
+            " OR (LOWER(tags.name) LIKE CONCAT('%', :searchText,'%'))" +
+            ") " +
             " AND (:icNumber='' OR  e.icMeeting.number=:icNumber)" +
             " AND (:departmentId IS NULL OR e.department.id=:departmentId OR (:isICMember=true AND e.published=true) OR " +
             " (e.published=true AND e.id=approve.icMeetingTopic.id AND approve.employee.position.department.id=:departmentId))" +
@@ -70,6 +73,7 @@ public interface ICMeetingTopicRepository extends PagingAndSortingRepository<ICM
             " ORDER BY e.id ASC")
     ICMeetingTopic findByExplanatoryNoteIdNotDeleted(Long id);
 
+    @Deprecated
     @Modifying(clearAutomatically = true)
     @Query("UPDATE ICMeetingTopic e SET e.icOrder=?2 where e.id=?1")
     int updateICOrder(Long id, Integer icOrder);

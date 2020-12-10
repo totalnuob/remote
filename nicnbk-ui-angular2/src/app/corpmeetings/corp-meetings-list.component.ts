@@ -468,7 +468,7 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
             if(topic.status === 'UNDER REVIEW'){
                 return 'label label-warning';
             }
-            if(topic.status === 'READY' || topic.status === 'APPROVEDs'){
+            if(topic.status === 'READY' || topic.status === 'APPROVED'){
                 return 'label label-success';
             }
         }

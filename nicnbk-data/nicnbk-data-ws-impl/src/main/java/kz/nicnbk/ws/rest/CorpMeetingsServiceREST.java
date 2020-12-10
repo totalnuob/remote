@@ -58,6 +58,7 @@ public class CorpMeetingsServiceREST extends CommonServiceREST{
     private static final String IC_MEETING_ADMIN = "hasRole('ROLE_ADMIN') OR hasRole('ROLE_IC_ADMIN')";
 
     private static final String IC_MEETING_TOPIC_EDITOR = "hasRole('ROLE_IC_TOPIC_EDITOR') OR hasRole('ROLE_ADMIN') OR hasRole('ROLE_IC_ADMIN')";
+
     private static final String IC_MEETING_TOPIC_VIEWER = "hasRole('ROLE_IC_TOPIC_EDITOR') OR hasRole('ROLE_IC_TOPIC_VIEWER_ALL') " +
             " OR hasRole('ROLE_IC_TOPIC_VIEWER') OR hasRole('ROLE_IC_TOPIC_RESTR') " +
             " OR hasRole('ROLE_ADMIN') OR hasRole('ROLE_IC_ADMIN')";
@@ -205,7 +206,17 @@ public class CorpMeetingsServiceREST extends CommonServiceREST{
         return buildEntitySaveResponse(responseDto);
     }
 
-    @PreAuthorize(IC_MEETING_TOPIC_EDITOR)
+    @PreAuthorize(IC_MEETING_TOPIC_APPROVAL)
+    @RequestMapping(value = "/ICMeetingTopic/cancelApprove/{id}", method = RequestMethod.POST)
+    public ResponseEntity<?> cancelApproveICMeetingTopicById(@PathVariable long id){
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
+
+        EntitySaveResponseDto responseDto = corpMeetingService.cancelApproveICMeetingTopic(id, username);
+        return buildEntitySaveResponse(responseDto);
+    }
+
+    @PreAuthorize(IC_MEETING_TOPIC_VIEWER)
     @RequestMapping(value = "/availableApproveList", method = RequestMethod.GET)
     public ResponseEntity getAvailableApproveList(){
         List<EmployeeDto> employees = this.corpMeetingService.getAvailableApproveList();

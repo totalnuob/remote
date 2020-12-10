@@ -50,6 +50,7 @@ export class CorpMeetingService extends CommonService {
 
     private IC_MEETING_TOPIC_DELETE_URL = this.CORP_MEETINGS_BASE_URL + "ICMeetingTopic/delete/";
     private IC_MEETING_TOPIC_APPROVE_URL = this.CORP_MEETINGS_BASE_URL + "ICMeetingTopic/approve/";
+    private IC_MEETING_TOPIC_CANCEL_APPROVE_URL = this.CORP_MEETINGS_BASE_URL + "ICMeetingTopic/cancelApprove/";
 
     private IC_MEETINGS_DELETE_URL = this.CORP_MEETINGS_BASE_URL + "ICMeeting/delete/";
     private IC_MEETING_CLOSE_URL = this.CORP_MEETINGS_BASE_URL + "ICMeeting/close/";
@@ -198,6 +199,13 @@ export class CorpMeetingService extends CommonService {
             .map(this.extractData)
             .catch(this.handleErrorResponse);
     }
+
+    cancelApproveICMeetingTopic(topicId): Observable<any> {
+        return this.http.post(this.IC_MEETING_TOPIC_CANCEL_APPROVE_URL + topicId, {}, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
 
     postFiles(meetingId, params, files){
         return this.uploadService.postFiles(this.MEETING_ATTACHMENT_UPLOAD_URL + meetingId, [], files, null);

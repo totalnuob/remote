@@ -133,7 +133,6 @@ import {HRNewsEditComponent} from "./hr/hr-news-edit.component";
 import {AdminMainComponent} from "./admin/admin.main.component";
 import {AdminUserManagementComponent} from "./admin/admin.user-management.component";
 import {MonitoringHedgeFundsEditComponent} from "./monitoring/monitoring-hedge-funds-edit.component";
-//import {CorpMeetingEditComponent} from "./corpmeetings/ic-meeting-topic-edit.component";
 
 @NgModule({
     imports: [

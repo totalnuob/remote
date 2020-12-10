@@ -21,4 +21,6 @@ export class ICMeeting{
     lockedByDeadline: boolean;
     unlockedForFinalize: boolean;
 
+    closeable: boolean;
+
 }

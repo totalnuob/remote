@@ -217,7 +217,7 @@ export class CorpMeetingICEditComponent extends CommonFormViewComponent implemen
     }
 
     public canEdit(){
-        if(this.icMeeting != null && this.icMeeting.closed){
+        if(this.icMeeting != null && (this.icMeeting.closed || this.icMeeting.deleted)){
             return false;
         }
         var accessOk = this.moduleAccessChecker.checkAccessICMeetingsEdit();
@@ -285,13 +285,10 @@ export class CorpMeetingICEditComponent extends CommonFormViewComponent implemen
             .subscribe(
                 (response: SaveResponse)  => {
                     this.icMeeting.id = response.entityId;
-                    this.successMessage = "Successfully saved IC meeting."
-                    this.errorMessage = null;
-
+                    this.postAction("Successfully saved IC meeting.", null);
                 },
                 (error: ErrorResponse) => {
-                    this.errorMessage = error.message;
-                    this.successMessage = null;
+                    this.postAction(null, error.message != null ? error.message : "Failed to save IC Meeting");
                 }
             );
     }
@@ -315,7 +312,7 @@ export class CorpMeetingICEditComponent extends CommonFormViewComponent implemen
             if(topic.status === 'UNDER REVIEW'){
                 return 'label label-warning';
             }
-            if(topic.status === 'READY' || topic.status === 'APPROVEDs'){
+            if(topic.status === 'READY' || topic.status === 'APPROVED'){
                 return 'label label-success';
             }
         }
@@ -495,7 +492,7 @@ export class CorpMeetingICEditComponent extends CommonFormViewComponent implemen
     }
 
     canUnlock(){
-        return this.canEdit() && this.icMeeting.status === 'LOCKED FOR IC';
+        return this.moduleAccessChecker.checkAccessICMeetingAdmin() && this.icMeeting.status === 'LOCKED FOR IC';
     }
 
     getICMeetingClassByStatus(){
@@ -566,11 +563,6 @@ export class CorpMeetingICEditComponent extends CommonFormViewComponent implemen
                     (error: ErrorResponse) => {
                         this.voteSuccessMessage = null;
                         this.voteErrorMessage = "Failed to save votes";
-                        //this.errorMessage = "Error saving IC Meeting votes";
-                        //if(error && !error.isEmpty()){
-                        //    this.processErrorMessage(error);
-                        //}
-                        //this.postAction(null, errorMessage);
                     }
                 );
     }
@@ -598,7 +590,7 @@ export class CorpMeetingICEditComponent extends CommonFormViewComponent implemen
     }
 
     canClose(){
-        var access = this.icMeeting != null && !this.icMeeting.deleted && !this.icMeeting.closed;
+        var access = this.icMeeting != null && !this.icMeeting.deleted && !this.icMeeting.closed && this.icMeeting.closeable;
         return access && this.moduleAccessChecker.checkAccessICMeetingAdmin();
     }
 

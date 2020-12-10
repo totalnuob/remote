@@ -435,7 +435,7 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <tr *ngFor = "let icMeeting of icMeetings" style="cursor: pointer">
+                        <tr *ngFor = "let icMeeting of icMeetings" style="cursor: pointer" (click)="editICMeeting(icMeeting)">
                             <td>{{icMeeting.number}}</td>
                             <td>{{icMeeting.date}}</td>
                             <td>
@@ -444,8 +444,8 @@
                                 </label>
                             </td>
                             <td>
-                                <button class="btn btn-xs btn-primary" (click)="editICMeeting(icMeeting)" *ngIf="!canEditICMeeting(icMeeting)"><span class="glyphicon glyphicon-search"></span></button>
-                                <button class="btn btn-xs btn-success" (click)="editICMeeting(icMeeting)" *ngIf="canEditICMeeting(icMeeting)"><span class="glyphicon glyphicon-pencil"></span></button>
+<!--                                <button class="btn btn-xs btn-primary" (click)="editICMeeting(icMeeting)" *ngIf="!canEditICMeeting(icMeeting)"><span class="glyphicon glyphicon-search"></span></button>-->
+<!--                                <button class="btn btn-xs btn-success" (click)="editICMeeting(icMeeting)" *ngIf="canEditICMeeting(icMeeting)"><span class="glyphicon glyphicon-pencil"></span></button>-->
                                 <button class="btn btn-xs btn-danger" (click)="deleteICMeeting(icMeeting)" *ngIf="canDeleteICMeeting(icMeeting)"><span class="glyphicon glyphicon-trash"></span></button>
                             </td>
 <!--                            <td>-->

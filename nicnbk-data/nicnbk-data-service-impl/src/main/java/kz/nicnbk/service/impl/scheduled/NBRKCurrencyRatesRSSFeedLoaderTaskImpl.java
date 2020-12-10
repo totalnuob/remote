@@ -32,13 +32,13 @@ public class NBRKCurrencyRatesRSSFeedLoaderTaskImpl {
     @Autowired
     private CurrencyRatesService currencyRatesService;
 
-    @Scheduled(cron="0 57 9 * * *") // Every day at 7 am
+    @Scheduled(cron="0 00 7 * * *") // Every day at 7 am
     public void loadUSDCurrencyRates() {
         try {
             URL feedUrl = new URL("http://www.nationalbank.kz/rss/rates_all.xml");
 
-            System.setProperty("http.proxyHost", "10.10.163.253");
-            System.setProperty("http.proxyPort", "8080");
+            //System.setProperty("http.proxyHost", "10.10.163.253");
+            //System.setProperty("http.proxyPort", "8080");
 
             SyndFeedInput input = new SyndFeedInput();
             SyndFeed feed = input.build(new XmlReader(feedUrl));
@@ -66,8 +66,8 @@ public class NBRKCurrencyRatesRSSFeedLoaderTaskImpl {
                 }
             }
 
-            System.setProperty("http.proxyHost", "");
-            System.setProperty("http.proxyPort", "");
+            //System.setProperty("http.proxyHost", "");
+            //System.setProperty("http.proxyPort", "");
 
         }
         catch (Exception ex) {

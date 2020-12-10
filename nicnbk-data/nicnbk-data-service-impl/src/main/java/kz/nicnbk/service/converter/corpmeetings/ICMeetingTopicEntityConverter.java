@@ -7,6 +7,7 @@ import kz.nicnbk.service.converter.dozer.BaseDozerEntityConverter;
 import kz.nicnbk.service.datamanager.LookupService;
 import kz.nicnbk.service.dto.corpmeetings.ICMeetingTopicDto;
 import kz.nicnbk.service.dto.tag.TagDto;
+import kz.nicnbk.service.dto.tag.TagTypes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -55,13 +56,10 @@ public class ICMeetingTopicEntityConverter extends BaseDozerEntityConverter<ICMe
         if(dto.getTags() != null && !dto.getTags().isEmpty()){
             List<Tag> tags = new ArrayList<>();
             for(String tagName: dto.getTags()){
-                // TODO: refactor type as enum
-                TagDto tagDto = this.tagService.findByNameAndTypeCode(tagName, "IC");
+                TagDto tagDto = this.tagService.findByNameAndTypeCode(tagName, TagTypes.IC.getCode());
                 if(tagDto != null){
                     tags.add(new Tag(tagDto.getId(), tagName));
                 }else {
-                    // do not add
-                    //tags.add(new Tag(null, tagName));
                 }
             }
             entity.setTags(tags);

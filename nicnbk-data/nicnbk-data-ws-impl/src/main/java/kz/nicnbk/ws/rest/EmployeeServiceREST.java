@@ -46,6 +46,17 @@ public class EmployeeServiceREST extends CommonServiceREST{
         }
     }
 
+    @RequestMapping(value = "/findActiveAll", method = RequestMethod.GET)
+    public ResponseEntity findActiveAll(){
+        List<EmployeeDto> employees = this.employeeService.findActiveAll();
+        if(employees == null){
+            // error occurred
+            return new ResponseEntity<>(null, null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }else{
+            return new ResponseEntity<>(employees, null, HttpStatus.OK);
+        }
+    }
+
     @RequestMapping(value = "/findICMembers", method = RequestMethod.GET)
     public ResponseEntity findICMembers(){
         List<EmployeeDto> employees = this.employeeService.findICMembers();

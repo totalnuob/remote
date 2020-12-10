@@ -79,8 +79,9 @@
                                                     <label class="btn btn-primary btn-xs col-md-3" [ngClass]="icMeetingTopic.explanatoryNote != null && icMeetingTopic.explanatoryNote.id > 0 ? 'disabled' : ''"  for="explanatoryNoteFile">
                                                         <input type="file" id="explanatoryNoteFile" (change)="onFileChangeExplanatoryNote($event)" [disabled]="icMeetingTopic.explanatoryNote != null && icMeetingTopic.explanatoryNote.id > 0" name="explanatoryNoteFile" style="display:none;"/>Upload</label>
                                                     <div class="col-md-9">
-                                                        <div class="row" *ngFor="let aFile of uploadExplanatoryNoteFile" class="label label-info" style="display: table;">
-                                                            <span>{{aFile.name}}</span> &nbsp;
+                                                        <div class="row" *ngFor="let aFile of uploadExplanatoryNoteFile"style="display: table;">
+                                                            <span class="label label-info" >{{aFile.name | slice:0:55}} {{aFile?.name?.length > 55 ? '...' : ''}}
+                                                            </span> &nbsp;
                                                             <button class="btn btn-xs" (click)="deleteUnsavedExplanatoryNote(aFile)" *ngIf="canEdit()">
                                                                 <i class="glyphicon glyphicon-trash"></i>
                                                             </button>
@@ -92,7 +93,8 @@
                                                     <div class="col-md-8">
                                                         <file-attachment-downloader fileId="{{icMeetingTopic.explanatoryNote?.id}}"
                                                                                     fileName="{{icMeetingTopic.explanatoryNote?.fileName |  slice:0:55 }}"
-                                                                                    fileType="IC_EXPNOTE">
+                                                                                    fileType="IC_EXPNOTE"
+                                                                                    showIcon="true">
                                                         </file-attachment-downloader>
                                                     </div>
                                                     <div class="col-md-2">
@@ -189,6 +191,7 @@
                                             <td>
                                                 <span class="label label-info ">
                                                     {{newFile.file.name | slice:0:55 }} &nbsp;
+                                                    {{newFile?.file?.name?.length > 55 ? '...' : ''}}
                                                 </span> &nbsp;
                                                 <button class="btn btn-xs"  (click)="deleteUnsavedAttachment(newFile)" *ngIf="canEdit()">
                                                     <i class="glyphicon glyphicon-trash"></i>
@@ -201,6 +204,7 @@
                                         </tr>
                                     </table>
                                 </div>
+                                <br/>
                                 <div class="row">
                                     <table style="width: 100%; table-layout: fixed;" >
                                         <tr *ngFor="let attachment of icMeetingTopic?.materials; let j = index" [attr.data-index]="j">
@@ -208,16 +212,18 @@
                                                 <file-attachment-downloader fileId="{{attachment.file.id}}"
                                                                             displayFileName="{{(j + 1) + '. ' + attachment?.file?.fileName | slice:0:60}} ..."
                                                                             fileName="{{attachment?.file?.fileName}}"
-                                                                            fileType="IC_MATRL">
+                                                                            fileType="IC_MATRL" showIcon="true">
                                                 </file-attachment-downloader>
                                             </td>
                                             <td width="45%">
                                                 <input class="form-control" type="text" style="width: 100%" [(ngModel)]="attachment.name" [ngModelOptions]="{standalone: true}"/>
                                             </td>
                                             <td width="10%">&nbsp;
-                                                <button class="btn btn-xs" (click)="deleteAttachment(attachment.file.id, false)" *ngIf="canEdit()">
-                                                    <i class="glyphicon glyphicon-trash"></i>
-                                                </button>
+                                                <small>
+                                                    <span style="cursor: pointer" (click)="deleteAttachment(attachment.file.id, false)" *ngIf="canEdit() || canEditUpdateBlock()">
+                                                        <i class="glyphicon glyphicon-trash"></i>
+                                                    </span>
+                                                </small>
                                             </td>
                                         </tr>
                                     </table>
@@ -240,7 +246,7 @@
                                             <div class="row" *ngFor="let item of icMeetingTopic?.approveList">
                                                 <span *ngIf="item.approved" class="glyphicon glyphicon-ok-circle" style="color: green"></span>
                                                 <span *ngIf="!item.approved"class="glyphicon glyphicon-hourglass" style="color: grey"></span>
-                                                {{item.employee.fullName != null ? item.employee.fullName : (item.employee.firstName + '' + item.employee.lastName)}}
+                                                {{item.employee.fullName != null ? item.employee.fullName : (item.employee.firstName + ' ' + item.employee.lastName)}}
                                             </div>
                                         </div>
                                     </div>
@@ -278,7 +284,7 @@
                     <br/>
                     <div class="row">
                         <button class="btn btn-success pull-right" (click)="approve()" *ngIf="canApprove()">Approve</button>
-                        <button class="btn btn-danger pull-right" (click)="disapprove()" *ngIf="canCancelApprove()">Dis-approve</button>
+                        <button class="btn btn-danger pull-right" (click)="cancelApprove()" *ngIf="canCancelApprove()">Dis-approve</button>
                     </div>
                 </form>
             </div>
@@ -315,7 +321,8 @@
                                     <tr *ngFor="let newFile of uploadMaterialsFilesUpd; let j = index" [attr.data-index]="j">
                                         <td>
                                             <span class="label label-info ">
-                                                {{newFile.file.name | slice:0:30 }} &nbsp;{{newFile?.file?.name?.length > 30 ? '...' : ''}}
+                                                {{newFile.file.name | slice:0:30 }} &nbsp;
+                                                {{newFile?.file?.name?.length > 30 ? '...' : ''}}
                                             </span> &nbsp;
                                             <button class="btn btn-xs"  (click)="deleteUnsavedAttachmentUpd(newFile)">
                                                 <i class="glyphicon glyphicon-trash"></i>
@@ -337,7 +344,7 @@
                                                                         displayFileName="{{(j + 1) + '. ' + attachment?.file?.fileName | slice:0:40}}
                                                                         {{attachment?.file?.fileName?.length > 40 ? '...' : ''}}"
                                                                         fileName="{{attachment?.file?.fileName}}"
-                                                                        fileType="IC_MATRL">
+                                                                        fileType="IC_MATRL" showIcon="true">
                                             </file-attachment-downloader>
                                         </td>
                                         <td width="45%">
@@ -364,8 +371,9 @@
                                     <tr *ngFor="let newFile of uploadExplanatoryNoteFileUpd; let j = index" [attr.data-index]="j">
                                         <td>
                                             <span class="label label-info ">
-                                                {{newFile.name | slice:0:55 }} &nbsp;
-                                            </span> &nbsp;
+                                                {{newFile.name | slice:0:30 }} &nbsp;
+                                                {{newFile?.name?.length > 30 ? '...' : ''}}
+                                            </span>&nbsp;
                                             <button class="btn btn-xs"  (click)="deleteUnsavedExplanatoryNoteUpd(newFile)">
                                                 <i class="glyphicon glyphicon-trash"></i>
                                             </button>
@@ -382,7 +390,7 @@
                                                                         displayFileName="{{icMeetingTopic.explanatoryNoteUpd.fileName | slice:0:40}}
                                                                     {{icMeetingTopic.explanatoryNoteUpd.fileName?.length > 40 ? '...' : ''}}"
                                                                         fileName="{{icMeetingTopic.explanatoryNoteUpd.fileName}}"
-                                                                        fileType="IC_EXPNOTE">
+                                                                        fileType="IC_EXPNOTE" showIcon="true">
                                             </file-attachment-downloader>
                                         </td>
                                         <td width="10%">&nbsp;
@@ -413,3 +421,4 @@
     <br>
     <br>
 </div>
+

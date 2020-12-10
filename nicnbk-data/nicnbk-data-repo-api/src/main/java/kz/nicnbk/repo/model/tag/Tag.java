@@ -20,6 +20,10 @@ public class Tag extends BaseEntity {
 
     public Tag(){}
 
+    public Tag(Long id){
+        this.setId(id);
+    }
+
     public Tag(Long id, String name){
         this.setId(id);
         this.name = name;
@@ -35,7 +39,7 @@ public class Tag extends BaseEntity {
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "type_id")
+    @JoinColumn(name = "type_id", nullable = false)
     public TagType getType() {
         return type;
     }

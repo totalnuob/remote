@@ -120,6 +120,14 @@ public class DateUtils {
         return simpleDateFormat.format(date);
     }
 
+    public static String getDateFormattedWithTime(Date date){
+        if(date == null){
+            return null;
+        }
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
+        return simpleDateFormat.format(date);
+    }
+
     // For DB operations, date format for psql is 'yyyy-MM-dd'
     public static String getDateFormatted_YYYY_MM_DD(Date date){
         if(date == null){

@@ -38,7 +38,6 @@ public class ICMeetingTopicDto extends CreateUpdateBaseEntityDto<ICMeetingTopic>
 
     private Boolean published;
     private boolean toPublish;
-    //private Boolean closed;
 
     private Boolean deleted;
 

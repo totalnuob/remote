@@ -1,5 +1,5 @@
 <a (click)="download()" style="cursor: pointer">
-    <span *ngIf="showIcon" class="glyphicon glyphicon-file" style="font-size:25px"></span>
+    <small><span *ngIf="showIcon" class="glyphicon glyphicon-file" style="font-size:15px"></span></small>
     <div *ngIf="showIcon" class="row" style="font-size:10px">
         {{displayFileName != null ? displayFileName : fileName}}
     </div>

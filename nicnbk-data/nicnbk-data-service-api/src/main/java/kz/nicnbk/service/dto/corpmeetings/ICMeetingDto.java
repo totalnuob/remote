@@ -41,6 +41,8 @@ public class ICMeetingDto extends CreateUpdateBaseEntityDto<ICMeeting> implement
     private Boolean closed;
     private Boolean deleted;
 
+    private boolean closeable;
+
     public String getNumber() {
         return number;
     }
@@ -141,17 +143,18 @@ public class ICMeetingDto extends CreateUpdateBaseEntityDto<ICMeeting> implement
     }
 
     public boolean isLockedByDeadline() {
-        // check date
-        if(this.date != null){
-            Date icDate = DateUtils.getDateWithTime(this.date, (this.time !=null ? this.time : "00:00"));
-            if(icDate != null) {
-                Date deadLine = DateUtils.moveDateByHours(icDate, -CorpMeetingService.IC_MEETING_DEADLINE_DAYS, true);
-                try {
+        return isICMeetingLockedByDeadline(this.date);
+    }
+
+    public static boolean isICMeetingLockedByDeadline(Date icDate){
+        if(icDate != null){
+            Date deadlineDate = DateUtils.moveDateByDays(icDate, -CorpMeetingService.IC_MEETING_DEADLINE_DAYS);
+            if(deadlineDate != null) {
+                Date deadLine = DateUtils.getDateWithTime(deadlineDate, CorpMeetingService.IC_MEETING_DEADLINE_HOURS);
+                if(deadLine != null){
                     if (deadLine.before(new Date())) {
-                        // cannot edit
                         return true;
                     }
-                } catch (NumberFormatException ex) {
                 }
             }
         }
@@ -203,6 +206,14 @@ public class ICMeetingDto extends CreateUpdateBaseEntityDto<ICMeeting> implement
 
     public void setDeleted(Boolean deleted) {
         this.deleted = deleted;
+    }
+
+    public boolean isCloseable() {
+        return closeable;
+    }
+
+    public void setCloseable(boolean closeable) {
+        this.closeable = closeable;
     }
 }
 

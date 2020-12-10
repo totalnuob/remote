@@ -10,10 +10,6 @@ import javax.persistence.*;
 import java.util.List;
 import java.util.Set;
 
-/**
- * Created by zhambyl on 04-Aug-16.
- */
-
 @Entity
 @Table(name = "ic_meeting_topic")
 public class ICMeetingTopic extends CreateUpdateBaseEntity{
@@ -95,8 +91,11 @@ public class ICMeetingTopic extends CreateUpdateBaseEntity{
         this.deleted = deleted;
     }
 
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "icmeetingtopic_tag",
+
+    //TODO: separate entity, repository + update services
+
+    @ManyToMany//(cascade = CascadeType.ALL)
+    @JoinTable(name = "ic_meeting_topic_tag",
             joinColumns = @JoinColumn(name = "meeting_id",
                     referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id",
@@ -138,7 +137,7 @@ public class ICMeetingTopic extends CreateUpdateBaseEntity{
         this.approveList = approveList;
     }
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "speaker_id")
     public Employee getSpeaker() {
         return speaker;
@@ -148,7 +147,7 @@ public class ICMeetingTopic extends CreateUpdateBaseEntity{
         this.speaker = speaker;
     }
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "executor_id")
     public Employee getExecutor() {
         return executor;
