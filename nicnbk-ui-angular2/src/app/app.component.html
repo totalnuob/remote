@@ -357,6 +357,12 @@
                     <div class="menu_header__row" style="background-color: white; height: 25px">
                         <nav class="menu_navigation">
                             <ul class="navigation__menu" style="background-color: white; height: 25px">
+                                <a (click)="showNotifications()" [style.color]="getNotifications() != null && getNotifications().length > 0 ? 'red' : 'grey'"
+                                   data-toggle="modal" data-target="#notificationsModal">
+                                    <span class="glyphicon glyphicon-alert" >
+                                        {{getNotifications() != null && getNotifications().length > 0 ? '(' + getNotifications().length + ')': ''}}
+                                    </span>
+                                </a>
                                 <li class="navigation__item" *ngIf="getHomePageURLByType('invest') != null" >
                                     <a [routerLink]="[getHomePageURLByType('invest')]" class="navigation__link" style="height: 25px; line-height: 25px"
                                        [style.background-color]="activeBlock === 'invest' ? '#D9A158' : 'white'" (click)="activeBlock = 'invest'; activeMenu = 'NEWS'">INVEST</a>
@@ -459,6 +465,9 @@
                             <li class="navigation__item dropdown" *ngIf="checkAvailable('CORP_MEETINGS')">
                                 <a [routerLink]="['/corpMeetings']" class="navigation__link"
                                    [style.border-bottom-color]="activeMenu === 'CORP_MEETINGS' ? '#D9A158' : 'white'" (click)="activeMenu = 'CORP_MEETINGS'">Corp Meetings</a>
+                                <ul  class="dropdown-menu">
+                                   <li><a [routerLink]="['/corpMeetings/lookupValues']" class="navigation__sublink" (click)="activeMenu = 'CORP_MEETINGS'">Lookup Values</a></li>
+                                </ul>
                             </li>
                             <li class="navigation__item dropdown" *ngIf="checkAvailable('LOOKUPS')">
                                 <a [routerLink]="['/lookups']" class="navigation__link"
@@ -481,6 +490,29 @@
                     </div>
                 </div>
             </header>
+
+            <div class="modal fade" id="notificationsModal" role="dialog">
+                <div [ngBusy]="notificationsBusy" class="modal-dialog" style="overflow-y: scroll; max-height:85%;  margin-top: 50px; margin-bottom:50px; width:65%;">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3 class="modal-title"  style="word-wrap: break-word">Notifications</h3>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <button *ngIf="getNotifications() != null && getNotifications().length > 0" class="btn pull-right" (click)="closeAllNotifications()">Close All &nbsp; X</button>
+                            </div>
+                            <br/>
+                            <div class="alert alert-danger" *ngFor="let notification of getNotifications()">
+                                <span>{{notification.name}}</span>
+                                <button class="btn btn-xs pull-right" (click)="closeNotification(notification)">close &nbsp; X</button>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+<!--                            <button type="button" class="btn btn-default" data-dismiss="modal" (click)="closeNotificationsModal()">Close</button>-->
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>

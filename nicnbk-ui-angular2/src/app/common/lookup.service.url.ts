@@ -88,7 +88,18 @@ export const SAVE_NIC_CHART_ACCOUNTS_URL = LOOKUP_SERVICE_URL + "saveNICChartAcc
 export const DELETE_LOOKUP_VALUE_BY_TYPE_URL = LOOKUP_SERVICE_URL + "lookupValue/delete/";
 export const DELETE_MATCHING_LOOKUP_VALUE_BY_TYPE_URL = LOOKUP_SERVICE_URL + "matchingLookupValue/delete/";
 
-export const IC_MEETING_TOPIC_TYPES_URL = LOOKUP_SERVICE_URL + "ICMeetingTopicTypes//";
+export const IC_MEETING_TOPIC_TYPES_URL = LOOKUP_SERVICE_URL + "ICMeetingTopicTypes/";
+export const IC_MEETING_ABSENCE_TYPES_URL = LOOKUP_SERVICE_URL + "ICMeetingAbsenceTypes/";
+export const IC_MEETING_PLACE_TYPES_URL = LOOKUP_SERVICE_URL + "ICMeetingPlaceTypes/";
+export const IC_MEETING_VOTE_TYPES_URL = LOOKUP_SERVICE_URL + "ICMeetingVoteTypes/";
+
+export const TAGS_BY_TYPE_GET_URL = LOOKUP_SERVICE_URL + "TagsByType/";
+export const TAGS_SAVE_URL = LOOKUP_SERVICE_URL + "Tags/save";
+
+
+
+
+
 
 
 

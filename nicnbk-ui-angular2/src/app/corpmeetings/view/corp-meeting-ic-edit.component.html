@@ -1,0 +1,335 @@
+<div class="container">
+    <div class="row withpadding" style="position: relative; min-height: 80px;">
+        <div [ngBusy]="busy">
+            <div class="row top-buffer" >
+                <div class="col-md-12">
+                    <ol class="breadcrumb">
+                        <li>
+                            <span *ngIf="this.breadcrumbParams != null"><a [routerLink]="['/corpMeetings', {params: this.breadcrumbParams, activeTab: 'IC_LIST'}]">IC List</a></span>
+                            <span *ngIf="this.breadcrumbParams == null"><a [routerLink]="['/corpMeetings', {activeTab: 'IC_LIST'}]">IC List</a></span>
+                        </li>
+                        <li class="active">IC Edit</li>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="row top-buffer" >
+                <div class="alert alert-danger" *ngIf="errorMessage != null"><span>{{errorMessage}}</span>
+                </div>
+                <div class="alert alert-info" *ngIf="successMessage != null"><span>{{successMessage}}</span>
+                </div>
+            </div>
+            <div>
+                <form class="well span">
+                    <div class="row">
+                        <label [ngClass]="getICMeetingClassByStatus()">{{icMeeting.status}}
+                            <span *ngIf="icMeeting.closed || icMeeting.lockedByDeadline" class="glyphicon glyphicon-lock"></span>
+                        </label>
+                    </div>
+                    <fieldset [disabled]="!canEdit()">
+                        <div class="row top-buffer">
+                            <div class="col-md-2">
+                                <label class="control-label" for="icDate">Date </label>
+                                <div class='input-group date col-md-2' id='icDate' style="width: 100%">
+                                    <input type="text" class="form-control" id="icDateValue" name="icDate" [(ngModel)]="icMeeting.date"/>
+                                    <a class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="col-md-2">
+                                <label class="control-label" for="icTime">Time </label>
+                                <div class='input-group datetime col-md-3' id='icTime' style="width: 100%">
+                                    <input type='text' class="form-control" id="icTimeValue" name="icTime" [(ngModel)]="icMeeting.time"/>
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-time"></span>
+                                        </span>
+                                </div>
+                            </div>
+                            <div class="col-md-3 form-group form-horizontal">
+                                <label class="control-label" for="icNumber">Number </label>
+                                <input type="text" class="form-control" placeholder="IC Number..."
+                                       id="icNumber" name="icNumber" [(ngModel)]="icMeeting.number"/>
+                            </div>
+                            <div class="col-md-3 form-group form-horizontal">
+                                <label class="control-label" for="icNumber">Place </label>
+                                <select class=" form-control small" style="display:inline; font-size: smaller" name="place" [(ngModel)]="icMeeting.place" [ngModelOptions]="{standalone: true}">
+                                    <option *ngFor="let item of placeTypes" [value]="item.code">{{item.nameRu}}</option>
+<!--                                    <option value="OFFICE">в здании АО «Национальная инвестиционная корпорация Национального Банка Казахстана»,-->
+<!--                                        находящемся по адресу: г. Нур - Султан, проспект Мәңгілік ел 57 А, 5 - й этаж.</option>-->
+<!--                                    <option value="WEBEX">Webex Meeting</option>-->
+<!--                                    <option value="OTHER">Other</option>-->
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row top-buffer withpadding">
+                            <div class="col-md-4">
+                                <label class="control-label">Attendees (IC Members):</label>
+                                <table class="condensed-table small" *ngIf="attendeesList != null">
+                                    <tbody>
+                                        <tr *ngFor="let attendee of attendeesList; let i = index">
+                                            <td style="text-align: right;">
+                                                <input type="checkbox" name="icMemberPresence" (click)="checkICMember(attendee)"
+                                                       [checked]="attendee.present" [attr.id]="'checkbox_' + i"/>
+                                            </td>
+                                            <td style="text-align: right;">{{i+1}}. &nbsp;</td>
+                                            <td>{{attendee.employee.firstName + ' ' + attendee.employee.lastName}}</td>
+                                            <td>
+                                                <select class="small" [disabled]="attendee.present" style="display:inline; font-size: smaller" name="absenceReason"
+                                                        [attr.id]="'select_' + i" [(ngModel)]="attendee.absenceType" [ngModelOptions]="{standalone: true}">
+                                                    <option *ngFor="let item of absenceTypes" [value]="item.code">{{item.nameEn}}</option>
+<!--                                                    <option value="SICK_LEAVE">Sick Leave</option>-->
+<!--                                                    <option value="VACATION">Vacation</option>-->
+<!--                                                    <option value="BIZ_TRIP">Business Trip</option>-->
+<!--                                                    <option value="OTHER">Other</option>-->
+                                                </select>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="col-md-8">
+                                <label class="control-label col-md-2">Invitees:</label>
+                                <div class="col-md-6" *ngIf="inviteesList?.length > 0">
+                                    <ng-select #inviteesSelect [initData]="icMeeting.invitees"
+                                               [multiple]="true"
+                                               [items]="inviteesList"
+                                               (data)="refreshInvitees($event)"
+                                               (selected)="selected($event)"
+                                               (removed)="removed($event)"
+                                               placeholder="No invitee selected"></ng-select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr style="border-top: 1px solid #B5AEAE">
+                        <div class="row top-buffer withpadding">
+                            <h4>Questions</h4>
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th width="5%"></th>
+                                        <th width="5%"></th>
+                                        <th width="40%">NAME</th>
+                                        <th width="10%">STATUS</th>
+                                        <th width="10%">CREATOR</th>
+                                        <th width="10%">CREATED</th>
+                                        <th width="10%">UPDATED</th>
+                                        <th width="5%">&nbsp;</th>
+                                        <th width="5%">&nbsp;</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    <tr *ngFor="let topic of icMeeting.topics; let i = index" style="cursor: pointer"
+                                        [style.color]="canViewICTopic(topic) ? 'black' : 'grey'">
+                                        <td>
+                                            <a *ngIf="i > 0" class="btn btn-primary btn-xs glyphicon glyphicon-arrow-up" (click)="moveTopicUp(i)"></a>
+                                            <a *ngIf="i < icMeeting.topics.length - 1" class="btn btn-primary btn-xs glyphicon glyphicon-arrow-down" (click)="moveTopicDown(i)"></a>
+                                        </td>
+                                        <td (click)="navigate(topic)">{{i + 1}}.</td>
+                                        <td (click)="navigate(topic)">{{topic.name}}</td>
+                                        <td (click)="navigate(topic)">
+                                            <label [ngClass]="getICMeetingTopicClassByStatus(topic)">{{topic.status}}
+                                                <span *ngIf="topic.closed || topic?.icMeeting.lockedByDeadline" class="glyphicon glyphicon-lock"></span>
+                                            </label>
+                                        </td>
+                                        <td (click)="navigate(topic)">{{topic.creator}}</td>
+                                        <td (click)="navigate(topic)">{{topic.creationDate}}</td>
+                                        <td (click)="navigate(topic)">{{topic.updateDate}}</td>
+                                        <td>
+                                            <span *ngIf="!canViewICTopic(topic)" class="glyphicon glyphicon-ban-circle" style="color:red"></span>
+                                        </td>
+                                        <td>
+                                            <span *ngIf="topic.authenticatedUserVote === 'YES'" class="glyphicon glyphicon-thumbs-up" style="color:green"></span>
+                                            <span *ngIf="topic.authenticatedUserVote === 'NO'" class="glyphicon glyphicon-thumbs-down" style="color:red"></span>
+                                            <span *ngIf="topic.authenticatedUserVote === '-'" class="glyphicon glyphicon-remove-circle" style="color:grey"></span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </fieldset>
+
+                    <div class="row">
+                        <button type="button" class="btn btn-success pull-right" *ngIf="canVote()" (click)="showVote()" data-toggle="modal" data-target="#voteModal">Vote</button>
+                    </div>
+
+                    <div class="modal fade" id="voteModal" role="dialog">
+                        <div [ngBusy]="busy" class="modal-dialog" style="min-height: 100px; max-height:85%;  margin-top: 100px; margin-bottom:50px; width:65%;">
+                            <div class="modal-content">
+                                <div class="alert alert-danger" *ngIf="voteErrorMessage != null"><span>{{voteErrorMessage}}</span>
+                                </div>
+                                <div class="alert alert-info" *ngIf="voteSuccessMessage != null"><span>{{voteSuccessMessage}}</span>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="row" *ngFor="let topic of icMeeting.topics; let i = index">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="col-md-10">
+                                                    <span>{{i + 1}}. {{topic.nameUpd}}</span>
+                                                </div>
+                                                <div class="col-md-2">
+<!--                                                        <select>-->
+<!--                                                            <option values="YES">YES</option>-->
+<!--                                                            <option values="NO">NO</option>-->
+<!--                                                            <option values="-">-&#45;&#45;</option>-->
+<!--                                                        </select>-->
+
+                                                    <select [(ngModel)] = "topic.authenticatedUserVote" [ngModelOptions]="{standalone: true}">
+                                                        <option *ngFor="let item of voteTypes" [value]="item.code">{{item.nameEn}}</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="col-md-10">
+                                                    <span>
+                                                        <i>{{topic.decisionUpd}}</i>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            &nbsp;
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default pull-left" (click)="closeVoteModal()" data-dismiss="modal">Close</button>
+                                    <button type="button" class="btn btn-success pull-right" (click)="saveVote()">Save</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row top-buffer withpadding">
+                        <h4>Documents</h4>
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th width="5%"></th>
+                                <th width="40%">NAME</th>
+                                <th width="10%">DOWNLOAD</th>
+                                <th class="text-center" width="40%" align="center">UPLOAD</th>
+                                <th width="5%">&nbsp;</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>1.</td>
+                                <td>Agenda</td>
+                                <td (click)="exportAgenda()">
+                                    <img src="../../../../public/img/ms_word.png" height="25" width="25" *ngIf="icMeeting.id > 0"/>
+                                </td>
+<!--                                    <td>-->
+<!--                                        <div *ngIf="icMeeting.agenda == null && canEdit()" align="center">-->
+<!--                                            <label class="btn btn-primary btn-xs " [ngClass]="icMeeting.agenda != null && icMeeting.agenda.id > 0 ? 'disabled' : ''"  for="agenda">-->
+<!--                                            <input type="file" id="agenda" (change)="onFileChangeAgenda($event)" [disabled]="icMeeting.agenda != null && icMeeting.agenda.id > 0" name="agendaScan" style="display:none;"/>Upload</label>-->
+<!--                                            <div  *ngFor="let aFile of uploadAgendaFile"  class="label label-info" style="display: table;">-->
+<!--                                                <span>{{aFile.name}}</span> &nbsp;-->
+<!--                                                <button class="btn btn-xs btn-danger" (click)="deleteUnsavedAgenda(aFile)">-->
+<!--                                                    <i class="glyphicon glyphicon-trash"></i>-->
+<!--                                                </button>-->
+<!--                                            </div>-->
+<!--                                        </div>-->
+<!--                                        <div *ngIf="icMeeting.agenda != null">-->
+<!--                                            <div class="col-md-10">-->
+<!--                                                <file-attachment-downloader fileId="{{icMeeting.agenda?.id}}"-->
+<!--                                                                            fileName="{{icMeeting.agenda?.fileName |  slice:0:55 }}"-->
+<!--                                                                            fileType="IC_AGENDA">-->
+<!--                                                </file-attachment-downloader>-->
+<!--                                            </div>-->
+<!--                                            <div class="col-md-2">-->
+<!--                                                <button class="btn btn-xs pull-left"  (click)="deleteAgenda()" *ngIf="icMeeting.agenda.id > 0 && canEdit()">-->
+<!--                                                    <i class="glyphicon glyphicon-trash"></i>-->
+<!--                                                </button>-->
+<!--                                            </div>-->
+<!--                                        </div>-->
+<!--                                    </td>-->
+                                <td>&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td>2.</td>
+                                <td>Protocol</td>
+                                <td (click)="exportProtocol()">
+                                    <img src="../../../../public/img/ms_word.png" height="25" width="25" *ngIf="icMeeting.id > 0"/>
+                                </td>
+<!--                                    <td>-->
+<!--                                        <div *ngIf="icMeeting.protocol == null && canEdit()" align="center">-->
+<!--                                            <label class="btn btn-primary btn-xs " [ngClass]="icMeeting.protocol != null && icMeeting.protocol.id > 0 ? 'disabled' : ''"  for="protocol">-->
+<!--                                                <input type="file" id="protocol" (change)="onFileChangeProtocol($event)" [disabled]="icMeeting.protocol != null && icMeeting.protocol.id > 0" name="protocolScan" style="display:none;"/>Upload</label>-->
+<!--                                            <div  *ngFor="let aFile of uploadProtocolFile"  class="label label-info" style="display: table;">-->
+<!--                                                <span>{{aFile.name}}</span> &nbsp;-->
+<!--                                                <button class="btn btn-xs btn-danger" (click)="deleteUnsavedProtocol(aFile)">-->
+<!--                                                    <i class="glyphicon glyphicon-trash"></i>-->
+<!--                                                </button>-->
+<!--                                            </div>-->
+<!--                                        </div>-->
+<!--                                        <div *ngIf="icMeeting.protocol != null">-->
+<!--                                            <div class="col-md-10">-->
+<!--                                                <file-attachment-downloader fileId="{{icMeeting.protocol?.id}}"-->
+<!--                                                                            fileName="{{icMeeting.protocol?.fileName |  slice:0:55 }}"-->
+<!--                                                                            fileType="IC_PROTOCOL">-->
+<!--                                                </file-attachment-downloader>-->
+<!--                                            </div>-->
+<!--                                            <div class="col-md-2">-->
+<!--                                                <button class="btn btn-xs pull-left"  (click)="deleteProtocol()" *ngIf="icMeeting.protocol.id > 0 && canEdit()">-->
+<!--                                                    <i class="glyphicon glyphicon-trash"></i>-->
+<!--                                                </button>-->
+<!--                                            </div>-->
+<!--                                        </div>-->
+<!--                                    </td>-->
+                                <td>&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td>3.</td>
+                                <td>Bulletin</td>
+                                <td (click)="exportBulletin()">
+                                    <img src="../../../../public/img/ms_word.png" height="25" width="25" *ngIf="icMeeting.id > 0"/>
+                                </td>
+                                <td>
+                                    &nbsp;
+                                </td>
+                                <td>&nbsp;</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="row top-buffer">
+                        <div class="col-md-12">
+                            <button type="button" class="btn btn-danger pull-left" name="deleteIC" (click)="deleteICMeeting()" *ngIf="canDelete() && icMeeting != null && icMeeting.id != null">
+                                Delete&nbsp;<span class="btn btn-danger btn-xs glyphicon glyphicon-trash"></span>
+                            </button>
+                            <button type="submit" class="btn btn-success pull-right" name="saveICMeeting" *ngIf="canEdit()" (click)="saveICMeeting()">Save</button>
+                        </div>
+                    </div>
+
+                    <div class="row top-buffer">
+                        <div class="col-md-12">
+                            <button type="button" class="btn btn-primary pull-right" name="unlock" *ngIf="canUnlock()" (click)="unlockForFinalize()">Open for finalize</button>
+                        </div>
+                    </div>
+                </form>
+                <div class="row top-buffer">
+                    <div class="col-md-12">
+                        <button type="button" class="btn btn-primary pull-right" *ngIf="canClose()" (click)="closeICMeeting()">
+                            Close&nbsp;<span class="glyphicon glyphicon-lock"></span>
+                        </button>
+                        <button type="button" class="btn btn-success pull-right" *ngIf="canReopen()" (click)="reopenICMeeting()">
+                            Re-open&nbsp;<span class="glyphicon glyphicon-lock"></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
+    <br>
+    <br>
+
+
+</div>

@@ -7,6 +7,7 @@ export class ICMeetingTopicSearchParams extends PageableSearchParams{
     icNumber: string;
     type: string;
 
+    activeTab: string;
     path: string;
 
 

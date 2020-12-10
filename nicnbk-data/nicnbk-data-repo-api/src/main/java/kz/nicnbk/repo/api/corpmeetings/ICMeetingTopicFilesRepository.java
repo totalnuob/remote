@@ -17,7 +17,8 @@ public interface ICMeetingTopicFilesRepository extends PagingAndSortingRepositor
      * @param tripMemoId
      * @return
      */
-    @Query("select m from ic_mmeting_topic_files m where m.icMeetingTopic.id=?1 and (m.file.deleted is null or m.file.deleted=false)")
+    @Query("select m from ic_mmeting_topic_files m where m.icMeetingTopic.id=?1 and (m.file.deleted is null or m.file.deleted=false) " +
+            " ORDER BY m.id ASC")
     List<ICMeetingTopicFiles> getFilesByMeetingId(Long tripMemoId);
 
     /**
@@ -26,6 +27,7 @@ public interface ICMeetingTopicFilesRepository extends PagingAndSortingRepositor
      * @param fileId
      * @return
      */
-    @Query("select m from ic_mmeting_topic_files m where m.file.id=?1  and (m.file.deleted is null or m.file.deleted=false)")
+    @Query("select m from ic_mmeting_topic_files m where m.file.id=?1  and (m.file.deleted is null or m.file.deleted=false)" +
+            " ORDER BY m.id ASC")
     ICMeetingTopicFiles getFilesByFileId(Long fileId);
 }

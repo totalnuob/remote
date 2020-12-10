@@ -2,6 +2,7 @@ package kz.nicnbk.service.api.employee;
 
 import kz.nicnbk.repo.model.employee.Employee;
 import kz.nicnbk.service.api.base.BaseService;
+import kz.nicnbk.service.dto.authentication.UserRoles;
 import kz.nicnbk.service.dto.common.EntitySaveResponseDto;
 import kz.nicnbk.service.dto.employee.*;
 
@@ -13,6 +14,16 @@ import java.util.List;
 public interface EmployeeService extends BaseService {
 
     List<EmployeeDto> findAll();
+
+    List<EmployeeDto> findActiveAll();
+
+    List<EmployeeDto> findICMembers();
+
+    List<EmployeeDto> findUsersWithRole(String role);
+
+    List<EmployeeDto> findByDepartmentAndActive(int id);
+
+    List<EmployeeDto> findEmployeesByRoleCodes(String[] codes);
 
     EmployeeDto getEmployeeById(Long empoyeeId);
 
@@ -31,6 +42,8 @@ public interface EmployeeService extends BaseService {
     EmployeeDto findActiveByUsernamePasswordCode(String username, String password, String otp);
 
     EmployeeDto findByUsername(String username);
+
+    boolean checkRoleByUsername(UserRoles role, String username);
 
     boolean setPassword(String username, String password, String user);
 

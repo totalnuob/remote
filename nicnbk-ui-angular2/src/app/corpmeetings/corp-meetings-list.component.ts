@@ -15,6 +15,7 @@ import {CorpMeetingSearchResults} from "./model/corp-meeting-search-results";
 import {ModuleAccessCheckerService} from "../authentication/module.access.checker.service";
 import {BaseDictionary} from "../common/model/base-dictionary";
 import {ICMeetingSearchResults} from "./model/ic-meeting-search-results";
+import {UpcomingEvent} from "./model/upcoming.event";
 import {ICMeeting} from "./model/ic-meeting";
 import {SaveResponse} from "../common/save-response";
 import {ICMeetingSearchParams} from "./model/ic-meeting-search-params";
@@ -33,7 +34,7 @@ declare var $:any
     providers: [],
 })
 export class CorpMeetingsListComponent extends CommonFormViewComponent implements OnInit {
-    activeTab = "IC_TOPICS";
+    activeTab = "UPCOMING";
     modalSuccessMessage: string;
     modalErrorMessage: string;
 
@@ -43,6 +44,11 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
     busy: Subscription;
     busyCreate: Subscription;
     public sub: any;
+
+    upcomingEventMonth;
+    upcomingEvents = [];
+    upcomingEventsCalendar = [];
+    selectedEvent = {};
 
     icTopicSearchParams = new ICMeetingTopicSearchParams();
     icTopics = [];
@@ -109,40 +115,29 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
                     //data1.forEach(element => {
                     //    this.icMeetingTopicTypes.push(element);
                     //});
-
                     this.sub = this.route
                         .params
                         .subscribe(params => {
+                            //console.log(params);
                             var page = 0;
-                            if (params['params'] != null) {
-                                this.icTopicSearchParams = JSON.parse(params['params']);
-
+                            this.activeTab = params['activeTab'];
+                            if (params['icMeetingParams'] != null) {
+                                // TODO: !!!!
+                                this.icMeetingsSearchParams = JSON.parse(params['icMeetingParams']);
+                            }
+                            if(this.activeTab === 'IC_LIST'){
+                                this.searchIC(page);
+                            }else if(this.activeTab === 'IC_TOPICS'){
                                 $('#fromDate').val(this.icTopicSearchParams.dateFrom);
                                 $('#toDate').val(this.icTopicSearchParams.dateTo);
 
                                 page = this.icTopicSearchParams.page > 0 ? this.icTopicSearchParams.page : 0;
-                                //this.busy = this.corpMeetingService.searchICMeetingTopics(this.icTopicSearchParams)
-                                //    .subscribe(
-                                //        (searchResult:ICMeetingTopicSearchResults) => {
-                                //            this.icTopics = searchResult.icMeetingTopics;
-                                //            this.icTopicSearchResult = searchResult;
-                                //        },
-                                //        error => this.errorMessage = "Failed to search IC meeting topics"
-                                //    );
-                            } else {
-
+                                this.searchICMeetingTopics(page)
+                            }else{
+                                this.searchICMeetingUpcomingEvents();
                             }
-                            if(this.icMeetingTopicTypes != null && this.icMeetingTopicTypes.length == 1){
-                                for(var i = 0; i < this.icMeetingTopicTypes.length; i++){
-                                    if(this.icMeetingTopicTypes[i].code != 'NONE'){
-                                        this.icTopicSearchParams.type = this.icMeetingTopicTypes[i].code;
-                                    }
-                                }
-                            }
-                            this.searchICMeetingTopics(page);
                         });
                 });
-
     }
 
     ngOnInit():any {
@@ -172,7 +167,50 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
         });
     }
 
+    searchICMeetingUpcomingEvents(){ // e.g. 09-2020
+        this.activeTab = "UPCOMING";
+        this.upcomingEventMonth = "SEPTEMBER 2020";
+
+        this.upcomingEventsCalendar = [];
+        this.upcomingEventsCalendar.push([{date: "31-08-2020", day: "31", isCurrentMonth: false, events: []},
+        {date: "01-09-2020", day: "01", isCurrentMonth: true, events: []}, {date: "02-09-2020", day: "02", isToday: true, isCurrentMonth: true, events: [
+        {name: "IC Meeting question submission due date", description: "This is a test 1 event"},
+        {name: "IC Meeting question submission due date", description: "This is a test 1 event"},
+        {name: "IC Meeting question submission due date", description: "This is a test 2 event"}]},
+        {date: "03-09-2020", day: "03", isCurrentMonth: true, events: []},
+        {date: "04-09-2020", day: "04", isCurrentMonth: true, events: []}, {date: "05-09-2020", day: "05", isCurrentMonth: true, isWeekend: true, events: []}, {date: "06-09-2020", day: "06", isCurrentMonth: true, isWeekend: true, events: []}, ]);
+        this.upcomingEventsCalendar.push([{date: "07-09-2020", day: "07", isCurrentMonth: true, events: []},
+                {date: "08-09-2020", day: "08", isCurrentMonth: true, events: []}, {date: "09-09-2020", day: "09", isCurrentMonth: true, events: []}, {date: "10-09-2020", day: "10", isCurrentMonth: true, events: []},
+                {date: "11-09-2020", day: "11", isCurrentMonth: true, events: []}, {date: "12-09-2020", day: "12", isCurrentMonth: true, isWeekend: true, events: []}, {date: "13-09-2020", day: "13", isCurrentMonth: true, isWeekend: true, events: []}, ]);
+        this.upcomingEventsCalendar.push([{date: "14-09-2020", day: "14", isCurrentMonth: true, events: []},
+                {date: "15-09-2020", day: "15", isCurrentMonth: true, events: []}, {date: "16-09-2020", day: "16", isCurrentMonth: true, events: []}, {date: "17-09-2020", day: "17", isCurrentMonth: true, events: []},
+                {date: "18-09-2020", day: "18", isCurrentMonth: true, events: []}, {date: "19-09-2020", day: "19", isCurrentMonth: true, isWeekend: true, events: []}, {date: "20-09-2020", day: "20", isCurrentMonth: true, isWeekend: true, events: []}, ]);
+        this.upcomingEventsCalendar.push([{date: "21-09-2020", day: "21", isCurrentMonth: true, events: [{name: "IC Meeting #258", description: "IC MEETINGS IS YO"}]},
+                {date: "22-09-2020", day: "22", isCurrentMonth: true, events: []}, {date: "23-09-2020", day: "23", isCurrentMonth: true, events: []}, {date: "24-09-2020", day: "24", isCurrentMonth: true, events: []},
+                {date: "25-09-2020", day: "25", isCurrentMonth: true, events: []}, {date: "26-09-2020", day: "26", isCurrentMonth: true, isWeekend: true, events: []}, {date: "27-09-2020", day: "27", isCurrentMonth: true, isWeekend: true, events: []}, ]);
+        this.upcomingEventsCalendar.push([{date: "26-09-2020", day: "26", isCurrentMonth: true, events: []},
+                {date: "27-09-2020", day: "27", isCurrentMonth: true, events: []}, {date: "28-09-2020", day: "28", isCurrentMonth: true, events: []}, {date: "29-09-2020", day: "29", isCurrentMonth: true, events: []},
+                {date: "30-09-2020", day: "30", isCurrentMonth: true, events: []}, {date: "01-10-2020", day: "01", isCurrentMonth: false, isWeekend: true, events: []}, {date: "02-10-2020", day: "02", isCurrentMonth: false, isWeekend: true, events: []}, ]);
+
+        console.log(this.upcomingEventsCalendar);
+    }
+
+
+    showEvent(event){
+        this.selectedEvent = event;
+        console.log(event);
+    }
+    getCalendarDayClass(day){
+        let classes = 'col-xs-12';
+        classes = !day.isWeekend ? classes + ' calendar-day' : classes + ' calendar-day-weekend';
+        classes = !day.isCurrentMonth ? classes + ' calendar-no-current-month' : classes;
+        classes = day.isToday ? classes + ' calendar-day-today' : classes;
+        //console.log(classes);
+        return classes;
+    }
+
     searchICMeetingTopics(page){
+
         this.activeTab = "IC_TOPICS";
 
         this.successMessage = null;
@@ -204,10 +242,10 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
             );
     }
 
-    navigate(meetingId){
+    navigate(topicId){
         this.icTopicSearchParams.path = '/corpMeetings';
         let params = JSON.stringify(this.icTopicSearchParams);
-        this.router.navigate(['/corpMeetings/edit/', meetingId, { params }]);
+        this.router.navigate(['/corpMeetings/edit/', topicId, { params }]);
     }
 
     clearSearchForm(){
@@ -291,17 +329,13 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
     }
 
     editICMeeting(icMeeting){
-        this.modalErrorMessage = null;
-        this.modalSuccessMessage = null;
-        if(icMeeting == null){
-            this.icMeeting = new ICMeeting();
-        }else {
-            this.icMeeting = icMeeting;
-        }
+        let params = JSON.stringify(this.icMeetingsSearchParams);
+        this.router.navigate(['/corpMeetings/ic/edit/', icMeeting.id, { params }]);
     }
 
     deleteICMeeting(icMeeting){
-        if(confirm("Are you sure want to delete?")) {
+        alert("TODO");
+        /*if(confirm("Are you sure want to delete?")) {
             this.busy = this.corpMeetingService.deleteICMeeting(icMeeting.id)
                 .subscribe(
                     (resposne) => {
@@ -314,7 +348,13 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
                         this.postAction(this.successMessage, this.errorMessage)
                     }
                 );
-        }
+        }*/
+    }
+    canEditICMeeting(icMeeting){
+        return this.moduleAccessChecker.checkAccessICMeetingsEdit();
+    }
+    canDeleteICMeeting(icMeeting){
+        return true;
     }
 
     showAddProtocolModal(icMeeting){
@@ -399,4 +439,106 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
         return (this.moduleAccessChecker.checkAccessAdmin() || this.moduleAccessChecker.checkAccessCorpMeetingsView());
     }
 
+    canViewIC(){
+        return this.moduleAccessChecker.checkAccessICMeetingsView();
+    }
+
+    canViewICTopics(){
+        return this.moduleAccessChecker.checkAccessICMeetingTopicsView();
+    }
+
+    getTopicClassByStatus(topic){
+        //console.log(topic);
+        if(topic.status != null){
+            if(topic.status === 'DRAFT'){
+                return 'label label-default';
+            }
+            if(topic.status === 'CLOSED'){
+                return 'label label-danger';
+            }
+            if(topic.status === 'LOCKED FOR IC'){
+                return 'label label-primary';
+            }
+            if(topic.status === 'TO BE FINALIZED'){
+                return 'label label-info';
+            }
+            if(topic.status === 'FINALIZED'){
+                return 'label label-success';
+            }
+            if(topic.status === 'UNDER REVIEW'){
+                return 'label label-warning';
+            }
+            if(topic.status === 'READY' || topic.status === 'APPROVED'){
+                return 'label label-success';
+            }
+        }
+        return 'label label-default';
+    }
+
+    /*getTopicStatus(topic){
+        if(!topic.published){
+            return 'DRAFT';
+        }else if(topic.closed){
+            return 'CLOSED';
+        }else{
+            // Check if sent to IC
+            if(topic.icMeeting.lockedByDeadline){
+                return 'LOCKED FOR IC';
+            }
+
+            // Check if to be finalized after IC
+            if(topic.icMeeting.unlockedForFinalize){
+                return 'TO BE FINALIZED';
+            }
+
+            if(topic.approveList == null || topic.approveList.length == 0){
+                return 'READY';
+            }else{
+                for(var i = 0; i < topic.approveList.length; i++){
+                    if(!topic.approveList[i].approved){
+                        return 'UNDER REVIEW';
+                    }
+                }
+                // Approved
+                return 'APPROVED';
+            }
+        }
+    }*/
+
+
+     getICClassByStatus(ic){
+        //console.log(ic);
+        if(ic.status === 'CLOSED'){
+            return 'label label-danger';
+        }else{
+            // Check if sent to IC
+            if(ic.status === 'LOCKED FOR IC'){
+                return 'label label-primary';
+            }
+            // Check if to be finalized after IC
+            if(ic.status === 'TO BE FINALIZED'){
+                return 'label label-info';
+            }
+            if(ic.status === 'FINALIZED'){
+                return 'label label-success';
+            }
+            return 'label label-default';
+        }
+    }
+
+    /*getICStatus(ic: ICMeeting){
+        if(ic.closed){
+            return 'CLOSED';
+        }else{
+            // Check if sent to IC
+            if(ic.lockedByDeadline){
+                return 'LOCKED FOR IC';
+            }
+            // Check if to be finalized after IC
+            if(ic.unlockedForFinalize){
+                return 'TO BE FINALIZED';
+            }
+            return 'OPEN';
+        }
+    }*/
 }

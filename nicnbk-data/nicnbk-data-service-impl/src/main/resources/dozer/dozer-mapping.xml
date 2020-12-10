@@ -401,6 +401,10 @@
             <a>updater</a>
             <b>updater</b>
         </field-exclude>
+        <field-exclude>
+            <a>place</a>
+            <b>place</b>
+        </field-exclude>
     </mapping>
 
     <mapping>

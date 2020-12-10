@@ -37,3 +37,13 @@ INSERT INTO role(id, code, name_en, name_ru, name_kz) VALUES(802, 'M2S2_VIEW', '
 
 INSERT INTO role(id, code, name_en, name_ru, name_kz) VALUES(901, 'LEGAL_EDIT', 'Legal - Editor', '', '');
 
+INSERT INTO role(id, code, name_en, name_ru, name_kz) VALUES(1001, 'IC_EDIT', 'IC Meeting - Editor', '', '');
+INSERT INTO role(id, code, name_en, name_ru, name_kz) VALUES(1002, 'IC_VIEW', 'IC Meeting - Viewer', '', '');
+INSERT INTO role(id, code, name_en, name_ru, name_kz) VALUES(1003, 'IC_T_EDIT', 'IC Meeting Topic - Editor', '', '');
+INSERT INTO role(id, code, name_en, name_ru, name_kz) VALUES(1004, 'IC_T_VIEW', 'IC Meeting Topic - Viewer', '', '');
+INSERT INTO role(id, code, name_en, name_ru, name_kz) VALUES(1005, 'IC_T_RESTR', 'IC Meeting Topic - Restricted', '', '');
+INSERT INTO role(id, code, name_en, name_ru, name_kz) VALUES(1006, 'IC_ADMIN', 'IC Meeting Topic - Admin', '', '');
+INSERT INTO role(id, code, name_en, name_ru, name_kz) VALUES(1007, 'IC_T_VIEWA', 'IC Meeting Topic - Viewer All', '', '');
+
+
+

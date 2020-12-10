@@ -1,8 +1,10 @@
 package kz.nicnbk.repo.model.corpmeetings;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import kz.nicnbk.repo.model.base.CreateUpdateBaseEntity;
 import kz.nicnbk.repo.model.base.DataConstraints;
 import kz.nicnbk.repo.model.employee.Employee;
+import kz.nicnbk.repo.model.files.Files;
 import kz.nicnbk.repo.model.tag.Tag;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -12,7 +14,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Created by zhambyl on 04-Aug-16.
+ * Created by magzumov.
  */
 
 @Entity
@@ -20,14 +22,24 @@ import java.util.Set;
 public class ICMeeting extends CreateUpdateBaseEntity{
 
     private String number;
-    private Boolean closed;
-
-    private Boolean deleted;
-
     @Basic
     @Temporal(TemporalType.DATE)
     @DateTimeFormat(pattern="dd-MM-yyyy")
     private Date date;
+    private String time;
+    private ICMeetingPlaceType place;
+
+    private Boolean closed;
+    private Boolean deleted;
+    private Boolean unlockedForFinalize;
+
+    private Files agenda;
+
+    public ICMeeting(){}
+
+    public ICMeeting(Long id){
+        this.setId(id);
+    }
 
     @Column(name="meeting_number", length=DataConstraints.C_TYPE_ENTITY_NAME, nullable = false)
     public String getNumber() {
@@ -63,4 +75,41 @@ public class ICMeeting extends CreateUpdateBaseEntity{
         this.deleted = deleted;
     }
 
+    @Column(name="time")
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
+    }
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "place_id")
+    public ICMeetingPlaceType getPlace() {
+        return place;
+    }
+
+    public void setPlace(ICMeetingPlaceType place) {
+        this.place = place;
+    }
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "agenda_file_id")
+    public Files getAgenda() {
+        return agenda;
+    }
+
+    public void setAgenda(Files agenda) {
+        this.agenda = agenda;
+    }
+
+    @Column(name="unlocked_for_finalize")
+    public Boolean getUnlockedForFinalize() {
+        return unlockedForFinalize;
+    }
+
+    public void setUnlockedForFinalize(Boolean unlockedForFinalize) {
+        this.unlockedForFinalize = unlockedForFinalize;
+    }
 }

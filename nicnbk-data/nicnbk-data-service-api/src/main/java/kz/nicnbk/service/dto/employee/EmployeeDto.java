@@ -2,6 +2,7 @@ package kz.nicnbk.service.dto.employee;
 
 import kz.nicnbk.common.service.model.BaseDictionaryDto;
 import kz.nicnbk.common.service.model.BaseEntityDto;
+import kz.nicnbk.common.service.util.StringUtils;
 import kz.nicnbk.repo.model.employee.Employee;
 
 import java.util.Date;
@@ -17,6 +18,11 @@ public class EmployeeDto extends BaseEntityDto<Employee> {
     private String patronymic;
     private Date birthDate;
     private PositionDto position;
+
+    private String lastNameRu;
+    private String firstNameRu;
+    private String patronymicRu;
+    private String lastNameRuPossessive;
 
     private Boolean active;
     private String username;
@@ -95,5 +101,68 @@ public class EmployeeDto extends BaseEntityDto<Employee> {
 
     public void setMfaEnabled(Boolean mfaEnabled) {
         this.mfaEnabled = mfaEnabled;
+    }
+
+    public String getLastNameRu() {
+        return lastNameRu;
+    }
+
+    public void setLastNameRu(String lastNameRu) {
+        this.lastNameRu = lastNameRu;
+    }
+
+    public String getFirstNameRu() {
+        return firstNameRu;
+    }
+
+    public void setFirstNameRu(String firstNameRu) {
+        this.firstNameRu = firstNameRu;
+    }
+
+    public String getPatronymicRu() {
+        return patronymicRu;
+    }
+
+    public void setPatronymicRu(String patronymicRu) {
+        this.patronymicRu = patronymicRu;
+    }
+
+    public String getLastNameRuPossessive() {
+        return lastNameRuPossessive;
+    }
+
+    public void setLastNameRuPossessive(String lastNameRuPossessive) {
+        this.lastNameRuPossessive = lastNameRuPossessive;
+    }
+
+    public String getFullNamePossessiveInitialsRu(){
+        if(StringUtils.isNotEmpty(this.lastNameRuPossessive) && StringUtils.isNotEmpty(this.firstNameRu) && StringUtils.isNotEmpty(this.patronymicRu)){
+            return this.lastNameRuPossessive + " " + this.firstNameRu.charAt(0) + "." + this.patronymicRu.charAt(0) + '.';
+        }else{
+            return getFullNameInitialsRu();
+        }
+    }
+
+    public String getFullNameInitialsRu(){
+        if(StringUtils.isNotEmpty(this.lastNameRu) && StringUtils.isNotEmpty(this.firstNameRu) && StringUtils.isNotEmpty(this.patronymicRu)){
+            return this.lastNameRu + " " + this.firstNameRu.charAt(0) + "." + this.patronymicRu.charAt(0) + '.';
+        }else if(StringUtils.isNotEmpty(this.lastNameRu) && StringUtils.isNotEmpty(this.firstNameRu)){
+            return this.lastNameRu + " " + this.firstNameRu.charAt(0) + ".";
+        }else if(StringUtils.isNotEmpty(this.lastNameRu)){
+            return this.lastNameRu;
+        }
+        return null;
+    }
+
+    public String getFullPositionRu(){
+        if(this.position != null) {
+            if (StringUtils.isNotEmpty(this.position.getNameRu()) && this.position.getDepartment() != null &&
+                    StringUtils.isNotEmpty(this.position.getDepartment().getNameUsedWithPositionRu())) {
+                return this.position.getNameRu() + " " + this.position.getDepartment().getNameUsedWithPositionRu();
+            } else if (StringUtils.isNotEmpty(this.position.getNameRu())) {
+                return this.position.getNameRu();
+            }
+        }
+        return null;
     }
 }

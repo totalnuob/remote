@@ -94,5 +94,8 @@ public interface LookupService extends BaseService {
     boolean deleteMatchingLookupByTypeAndId(String type, Long id, String username);
 
     List<BaseDictionaryDto> getICMeetingTopicTypes();
+    List<BaseDictionaryDto> getICMeetingAbsenceTypes();
+    List<BaseDictionaryDto> getICMeetingPlaceTypes();
+    List<BaseDictionaryDto> getICMeetingVoteTypes();
 }
 

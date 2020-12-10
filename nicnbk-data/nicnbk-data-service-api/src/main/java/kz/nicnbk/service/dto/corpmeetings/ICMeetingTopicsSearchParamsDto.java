@@ -22,11 +22,13 @@ public class ICMeetingTopicsSearchParamsDto implements BaseDto {
 
     private String searchText;
     private String icNumber;
-    private String type;
+    //private String type;
 
     /* Pagination */
     private int page;
     private int pageSize;
+
+    private String username;
 
 
     public int getPage() {
@@ -97,20 +99,28 @@ public class ICMeetingTopicsSearchParamsDto implements BaseDto {
         this.icNumber = icNumber;
     }
 
-    public String getType() {
-        return type;
+    public String getUsername() {
+        return username;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setUsername(String username) {
+        this.username = username;
     }
+
+    //    public String getType() {
+//        return type;
+//    }
+//
+//    public void setType(String type) {
+//        this.type = type;
+//    }
 
     /**
      * Returns true if no search parameters are specified, false otherwise.
      * @return - true/false
      */
     public boolean isEmpty(){
-        return  StringUtils.isEmpty(this.searchText) && StringUtils.isEmpty(this.icNumber) && StringUtils.isEmpty(this.type)
+        return  StringUtils.isEmpty(this.searchText) && StringUtils.isEmpty(this.icNumber) /*&& StringUtils.isEmpty(this.type)*/
                 && this.dateFrom == null && this.dateTo == null;
     }
 
@@ -125,7 +135,7 @@ public class ICMeetingTopicsSearchParamsDto implements BaseDto {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
         params.append(searchText != null ? "searchText=" + searchText + "&"  : "");
         params.append(icNumber != null ? "icNumber=" + icNumber + "&"  : "");
-        params.append(type != null ? "type=" + type + "&"  : "");
+        //params.append(type != null ? "type=" + type + "&"  : "");
         params.append(dateFrom != null ? "dateFrom=" + simpleDateFormat.format(dateFrom) + "&"  : "");
         params.append(dateTo != null ? "dateTo=" + simpleDateFormat.format(dateTo) + "&"  : "");
         return params.toString();
