@@ -1,6 +1,6 @@
 package kz.nicnbk.service.dto.bloomberg;
 
-public class CurrencyFieldJSONDataDto {
+public class FieldDataDto {
     private String date;
     private String value;
 
