@@ -1,12 +1,26 @@
+import {ICMeetingTopic} from "ic-meeting-topic";
+
 export class ICMeeting{
     id: number;
     date: string;
+    time: string;
+    place: string;
     number: string;
 
-    numberOfTopics: number;
+    //numberOfTopics: number;
 
-    protocolFileId: number;
-    protocolFileName: string;
+    attendees: [];
+    invitees: [];
+
+    questions: ICMeetingTopic[];
+
+    //protocolFileId: number;
+    //protocolFileName: string;
 
     closed: boolean;
+    lockedByDeadline: boolean;
+    unlockedForFinalize: boolean;
+
+    closeable: boolean;
+
 }

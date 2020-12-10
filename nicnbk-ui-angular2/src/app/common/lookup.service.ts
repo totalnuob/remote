@@ -70,6 +70,11 @@ import {SEARCH_NIC_REPORTING_CHART_OF_ACCOUNTS_URL} from "./lookup.service.url";
 import {DELETE_LOOKUP_VALUE_BY_TYPE_URL} from "./lookup.service.url";
 import {DELETE_MATCHING_LOOKUP_VALUE_BY_TYPE_URL} from "./lookup.service.url";
 import {IC_MEETING_TOPIC_TYPES_URL} from "./lookup.service.url";
+import {IC_MEETING_ABSENCE_TYPES_URL} from "./lookup.service.url";
+import {IC_MEETING_PLACE_TYPES_URL} from "./lookup.service.url";
+import {IC_MEETING_VOTE_TYPES_URL} from "./lookup.service.url";
+import {TAGS_BY_TYPE_GET_URL} from "./lookup.service.url";
+import {TAGS_SAVE_URL} from "./lookup.service.url";
 import {BENCHMARK_TYPE_URL} from "./lookup.service.url";
 import {SEARCH_BENCHMARKS_URL} from "./lookup.service.url";
 import {SAVE_BENCHMARK_URL} from "./lookup.service.url";
@@ -629,7 +634,35 @@ export class LookupService extends CommonService{
             .catch(this.handleErrorResponse);
     }
 
+    getICMeetingAbsenceTypes(){
+        return this.http.get(IC_MEETING_ABSENCE_TYPES_URL, this.getOptionsWithCredentials())
+            .map(this.extractDataList)
+            .catch(this.handleErrorResponse);
+    }
 
+    getICMeetingPlaceTypes(){
+        return this.http.get(IC_MEETING_PLACE_TYPES_URL, this.getOptionsWithCredentials())
+            .map(this.extractDataList)
+            .catch(this.handleErrorResponse);
+    }
 
+    getICMeetingVoteTypes(){
+        return this.http.get(IC_MEETING_VOTE_TYPES_URL, this.getOptionsWithCredentials())
+            .map(this.extractDataList)
+            .catch(this.handleErrorResponse);
+    }
+
+    getAvailableTagsByType(type): Observable<BaseDictionary[]>{
+        return this.http.get(TAGS_BY_TYPE_GET_URL + type, this.getOptionsWithCredentials())
+                    .map(this.extractDataList)
+                    .catch(this.handleErrorResponse);
+    }
+
+    saveTag(tag): Observable<any>{
+        let body = JSON.stringify(tag);
+        return this.http.post(TAGS_SAVE_URL, body, this.getOptionsWithCredentials())
+                    .map(this.extractDataList)
+                    .catch(this.handleErrorResponse);
+    }
 
 }

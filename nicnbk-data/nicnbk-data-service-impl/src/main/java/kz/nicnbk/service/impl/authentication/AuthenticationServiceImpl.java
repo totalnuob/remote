@@ -47,6 +47,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                     }
                     authenticatedUserDto.setRoles(roles);
                 }
+                authenticatedUserDto.setPosition(employeeDto.getPosition());
                 logger.info("Successfully authenticated: username=" + username);
                 return authenticatedUserDto;
             }
@@ -57,6 +58,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     // TODO: change ROLE.CODE field size and remove this conversion, store long code
+    // TODO: or store converted long name in the database in separate field
     private String convertToOutputRoleName(String roleName){
         switch(roleName){
             case "ADMIN":
@@ -123,6 +125,20 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 return "ROLE_M2S2_VIEWER";
             case "M2S2_EDIT":
                 return "ROLE_M2S2_EDITOR";
+            case "IC_EDIT":
+                return "ROLE_IC_EDITOR";
+            case "IC_VIEW":
+                return "ROLE_IC_VIEWER";
+            case "IC_T_EDIT":
+                return "ROLE_IC_TOPIC_EDITOR";
+            case "IC_T_VIEW":
+                return "ROLE_IC_TOPIC_VIEWER";
+            case "IC_T_VIEWA":
+                return "ROLE_IC_TOPIC_VIEWER_ALL";
+            case "IC_T_RESTR":
+                return "ROLE_IC_TOPIC_RESTR";
+            case "IC_ADMIN":
+                return "ROLE_IC_ADMIN";
             default:
                 return null;
         }

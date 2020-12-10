@@ -4,10 +4,7 @@ import kz.nicnbk.repo.model.base.BaseEntity;
 import kz.nicnbk.repo.model.files.Files;
 import kz.nicnbk.repo.model.tripmemo.TripMemo;
 
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 
 /**
  * Created by magzumov on 04-Aug-16.
@@ -18,16 +15,20 @@ public class ICMeetingTopicFiles extends BaseEntity {
 
     private ICMeetingTopic icMeetingTopic;
     private Files file;
+    private String customName;
+    private boolean update;
 
     public ICMeetingTopicFiles(){}
 
-    public ICMeetingTopicFiles(Long icMeetingTopicId, Long fileId){
+    public ICMeetingTopicFiles(Long icMeetingTopicId, Long fileId, String customName, boolean update){
         ICMeetingTopic icMeetingTopic = new ICMeetingTopic();
         icMeetingTopic.setId(icMeetingTopicId);
         Files file = new Files();
         file.setId(fileId);
         this.icMeetingTopic = icMeetingTopic;
         this.file = file;
+        this.customName = customName;
+        this.update = update;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -48,5 +49,23 @@ public class ICMeetingTopicFiles extends BaseEntity {
 
     public void setFile(Files file) {
         this.file = file;
+    }
+
+    @Column(name="custom_name")
+    public String getCustomName() {
+        return customName;
+    }
+
+    public void setCustomName(String customName) {
+        this.customName = customName;
+    }
+
+    @Column(name="update", nullable = false)
+    public boolean isUpdate() {
+        return update;
+    }
+
+    public void setUpdate(boolean update) {
+        this.update = update;
     }
 }

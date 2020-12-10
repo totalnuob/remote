@@ -22,6 +22,8 @@ public class ICMeetingsSearchParamsDto implements BaseDto {
     @DateTimeFormat(pattern="dd-MM-yyyy")
     private Date dateTo;
 
+    //private String searchText;
+
     /* Pagination */
     private int page;
     private int pageSize;
@@ -78,6 +80,7 @@ public class ICMeetingsSearchParamsDto implements BaseDto {
     public void setDateTo(Date dateTo) {
         this.dateTo = dateTo;
     }
+
 
     /**
      * Returns true if no search parameters are specified, false otherwise.

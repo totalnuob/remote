@@ -76,7 +76,7 @@ public class EmployeeServiceImpl implements EmployeeService{
     public List<EmployeeDto> findAll(){
         try {
             List<EmployeeDto> dtoList = new ArrayList<>();
-            Iterator<Employee> entities = this.employeeRepository.findAll().iterator();
+            Iterator<Employee> entities = this.employeeRepository.findAll(new Sort(Sort.Direction.ASC, "firstName")).iterator();
             while (entities.hasNext()) {
                 EmployeeDto employeeDto = this.employeeEntityConverter.disassemble(entities.next());
                 dtoList.add(employeeDto);
@@ -86,6 +86,104 @@ public class EmployeeServiceImpl implements EmployeeService{
             logger.error("Failed to load full employee list", ex);
         }
         return null;
+    }
+
+    @Override
+    public List<EmployeeDto> findActiveAll(){
+        try {
+            List<EmployeeDto> dtoList = new ArrayList<>();
+            Iterator<Employee> entities = this.employeeRepository.findAll(new Sort(Sort.Direction.ASC, "firstName")).iterator();
+            while (entities.hasNext()) {
+                EmployeeDto employeeDto = this.employeeEntityConverter.disassemble(entities.next());
+                dtoList.add(employeeDto);
+            }
+            return dtoList;
+        }catch (Exception ex){
+            logger.error("Failed to load full employee list", ex);
+        }
+        return null;
+    }
+
+    @Override
+    public List<EmployeeDto> findICMembers(){
+        try {
+            List<EmployeeDto> dtoList = findEmployeesByRoleCode(UserRoles.IC_MEMBER.getCode());
+            return dtoList;
+        }catch (Exception ex){
+            logger.error("Failed to load full employee list", ex);
+        }
+        return null;
+    }
+
+    @Override
+    public List<EmployeeDto> findUsersWithRole(String role){
+        try {
+            List<EmployeeDto> dtoList = findEmployeesByRoleCode(role);
+            return dtoList;
+        }catch (Exception ex){
+            logger.error("Failed to load full employee list", ex);
+        }
+        return null;
+    }
+
+    @Override
+    public List<EmployeeDto> findByDepartmentAndActive(int departmentId){
+        try {
+            List<EmployeeDto> dtoList = new ArrayList<>();
+            List<Employee> entities = this.employeeRepository.findByPositionDepartmentIdAndActive(departmentId, true);
+            for(Employee employee: entities) {
+                EmployeeDto employeeDto = this.employeeEntityConverter.disassemble(employee);
+                dtoList.add(employeeDto);
+            }
+            return dtoList;
+        }catch (Exception ex){
+            logger.error("Failed to load employee list by department", ex);
+        }
+        return null;
+    }
+
+
+    private List<EmployeeDto> findEmployeesByRoleCode(String code){
+        List<EmployeeDto> icList = new ArrayList<>();
+        List<EmployeeDto> allEmployees = findAll();
+        if(allEmployees != null){
+            for(EmployeeDto employeeDto: allEmployees){
+                if(employeeDto.getRoles() != null){
+                    for(BaseDictionaryDto role: employeeDto.getRoles()){
+                        if(role.getCode() != null && role.getCode().equalsIgnoreCase(code)){
+                            icList.add(employeeDto);
+                        }
+                    }
+                }
+            }
+        }
+        return icList;
+    }
+
+    @Override
+    public List<EmployeeDto> findEmployeesByRoleCodes(String[] codes){
+        List<EmployeeDto> employeeList = new ArrayList<>();
+        List<EmployeeDto> allEmployees = findAll();
+        if(allEmployees != null && codes != null){
+            for(EmployeeDto employeeDto: allEmployees){
+                boolean added = false;
+                if(employeeDto.getRoles() != null){
+                    for(BaseDictionaryDto role: employeeDto.getRoles()){
+                        for(String code: codes) {
+                            if (role.getCode() != null && role.getCode().equalsIgnoreCase(code)) {
+                                employeeList.add(employeeDto);
+                                added = true;
+                                break;
+                            }
+                        }
+                        if(added){
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        return employeeList;
     }
 
     @Override
@@ -200,6 +298,11 @@ public class EmployeeServiceImpl implements EmployeeService{
                 entity.setLastName(employeeFullDto.getLastName());
                 entity.setBirthDate(employeeFullDto.getBirthDate());
                 entity.setPatronymic(employeeFullDto.getPatronymic());
+
+                entity.setLastNameRu(employeeFullDto.getLastNameRu());
+                entity.setFirstNameRu(employeeFullDto.getFirstNameRu());
+                entity.setPatronymicRu(employeeFullDto.getPatronymicRu());
+                entity.setLastNameRuPossessive(employeeFullDto.getLastNameRuPossessive());
 
             }
             Position position = null;
@@ -415,6 +518,19 @@ public class EmployeeServiceImpl implements EmployeeService{
     }
 
     @Override
+    public boolean checkRoleByUsername(UserRoles role, String username){
+        Employee employee = this.employeeRepository.findByUsername(username);
+        if(employee != null && employee.getRoles() != null && role != null){
+            for(Role aRole: employee.getRoles()){
+                if(aRole.getCode().equalsIgnoreCase(role.getCode())){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    @Override
     public boolean setPassword(String username, String password, String user){
         try {
             Employee employee = this.employeeRepository.findByUsername(username);
@@ -473,8 +589,7 @@ public class EmployeeServiceImpl implements EmployeeService{
                 PositionDto positionDto = new PositionDto(entity.getId(), entity.getCode(), entity.getNameRu(),
                         entity.getNameEn(), entity.getNameKz(), null);
                 if(entity.getDepartment() != null){
-                    positionDto.setDepartment(new BaseDictionaryDto(entity.getDepartment().getCode(), entity.getDepartment().getNameEn(),
-                            entity.getDepartment().getNameRu(), entity.getDepartment().getNameKz()));
+                    positionDto.setDepartment(new DepartmentDto(entity.getDepartment()));
                 }
                 positions.add(positionDto);
             }

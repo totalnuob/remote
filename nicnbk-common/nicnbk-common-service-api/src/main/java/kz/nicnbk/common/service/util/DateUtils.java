@@ -54,6 +54,12 @@ public class DateUtils {
         return calendar.get(Calendar.DAY_OF_MONTH);
     }
 
+    public static int getDayOfWeek(Date date){
+        Calendar calendar = new GregorianCalendar();
+        calendar.setTime(date);
+        return calendar.get(Calendar.DAY_OF_WEEK);
+    }
+
     public static Date getDate(String date){
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy");
         try {
@@ -111,6 +117,14 @@ public class DateUtils {
             return null;
         }
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy");
+        return simpleDateFormat.format(date);
+    }
+
+    public static String getDateFormattedWithTime(Date date){
+        if(date == null){
+            return null;
+        }
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
         return simpleDateFormat.format(date);
     }
 
@@ -284,6 +298,21 @@ public class DateUtils {
         return  dateRu.replace("г.", "года");
     }
 
+    public static String getDateRussianTextualDate(Date date){
+        //int day = getDay(date);
+        int month = getMonth(date);
+        int year = getYear(date);
+        int day = getDay(date);
+
+        month = month + 1;
+
+        String dateRu = DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL).withLocale(new Locale("ru")).format(LocalDate.of(year, month, day));
+        if(dateRu != null && dateRu.startsWith("1 ")){
+            dateRu = "0" + dateRu;
+        }
+        return  dateRu.replace("г.", "года");
+    }
+
     public static String getDateEnglishTextualDate(Date date){
         int day = getDay(date);
         int month = getMonth(date);
@@ -302,6 +331,18 @@ public class DateUtils {
         return sdf.format(date);
     }
 
+    public static Date getDateWithTime(Date date,String time){
+        String fullDate = getDateFormatted(date) + " " + time;
+        String format = "dd.MM.yyyy HH:mm";
+        SimpleDateFormat sdf = new SimpleDateFormat(format, Locale.ENGLISH);
+        try{
+            return sdf.parse(fullDate);
+        }catch (ParseException ex){
+            //
+        }
+        return null;
+    }
+
     public static boolean isJanuary(Date date){
         return date != null && getMonth(date) == 0;
     }
@@ -317,6 +358,27 @@ public class DateUtils {
         Calendar c = Calendar.getInstance();
         c.setTime(referenceDate);
         c.add(Calendar.DAY_OF_MONTH, days);
+        return c.getTime();
+    }
+
+    public static Date moveDateByHours(Date referenceDate, int days, boolean skipWeekend){
+        Calendar c = Calendar.getInstance();
+        c.setTime(referenceDate);
+        if(days > 0) {
+            for (int i = 1; i <= days;) {
+                c.add(Calendar.DAY_OF_MONTH, 1);
+                if(getDayOfWeek(c.getTime()) != 1 && getDayOfWeek(c.getTime()) !=7 ){
+                    i ++;
+                }
+            }
+        }else if(days < 0){
+            for (int i = -1; i >= days;) {
+                c.add(Calendar.DAY_OF_MONTH, -1);
+                if(getDayOfWeek(c.getTime()) != 1 && getDayOfWeek(c.getTime()) !=7 ){
+                    i --;
+                }
+            }
+        }
         return c.getTime();
     }
 

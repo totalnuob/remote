@@ -20,6 +20,11 @@ public class Employee extends BaseEntity {
     private Date birthDate;
     private Position position;
 
+    private String lastNameRu;
+    private String firstNameRu;
+    private String patronymicRu;
+    private String lastNameRuPossessive;
+
     private String username;
     private String salt;
     private String password;
@@ -166,5 +171,41 @@ public class Employee extends BaseEntity {
 
     public void setSecret(String secret) {
         this.secret = secret;
+    }
+
+    @Column(name="lastname_ru")
+    public String getLastNameRu() {
+        return lastNameRu;
+    }
+
+    public void setLastNameRu(String lastNameRu) {
+        this.lastNameRu = lastNameRu;
+    }
+
+    @Column(name="firstname_ru")
+    public String getFirstNameRu() {
+        return firstNameRu;
+    }
+
+    public void setFirstNameRu(String firstNameRu) {
+        this.firstNameRu = firstNameRu;
+    }
+
+    @Column(name="patronymic_ru")
+    public String getPatronymicRu() {
+        return patronymicRu;
+    }
+
+    public void setPatronymicRu(String patronymicRu) {
+        this.patronymicRu = patronymicRu;
+    }
+
+    @Column(name="lastname_ru_possessive")
+    public String getLastNameRuPossessive() {
+        return lastNameRuPossessive;
+    }
+
+    public void setLastNameRuPossessive(String lastNameRuPossessive) {
+        this.lastNameRuPossessive = lastNameRuPossessive;
     }
 }

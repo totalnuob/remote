@@ -22,6 +22,13 @@ public interface ICMeetingsRepository extends PagingAndSortingRepository<ICMeeti
     Page<ICMeeting> searchAll(Pageable pageable);
 
     @Query("select e from ICMeeting e where " +
+            " (e.date IS NOT NULL AND e.date >= ?1 AND e.date <= ?2) " +
+            " AND (e.closed is null or e.closed=false)" +
+            " AND (e.deleted is null or e.deleted=false)" +
+            " ORDER BY e.number DESC")
+    List<ICMeeting> getOpenICMeetingsWithinDates(Date dateFrom, Date dateTo);
+
+    @Query("select e from ICMeeting e where " +
             " (e.number=?1 or ?1 is null)" +
             " and (e.date >= ?2 AND e.date <= ?3) " +
             " and (e.deleted is null or e.deleted=false)" +

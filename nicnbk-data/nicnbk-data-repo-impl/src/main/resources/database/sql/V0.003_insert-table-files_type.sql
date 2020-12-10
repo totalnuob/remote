@@ -43,6 +43,9 @@ INSERT INTO files_type(id, code, name_en, name_ru, name_kz, catalog) VALUES(36, 
 
 INSERT INTO files_type(id, code, name_en, name_ru, name_kz, catalog) VALUES(37, 'NB_REP_ITD', 'NBRK Reporting Singularity Investment Data Final', '', '', 'reporting/nbrk');
 
+INSERT INTO files_type(id, code, name_en, name_ru, name_kz, catalog) VALUES(38, 'IC_EXPNOTE', 'IC Meeting Explanatory Note File', '', '', 'ic_meeting');
+INSERT INTO files_type(id, code, name_en, name_ru, name_kz, catalog) VALUES(39, 'IC_AGENDA', 'IC Meeting Agenda File', '', '', 'ic_meeting');
+
 
 
 

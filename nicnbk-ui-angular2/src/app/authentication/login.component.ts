@@ -49,9 +49,9 @@ export class LoginComponent implements OnInit{
         this.authenticationService.login(this.user)
             .subscribe(
                 response => {
-
                     //this.runtimeCompiler.clearCache();
 
+                    localStorage.setItem("authenticatedUserPosition",  JSON.stringify(response.position));
                     localStorage.setItem("authenticatedUser", this.user.username);
                     localStorage.setItem("authenticatedUserRoles", JSON.stringify(response.roles));
 

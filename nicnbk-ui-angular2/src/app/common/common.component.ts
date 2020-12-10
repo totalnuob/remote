@@ -80,8 +80,7 @@ export class CommonFormViewComponent {
     }
 
     processErrorMessage(errorResponse){
-        ///console.log(errorResponse);
-        if(errorResponse.message){
+        if(errorResponse.message != null){
             this.errorMessage = errorResponse.message;
             this.successMessage = null;
         }else if(errorResponse.status){
@@ -98,6 +97,7 @@ export class CommonFormViewComponent {
             //this.errorMessage = "Error occurred when processing request";
         }
     }
+
 
     public getReportDateShortFormatted(reportDate){
         if(reportDate){

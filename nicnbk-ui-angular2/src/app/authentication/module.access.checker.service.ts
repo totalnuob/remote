@@ -10,6 +10,7 @@ import {ROLE_REPORTING_EDIT} from "./roles.constants";
 import {ROLE_CORPMEETINGS_EDIT} from "./roles.constants";
 import {ROLE_STRATEGY_RISKS_EDIT} from "./roles.constants";
 import {ROLE_IC_MEMBER} from "./roles.constants";
+import {ROLE_IC_ADMIN} from "./roles.constants";
 import {ROLE_USER_PROFILE_EDIT} from "./roles.constants";
 import {ROLE_MONITORING_EDIT} from "./roles.constants";
 import {ROLE_LOOKUPS_EDIT} from "./roles.constants";
@@ -20,6 +21,14 @@ import {ROLE_LEGAL_EDIT} from "./roles.constants";
 import {ROLE_STRATEGY_EDIT} from "./roles.constants";
 import {ROLE_RISKS_EDIT} from "./roles.constants";
 
+import {ROLE_IC_EDIT} from "./roles.constants";
+import {ROLE_IC_VIEW} from "./roles.constants";
+import {ROLE_IC_TOPIC_EDIT} from "./roles.constants";
+import {ROLE_IC_TOPIC_VIEW} from "./roles.constants";
+import {ROLE_IC_TOPIC_VIEW_ALL} from "./roles.constants";
+import {ROLE_IC_TOPIC_RESTR} from "./roles.constants";
+
+
 
 @Injectable()
 export class ModuleAccessCheckerService extends CommonService{
@@ -28,8 +37,6 @@ export class ModuleAccessCheckerService extends CommonService{
 
     constructor(){
         super();
-
-        // TODO: refactor string
         var rolesText = localStorage.getItem("authenticatedUserRoles");
         this.roles = JSON.parse(rolesText);
     }
@@ -140,7 +147,43 @@ export class ModuleAccessCheckerService extends CommonService{
 
 
     public checkAccessCorpMeetingsView(){
-        return this.checkAccessICMember() || this.checkAccess(ROLE_CORPMEETINGS_EDIT);
+        return this.checkAccess(ROLE_IC_EDIT) || this.checkAccess(ROLE_IC_VIEW) || this.checkAccess(ROLE_IC_TOPIC_EDIT)
+        || this.checkAccess(ROLE_IC_TOPIC_VIEW) || this.checkAccess(ROLE_IC_TOPIC_RESTR) || this.checkAccess(ROLE_IC_MEMBER)
+         || this.checkAccess(ROLE_IC_ADMIN);
+    }
+
+    public checkAccessICMeetingsView(){
+        return this.checkAccess(ROLE_IC_EDIT) || this.checkAccess(ROLE_IC_VIEW) || this.checkAccess(ROLE_IC_MEMBER)
+            || this.checkAccess(ROLE_IC_ADMIN);
+    }
+
+    public checkAccessICMeetingsEdit(){
+        return this.checkAccess(ROLE_IC_EDIT) || this.checkAccess(ROLE_IC_ADMIN);
+    }
+
+    public checkAccessICMeetingTopicsView(){
+        return this.checkAccess(ROLE_IC_TOPIC_EDIT) || this.checkAccess(ROLE_IC_TOPIC_VIEW_ALL)
+            || this.checkAccess(ROLE_IC_TOPIC_VIEW) || this.checkAccess(ROLE_IC_TOPIC_RESTR)
+            || this.checkAccess(ROLE_IC_MEMBER) || this.checkAccess(ROLE_IC_ADMIN);
+    }
+
+    public checkAccessICMeetingTopicsViewFull(){
+        return this.checkAccess(ROLE_IC_TOPIC_EDIT) || this.checkAccess(ROLE_IC_TOPIC_VIEW_ALL)
+            || this.checkAccess(ROLE_IC_MEMBER) || this.checkAccess(ROLE_IC_ADMIN);
+    }
+
+    public checkAccessICMeetingAdmin(){
+        return this.checkAccess(ROLE_IC_ADMIN);
+    }
+
+    public checkAccessICMeetingTopicsEdit(departmentId){
+        if(this.checkAccessAdmin() || this.checkAccess(ROLE_IC_ADMIN)){
+            return true;
+        }
+        var access = this.checkAccess(ROLE_IC_TOPIC_EDIT);
+        var userPosition = JSON.parse(localStorage.getItem("authenticatedUserPosition"));
+        var departmentOk = userPosition != null && userPosition.department != null && departmentId != null && userPosition.department.id == departmentId;
+        return access && departmentOk;
     }
 
     public checkAccessCorpMeetingsEdit(){
@@ -161,6 +204,8 @@ export class ModuleAccessCheckerService extends CommonService{
     public checkAccessRisksEditor(){
         return this.checkAccess(ROLE_RISKS_EDIT);
     }
+
+
 
 
     /**

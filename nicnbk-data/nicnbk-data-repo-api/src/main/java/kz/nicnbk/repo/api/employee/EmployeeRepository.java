@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
+
 /**
  * Created by magzumov on 02.08.2016.
  */
@@ -24,4 +26,9 @@ public interface EmployeeRepository extends PagingAndSortingRepository<Employee,
 
     @Query("SELECT e FROM  Employee e " )
     Page<Employee> findAll(Pageable pageable);
+
+    @Query("SELECT e FROM  Employee e WHERE e.active=true" )
+    List<Employee> findActiveAll();
+
+    List<Employee> findByPositionDepartmentIdAndActive(int departmentId, boolean active);
 }

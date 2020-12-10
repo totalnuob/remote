@@ -57,4 +57,12 @@ export class CommonService{
         let options = new RequestOptions({headers: headers, withCredentials: true });
         return options;
     }
+
+    public getHeadersMultipartOptionsWithCredentials(){
+        let headers = new Headers();
+        headers.append('Content-Type', 'multipart/form-data');
+        let options = new RequestOptions({headers: headers, withCredentials: true });
+        return options;
+    }
+
 }
