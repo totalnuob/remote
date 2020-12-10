@@ -49,7 +49,7 @@ public class NotificationGenerationServiceImpl {
                 for(ICMeetingDto icMeeting: icMeetings){
                     if(icMeeting.getTopics() != null && !icMeeting.getTopics().isEmpty()){
                         for(ICMeetingTopicDto topic: icMeeting.getTopics()){
-                            if(topic.getSpeaker() != null){
+                            if(topic.getSpeaker() != null && icMeeting.getDate() != null){
                                 String topicName = StringUtils.isNotEmpty(topic.getName()) ?
                                         ("'" + topic.getName().substring(0, Math.min(30,topic.getName().length())) + (topic.getName().length() > 30 ? "...'": "'")) : "";
                                 Date deadlineDate = DateUtils.moveDateByDays(icMeeting.getDate(), -CorpMeetingService.IC_MEETING_DEADLINE_DAYS);
