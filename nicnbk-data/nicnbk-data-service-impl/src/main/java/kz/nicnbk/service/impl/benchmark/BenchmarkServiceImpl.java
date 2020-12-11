@@ -265,7 +265,7 @@ public class BenchmarkServiceImpl implements BenchmarkService {
             Date date = DateUtils.getLastDayOfCurrentMonth(dateFrom);
             while(date.before(dateTo) || date.compareTo(dateTo) == 0) {
                 Date date1 = DateUtils.getLastDayOfCurrentMonth(date);
-                Date date2 = DateUtils.moveDateByDays(date1, 0 - daysRange);
+                Date date2 = DateUtils.moveDateByDays(date1, 0 - daysRange,false);
                 List<BenchmarkValueDto> matchingValues = getBenchmarkValuesForDatesAndType(date2, date1, benchmark);
                 if(matchingValues != null && !matchingValues.isEmpty()) {
                     Collections.sort(matchingValues);

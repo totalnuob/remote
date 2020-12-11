@@ -791,6 +791,10 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
             return false;
         }
         if(this.showUpdateBlock() && (this.icMeetingTopic.status === 'TO BE FINALIZED' || this.icMeetingTopic.status === 'FINALIZED')){
+            // check deadline
+            if(this.icMeetingTopic.icMeeting.updateLockedByDeadline){
+                return false;
+            }
             var departmentId = this.icMeetingTopic != null && this.icMeetingTopic.department != null ? this.icMeetingTopic.department.id : 0;
             if(this.moduleAccessChecker.checkAccessICMeetingTopicsEdit(departmentId)){
                 return true;
@@ -798,7 +802,6 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
         }
         return false;
     }
-
 
     saveUpd(){
         //alert("TODO: saveUpd()");

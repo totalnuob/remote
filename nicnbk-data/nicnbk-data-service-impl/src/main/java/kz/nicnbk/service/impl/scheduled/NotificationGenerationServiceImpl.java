@@ -52,7 +52,7 @@ public class NotificationGenerationServiceImpl {
                             if(topic.getSpeaker() != null && icMeeting.getDate() != null){
                                 String topicName = StringUtils.isNotEmpty(topic.getName()) ?
                                         ("'" + topic.getName().substring(0, Math.min(30,topic.getName().length())) + (topic.getName().length() > 30 ? "...'": "'")) : "";
-                                Date deadlineDate = DateUtils.moveDateByDays(icMeeting.getDate(), -CorpMeetingService.IC_MEETING_DEADLINE_DAYS);
+                                Date deadlineDate = DateUtils.moveDateByDays(icMeeting.getDate(), -CorpMeetingService.IC_MEETING_DEADLINE_DAYS,true);
                                 if(deadlineDate != null) {
                                     Date deadLine = DateUtils.getDateWithTime(deadlineDate, CorpMeetingService.IC_MEETING_DEADLINE_HOURS);
                                     if(deadLine != null){

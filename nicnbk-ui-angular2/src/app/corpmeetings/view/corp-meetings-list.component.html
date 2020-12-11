@@ -214,12 +214,16 @@
                             <div class="events" *ngFor = "let event of day.events" >
                                 <div class="event" data-toggle="modal" data-target="#eventModal">
                                     <span (click)="showEvent(event)">
-                                        <h4><span class="glyphicon glyphicon-exclamation-sign">&nbsp;</span>{{event.name}}</h4>
+                                        <h4>
+                                            <span *ngIf="event.alertType === 'WARNING'" class="glyphicon glyphicon-exclamation-sign" style="color:red; font-size: 15px">&nbsp;</span>
+                                            <span *ngIf="event.alertType === 'INFO'" class="glyphicon glyphicon-info-sign" style="color:#37c0ee; font-size: 15px">&nbsp;</span>
+                                            {{event.name}}
+                                        </h4>
                                     </span>
+
                                     <div class="desc">
                                         <p>{{event.description}}</p>
                                     </div>
-<!--                                    <div class="location"> <span class="glyphicon glyphicon-map-marker"></span> State St and Rt 5, Erie, Pa.</div>-->
                                     <div class="datetime"> <span class="glyphicon glyphicon-time"></span> {{event.time}}</div>
                                     <div class="attending">
                                         <span>TM</span>

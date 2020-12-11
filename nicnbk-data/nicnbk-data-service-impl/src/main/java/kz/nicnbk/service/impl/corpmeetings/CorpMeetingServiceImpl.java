@@ -1025,6 +1025,17 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
                     // IC Meeting must be unlocked for update
                     return false;
                 }
+                // check deadline
+                Date icDate = topicDto.getIcMeeting().getDate();
+                if(icDate != null){
+                    String time = topicDto.getIcMeeting().getTime() != null ? topicDto.getIcMeeting().getTime() : "9:00";
+                    Date icDateWithTime = DateUtils.getDateWithTime(icDate, time);
+                    if(icDateWithTime != null){
+                        if(DateUtils.moveDateByDays(icDateWithTime, 1, true).before(new Date())){
+                            return false;
+                        }
+                    }
+                }
                 // Check same dept
                 int creatorDeptId = topicDto.getDepartment() != null ? topicDto.getDepartment().getId() : 0;
                 int editorDeptId = editor != null && editor.getPosition() != null &&
@@ -2140,8 +2151,8 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
     @Override
     public List<ICMeetingDto> getICMeetingsWithDeadline(Date date) {
         List<ICMeetingDto> dtoList = new ArrayList<>();
-        Date dateFrom = DateUtils.getDateWithTime(DateUtils.moveDateByDays(date, CorpMeetingService.IC_MEETING_DEADLINE_DAYS + 1), "00:00");
-        Date dateTo = DateUtils.getDateWithTime(DateUtils.moveDateByDays(dateFrom, CorpMeetingService.IC_MEETING_DEADLINE_DAYS + 1), "23:59");
+        Date dateFrom = DateUtils.getDateWithTime(DateUtils.moveDateByDays(date, CorpMeetingService.IC_MEETING_DEADLINE_DAYS + 1, true), "00:00");
+        Date dateTo = DateUtils.getDateWithTime(DateUtils.moveDateByDays(dateFrom, CorpMeetingService.IC_MEETING_DEADLINE_DAYS + 1, true), "23:59");
         List<ICMeeting> icMeetings = this.icMeetingsRepository.getOpenICMeetingsWithinDates(dateFrom, dateTo);
         if(icMeetings != null && !icMeetings.isEmpty()){
             for(ICMeeting entity: icMeetings){
@@ -3537,6 +3548,40 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
             logger.error("Error reopneing IC meeting: id=" + id.longValue() + ", ]user]=" + username, ex);
         }
         return false;
+    }
+
+    @Override
+    public List<CorpMeetingUpcomingEventDto> getUpcomingEvents(String username){
+
+        // TODO: based on username?
+
+        List<CorpMeetingUpcomingEventDto> events = new ArrayList<>();
+        // get IC Meetings
+        ICMeetingsSearchParamsDto searchParams = new ICMeetingsSearchParamsDto();
+        searchParams.setDateFrom(DateUtils.getFirstDayOfCurrentMonth(new Date()));
+        searchParams.setDateTo(DateUtils.getLastDayOfCurrentMonth(new Date()));
+        searchParams.setPage(0);
+        searchParams.setPageSize(100);
+        ICMeetingsPagedSearchResult searchResult = searchICMeetings(searchParams);
+        if(searchResult != null && searchResult.getIcMeetings() != null && !searchResult.getIcMeetings().isEmpty()){
+            for(ICMeetingDto icMeetingDto: searchResult.getIcMeetings()){
+                CorpMeetingUpcomingEventDto event = new CorpMeetingUpcomingEventDto("IC # " + icMeetingDto.getNumber(), "");
+                event.setDate(icMeetingDto.getDate());
+                event.setAlertType("INFO"); // TODO: refactor
+                events.add(event);
+
+                Date deadlineDate = DateUtils.moveDateByDays(icMeetingDto.getDate(), -CorpMeetingService.IC_MEETING_DEADLINE_DAYS,true);
+                CorpMeetingUpcomingEventDto eventDeadline = new CorpMeetingUpcomingEventDto("Deadline for IC # " + icMeetingDto.getNumber(), "");
+                eventDeadline.setDescription("Deadline for submission - IC # " + icMeetingDto.getNumber() + " on " + DateUtils.getDateFormatted(deadlineDate));
+                eventDeadline.setDate(deadlineDate);
+                eventDeadline.setAlertType("WARNING");// TODO: refactor
+                events.add(eventDeadline);
+            }
+        }
+
+        // get Deadlines
+
+        return events;
     }
 
 
