@@ -266,8 +266,8 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
         this.upcomingEventsCalendar.push([{date: "26-09-2020", day: "26", isCurrentMonth: true, events: []},
                 {date: "27-09-2020", day: "27", isCurrentMonth: true, events: []}, {date: "28-09-2020", day: "28", isCurrentMonth: true, events: []}, {date: "29-09-2020", day: "29", isCurrentMonth: true, events: []},
                 {date: "30-09-2020", day: "30", isCurrentMonth: true, events: []}, {date: "01-10-2020", day: "01", isCurrentMonth: false, isWeekend: true, events: []}, {date: "02-10-2020", day: "02", isCurrentMonth: false, isWeekend: true, events: []}, ]);
-
-        console.log(this.upcomingEventsCalendar);
+        */
+        //console.log(this.upcomingEventsCalendar);
     }
 
 
