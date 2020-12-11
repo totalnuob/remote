@@ -117,4 +117,5 @@ public interface CorpMeetingService extends BaseService {
 
     boolean deleteICMeetingAgenda(Long icMeetingId, String username);
 
+    List<CorpMeetingUpcomingEventDto> getUpcomingEvents(String username);
 }

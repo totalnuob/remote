@@ -585,6 +585,16 @@ public class CorpMeetingsServiceREST extends CommonServiceREST{
         return buildDeleteResponseEntity(deleted);
     }
 
+    @PreAuthorize(IC_MEETING_OR_TOPIC_VIEWER)
+    @RequestMapping(value = "/CorpMeetings/upcoming", method = RequestMethod.GET)
+    public ResponseEntity<?> getUpcomingEvents() {
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
+
+        List<CorpMeetingUpcomingEventDto> events = corpMeetingService.getUpcomingEvents(username);
+        return buildNonNullResponse(events);
+    }
+
 //    @PreAuthorize(IC_MEETING_EDITOR)
 //    @ResponseBody
 //    @RequestMapping(value="/ICMeeting/protocol/delete/{meetingId}/{fileId}", method=RequestMethod.DELETE)

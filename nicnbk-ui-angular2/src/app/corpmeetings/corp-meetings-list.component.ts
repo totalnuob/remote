@@ -27,6 +27,8 @@ import 'rxjs/add/observable/forkJoin';
 
 declare var $:any
 
+var moment = require("moment");
+
 @Component({
     selector: 'corp-meetings-list',
     templateUrl: 'view/corp-meetings-list.component.html',
@@ -169,9 +171,82 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
 
     searchICMeetingUpcomingEvents(){ // e.g. 09-2020
         this.activeTab = "UPCOMING";
-        this.upcomingEventMonth = "SEPTEMBER 2020";
 
+        var now = new Date();
+        const month = now.toLocaleString('default', { month: 'long' });
+        this.upcomingEventMonth = month + " " + now.getFullYear();
         this.upcomingEventsCalendar = [];
+
+        var daysOfMonth = [];
+        var daysOfWeek = [];
+        for (var d = new Date(now.getFullYear(), now.getMonth(), 1); d.getMonth() == now.getMonth(); d.setDate(d.getDate() + 1)) {
+            var dayOfWeek = d.getDay() == 0 ? 7: d.getDay();
+            if(d.getDate() == 1 && dayOfWeek > 1){
+                var date = new Date(d);
+                var diff = dayOfWeek;
+                while(diff > 1){
+                    date.setDate(date.getDate() - (diff - 1));
+                    var pushDate = new Date(date);
+                    daysOfWeek.push({date: pushDate, day: pushDate.getDate(), isCurrentMonth: false, isWeekend: (dayOfWeek > 5), events: []});
+                    diff--;
+                }
+            }
+            daysOfWeek.push({date: new Date(d), day: d.getDate(), isCurrentMonth: true, isWeekend: (dayOfWeek > 5), events: []});
+             if(dayOfWeek == 7){
+                daysOfMonth.push(daysOfWeek);
+                daysOfWeek = [];
+             }
+        }
+        if(daysOfWeek.length != 7){
+            daysOfMonth.push(daysOfWeek);
+        }
+        //console.log(daysOfMonth);
+
+        if(daysOfMonth[daysOfMonth.length-1].length < 7){
+            var lastWeek = daysOfMonth[daysOfMonth.length-1];
+            var nextMonthDate = new Date(lastWeek[lastWeek.length-1].date);
+            var lastDay = nextMonthDate.getDay() == 0 ? 7 : nextMonthDate.getDay();
+            while(lastDay < 7){
+                nextMonthDate.setDate(nextMonthDate.getDate() + 1);
+                var dayOfWeek = nextMonthDate.getDay() == 0 ? 7 : nextMonthDate.getDay();
+                lastWeek.push({date: new Date(nextMonthDate), day: nextMonthDate.getDate(), isCurrentMonth: false,
+                                isWeekend: (dayOfWeek > 5), events: []})
+                lastDay++;
+            }
+        }
+        //console.log(daysOfMonth);
+
+        this.upcomingEventsCalendar = daysOfMonth;
+
+        this.busy = this.corpMeetingService.searchUpcomingEvents()
+                    .subscribe(
+                        events => {
+                            if(events != null && events.length > 0){
+                                for(var k = 0; k < events.length; k++){
+                                    var found = false;
+                                    for(var i = 0; !found && i < this.upcomingEventsCalendar.length; i++){
+                                        for(var j = 0; !found && j < this.upcomingEventsCalendar[i].length; j++){
+                                            var item = this.upcomingEventsCalendar[i][j];
+                                            // check date
+                                            var eventDate = moment(events[k].date, 'DD-MM-YYYY').toDate();
+                                            if(item.date.getTime() === eventDate.getTime()){
+                                                item.events.push(events[k]);
+                                                found = true;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        (error: ErrorResponse) => {
+                            this.errorMessage = "Error searching IC meeting topic";
+                            if(error && !error.isEmpty()){
+                                this.processErrorMessage(error);
+                            }
+                            this.postAction(null,  this.errorMessage);
+                        }
+                    );
+        /*
         this.upcomingEventsCalendar.push([{date: "31-08-2020", day: "31", isCurrentMonth: false, events: []},
         {date: "01-09-2020", day: "01", isCurrentMonth: true, events: []}, {date: "02-09-2020", day: "02", isToday: true, isCurrentMonth: true, events: [
         {name: "IC Meeting question submission due date", description: "This is a test 1 event"},
@@ -191,6 +266,7 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
         this.upcomingEventsCalendar.push([{date: "26-09-2020", day: "26", isCurrentMonth: true, events: []},
                 {date: "27-09-2020", day: "27", isCurrentMonth: true, events: []}, {date: "28-09-2020", day: "28", isCurrentMonth: true, events: []}, {date: "29-09-2020", day: "29", isCurrentMonth: true, events: []},
                 {date: "30-09-2020", day: "30", isCurrentMonth: true, events: []}, {date: "01-10-2020", day: "01", isCurrentMonth: false, isWeekend: true, events: []}, {date: "02-10-2020", day: "02", isCurrentMonth: false, isWeekend: true, events: []}, ]);
+        */
 
         console.log(this.upcomingEventsCalendar);
     }

@@ -354,10 +354,28 @@ public class DateUtils {
         return c.getTime();
     }
 
-    public static Date moveDateByDays(Date referenceDate, int days){
+    public static Date moveDateByDays(Date referenceDate, int days, boolean skipWeekend){
         Calendar c = Calendar.getInstance();
         c.setTime(referenceDate);
-        c.add(Calendar.DAY_OF_MONTH, days);
+        if(!skipWeekend) {
+            c.add(Calendar.DAY_OF_MONTH, days);
+        }else {
+            if (days > 0) {
+                for (int i = 1; i <= days; ) {
+                    c.add(Calendar.DAY_OF_MONTH, 1);
+                    if (getDayOfWeek(c.getTime()) != Calendar.SATURDAY && getDayOfWeek(c.getTime()) != Calendar.SUNDAY) {
+                        i++;
+                    }
+                }
+            } else if (days < 0) {
+                for (int i = -1; i >= days; ) {
+                    c.add(Calendar.DAY_OF_MONTH, -1);
+                    if (getDayOfWeek(c.getTime()) != Calendar.SATURDAY && getDayOfWeek(c.getTime()) != Calendar.SUNDAY) {
+                        i--;
+                    }
+                }
+            }
+        }
         return c.getTime();
     }
 

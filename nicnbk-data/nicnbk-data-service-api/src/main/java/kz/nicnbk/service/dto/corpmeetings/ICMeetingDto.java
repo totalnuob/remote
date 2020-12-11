@@ -146,9 +146,13 @@ public class ICMeetingDto extends CreateUpdateBaseEntityDto<ICMeeting> implement
         return isICMeetingLockedByDeadline(this.date);
     }
 
+    public boolean isUpdateLockedByDeadline(){
+        return isICMeetingUpdateLockedByDeadline(this.date,this.time);
+    }
+
     public static boolean isICMeetingLockedByDeadline(Date icDate){
         if(icDate != null){
-            Date deadlineDate = DateUtils.moveDateByDays(icDate, -CorpMeetingService.IC_MEETING_DEADLINE_DAYS);
+            Date deadlineDate = DateUtils.moveDateByDays(icDate, -CorpMeetingService.IC_MEETING_DEADLINE_DAYS, true);
             if(deadlineDate != null) {
                 Date deadLine = DateUtils.getDateWithTime(deadlineDate, CorpMeetingService.IC_MEETING_DEADLINE_HOURS);
                 if(deadLine != null){
@@ -157,6 +161,20 @@ public class ICMeetingDto extends CreateUpdateBaseEntityDto<ICMeeting> implement
                     }
                 }
             }
+        }
+        return false;
+    }
+
+    public static boolean isICMeetingUpdateLockedByDeadline(Date icDate, String icTime){
+        if(icDate != null){
+            String time = icTime != null ? icTime : "9:00";
+            Date icDateWithTime = DateUtils.getDateWithTime(icDate, time);
+            if(icDateWithTime != null){
+                if(DateUtils.moveDateByDays(icDateWithTime, 1, true).before(new Date())){
+                    return true;
+                }
+            }
+
         }
         return false;
     }

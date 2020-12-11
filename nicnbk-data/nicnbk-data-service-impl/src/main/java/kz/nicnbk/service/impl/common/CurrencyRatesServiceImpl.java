@@ -94,7 +94,7 @@ public class CurrencyRatesServiceImpl implements CurrencyRatesService {
                 return dto;
             }else{
 
-                Date newDateFormatted = DateUtils.getDateOnly(DateUtils.moveDateByDays(dateFormatted, -1));
+                Date newDateFormatted = DateUtils.getDateOnly(DateUtils.moveDateByDays(dateFormatted, -1, false));
                 sameMonth = DateUtils.getMonth(dateFormatted) == DateUtils.getMonth(newDateFormatted);
                 dateFormatted = newDateFormatted;
             }

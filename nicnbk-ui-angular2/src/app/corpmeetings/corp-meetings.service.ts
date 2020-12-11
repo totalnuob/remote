@@ -55,8 +55,7 @@ export class CorpMeetingService extends CommonService {
     private IC_MEETINGS_DELETE_URL = this.CORP_MEETINGS_BASE_URL + "ICMeeting/delete/";
     private IC_MEETING_CLOSE_URL = this.CORP_MEETINGS_BASE_URL + "ICMeeting/close/";
     private IC_MEETING_REOPEN_URL = this.CORP_MEETINGS_BASE_URL + "ICMeeting/reopen/";
-
-
+    private CORP_MEETING_UPCOMING_EVENTS_GET_URL = this.CORP_MEETINGS_BASE_URL + "CorpMeetings/upcoming/";
 
 
     constructor( private http: Http,
@@ -293,6 +292,11 @@ export class CorpMeetingService extends CommonService {
                 .catch(this.handleErrorResponse);
     }
 
+    searchUpcomingEvents(): Observable<any[]>{
+        return this.http.get(this.CORP_MEETING_UPCOMING_EVENTS_GET_URL, this.getOptionsWithCredentials())
+                .map(this.extractData)
+                .catch(this.handleErrorResponse);
+    }
 
     public makeFileRequest(url, fileName, method?: string, body?): Observable<Response> {
         return Observable.fromPromise(new Promise((resolve, reject) => {
