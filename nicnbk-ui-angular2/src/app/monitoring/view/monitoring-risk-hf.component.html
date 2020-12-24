@@ -32,6 +32,142 @@
     <br/>
     <br/>
 
+    <!-- PERFORMANCE SUMMARY -->
+    <div class="row" [hidden]="selectedDateMonitoringInfo == null">
+        <div class="col-md-12">
+            <div class="alert alert-danger small" *ngIf="selectedDateMonitoringInfo?.performanceError != null">
+                <span>{{selectedDateMonitoringInfo?.performanceError}}</span>
+            </div>
+            <div class="alert alert-warning small" *ngIf="selectedDateMonitoringInfo?.performanceWarning != null">
+                <span>* {{selectedDateMonitoringInfo.performanceWarning}}</span>
+            </div>
+        </div>
+        <div class="col-md-12">
+            <div class="col-md-12">
+                <table class="table table-hover table-responsive table-condensed">
+                    <thead>
+                    <tr style="background-color: #3664ab; color: white;">
+                        <th width="40%">PERFORMANCE SUMMARY 12M</th>
+                        <th width="15%">Portfolio A-class</th>
+                        <th width="15%">HFRI FoF</th>
+                        <th width="15%">Portfolio B-class</th>
+                        <th width="15%">HFRIAWC</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr *ngFor="let performance of selectedDateMonitoringInfo?.performance12M">
+                        <td>{{performance.name}}</td>
+                        <td>{{performance.portfolioValueTxt}}
+                            <!--                                <span data-toggle="tooltip">{{performance.portfolioValue | percent : '1.2'}}</span>-->
+                        </td>
+                        <td>{{performance.benchmarkValueTxt}}</td>
+                        <td>{{performance.portfolioValueTxt}}
+                            <!--                                <span data-toggle="tooltip">{{performance.portfolioValue | percent : '1.2'}}</span>-->
+                        </td>
+                        <td>{{performance.benchmarkValueTxt}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-md-12">
+                <table class="table table-hover table-responsive table-condensed">
+                    <thead>
+                    <tr style="background-color: #3664ab; color: white;">
+                        <th width="40%">PERFORMANCE SUMMARY SINCE INC.</th>
+                        <th width="15%">Portfolio A-class</th>
+                        <th width="15%">HFRI FoF</th>
+                        <th width="15%">Portfolio B-class</th>
+                        <th width="15%">HFRIAWC</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr *ngFor="let performance of selectedDateMonitoringInfo?.performanceSinceInception">
+                        <td>{{performance.name}}</td>
+                        <td>{{performance.portfolioValueTxt}}
+                        </td>
+                        <td>{{performance.benchmarkValueTxt}}</td>
+                        <td>{{performance.portfolioValueTxt}}
+                        </td>
+                        <td>{{performance.benchmarkValueTxt}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <br/>
+
+    <!--FACTOR BETAS AND MARKET SENSITIVITY-->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="row withpadding">
+                <div class="alert alert-danger small" *ngIf="selectedDateMonitoringInfo?.factorBetasError != null">
+                    <span>{{selectedDateMonitoringInfo?.factorBetasError}}</span>
+                </div>
+            </div>
+            <div class="row withpadding">
+                <div class="alert alert-danger small" *ngIf="selectedDateMonitoringInfo?.marketSensitivityError != null">
+                    <span>{{selectedDateMonitoringInfo?.marketSensitivityError}}</span>
+                </div>
+            </div>
+            <div class="row withpadding">
+                <div class="alert alert-warning small" *ngIf="selectedDateMonitoringInfo?.factorBetasWarning != null">
+                    <span>* {{selectedDateMonitoringInfo.factorBetasWarning}}</span>
+                </div>
+            </div>
+            <div class="row withpadding">
+                <div class="alert alert-warning small" *ngIf="selectedDateMonitoringInfo?.marketSensitivityWarning != null">
+                    <span>* {{selectedDateMonitoringInfo.marketSensitivityWarning}}</span>
+                </div>
+            </div>
+            <div class="col-md-3" [hidden]="selectedDateMonitoringInfo == null">
+                <table class="table table-hover table-responsive table-condensed">
+                    <thead>
+                    <tr style="background-color: #3664ab; color: white;">
+                        <th width="60%">FACTOR BETAS</th>
+                        <th width="20%">SI</th>
+                        <th width="20%">12M</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr *ngFor="let factor of selectedDateMonitoringInfo?.factorBetas">
+                        <td>{{factor.name}}</td>
+                        <td>{{factor.valueSinceInception | number: '1.2' }}</td>
+                        <td>{{factor.value12M | number: '1.2' }}</td>
+                    </tr>
+                    </tbody>
+                </table>
+                <table class="table table-hover table-responsive table-condensed">
+                    <thead>
+                    <tr style="background-color: #3664ab; color: white;">
+                        <th width="80%">HF Portfolio VaR</th>
+                        <th width="20%">&nbsp;</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr *ngFor="let item of selectedDateMonitoringInfo?.portfolioVars">
+                        <td>{{item.name}}</td>
+                        <td>{{item.value}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+
+            </div>
+            <div class="col-md-9">
+                <h5 [hidden]="selectedDateMonitoringInfo == null">MARKET UP/DOWN SENSITIVITIES SINCE INCEPTION</h5>
+                <div class="row">
+                    <div id="marketSensitivitiesSinceInceptionMSCI">
+                    </div>
+                </div>
+                <div class="row">
+                    <div id="marketSensitivitiesSinceInceptionBarclaysGblAgg">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div >
+    <br/>
+
     <!-- TOP PORTFOLIO FUND ALLOCATIONS-->
     <div class="row" [hidden]="selectedDateMonitoringInfo == null">
         <div class="col-md-12">
@@ -73,127 +209,10 @@
         </div>
         <br/>
     </div>
-    <br/>
-
-    <!--FACTOR BETAS AND MARKET SENSITIVITY-->
-    <div class="row">
-        <div class="col-md-12">
-            <div class="row withpadding">
-                <div class="alert alert-danger small" *ngIf="selectedDateMonitoringInfo?.factorBetasError != null">
-                    <span>{{selectedDateMonitoringInfo?.factorBetasError}}</span>
-                </div>
-            </div>
-            <div class="row withpadding">
-                <div class="alert alert-danger small" *ngIf="selectedDateMonitoringInfo?.marketSensitivityError != null">
-                    <span>{{selectedDateMonitoringInfo?.marketSensitivityError}}</span>
-                </div>
-            </div>
-            <div class="row withpadding">
-                <div class="alert alert-warning small" *ngIf="selectedDateMonitoringInfo?.factorBetasWarning != null">
-                    <span>* {{selectedDateMonitoringInfo.factorBetasWarning}}</span>
-                </div>
-            </div>
-            <div class="row withpadding">
-                <div class="alert alert-warning small" *ngIf="selectedDateMonitoringInfo?.marketSensitivityWarning != null">
-                    <span>* {{selectedDateMonitoringInfo.marketSensitivityWarning}}</span>
-                </div>
-            </div>
-            <div class="col-md-3" [hidden]="selectedDateMonitoringInfo == null">
-                <table class="table table-hover table-responsive table-condensed">
-                    <thead>
-                    <tr style="background-color: #3664ab; color: white;">
-                        <th width="60%">FACTOR BETAS</th>
-                        <th width="20%">SI</th>
-                        <th width="20%">12M</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                        <tr *ngFor="let factor of selectedDateMonitoringInfo?.factorBetas">
-                            <td>{{factor.name}}</td>
-                            <td>{{factor.valueSinceInception | number: '1.2' }}</td>
-                            <td>{{factor.value12M | number: '1.2' }}</td>
-                        </tr>
-                    </tbody>
-                </table>
-                <table class="table table-hover table-responsive table-condensed">
-                    <thead>
-                        <tr style="background-color: #3664ab; color: white;">
-                            <th width="80%">HF Portfolio VaR</th>
-                            <th width="20%">&nbsp;</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    <tr *ngFor="let item of selectedDateMonitoringInfo?.portfolioVars">
-                        <td>{{item.name}}</td>
-                        <td>{{item.value}}</td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
-            <div class="col-md-9">
-                <h5 [hidden]="selectedDateMonitoringInfo == null">MARKET UP/DOWN SENSITIVITIES SINCE INCEPTION</h5>
-                <div class="row">
-                    <div id="marketSensitivitiesSinceInceptionMSCI">
-                    </div>
-                </div>
-                <div class="row">
-                    <div id="marketSensitivitiesSinceInceptionBarclaysGblAgg">
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div >
-    <br/>
-
-    <!-- PERFORMANCE SUMMARY -->
-    <div class="row" [hidden]="selectedDateMonitoringInfo == null">
-        <div class="col-md-12">
-            <div class="alert alert-danger small" *ngIf="selectedDateMonitoringInfo?.performanceError != null">
-                <span>{{selectedDateMonitoringInfo?.performanceError}}</span>
-            </div>
-            <div class="alert alert-warning small" *ngIf="selectedDateMonitoringInfo?.performanceWarning != null">
-                <span>* {{selectedDateMonitoringInfo.performanceWarning}}</span>
-            </div>
-        </div>
-        <div class="col-md-12">
-            <div class="col-md-6">
-                <table class="table table-hover table-responsive table-condensed">
-                    <thead>
-                    <tr style="background-color: #3664ab; color: white;">
-                        <th width="60%">PERFORMANCE SUMMARY 12M</th>
-                        <th width="20%">Portfolio</th>
-                        <th width="20%">HFRI FoF</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                        <tr *ngFor="let performance of selectedDateMonitoringInfo?.performance12M">
-                            <td>{{performance.name}}</td>
-                            <td>{{performance.portfolioValueTxt}}
-<!--                                <span data-toggle="tooltip">{{performance.portfolioValue | percent : '1.2'}}</span>-->
-                            </td>
-                            <td>{{performance.benchmarkValueTxt}}</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            <div class="col-md-6">
-                <table class="table table-hover table-responsive table-condensed">
-                    <thead>
-                    <tr style="background-color: #3664ab; color: white;">
-                        <th width="60%">PERFORMANCE SUMMARY SINCE INC.</th>
-                        <th width="20%">Portfolio</th>
-                        <th width="20%">HFRI FoF</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                        <tr *ngFor="let performance of selectedDateMonitoringInfo?.performanceSinceInception">
-                            <td>{{performance.name}}</td>
-                            <td>{{performance.portfolioValueTxt}}
-                            </td>
-                            <td>{{performance.benchmarkValueTxt}}</td>
-                        </tr>
-                    </tbody>
-                </table>
+    <div class="col-md-12">
+        <h5 [hidden]="selectedDateMonitoringInfo == null">ALLOCATION BY SUB STRATEGY</h5>
+        <div class="row">
+            <div id="allocationBySubStrategy" style="height: 500px;">
             </div>
         </div>
     </div>
@@ -226,5 +245,19 @@
                 </tr>
             </tbody>
         </table>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <table class="table table-hover table-responsive table-condensed">
+                <thead>
+                <tr style="background-color: #3664ab; color: white;">
+                    <th width="60%">Name</th>
+                    <th width="20%">Year</th>
+                    <th width="20%">Value</th>
+                </tr>
+                </thead>
+            </table>
+        </div>
     </div>
 </div>

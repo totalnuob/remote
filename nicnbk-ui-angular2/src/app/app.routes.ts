@@ -117,7 +117,7 @@ import {HRNewsEditComponent} from "./hr/hr-news-edit.component";
 import {AdminMainComponent} from "./admin/admin.main.component";
 import {AdminUserManagementComponent} from "./admin/admin.user-management.component";
 import {MonitoringHedgeFundsEditComponent} from "./monitoring/monitoring-hedge-funds-edit.component";
-
+import {PortfolioVarLookupValuesComponent} from "./lookup/portfolio.var.lookup.values.component";
 
 
 const routes: Routes  = [
@@ -679,6 +679,11 @@ const routes: Routes  = [
     {
         path: 'lookups/benchmarks',
         component: BenchmarkLookupValuesComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'lookups/portfolioVars',
+        component: PortfolioVarLookupValuesComponent,
         canActivate: [AuthGuard]
     },
     /* HR ******************************************/

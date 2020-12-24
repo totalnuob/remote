@@ -132,6 +132,8 @@ import {HRNewsEditComponent} from "./hr/hr-news-edit.component";
 import {AdminMainComponent} from "./admin/admin.main.component";
 import {AdminUserManagementComponent} from "./admin/admin.user-management.component";
 import {MonitoringHedgeFundsEditComponent} from "./monitoring/monitoring-hedge-funds-edit.component";
+import {PortfolioVarLookupValuesComponent} from "./lookup/portfolio.var.lookup.values.component";
+
 //import {CorpMeetingEditComponent} from "./corpmeetings/ic-meeting-topic-edit.component";
 
 @NgModule({
@@ -181,7 +183,7 @@ import {MonitoringHedgeFundsEditComponent} from "./monitoring/monitoring-hedge-f
         ConsolidatedKZTForm3NBReportingComponent, ConsolidatedKZTForm6NBReportingComponent,
         AccessDeniedComponent, MMEditComponent, MMViewComponent,NotFoundComponent,
         CorpMeetingsListComponent, CorpMeetingEditComponent,
-        LookupValuesComponent, CurrencyRatesLookupValuesComponent, BenchmarkLookupValuesComponent,
+        LookupValuesComponent, CurrencyRatesLookupValuesComponent, BenchmarkLookupValuesComponent, PortfolioVarLookupValuesComponent,
         HRNewsListComponent, HRNewsEditComponent, HREmployeesListComponent, HRDocsListComponent,
         AdminMainComponent, AdminUserManagementComponent
     ],

@@ -60,6 +60,7 @@ export class MonitoringRiskHedgeFundComponent extends GoogleChartComponent {
         if(this.selectedDateMonitoringInfo != null){
             this.drawMarketSensitivitiesSinceInceptionMSCI();
             this.drawMarketSensitivitiesSinceInceptionBarclaysGblAgg();
+            this.drawAllocationBySubStrategy();
         }
     }
 
@@ -153,8 +154,36 @@ export class MonitoringRiskHedgeFundComponent extends GoogleChartComponent {
         chart.draw(data, options);
     }
 
+    drawAllocationBySubStrategy(){
+        var data = google.visualization.arrayToDataTable([
+            ['Sub-strategy', '30.09.2020', '31.10.2020'],
+            ['Other Investments', 0.1, 0.1],
+            ['Specialist Equity', 1.2, 1.2],
+            ['Non-Directional Quantiative', 1.3, 1.3],
+            ['Event Driven', 1.6, 1.6],
+            ['Structured Credit', 1.8, 1.8],
+            ['Fundamental Credit', 4.7, 4.7],
+            ['Diversified Multi-Strategy', 3.6, 3.6],
+            ['Directional Equity', 12.4, 12.4],
+            ['Diversified Macro', 4.4, 4.4],
+            ['Option Volatility Arbitrage', 6.7, 6.7],
+            ['Low Net Equity', 8.5, 8.5],
+            ['Fundamental Market Neutral Equity', 14.1, 14.1],
+            ['Diversified Relative Value', 35.7, 37.4]
+        ]);
 
+        var options = {
+            chart: {
+                title: '',
+                subtitle: '',
+            },
+            bars: 'horizontal'
+        };
 
+        var chart = new google.charts.Bar(document.getElementById('allocationBySubStrategy'));
+
+        chart.draw(data, google.charts.Bar.convertOptions(options));
+    }
 
     selectDate(value){
         this.selectedDate = value;
@@ -210,5 +239,9 @@ export class MonitoringRiskHedgeFundComponent extends GoogleChartComponent {
                      console.log(error.message);
                 }
         );
+    }
+
+    edit() {
+
     }
 }

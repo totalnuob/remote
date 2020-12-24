@@ -5,18 +5,23 @@ import kz.nicnbk.common.service.util.MathUtils;
 import kz.nicnbk.common.service.util.StringUtils;
 import kz.nicnbk.common.service.util.WorstDrawdownDto;
 import kz.nicnbk.repo.model.lookup.BenchmarkLookup;
+import kz.nicnbk.repo.model.lookup.PortfolioVarLookup;
 import kz.nicnbk.service.api.benchmark.BenchmarkService;
+import kz.nicnbk.service.api.monitoring.MonitoringHedgeFundService;
 import kz.nicnbk.service.api.monitoring.MonitoringRiskService;
 import kz.nicnbk.service.api.monitoring.NicPortfolioService;
 import kz.nicnbk.service.api.reporting.PeriodicReportService;
 import kz.nicnbk.service.api.reporting.hedgefunds.HFGeneralLedgerBalanceService;
 import kz.nicnbk.service.api.reporting.hedgefunds.HFITDService;
+import kz.nicnbk.service.api.reporting.hedgefunds.HFPortfolioRiskService;
 import kz.nicnbk.service.api.risk.RiskStressTestsService;
 import kz.nicnbk.service.dto.benchmark.BenchmarkValueDto;
+import kz.nicnbk.service.dto.common.EntitySaveResponseDto;
 import kz.nicnbk.service.dto.common.ListResponseDto;
 import kz.nicnbk.service.dto.common.ResponseStatusType;
 import kz.nicnbk.service.dto.monitoring.*;
 import kz.nicnbk.service.dto.reporting.*;
+import kz.nicnbk.service.dto.risk.PortfolioVarValueDto;
 import kz.nicnbk.service.impl.reporting.PeriodicReportConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,6 +53,12 @@ public class MonitoringRiskServiceImpl implements MonitoringRiskService {
 
     @Autowired
     private HFITDService hfitdService;
+
+    @Autowired
+    private MonitoringHedgeFundService hfService;
+
+    @Autowired
+    HFPortfolioRiskService hfPortfolioRiskService;
 
     @Override
     public MonitoringRiskHedgeFundReportDto getMonthlyHedgeFundReport(MonitoringRiskReportSearchParamsDto searchParamsDto) {
@@ -164,7 +175,7 @@ public class MonitoringRiskServiceImpl implements MonitoringRiskService {
         reportDto.setMarketSensitivitesBarclays(marketSensitivitesBarclaysRecords);
 
         // VARS
-        ListResponseDto portfolioVarResponse = getHedgeFundPortfolioVars(searchParamsDto.getDate());
+        ListResponseDto portfolioVarResponse = getHedgeFundPortfolioVars(searchParamsDto.getDate(), PortfolioVarLookup.VAR95.getCode(), PortfolioVarLookup.VAR99.getCode());
         if(!portfolioVarResponse.isStatusOK()){
             reportDto.setPortfolioVarsError(marketSensitivityBarclaysGlobalResponse.getErrorMessageEn());
         }
@@ -240,18 +251,36 @@ public class MonitoringRiskServiceImpl implements MonitoringRiskService {
         }
     }
 
-    private ListResponseDto getHedgeFundPortfolioVars(Date date){
+    private ListResponseDto getHedgeFundPortfolioVars(Date date, String portfolioVarCode, String portfolioVarCode2){
         ListResponseDto responseDto = new ListResponseDto();
         List<MonitoringRiskHedgeFundPortfolioVarDto> records = new ArrayList<>();
 
         // Actual
-        MonitoringRiskHedgeFundPortfolioVarDto recordPortfolio = new MonitoringRiskHedgeFundPortfolioVarDto("1M VaR 95%", null);
-        records.add(recordPortfolio);
+        MonitoringRiskHedgeFundPortfolioVarDto recordPortfolio = new MonitoringRiskHedgeFundPortfolioVarDto();
+        PortfolioVarValueDto dto1 = hfPortfolioRiskService.getPortfolioVarEndOfMonthForDate(date, portfolioVarCode);
+        try {
+            recordPortfolio.setName(dto1.getPortfolioVar().getCode());
+            recordPortfolio.setValue(dto1.getValue());
+            records.add(recordPortfolio);
+            responseDto.setRecords(records);
+        } catch (NullPointerException ex) {
+            String errorMessage = "No recorded value for " + portfolioVarCode + " for the date " + date;
+            logger.error(errorMessage);
+            responseDto.appendErrorMessageEn(errorMessage);
+        }
         // Simulation
-        MonitoringRiskHedgeFundPortfolioVarDto recordSimulation = new MonitoringRiskHedgeFundPortfolioVarDto("1M simulation VaR 95%", null);
-        records.add(recordSimulation);
-
-        responseDto.setRecords(records);
+        MonitoringRiskHedgeFundPortfolioVarDto recordSimulation = new MonitoringRiskHedgeFundPortfolioVarDto();
+        PortfolioVarValueDto dto2 = hfPortfolioRiskService.getPortfolioVarEndOfMonthForDate(date, portfolioVarCode2);
+        try {
+            recordSimulation.setName(dto2.getPortfolioVar().getCode());
+            recordSimulation.setValue(dto2.getValue());
+            records.add(recordSimulation);
+            responseDto.setRecords(records);
+        } catch (NullPointerException ex) {
+            String errorMessage = "No recorded value for " + portfolioVarCode2 + " for the date " + date;
+            logger.error(errorMessage);
+            responseDto.appendErrorMessageEn(errorMessage);
+        }
         if(responseDto.getStatus() == null){
             responseDto.setStatus(ResponseStatusType.SUCCESS);
         }
@@ -985,6 +1014,15 @@ public class MonitoringRiskServiceImpl implements MonitoringRiskService {
         return responseDto;
     }
     /* ****************************************************************************************************************/
+
+//    private EntitySaveResponseDto saveHFPortfolioVar(MonitoringRiskHedgeFundPortfolioVarDto dto) {
+//        EntitySaveResponseDto saveResponse = new EntitySaveResponseDto();
+//
+//    }
+//
+//    private EntitySaveResponseDto saveStressTest(MonitoringRiskHedgeFundStressTestDto dto) {
+//
+//    }
 
     private MonitoringRiskHedgeFundReportDto getDummyMonthlyHedgeFundReport(){
         MonitoringRiskHedgeFundReportDto report = new MonitoringRiskHedgeFundReportDto();

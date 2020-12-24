@@ -37,6 +37,10 @@ public class MonitoringRiskHedgeFundReportDto extends ResponseDto {
     private String stressTestsWarning;
     private String stressTestsError;
 
+    private List<MonitoringRiskHedgeFundAllocationSubStrategyDto> subStrategyAllocations;
+    private String subStrategyAllocationsWarning;
+    private String subStrategyAllocationsError;
+
     public Date getDate() {
         return date;
     }

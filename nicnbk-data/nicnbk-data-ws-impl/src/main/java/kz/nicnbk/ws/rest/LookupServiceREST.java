@@ -4,6 +4,7 @@ import kz.nicnbk.common.service.model.BaseDictionaryDto;
 import kz.nicnbk.service.api.authentication.TokenService;
 import kz.nicnbk.service.api.benchmark.BenchmarkService;
 import kz.nicnbk.service.api.common.CurrencyRatesService;
+import kz.nicnbk.service.api.reporting.hedgefunds.HFPortfolioRiskService;
 import kz.nicnbk.service.datamanager.LookupService;
 import kz.nicnbk.service.dto.benchmark.BenchmarkValueDto;
 import kz.nicnbk.service.dto.common.EntityListSaveResponseDto;
@@ -11,6 +12,7 @@ import kz.nicnbk.service.dto.common.EntitySaveResponseDto;
 import kz.nicnbk.service.dto.lookup.*;
 import kz.nicnbk.service.dto.reporting.*;
 import kz.nicnbk.service.dto.reporting.realestate.TerraNICReportingChartOfAccountsDto;
+import kz.nicnbk.service.dto.risk.PortfolioVarValueDto;
 import kz.nicnbk.service.dto.strategy.StrategyDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -40,6 +42,9 @@ public class LookupServiceREST extends CommonServiceREST{
 
     @Autowired
     private BenchmarkService benchmarkService;
+
+    @Autowired
+    private HFPortfolioRiskService hfPortfolioRiskService;
 
     @RequestMapping(value = "/NewsType", method = RequestMethod.GET)
     public ResponseEntity getAllNewsTypes(){
@@ -110,6 +115,12 @@ public class LookupServiceREST extends CommonServiceREST{
     @RequestMapping(value = "/BenchmarkType", method = RequestMethod.GET)
     public ResponseEntity getBenchmarkTypes(){
         List<BaseDictionaryDto> lookups = this.lookupService.getBenchmarkTypes();
+        return buildNonNullResponse(lookups);
+    }
+
+    @RequestMapping(value = "/PortfolioVarType", method = RequestMethod.GET)
+    public ResponseEntity getPortfolioVarTypes(){
+        List<BaseDictionaryDto> lookups = this.lookupService.getPortfolioVarTypes();
         return buildNonNullResponse(lookups);
     }
 
@@ -257,6 +268,12 @@ public class LookupServiceREST extends CommonServiceREST{
         return searchResult;
     }
 
+    @RequestMapping(value = "/portfolioVars", method = RequestMethod.POST)
+    public PortfolioVarPagedSearchResult getPortfolioVarValues(@RequestBody PortfolioVarSearchParams searchParams) {
+        PortfolioVarPagedSearchResult searchResult = this.hfPortfolioRiskService.search(searchParams);
+        return searchResult;
+    }
+
     @PreAuthorize("hasRole('ROLE_LOOKUPS_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/currencyRates/save", method = RequestMethod.POST)
     public ResponseEntity saveCurrencyRates(@RequestBody CurrencyRatesDto currencyRatesDto){
@@ -285,6 +302,16 @@ public class LookupServiceREST extends CommonServiceREST{
 
         EntitySaveResponseDto saveResponse = this.benchmarkService.save(benchmarkValueDto, username);
         return buildEntitySaveResponse(saveResponse);
+    }
+
+    @PreAuthorize("hasRole('ROLE_LOOKUPS_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/portfolioVars/save", method = RequestMethod.POST)
+    public ResponseEntity savePortfolioVarValue(@RequestBody PortfolioVarValueDto portfolioVarValueDto) {
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
+
+        EntitySaveResponseDto saveResponseDto = this.hfPortfolioRiskService.save(portfolioVarValueDto, username);
+        return buildNonNullResponse(saveResponseDto);
     }
 
     @PreAuthorize("hasRole('ROLE_LOOKUPS_EDITOR') OR hasRole('ROLE_ADMIN')")
