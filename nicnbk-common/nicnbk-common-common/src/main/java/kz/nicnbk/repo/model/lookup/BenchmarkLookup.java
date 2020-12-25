@@ -18,7 +18,9 @@ public enum BenchmarkLookup {
     GOLD("GOLD"),
     GLOBAL_FI("GLOBAL_FI"),
     BARCLAYS_GLOBAL_AGG("BRCL_G_AGG"),
-    HFRI("HFRI");
+    HFRI("HFRI"),
+    HFRIFOF("HFRI_FOF"),
+    HFRIAWC("HFRI_AWC");
 
     private String code;
 

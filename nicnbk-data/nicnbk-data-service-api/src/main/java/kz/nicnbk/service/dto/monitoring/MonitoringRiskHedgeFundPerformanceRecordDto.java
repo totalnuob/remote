@@ -10,10 +10,13 @@ public class MonitoringRiskHedgeFundPerformanceRecordDto implements BaseDto {
     private String name;
     private Double portfolioValue;
     private Double benchmarkValue;
+    private Double portfolioBValue;
+    private Double benchmarkAwcValue;
 
     private String portfolioValueTxt;
     private String benchmarkValueTxt;
-
+    private String portfolioBValueTxt;
+    private String benchmarkAwcValueTxt;
 
     public MonitoringRiskHedgeFundPerformanceRecordDto(){}
 
@@ -29,6 +32,19 @@ public class MonitoringRiskHedgeFundPerformanceRecordDto implements BaseDto {
         this.benchmarkValue = benchmarkValue;
         this.portfolioValueTxt = portfolioValueTxt;
         this.benchmarkValueTxt = benchmarkValueTxt;
+    }
+
+    public MonitoringRiskHedgeFundPerformanceRecordDto(String name, Double portfolioValue, Double benchmarkValue, Double portfolioBValue, Double benchmarkAwcValue,
+                                                       String portfolioValueTxt, String benchmarkValueTxt, String portfolioBValueTxt, String benchmarkAwcValueTxt) {
+        this.name = name;
+        this.portfolioValue = portfolioValue;
+        this.benchmarkValue = benchmarkValue;
+        this.portfolioBValue = portfolioBValue;
+        this.benchmarkAwcValue = benchmarkAwcValue;
+        this.portfolioValueTxt = portfolioValueTxt;
+        this.benchmarkValueTxt = benchmarkValueTxt;
+        this.portfolioBValueTxt = portfolioBValueTxt;
+        this.benchmarkAwcValueTxt = benchmarkAwcValueTxt;
     }
 
     public String getName() {
@@ -69,5 +85,37 @@ public class MonitoringRiskHedgeFundPerformanceRecordDto implements BaseDto {
 
     public void setBenchmarkValueTxt(String benchmarkValueTxt) {
         this.benchmarkValueTxt = benchmarkValueTxt;
+    }
+
+    public Double getPortfolioBValue() {
+        return portfolioBValue;
+    }
+
+    public void setPortfolioBValue(Double portfolioBValue) {
+        this.portfolioBValue = portfolioBValue;
+    }
+
+    public Double getBenchmarkAwcValue() {
+        return benchmarkAwcValue;
+    }
+
+    public void setBenchmarkAwcValue(Double benchmarkAwcValue) {
+        this.benchmarkAwcValue = benchmarkAwcValue;
+    }
+
+    public String getPortfolioBValueTxt() {
+        return portfolioBValueTxt;
+    }
+
+    public void setPortfolioBValueTxt(String portfolioBValueTxt) {
+        this.portfolioBValueTxt = portfolioBValueTxt;
+    }
+
+    public String getBenchmarkAwcValueTxt() {
+        return benchmarkAwcValueTxt;
+    }
+
+    public void setBenchmarkAwcValueTxt(String benchmarkAwcValueTxt) {
+        this.benchmarkAwcValueTxt = benchmarkAwcValueTxt;
     }
 }

@@ -91,32 +91,50 @@ public class MonitoringRiskServiceImpl implements MonitoringRiskService {
         // Performance summary
         Date dateTo = DateUtils.getLastDayOfCurrentMonth(searchParamsDto.getDate());
         Date dateFrom12M = DateUtils.getLastDayOfCurrentMonth(DateUtils.moveDateByMonths(searchParamsDto.getDate(), -11));
-        ListResponseDto performance12MResponsePortfolio = null;
-        ListResponseDto performance12MResponseBenchmark = null;
+        ListResponseDto performance12MResponsePortfolioA = null;
+        ListResponseDto performance12MResponsePortfolioB = null;
+        ListResponseDto performance12MResponseHfriFoF = null;
+        ListResponseDto performance12MResponseHfriAWC = null;
         if(nicPortfolioResultDto != null && nicPortfolioResultDto.getNicPortfolioDtoList() != null){
-            List<DateDoubleValue> values = new ArrayList<>();
+            List<DateDoubleValue> valuesA = new ArrayList<>();
+            List<DateDoubleValue> valuesB = new ArrayList<>();
             for(NicPortfolioDto dto: nicPortfolioResultDto.getNicPortfolioDtoList()){
-                DateDoubleValue value = new DateDoubleValue(DateUtils.getLastDayOfCurrentMonth(dto.getDate()), dto.getHedgeFundsMtd());
-                values.add(value);
+                DateDoubleValue valueA = new DateDoubleValue(DateUtils.getLastDayOfCurrentMonth(dto.getDate()), dto.getHedgeFundsClassAMtd());
+                DateDoubleValue valueB = new DateDoubleValue(DateUtils.getLastDayOfCurrentMonth(dto.getDate()), dto.getHedgeFundsClassBMtd());
+                valuesA.add(valueA);
+                valuesB.add(valueB);
             }
 
-            performance12MResponsePortfolio = getHedgeFundsPerformanceSummary(dateFrom12M, dateTo, values, false);
+            performance12MResponsePortfolioA = getHedgeFundsPerformanceSummary(dateFrom12M, dateTo, valuesA, false);
+            performance12MResponsePortfolioB = getHedgeFundsPerformanceSummary(dateFrom12M, dateTo, valuesB, false);
         }
 
 
-        String[] benchmarkCodesHFRI = {BenchmarkLookup.HFRI.getCode()};
-        List<BenchmarkValueDto> hfri12M = this.benchmarkService.getBenchmarkValuesEndOfMonthForDateRangeAndTypes(dateFrom12M, dateTo, 10, benchmarkCodesHFRI);
-        if(hfri12M != null && !hfri12M.isEmpty()){
-            List<DateDoubleValue> values = new ArrayList<>();
-            for(BenchmarkValueDto dto: hfri12M){
+        String[] benchmarkCodesHFRIFOF = {BenchmarkLookup.HFRIFOF.getCode()};
+        String[] benchmarkCodesHFRIAWC = {BenchmarkLookup.HFRIAWC.getCode()};
+        List<BenchmarkValueDto> hfrifof12M = this.benchmarkService.getBenchmarkValuesEndOfMonthForDateRangeAndTypes(dateFrom12M, dateTo, 10, benchmarkCodesHFRIFOF);
+        List<BenchmarkValueDto> hfriawc12M = this.benchmarkService.getBenchmarkValuesEndOfMonthForDateRangeAndTypes(dateFrom12M, dateTo, 10, benchmarkCodesHFRIAWC);
+        if(hfrifof12M != null && !hfrifof12M.isEmpty()){
+            List<DateDoubleValue> valuesHfriFoF = new ArrayList<>();
+            for(BenchmarkValueDto dto: hfrifof12M){
                 DateDoubleValue value = new DateDoubleValue(DateUtils.getLastDayOfCurrentMonth(dto.getDate()), dto.getReturnValue());
-                values.add(value);
+                valuesHfriFoF.add(value);
             }
 
-            performance12MResponseBenchmark = getHedgeFundsPerformanceSummary(dateFrom12M, dateTo, values, true);
+            performance12MResponseHfriFoF = getHedgeFundsPerformanceSummary(dateFrom12M, dateTo, valuesHfriFoF, true);
+        }
+        if (hfriawc12M != null && !hfriawc12M.isEmpty()){
+            List<DateDoubleValue> valuesHfriAWC = new ArrayList<>();
+            for (BenchmarkValueDto dto : hfriawc12M) {
+                DateDoubleValue value = new DateDoubleValue(DateUtils.getLastDayOfCurrentMonth(dto.getDate()), dto.getReturnValue());
+                valuesHfriAWC.add(value);
+            }
+            performance12MResponseHfriAWC = getHedgeFundsPerformanceSummary(dateFrom12M, dateTo, valuesHfriAWC, true);
         }
 
-        ListResponseDto mergedPerformance12MResponse = mergePerformanceResponses(performance12MResponsePortfolio, performance12MResponseBenchmark);
+        ListResponseDto mergedPortfolioPerformance12MResponse = mergePortfolioPerformanceResponses(performance12MResponsePortfolioA, performance12MResponsePortfolioB);
+        ListResponseDto mergedBenchmarkPerformance12mResponse = mergeBenchmarkPerformanceResponses(performance12MResponseHfriFoF, performance12MResponseHfriAWC);
+        ListResponseDto mergedPerformance12MResponse = mergePerformanceResponses(mergedPortfolioPerformance12MResponse, mergedBenchmarkPerformance12mResponse);
         if(!mergedPerformance12MResponse.isStatusOK()){
             reportDto.setPerformanceError(mergedPerformance12MResponse.getErrorMessageEn());
         }
@@ -126,30 +144,46 @@ public class MonitoringRiskServiceImpl implements MonitoringRiskService {
 
         // Performance since inception
         Date dateFromSI = DateUtils.getLastDayOfCurrentMonth(SINGULAR_PORTFOLIO_START_DATE);
-        ListResponseDto performanceSIResponsePortfolio = null;
-        ListResponseDto performanceSIResponseBenchmark = null;
+        ListResponseDto performanceSIResponsePortfolioA = null;
+        ListResponseDto performanceSIResponsePortfolioB = null;
+        ListResponseDto performanceSIResponseHfriFoF = null;
+        ListResponseDto performanceSIResponseHfriAWC = null;
         if(nicPortfolioResultDto != null && nicPortfolioResultDto.getNicPortfolioDtoList() != null){
-            List<DateDoubleValue> values = new ArrayList<>();
+            List<DateDoubleValue> valuesA = new ArrayList<>();
+            List<DateDoubleValue> valuesB = new ArrayList<>();
             for(NicPortfolioDto dto: nicPortfolioResultDto.getNicPortfolioDtoList()){
-                DateDoubleValue value = new DateDoubleValue(DateUtils.getLastDayOfCurrentMonth(dto.getDate()), dto.getHedgeFundsMtd());
-                values.add(value);
+                DateDoubleValue valueA = new DateDoubleValue(DateUtils.getLastDayOfCurrentMonth(dto.getDate()), dto.getHedgeFundsClassAMtd());
+                DateDoubleValue valueB = new DateDoubleValue(DateUtils.getLastDayOfCurrentMonth(dto.getDate()), dto.getHedgeFundsClassBMtd());
+                valuesA.add(valueA);
+                valuesB.add(valueB);
             }
 
-            performanceSIResponsePortfolio = getHedgeFundsPerformanceSummary(dateFromSI, dateTo, values, false);
+            performanceSIResponsePortfolioA = getHedgeFundsPerformanceSummary(dateFromSI, dateTo, valuesA, false);
+            performanceSIResponsePortfolioB = getHedgeFundsPerformanceSummary(dateFromSI, dateTo, valuesB, false);
         }
 
-        List<BenchmarkValueDto> hfriSI = this.benchmarkService.getBenchmarkValuesEndOfMonthForDateRangeAndTypes(dateFromSI, dateTo, 10, benchmarkCodesHFRI);
-        if(hfriSI != null && !hfriSI.isEmpty()){
-            List<DateDoubleValue> values = new ArrayList<>();
-            for(BenchmarkValueDto dto: hfriSI){
+        List<BenchmarkValueDto> hfriFoFSI = this.benchmarkService.getBenchmarkValuesEndOfMonthForDateRangeAndTypes(dateFromSI, dateTo, 10, benchmarkCodesHFRIFOF);
+        List<BenchmarkValueDto> hfriAWCSI = this.benchmarkService.getBenchmarkValuesEndOfMonthForDateRangeAndTypes(dateFromSI, dateTo, 10, benchmarkCodesHFRIAWC);
+        if(hfriFoFSI != null && !hfriFoFSI.isEmpty()){
+            List<DateDoubleValue> valuesHfriFoF = new ArrayList<>();
+            for(BenchmarkValueDto dto: hfriFoFSI){
                 DateDoubleValue value = new DateDoubleValue(DateUtils.getLastDayOfCurrentMonth(dto.getDate()), dto.getReturnValue());
-                values.add(value);
+                valuesHfriFoF.add(value);
             }
 
-            performanceSIResponseBenchmark = getHedgeFundsPerformanceSummary(dateFromSI, dateTo, values, true);
+            performanceSIResponseHfriFoF = getHedgeFundsPerformanceSummary(dateFromSI, dateTo, valuesHfriFoF, true);
+        }
+        if (hfriAWCSI != null && !hfriAWCSI.isEmpty()) {
+            List<DateDoubleValue> valuesHfriAWC = new ArrayList<>();
+            for (BenchmarkValueDto dto: hfriAWCSI){
+                DateDoubleValue value = new DateDoubleValue(DateUtils.getLastDayOfCurrentMonth(dto.getDate()), dto.getReturnValue());
+            }
+            performanceSIResponseHfriAWC = getHedgeFundsPerformanceSummary(dateFromSI, dateTo, valuesHfriAWC, true);
         }
 
-        ListResponseDto mergedPerformanceSIResponse = mergePerformanceResponses(performanceSIResponsePortfolio, performanceSIResponseBenchmark);
+        ListResponseDto mergedPortfolioPerformanceSIResponse = mergePortfolioPerformanceResponses(performanceSIResponsePortfolioA, performanceSIResponsePortfolioB);
+        ListResponseDto mergedBenchmarkPerformanceSIResponse = mergeBenchmarkPerformanceResponses(performanceSIResponseHfriFoF, performanceSIResponseHfriAWC);
+        ListResponseDto mergedPerformanceSIResponse = mergePerformanceResponses(mergedPortfolioPerformanceSIResponse, mergedBenchmarkPerformanceSIResponse);
         if(!mergedPerformanceSIResponse.isStatusOK()){
             String performanceError = reportDto.getPerformanceError();
             reportDto.setPerformanceError((StringUtils.isNotEmpty(performanceError) ? performanceError : "") + mergedPerformanceSIResponse.getErrorMessageEn());
@@ -210,6 +244,84 @@ public class MonitoringRiskServiceImpl implements MonitoringRiskService {
             return dates;
         }
         return null;
+    }
+
+    private ListResponseDto mergePortfolioPerformanceResponses(ListResponseDto portfolioAResponse, ListResponseDto portfolioBResponse) {
+        if (portfolioAResponse == null) {
+            return portfolioBResponse;
+        } else if (portfolioBResponse == null) {
+            return portfolioAResponse;
+        } else {
+            ListResponseDto mergedPortfolioResponse = new ListResponseDto();
+            mergedPortfolioResponse.setStatus(ResponseStatusType.SUCCESS);
+            //Error messages
+            if (portfolioAResponse.getErrorMessageEn() != null) {
+                mergedPortfolioResponse.appendErrorMessageEn(portfolioAResponse.getErrorMessageEn());
+            }
+            if (portfolioBResponse.getErrorMessageEn() != null) {
+                mergedPortfolioResponse.appendErrorMessageEn(portfolioBResponse.getErrorMessageEn());
+            }
+            //Records
+            if(portfolioAResponse.getRecords() != null && !portfolioAResponse.getRecords().isEmpty()) {
+                mergedPortfolioResponse.setRecords(portfolioAResponse.getRecords());
+            }
+            if (portfolioBResponse.getRecords() != null && !portfolioBResponse.getRecords().isEmpty()) {
+                if(mergedPortfolioResponse.getRecords() == null || mergedPortfolioResponse.getRecords().isEmpty()) {
+                    mergedPortfolioResponse.setRecords(portfolioBResponse.getRecords());
+                } else {
+                    //Merge portfolio values
+                    for (MonitoringRiskHedgeFundPerformanceRecordDto portfolioDto: (List<MonitoringRiskHedgeFundPerformanceRecordDto>) mergedPortfolioResponse.getRecords()) {
+                        for (MonitoringRiskHedgeFundPerformanceRecordDto portfolioBDto: (List<MonitoringRiskHedgeFundPerformanceRecordDto>) portfolioBResponse.getRecords()) {
+                            if (portfolioDto.getName().equalsIgnoreCase(portfolioBDto.getName())) {
+                                portfolioDto.setPortfolioBValue(portfolioBDto.getPortfolioValue());
+                                portfolioDto.setPortfolioBValueTxt(portfolioBDto.getPortfolioValueTxt());
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            return mergedPortfolioResponse;
+        }
+    }
+
+    private ListResponseDto mergeBenchmarkPerformanceResponses(ListResponseDto hfriFofResponse, ListResponseDto hfriAwcResponse) {
+        if (hfriFofResponse == null) {
+            return hfriAwcResponse;
+        } else if (hfriAwcResponse == null) {
+            return hfriFofResponse;
+        } else {
+            ListResponseDto mergedBenchmarkResponse = new ListResponseDto();
+            mergedBenchmarkResponse.setStatus(ResponseStatusType.SUCCESS);
+            //Error messages
+            if (hfriFofResponse.getErrorMessageEn() != null) {
+                mergedBenchmarkResponse.setErrorMessageEn(hfriFofResponse.getErrorMessageEn());
+            }
+            if (hfriAwcResponse.getErrorMessageEn() != null) {
+                mergedBenchmarkResponse.setErrorMessageEn(hfriAwcResponse.getErrorMessageEn());
+            }
+            //Records
+            if (hfriFofResponse.getRecords() != null && !hfriFofResponse.getRecords().isEmpty()) {
+                mergedBenchmarkResponse.setRecords(hfriFofResponse.getRecords());
+            }
+            if (hfriAwcResponse.getRecords() != null && !hfriAwcResponse.getRecords().isEmpty()) {
+                if (mergedBenchmarkResponse.getRecords() == null && mergedBenchmarkResponse.getRecords().isEmpty()) {
+                    mergedBenchmarkResponse.setRecords(hfriAwcResponse.getRecords());
+                } else {
+                    //Merge benchmark values
+                    for (MonitoringRiskHedgeFundPerformanceRecordDto benchmarkDto: (List<MonitoringRiskHedgeFundPerformanceRecordDto>) mergedBenchmarkResponse.getRecords()) {
+                        for (MonitoringRiskHedgeFundPerformanceRecordDto hfriAwcDto: (List<MonitoringRiskHedgeFundPerformanceRecordDto>) hfriAwcResponse.getRecords()) {
+                            if (benchmarkDto.getName().equalsIgnoreCase(hfriAwcDto.getName())) {
+                                benchmarkDto.setBenchmarkAwcValue(benchmarkDto.getBenchmarkValue());
+                                benchmarkDto.setBenchmarkAwcValueTxt(benchmarkDto.getBenchmarkValueTxt());
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            return mergedBenchmarkResponse;
+        }
     }
 
     private ListResponseDto mergePerformanceResponses(ListResponseDto portfolioResponse, ListResponseDto benchmarkResponse){

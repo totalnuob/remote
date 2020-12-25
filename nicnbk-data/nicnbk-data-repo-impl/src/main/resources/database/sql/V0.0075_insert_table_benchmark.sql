@@ -12,3 +12,5 @@ INSERT INTO public.benchmark(id, code, name_en, name_kz, name_ru) VALUES (10, 'U
 INSERT INTO public.benchmark(id, code, name_en, name_kz, name_ru) VALUES (11, 'GOLD', 'Gold', null, '');
 INSERT INTO public.benchmark(id, code, name_en, name_kz, name_ru) VALUES (12, 'GLOBAL_FI', 'Global FI', null, '');
 INSERT INTO public.benchmark(id, code, name_en, name_kz, name_ru) VALUES (13, 'SP500_SPX', 'S $ P 500 (SPX)', null, '');
+INSERT INTO public.benchmark(id, code, name_en, name_kz, name_ru) VALUES (14, 'HFRI_FOF', 'HFRI FoF', null, '');
+INSERT INTO public.benchmark(id, code, name_en, name_kz, name_ru) VALUES (15, 'HFRI_AWC', 'HFRI AWC', null, '');
