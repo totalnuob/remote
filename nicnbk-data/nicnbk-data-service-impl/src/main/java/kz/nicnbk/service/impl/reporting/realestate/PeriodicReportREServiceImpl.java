@@ -704,6 +704,7 @@ public class PeriodicReportREServiceImpl implements PeriodicReportREService {
                 (accountDto.getNicReportingChartOfAccounts().getNbChartOfAccounts().getCode().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_1123_010)
                 || accountDto.getNicReportingChartOfAccounts().getNbChartOfAccounts().getCode().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_1183_040)
                 || accountDto.getNicReportingChartOfAccounts().getNbChartOfAccounts().getCode().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_6113_030)
+                || accountDto.getNicReportingChartOfAccounts().getNbChartOfAccounts().getCode().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_6150_010)
                 || accountDto.getNicReportingChartOfAccounts().getNbChartOfAccounts().getCode().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_6280_010)
                 || accountDto.getNicReportingChartOfAccounts().getNbChartOfAccounts().getCode().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_7470_010)
                 || accountDto.getNicReportingChartOfAccounts().getNbChartOfAccounts().getCode().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_7330_010));
