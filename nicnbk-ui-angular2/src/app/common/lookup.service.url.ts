@@ -51,6 +51,7 @@ export const CORP_MEETING_TYPE_URL = LOOKUP_SERVICE_URL + "CorpMeetingType/";
 
 export const SEARCH_CURRENCY_RATES_URL = LOOKUP_SERVICE_URL + "currencyRates/";
 export const SEARCH_BENCHMARKS_URL = LOOKUP_SERVICE_URL + "benchmarks/";
+export const GET_BENCHMARKS_BB_URL = LOOKUP_SERVICE_URL + "benchmarks/bloomberg/";
 export const SAVE_CURRENCY_RATES_URL = LOOKUP_SERVICE_URL + "currencyRates/save/";
 export const SAVE_CURRENCY_RATES_LIST_URL = LOOKUP_SERVICE_URL + "currencyRates/saveList/";
 export const SAVE_BENCHMARKS_LIST_URL = LOOKUP_SERVICE_URL + "benchmarks/saveList/";
