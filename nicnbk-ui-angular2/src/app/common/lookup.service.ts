@@ -12,8 +12,8 @@ import {CommonService} from "./common.service";
 import {
     PE_STRATEGIES_URL,
     PORTFOLIO_VAR_TYPE_URL,
-    SAVE_PORTFOLIO_VARS_URL,
-    SEARCH_PORTFOLIO_VARS_URL
+    SAVE_PORTFOLIO_VARS_URL, SAVE_STRESS_TESTS_URL,
+    SEARCH_PORTFOLIO_VARS_URL, SEARCH_STRESS_TESTS_URL
 } from "./lookup.service.url";
 import {ALL_STRATEGIES_URL} from "./lookup.service.url";
 import {RE_STRATEGIES_URL} from "./lookup.service.url";
@@ -497,6 +497,14 @@ export class LookupService extends CommonService{
             .catch(this.handleErrorResponse);
     }
 
+    getStressTests(searchParams){
+        let body = JSON.stringify(searchParams);
+
+        return this.http.post(SEARCH_STRESS_TESTS_URL, body, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
     saveCurrencyRates(item){
         let body = JSON.stringify(item);
         return this.http.post(SAVE_CURRENCY_RATES_URL, body, this.getOptionsWithCredentials())
@@ -528,6 +536,13 @@ export class LookupService extends CommonService{
     savePortfolioVar(item){
         let body = JSON.stringify(item);
         return this.http.post(SAVE_PORTFOLIO_VARS_URL, body, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+    saveStressTest(item){
+        let body = JSON.stringify(item);
+        return this.http.post(SAVE_STRESS_TESTS_URL, body, this.getOptionsWithCredentials())
             .map(this.extractData)
             .catch(this.handleErrorResponse);
     }

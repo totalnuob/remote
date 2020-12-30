@@ -54,6 +54,7 @@ export const CORP_MEETING_TYPE_URL = LOOKUP_SERVICE_URL + "CorpMeetingType/";
 export const SEARCH_CURRENCY_RATES_URL = LOOKUP_SERVICE_URL + "currencyRates/";
 export const SEARCH_BENCHMARKS_URL = LOOKUP_SERVICE_URL + "benchmarks/";
 export const SEARCH_PORTFOLIO_VARS_URL = LOOKUP_SERVICE_URL + "portfolioVars/";
+export const SEARCH_STRESS_TESTS_URL = LOOKUP_SERVICE_URL + "stressTests/";
 export const SAVE_CURRENCY_RATES_URL = LOOKUP_SERVICE_URL + "currencyRates/save/";
 export const SAVE_CURRENCY_RATES_LIST_URL = LOOKUP_SERVICE_URL + "currencyRates/saveList/";
 export const SAVE_BENCHMARKS_LIST_URL = LOOKUP_SERVICE_URL + "benchmarks/saveList/";
@@ -61,6 +62,7 @@ export const SAVE_BENCHMARKS_LIST_URL = LOOKUP_SERVICE_URL + "benchmarks/saveLis
 
 export const SAVE_BENCHMARK_URL = LOOKUP_SERVICE_URL + "benchmarks/save/";
 export const SAVE_PORTFOLIO_VARS_URL = LOOKUP_SERVICE_URL + "portfolioVars/save/";
+export const SAVE_STRESS_TESTS_URL = LOOKUP_SERVICE_URL + "stressTests/save/";
 export const DELETE_CURRENCY_RATES_URL = LOOKUP_SERVICE_URL + "currencyRates/delete/";
 
 export const SAVE_LOOKUP_VALUE_URL = LOOKUP_SERVICE_URL + "saveLookupValue/";

@@ -5,11 +5,13 @@ import kz.nicnbk.service.api.authentication.TokenService;
 import kz.nicnbk.service.api.benchmark.BenchmarkService;
 import kz.nicnbk.service.api.common.CurrencyRatesService;
 import kz.nicnbk.service.api.reporting.hedgefunds.HFPortfolioRiskService;
+import kz.nicnbk.service.api.risk.RiskStressTestsService;
 import kz.nicnbk.service.datamanager.LookupService;
 import kz.nicnbk.service.dto.benchmark.BenchmarkValueDto;
 import kz.nicnbk.service.dto.common.EntityListSaveResponseDto;
 import kz.nicnbk.service.dto.common.EntitySaveResponseDto;
 import kz.nicnbk.service.dto.lookup.*;
+import kz.nicnbk.service.dto.monitoring.RiskStressTestsDto;
 import kz.nicnbk.service.dto.reporting.*;
 import kz.nicnbk.service.dto.reporting.realestate.TerraNICReportingChartOfAccountsDto;
 import kz.nicnbk.service.dto.risk.PortfolioVarValueDto;
@@ -20,6 +22,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.swing.text.html.parser.Entity;
 import java.util.Collections;
 import java.util.List;
 
@@ -45,6 +48,9 @@ public class LookupServiceREST extends CommonServiceREST{
 
     @Autowired
     private HFPortfolioRiskService hfPortfolioRiskService;
+
+    @Autowired
+    RiskStressTestsService riskStressTestsService;
 
     @RequestMapping(value = "/NewsType", method = RequestMethod.GET)
     public ResponseEntity getAllNewsTypes(){
@@ -274,6 +280,12 @@ public class LookupServiceREST extends CommonServiceREST{
         return searchResult;
     }
 
+    @RequestMapping(value = "/stressTests", method = RequestMethod.POST)
+    public RiskStressTestPagedSearchResult getStressTests(@RequestBody RiskStressTestPagedSearchParams searchParams) {
+        RiskStressTestPagedSearchResult searchResult = this.riskStressTestsService.search(searchParams);
+        return searchResult;
+    }
+
     @PreAuthorize("hasRole('ROLE_LOOKUPS_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/currencyRates/save", method = RequestMethod.POST)
     public ResponseEntity saveCurrencyRates(@RequestBody CurrencyRatesDto currencyRatesDto){
@@ -311,6 +323,16 @@ public class LookupServiceREST extends CommonServiceREST{
         String username = this.tokenService.decode(token).getUsername();
 
         EntitySaveResponseDto saveResponseDto = this.hfPortfolioRiskService.save(portfolioVarValueDto, username);
+        return buildNonNullResponse(saveResponseDto);
+    }
+
+    @PreAuthorize("hasRole('ROLE_LOOKUPS_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/stressTests/save", method = RequestMethod.POST)
+    public ResponseEntity saveStressTestValue(@RequestBody RiskStressTestsDto stressTestsDto) {
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
+
+        EntitySaveResponseDto saveResponseDto = this.riskStressTestsService.save(stressTestsDto, username);
         return buildNonNullResponse(saveResponseDto);
     }
 

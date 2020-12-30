@@ -1,12 +1,16 @@
 package kz.nicnbk.service.impl.monitoring;
 
-import kz.nicnbk.common.service.util.DateUtils;
-import kz.nicnbk.common.service.util.MathUtils;
-import kz.nicnbk.common.service.util.StringUtils;
-import kz.nicnbk.common.service.util.WorstDrawdownDto;
+import kz.nicnbk.common.service.util.*;
+import kz.nicnbk.repo.api.employee.EmployeeRepository;
+import kz.nicnbk.repo.api.risk.AllocationBySubStrategyRepository;
+import kz.nicnbk.repo.model.employee.Employee;
+import kz.nicnbk.repo.model.files.Files;
 import kz.nicnbk.repo.model.lookup.BenchmarkLookup;
+import kz.nicnbk.repo.model.lookup.FileTypeLookup;
 import kz.nicnbk.repo.model.lookup.PortfolioVarLookup;
+import kz.nicnbk.repo.model.risk.AllocationBySubStrategy;
 import kz.nicnbk.service.api.benchmark.BenchmarkService;
+import kz.nicnbk.service.api.files.FileService;
 import kz.nicnbk.service.api.monitoring.MonitoringHedgeFundService;
 import kz.nicnbk.service.api.monitoring.MonitoringRiskService;
 import kz.nicnbk.service.api.monitoring.NicPortfolioService;
@@ -15,19 +19,25 @@ import kz.nicnbk.service.api.reporting.hedgefunds.HFGeneralLedgerBalanceService;
 import kz.nicnbk.service.api.reporting.hedgefunds.HFITDService;
 import kz.nicnbk.service.api.reporting.hedgefunds.HFPortfolioRiskService;
 import kz.nicnbk.service.api.risk.RiskStressTestsService;
+import kz.nicnbk.service.converter.risk.AllocationBySubStrategyEntityConverter;
 import kz.nicnbk.service.dto.benchmark.BenchmarkValueDto;
-import kz.nicnbk.service.dto.common.EntitySaveResponseDto;
 import kz.nicnbk.service.dto.common.ListResponseDto;
 import kz.nicnbk.service.dto.common.ResponseStatusType;
+import kz.nicnbk.service.dto.files.FilesDto;
 import kz.nicnbk.service.dto.monitoring.*;
 import kz.nicnbk.service.dto.reporting.*;
 import kz.nicnbk.service.dto.risk.PortfolioVarValueDto;
 import kz.nicnbk.service.impl.reporting.PeriodicReportConstants;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.*;
 
 @Service
@@ -60,6 +70,19 @@ public class MonitoringRiskServiceImpl implements MonitoringRiskService {
     @Autowired
     HFPortfolioRiskService hfPortfolioRiskService;
 
+    @Autowired
+    private EmployeeRepository employeeRepository;
+
+    @Autowired
+    private AllocationBySubStrategyRepository repository;
+
+    @Autowired
+    private FileService fileService;
+
+    @Autowired
+    private AllocationBySubStrategyEntityConverter converter;
+
+
     @Override
     public MonitoringRiskHedgeFundReportDto getMonthlyHedgeFundReport(MonitoringRiskReportSearchParamsDto searchParamsDto) {
 
@@ -77,6 +100,18 @@ public class MonitoringRiskServiceImpl implements MonitoringRiskService {
             }
             List<MonitoringRiskHedgeFundFundAllocationDto> topFundAllocations = topFundAllocationsResponse.getRecords();
             reportDto.setTopFundAllocations(topFundAllocations);
+        }
+
+        //Sub-strategy allocations
+        ListResponseDto subStrategyAllocationsResponse = getAllocationBySubStrategy(searchParamsDto.getDate());
+        if (subStrategyAllocationsResponse != null) {
+            reportDto.setSubStrategyAllocationsWarning(topFundAllocationsResponse.getWarningMessageEn());
+
+            if (!subStrategyAllocationsResponse.isStatusOK()) {
+                reportDto.setSubStrategyAllocationsError(subStrategyAllocationsResponse.getErrorMessageEn());
+            }
+            List<MonitoringRiskHedgeFundAllocationSubStrategyDto> subStrategyAllocations = subStrategyAllocationsResponse.getRecords();
+            reportDto.setSubStrategyAllocations(subStrategyAllocations);
         }
 
         // Factor Betas
@@ -217,7 +252,7 @@ public class MonitoringRiskServiceImpl implements MonitoringRiskService {
         reportDto.setPortfolioVars(portfolioVars);
 
         // Stress Tests
-        List<RiskStressTestsDto> stressTests = riskStressTestsService.getStressTestsByDate(searchParamsDto.getDate());
+        List<RiskStressTestsDto> stressTests = riskStressTestsService.getAllStressTests();
         if(stressTests != null && !stressTests.isEmpty()){
             reportDto.setStressTests(stressTests);
         }else{
@@ -780,6 +815,17 @@ public class MonitoringRiskServiceImpl implements MonitoringRiskService {
     }
     /* ****************************************************************************************************************/
 
+    private ListResponseDto getAllocationBySubStrategy(Date date) {
+        ListResponseDto responseDto = new ListResponseDto();
+        try {
+            List<MonitoringRiskHedgeFundAllocationSubStrategyDto> allocationSubStrategyDtos = this.converter.disassembleList(this.repository.findByFirstDate(date));
+            responseDto.setRecords(allocationSubStrategyDtos);
+        } catch (Exception ex) {
+            logger.error("Error finding Sub-strategies");
+        }
+        return responseDto;
+    }
+
     /* HEDGE FUNDS FACTOR BETAS ***************************************************************************************/
     private ListResponseDto getHedgeFundsFactorBetas(Date date, NicPortfolioResultDto nicPortfolioResultDto){
         ListResponseDto responseDto = new ListResponseDto();
@@ -1135,6 +1181,136 @@ public class MonitoringRiskServiceImpl implements MonitoringRiskService {
 //    private EntitySaveResponseDto saveStressTest(MonitoringRiskHedgeFundStressTestDto dto) {
 //
 //    }
+
+    @Override
+    public MonitoringRiskHedgeFundAllocationSubStrategyResultDto uploadStrategy(Set<FilesDto> filesDtoSet, String updater) {
+
+        try {
+            Employee employee = this.employeeRepository.findByUsername(updater);
+
+            if (employee == null) {
+                logger.error("Failed to update Sub-strategy data: the user is not found in the database!");
+                return new MonitoringRiskHedgeFundAllocationSubStrategyResultDto(null, ResponseStatusType.FAIL, "", "Failed to update Sub-strategy data: the user is not found in the database!", "");
+            }
+
+            FilesDto filesDto;
+            Iterator<Row> rowIterator;
+            Row previousRow = null;
+            Row currentRow;
+            int previousMonth;
+            int currentMonth;
+            int rowNumber = 0;
+            List<AllocationBySubStrategy> allocationBySubStrategyList = new ArrayList<>();
+
+            try {
+                filesDto = filesDtoSet.iterator().next();
+                InputStream inputFile = new ByteArrayInputStream(filesDto.getBytes());
+                XSSFWorkbook workbook = new XSSFWorkbook(inputFile);
+                XSSFSheet sheet = workbook.getSheet("Database");
+                rowIterator = sheet.iterator();
+            } catch (Exception ex) {
+                logger.error("Failed to update Sub-strategy data: the file or the sheet 'Database' cannot be opened, ", ex);
+                return new MonitoringRiskHedgeFundAllocationSubStrategyResultDto(null, ResponseStatusType.FAIL, "", "Failed to update Sub-strategy data: the file or the sheet 'Database' cannot be opened!", "");
+            }
+
+            for (int i = 0; i < 1; i++) {
+                if(rowIterator.hasNext()) {
+                    previousRow = rowIterator.next();
+                    rowNumber++;
+                } else {
+                    logger.error("Failed to update Sub-strategy data: the sheet 'Database' contains less than 10 rows!");
+                    return new MonitoringRiskHedgeFundAllocationSubStrategyResultDto(null, ResponseStatusType.FAIL, "", "Failed to update Sub-strategy data: the sheet 'Database' contains less than 15 rows!", "");
+                }
+            }
+
+            while (rowIterator.hasNext()) {
+                currentRow = rowIterator.next();
+                rowNumber++;
+
+                if (previousRow.getCell(0) == null || currentRow.getCell(0) == null) {
+                    //end of data
+                    break;
+                }
+
+                try {
+                    previousMonth = DateUtils.getMonth(previousRow.getCell(1).getDateCellValue());
+                    currentMonth = DateUtils.getMonth(previousRow.getCell(0).getDateCellValue());
+
+                    if (previousMonth != currentMonth) {
+                        allocationBySubStrategyList.add(this.create(previousRow, employee));
+                    }
+                } catch (Exception ex) {
+                    logger.error("Failed to update Sub-strategy data: error parsing row #" + rowNumber + ", ", ex);
+                    return new MonitoringRiskHedgeFundAllocationSubStrategyResultDto(null, ResponseStatusType.FAIL, "", "Failed to update Sub-strategy data: error parsing row #" + rowNumber + "!", "");
+                }
+
+                previousRow = currentRow;
+            }
+
+            try {
+                if(allocationBySubStrategyList.size() > 0) {
+                    filesDto.setType(FileTypeLookup.MONITORING_RISK_ALLOCATION_BY_SUB_STRATEGY.getCode());
+                    Long fileId = this.fileService.save(filesDto, FileTypeLookup.MONITORING_RISK_ALLOCATION_BY_SUB_STRATEGY.getCatalog());
+
+                    Files file = new Files();
+                    file.setId(fileId);
+                    for (AllocationBySubStrategy allocationBySubStrategy : allocationBySubStrategyList) {
+                        allocationBySubStrategy.setFile(file);
+                    }
+
+                    this.repository.save(allocationBySubStrategyList);
+
+//                    List<Long> portfoliosToDelete = new ArrayList<>();
+//                    List<Long> filesToDelete = new ArrayList<>();
+//
+//                    for (AllocationBySubStrategy allocationBySubStrategy : this.repository.findAll()) {
+//                        if (allocationBySubStrategy.getFile() != null && ! allocationBySubStrategy.getFile().getId().equals(fileId)) {
+//                            portfoliosToDelete.add(allocationBySubStrategy.getId());
+//                            if ( ! filesToDelete.contains(allocationBySubStrategy.getFile().getId())) {
+//                                filesToDelete.add(allocationBySubStrategy.getFile().getId());
+//                            }
+//                        }
+//                    }
+//
+//                    for (Long id : portfoliosToDelete) {
+//                        this.repository.delete(id);
+//                    }
+//
+//                    for (Long id : filesToDelete) {
+//                        this.fileService.delete(id);
+//                    }
+                }
+            } catch (Exception ex) {
+                logger.error("Failed to update Sub-strategy data: repository problem, ", ex);
+                return new MonitoringRiskHedgeFundAllocationSubStrategyResultDto(null, ResponseStatusType.FAIL, "", "Failed to update Sub-strategy data: repository problem!", "");
+            }
+
+            logger.info("Sub-strategy data has been updated successfully, updater: " + updater);
+            List<MonitoringRiskHedgeFundAllocationSubStrategyDto> allocationSubStrategyDtos = this.converter.disassembleList(this.repository.findAllByOrderByFirstDateAsc());
+            return new MonitoringRiskHedgeFundAllocationSubStrategyResultDto(allocationSubStrategyDtos, ResponseStatusType.SUCCESS, "", "Sub-strategy data has been updated successfully!", "");
+
+        } catch (Exception ex) {
+            logger.error("Failed to update Sub-strategy data, ", ex);
+            return new MonitoringRiskHedgeFundAllocationSubStrategyResultDto(null, ResponseStatusType.FAIL, "", "Failed to update Sub-strategy data!", "");
+        }
+    }
+
+    private AllocationBySubStrategy create(Row row, Employee updater) {
+        try {
+            return new AllocationBySubStrategy(
+                    updater,
+                    new Files(),
+                    ExcelUtils.getStringValueFromCell(row.getCell(2)),
+                    row.getCell(0).getDateCellValue(),
+                    row.getCell(1).getDateCellValue(),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(3)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(4))
+            );
+        } catch (Exception ex) {
+            logger.error("Failed to update Allocation by Sub-strategy data: row parsing error, ", ex);
+            throw ex;
+        }
+    }
 
     private MonitoringRiskHedgeFundReportDto getDummyMonthlyHedgeFundReport(){
         MonitoringRiskHedgeFundReportDto report = new MonitoringRiskHedgeFundReportDto();

@@ -28,5 +28,5 @@ public interface PortfolioVarValueRepository extends PagingAndSortingRepository<
                                            @Param("typeCode") String typeCode);
 
     @Query("SELECT entity FROM PortfolioVarValue entity WHERE entity.date = ?1")
-    BenchmarkValue getValuesForDate(@Param("date") @Temporal(TemporalType.DATE) Date date);
+    PortfolioVarValue getValuesForDate(@Param("date") @Temporal(TemporalType.DATE) Date date);
 }

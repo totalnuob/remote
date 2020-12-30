@@ -211,8 +211,19 @@
     </div>
     <div class="col-md-12">
         <h5 [hidden]="selectedDateMonitoringInfo == null">ALLOCATION BY SUB STRATEGY</h5>
+        <div *ngIf="canEdit()">
+            <form #yourForm="ngForm" (ngSubmit)="onSubmitSubStrategy()">
+                <label class="btn btn-sm btn-primary">
+                    <input type="file" #fileupload id="fileupload" (change)="fileChange(fileupload.files)" style="display: none"/>Update
+                </label>
+                <button type="submit" class="btn btn-sm btn-success" *ngIf="this.myFiles.length > 0">Submit</button>
+            </form>
+            <div *ngFor="let file of this.myFiles" class="label label-info">
+                <span>{{file.name}}</span>
+            </div>
+        </div>
         <div class="row">
-            <div id="allocationBySubStrategy" style="height: 500px;">
+            <div id="allocation123" style="height: 500px;">
             </div>
         </div>
     </div>
@@ -247,17 +258,27 @@
         </table>
     </div>
 
-    <div class="row">
-        <div class="col-md-12">
-            <table class="table table-hover table-responsive table-condensed">
-                <thead>
-                <tr style="background-color: #3664ab; color: white;">
-                    <th width="60%">Name</th>
-                    <th width="20%">Year</th>
-                    <th width="20%">Value</th>
-                </tr>
-                </thead>
-            </table>
-        </div>
-    </div>
+<!--    <div class="row">-->
+<!--        <div class="col-md-12">-->
+<!--            <table class="table table-hover table-responsive table-condensed">-->
+<!--                <thead>-->
+<!--                <tr style="background-color: #3664ab; color: white;">-->
+<!--                    <th colspan="3" >STRESS TESTS</th>-->
+<!--                    <th width="60%">Name</th>-->
+<!--                    <th width="20%">Year</th>-->
+<!--                    <th width="20%">Value</th>-->
+<!--                </tr>-->
+<!--                </thead>-->
+<!--                <tbody>-->
+<!--                <tr *ngFor="let item of selectedDateMonitoringInfoStressTests; let i = index"-->
+<!--                    [style.font-weight]="i % 2 == 1 ? 'bold' : ''" [style.text-align]="'center'">-->
+<!--                    <td>{{item[i].name}}</td>-->
+<!--                    <td>{{item[i].date}}</td>-->
+<!--                    <td>{{item[i].value | percent: '1.2-2'}}</td>-->
+
+<!--                </tr>-->
+<!--                </tbody>-->
+<!--            </table>-->
+<!--        </div>-->
+<!--    </div>-->
 </div>

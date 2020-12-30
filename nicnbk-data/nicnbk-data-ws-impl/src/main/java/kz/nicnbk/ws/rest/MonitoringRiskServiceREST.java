@@ -4,6 +4,7 @@ import kz.nicnbk.service.api.authentication.TokenService;
 import kz.nicnbk.service.api.monitoring.LiquidPortfolioService;
 import kz.nicnbk.service.api.monitoring.MonitoringRiskService;
 import kz.nicnbk.service.dto.common.EntitySaveResponseDto;
+import kz.nicnbk.service.dto.files.FilesDto;
 import kz.nicnbk.service.dto.monitoring.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,9 +14,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 
 /**
@@ -31,6 +34,9 @@ public class MonitoringRiskServiceREST extends CommonServiceREST {
     @Autowired
     private MonitoringRiskService riskService;
 
+    @Autowired
+    private TokenService tokenService;
+
     @PreAuthorize("hasRole('ROLE_RISKS_EDITOR') OR hasRole('ROLE_RISKS_VIEWER') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/hfMonthly", method = RequestMethod.POST)
     public ResponseEntity getMonthlyHedgeFundReport(@RequestBody MonitoringRiskReportSearchParamsDto searchParamsDto) {
@@ -45,19 +51,21 @@ public class MonitoringRiskServiceREST extends CommonServiceREST {
         return buildNonNullResponse(dateList);
     }
 
-//    @RequestMapping(value = "/portfolioVar/save", method = RequestMethod.POST)
-//    public ResponseEntity<?> savePortfolioVar(@RequestBody MonitoringRiskHedgeFundPortfolioVarDto varDto) {
-////        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
-////        String username = this.tokenService.decode(token).getUsername();
-//        EntitySaveResponseDto saveResponse = this.riskService.save(varDto);
-//        return buildEntitySaveResponse(saveResponse);
-//    }
-//
-//    @RequestMapping(value = "/stressTest/save", method = RequestMethod.POST)
-//    public ResponseEntity<?> saveStressTest(@RequestBody MonitoringRiskHedgeFundStressTestDto stressTestDto) {
-////        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
-////        String username = this.tokenService.decode(token).getUsername();
-//        EntitySaveResponseDto saveResponse = this.riskService.save(stressTestDto);
-//        return buildEntitySaveResponse(saveResponse);
-//    }
+    @PreAuthorize("hasRole('ROLE_RISKS_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/strategy/upload", method = RequestMethod.POST)
+    public ResponseEntity uploadStrategy(@RequestParam(value = "file", required = false) MultipartFile[] files) {
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
+
+        Set<FilesDto> filesDtoSet = buildFilesDtoFromMultipart(files, null);
+
+        MonitoringRiskHedgeFundAllocationSubStrategyResultDto resultDto = this.riskService.uploadStrategy(filesDtoSet, username);
+
+        if (resultDto.getStatus().getCode().equals("SUCCESS")) {
+            return new ResponseEntity<>(resultDto, null, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(resultDto, null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 }

@@ -208,4 +208,28 @@ public class MonitoringRiskHedgeFundReportDto extends ResponseDto {
     public void setStressTestsError(String stressTestsError) {
         this.stressTestsError = stressTestsError;
     }
+
+    public List<MonitoringRiskHedgeFundAllocationSubStrategyDto> getSubStrategyAllocations() {
+        return subStrategyAllocations;
+    }
+
+    public void setSubStrategyAllocations(List<MonitoringRiskHedgeFundAllocationSubStrategyDto> subStrategyAllocations) {
+        this.subStrategyAllocations = subStrategyAllocations;
+    }
+
+    public String getSubStrategyAllocationsWarning() {
+        return subStrategyAllocationsWarning;
+    }
+
+    public void setSubStrategyAllocationsWarning(String subStrategyAllocationsWarning) {
+        this.subStrategyAllocationsWarning = subStrategyAllocationsWarning;
+    }
+
+    public String getSubStrategyAllocationsError() {
+        return subStrategyAllocationsError;
+    }
+
+    public void setSubStrategyAllocationsError(String subStrategyAllocationsError) {
+        this.subStrategyAllocationsError = subStrategyAllocationsError;
+    }
 }

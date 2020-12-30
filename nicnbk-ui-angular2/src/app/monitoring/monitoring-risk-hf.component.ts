@@ -25,6 +25,13 @@ declare var $: any;
 export class MonitoringRiskHedgeFundComponent extends GoogleChartComponent {
 
     private moduleAccessChecker = new ModuleAccessCheckerService;
+
+    private tableDate;
+
+    private subStrategyList = [];
+
+    private myFiles: File[];
+
     busy: Subscription;
 
     availableDates: any[];
@@ -37,6 +44,8 @@ export class MonitoringRiskHedgeFundComponent extends GoogleChartComponent {
         private monitoringRiskHFService: MonitoringRiskHedgeFundService
     ){
         super();
+
+        this.myFiles = [];
 
          Observable.forkJoin(
                     // Load dates
@@ -61,6 +70,7 @@ export class MonitoringRiskHedgeFundComponent extends GoogleChartComponent {
             this.drawMarketSensitivitiesSinceInceptionMSCI();
             this.drawMarketSensitivitiesSinceInceptionBarclaysGblAgg();
             this.drawAllocationBySubStrategy();
+            //this.drawAllocationBySubStrategy2();
         }
     }
 
@@ -154,7 +164,41 @@ export class MonitoringRiskHedgeFundComponent extends GoogleChartComponent {
         chart.draw(data, options);
     }
 
-    drawAllocationBySubStrategy(){
+    drawAllocationBySubStrategy() {
+        if(typeof google.charts === 'undefined'){
+            console.log("google undefined");
+            return;
+        }
+        if(this.selectedDateMonitoringInfo.subStrategyAllocations == null || this.selectedDateMonitoringInfo.subStrategyAllocations.length == 0){
+            return;
+        }
+        var dataArr = [];
+        dataArr.push(['Sub-Strategy', this.selectedDateMonitoringInfo.subStrategyAllocations[0].firstDate,
+            this.selectedDateMonitoringInfo.subStrategyAllocations[0].lastDate]);
+        for (var i = 0; i < this.selectedDateMonitoringInfo.subStrategyAllocations.length; i++) {
+            dataArr.push([this.selectedDateMonitoringInfo.subStrategyAllocations[i].subStrategyName,
+                Number((this.selectedDateMonitoringInfo.subStrategyAllocations[i].currentValue * 100).toFixed(2)),
+                Number((this.selectedDateMonitoringInfo.subStrategyAllocations[i].previousValue * 100).toFixed(2))]);
+        }
+        console.log(dataArr);
+        var data = google.visualization.arrayToDataTable(dataArr);
+        var formatNumber = new google.visualization.NumberFormat({
+            pattern: '0.00'
+        });
+        formatNumber.format(data, 1);
+        formatNumber.format(data, 2);
+        var options = {
+            chart: {
+                title: '',
+                subtitle: '',
+            },
+            bars: 'horizontal'
+        };
+        var chart = new google.charts.Bar(document.getElementById('allocation123'));
+        chart.draw(data, google.charts.Bar.convertOptions(options));
+    }
+
+    drawAllocationBySubStrategy2(){
         var data = google.visualization.arrayToDataTable([
             ['Sub-strategy', '30.09.2020', '31.10.2020'],
             ['Other Investments', 0.1, 0.1],
@@ -197,31 +241,40 @@ export class MonitoringRiskHedgeFundComponent extends GoogleChartComponent {
                         this.selectedDateMonitoringInfo = monitoringData;
                         if(this.selectedDateMonitoringInfo != null && this.selectedDateMonitoringInfo.stressTests != null){
                             var stressTestsNames = [];
+                            var stressTestsDates = [];
                             var stressTestsValues = [];
                             for(var i = 0; i < this.selectedDateMonitoringInfo.stressTests.length; i++){
                                 var stressTestsNameItem = [];
+                                var stressTestsDatesItem = [];
                                 var stressTestsValueItem = [];
                                 if(stressTestsNames.length > 0){
                                     stressTestsNameItem = stressTestsNames[stressTestsNames.length - 1];
+                                    stressTestsDatesItem = stressTestsDates[stressTestsDates.length -1];
                                     stressTestsValueItem = stressTestsValues[stressTestsValues.length - 1];
                                     if(stressTestsNameItem.length == 5){
                                         stressTestsNames.push([]);
+                                        stressTestsDates.push([]);
                                         stressTestsValues.push([]);
                                         stressTestsNameItem = stressTestsNames[stressTestsNames.length - 1];
+                                        stressTestsDatesItem = stressTestsDates[stressTestsDates.length - 1];
                                         stressTestsValueItem = stressTestsValues[stressTestsValues.length - 1]
                                     }
                                 }else{
                                     stressTestsNames.push(stressTestsNameItem);
+                                    stressTestsDates.push(stressTestsDatesItem);
                                     stressTestsValues.push(stressTestsValueItem);
                                 }
                                 stressTestsNameItem.push(this.selectedDateMonitoringInfo.stressTests[i].name);
+                                stressTestsDatesItem.push(this.selectedDateMonitoringInfo.stressTests[i].date);
                                 stressTestsValueItem.push(this.selectedDateMonitoringInfo.stressTests[i].value);
                             }
                             console.log(stressTestsNames);
+                            console.log(stressTestsDates);
                             console.log(stressTestsValues);
                             this.selectedDateMonitoringInfoStressTests = [];
                             for(var i = 0; i < stressTestsNames.length; i++){
                                 this.selectedDateMonitoringInfoStressTests.push(stressTestsNames[i]);
+                                this.selectedDateMonitoringInfoStressTests.push(stressTestsDates[i]);
                                 this.selectedDateMonitoringInfoStressTests.push(stressTestsValues[i]);
                             }
                         }
@@ -241,7 +294,64 @@ export class MonitoringRiskHedgeFundComponent extends GoogleChartComponent {
         );
     }
 
-    edit() {
+    canEdit(){
+        return this.moduleAccessChecker.checkAccessMonitoringEditor();
+    }
 
+    fileChange(files: any){
+        this.myFiles = files;
+        console.log(this.myFiles);
+    }
+
+    private getDataByDate(tableDate){
+        for(var i = 0; i < this.subStrategyList.length; i++){
+            if(this.subStrategyList[i].date === tableDate){
+                return this.subStrategyList[i];
+            }
+        }
+        return null;
+    }
+
+    private onSubmitSubStrategy() {
+        this.busy = this.monitoringRiskHFService.postFiles(this.myFiles)
+            .subscribe(
+                (response) => {
+                    this.subStrategyList = response.monitoringRiskHedgeFundAllocationSubStrategyDtoList;
+
+                    console.log(response);
+                    console.log(response.message.nameEn);
+
+                    this.postAction(response.message.nameEn, null);
+
+                    if(this.subStrategyList.length > 0) {
+                        // this.tableDate = this.getAllDates()[0];
+                        // this.tableDate = this.getAllDates()[0];
+                        // this.drawActualAllocationChart(this.tableDate);
+                        // this.drawNewlyCreatedAllocationChart(this.subStrategyList);
+
+                        this.postAction(response.message.nameEn, null);
+
+                        this.myFiles = [];
+                        $("#fileupload").val(null);
+                    }
+                },
+                error => {
+                    // this.processErrorMessage(error);
+                    this.postAction(null, JSON.parse(error).message.nameEn);
+                    console.log(error);
+                    console.log(JSON.parse(error).message.nameEn);
+                }
+            )
+    }
+
+    public getAllDates(){
+        var dates = [];
+        // for(var i = this.nav.length - 1; i >= 0; i--){
+        //     dates.push(this.nav[i][0]);
+        // }
+        for(var i = this.subStrategyList.length - 1; i >= 0; i--){
+            dates.push(this.subStrategyList[i].date);
+        }
+        return dates;
     }
 }

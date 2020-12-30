@@ -26,10 +26,10 @@ public class PortfolioVarPagedSearchResult extends PageableResult {
         this.searchParams = searchParams;
     }
 
-    public void add(PortfolioVarValueDto benchmark){
+    public void add(PortfolioVarValueDto portfolioVar){
         if(this.portfolioVars == null){
             this.portfolioVars = new ArrayList<>();
         }
-        this.portfolioVars.add(benchmark);
+        this.portfolioVars.add(portfolioVar);
     }
 }

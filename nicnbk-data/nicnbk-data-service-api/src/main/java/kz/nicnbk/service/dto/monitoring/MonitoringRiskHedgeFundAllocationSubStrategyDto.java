@@ -1,26 +1,15 @@
 package kz.nicnbk.service.dto.monitoring;
 
 import kz.nicnbk.common.service.model.BaseDto;
-import kz.nicnbk.common.service.util.MathUtils;
 
-public class MonitoringRiskHedgeFundAllocationSubStrategyDto implements BaseDto, Comparable {
-    private String strategyName;
+import java.util.Date;
+
+public class MonitoringRiskHedgeFundAllocationSubStrategyDto implements BaseDto{
     private String subStrategyName;
-    private String className;
-    private Double nav;
-    private Double navPercent;
-    private Double mtd;
-    private Double ytd;
-
-
-
-    public String getStrategyName() {
-        return strategyName;
-    }
-
-    public void setStrategyName(String strategyName) {
-        this.strategyName = strategyName;
-    }
+    private Date firstDate;
+    private Date lastDate;
+    private Double currentValue;
+    private Double previousValue;
 
     public String getSubStrategyName() {
         return subStrategyName;
@@ -30,55 +19,36 @@ public class MonitoringRiskHedgeFundAllocationSubStrategyDto implements BaseDto,
         this.subStrategyName = subStrategyName;
     }
 
-    public String getClassName() {
-        return className;
+    public Date getFirstDate() {
+        return firstDate;
     }
 
-    public void setClassName(String className) {
-        this.className = className;
+    public void setFirstDate(Date firstDate) {
+        this.firstDate = firstDate;
     }
 
-    public Double getNav() {
-        return nav;
+    public Date getLastDate() {
+        return lastDate;
     }
 
-    public void setNav(Double nav) {
-        this.nav = nav;
+    public void setLastDate(Date lastDate) {
+        this.lastDate = lastDate;
     }
 
-    public Double getNavPercent() {
-        return navPercent;
+    public Double getCurrentValue() {
+        return currentValue;
     }
 
-    public void setNavPercent(Double navPercent) {
-        this.navPercent = navPercent;
+    public void setCurrentValue(Double currentValue) {
+        this.currentValue = currentValue;
     }
 
-    public Double getMtd() {
-        return mtd;
+    public Double getPreviousValue() {
+        return previousValue;
     }
 
-    public void setMtd(Double mtd) {
-        this.mtd = mtd;
+    public void setPreviousValue(Double previousValue) {
+        this.previousValue = previousValue;
     }
 
-    public Double getYtd() {
-        return ytd;
-    }
-
-    public void setYtd(Double ytd) {
-        this.ytd = ytd;
-    }
-
-    @Override
-    public int compareTo(Object o) {
-        if(this.nav != null && ((MonitoringRiskHedgeFundAllocationSubStrategyDto) o).nav != null){
-            Double diff = MathUtils.subtract(this.nav, ((MonitoringRiskHedgeFundAllocationSubStrategyDto) o).nav);
-            return diff > 0 ? -1 : diff < 0 ? 1 : 0;
-        }else if(this.nav != null){
-            return 1;
-        }else{
-            return -1;
-        }
-    }
 }
