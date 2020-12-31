@@ -74,6 +74,15 @@ export class BenchmarkLookupValuesComponent extends CommonNBReportingComponent i
             format: 'DD-MM-YYYY'
         });
 
+        $('#fromDateDTPickeerBB').datetimepicker({
+            //defaultDate: new Date(),
+            format: 'DD-MM-YYYY'
+        });
+        $('#untilDateDTPickeerBB').datetimepicker({
+            //defaultDate: new Date(),
+            format: 'DD-MM-YYYY'
+        });
+
         $('#valueDateDTPickeer').datetimepicker({
             //defaultDate: new Date(),
             format: 'DD-MM-YYYY'
