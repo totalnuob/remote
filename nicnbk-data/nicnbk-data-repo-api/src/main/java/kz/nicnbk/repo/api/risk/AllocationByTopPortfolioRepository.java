@@ -13,5 +13,9 @@ public interface AllocationByTopPortfolioRepository extends PagingAndSortingRepo
 
     AllocationByTopPortfolio findByDate(Date date);
 
-    AllocationByTopPortfolio findByFundName(String fundName);
+//    AllocationByTopPortfolio findByFundName(String fundName);
+
+    List<AllocationByTopPortfolio> findByFundName(String fundName);
+
+    List<AllocationByTopPortfolio> findAllocationsByDate(Date date);
 }

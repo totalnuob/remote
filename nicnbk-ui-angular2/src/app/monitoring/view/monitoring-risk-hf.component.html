@@ -172,12 +172,6 @@
     <div class="row" [hidden]="selectedDateMonitoringInfo == null">
         <div class="col-md-12">
             <h4>TOP PORTFOLIO FUND ALLOCATIONS</h4>
-            <div class="alert alert-danger small" *ngIf="selectedDateMonitoringInfo?.topFundAllocationsError != null">
-                <span>{{selectedDateMonitoringInfo?.topFundAllocationsError}}</span>
-            </div>
-            <div class="alert alert-warning small" *ngIf="selectedDateMonitoringInfo?.topFundAllocationsWarning != null">
-                <span>* {{selectedDateMonitoringInfo.topFundAllocationsWarning}}</span>
-            </div>
             <div *ngIf="canEdit()">
                 <form #yourForm="ngForm" (ngSubmit)="onSubmitTopPortfolio()">
                     <label class="btn btn-sm btn-primary">
@@ -188,6 +182,13 @@
                 <div *ngFor="let file of this.myFilesTopPortfolio" class="label label-info">
                     <span>{{file.name}}</span>
                 </div>
+            </div>
+            <br>
+            <div class="alert alert-danger small" *ngIf="selectedDateMonitoringInfo?.topFundAllocationsError != null">
+                <span>{{selectedDateMonitoringInfo?.topFundAllocationsError}}</span>
+            </div>
+            <div class="alert alert-warning small" *ngIf="selectedDateMonitoringInfo?.topFundAllocationsWarning != null">
+                <span>* {{selectedDateMonitoringInfo.topFundAllocationsWarning}}</span>
             </div>
             <table class="table table-hover table-responsive table-condensed">
                 <thead>
@@ -258,7 +259,7 @@
             </thead>
             <tbody>
                 <tr *ngFor="let item of selectedDateMonitoringInfoStressTests; let i = index"
-                    [style.font-weight]="i % 2 == 1 ? 'bold' : ''" [style.text-align]="'center'">
+                    [style.font-weight]="i % 3 == 0 ? 'bold' : ''" [style.text-align]="'center'">
                     <td>{{item[0]}}</td>
                     <td>{{item[1]}}</td>
                     <td>{{item[2]}}</td>

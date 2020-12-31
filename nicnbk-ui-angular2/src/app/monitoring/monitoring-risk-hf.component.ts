@@ -284,7 +284,7 @@ export class MonitoringRiskHedgeFundComponent extends GoogleChartComponent {
                             }
                         }
                     }else{
-                        if(monitoringData.message != null && monitoringData.message.nameEn != null && monitoringData.message.nameEn.trim() != ''{
+                        if(monitoringData.message != null && monitoringData.message.nameEn != null && monitoringData.message.nameEn.trim() != ''){
                             this.errorMessage = monitoringData.message.nameEn;
                         }
                     }

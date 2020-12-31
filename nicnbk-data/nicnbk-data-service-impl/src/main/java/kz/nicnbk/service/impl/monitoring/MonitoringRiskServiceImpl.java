@@ -781,7 +781,26 @@ public class MonitoringRiskServiceImpl implements MonitoringRiskService {
         }
 
         List<MonitoringRiskHedgeFundFundAllocationDto> topFundAllocations = new ArrayList<>();
-        topFundAllocations.addAll(valueList.subList(0, 10));
+        List<MonitoringRiskHedgeFundFundAllocationDto> modifiedTopFundAllocations = new ArrayList<>(valueList.subList(0, 10));
+        List<AllocationByTopPortfolio> fromRepository = topPortfolioRepository.findAllocationsByDate(date);
+        if (fromRepository != null || !fromRepository.isEmpty()) {
+            for (AllocationByTopPortfolio portfolio : fromRepository) {
+                if (portfolio != null) {
+                    MonitoringRiskHedgeFundFundAllocationDto dto = topPortfolioEntityConverter.disassemble(portfolio);
+                    for (MonitoringRiskHedgeFundFundAllocationDto modifiedDto : modifiedTopFundAllocations) {
+                        if (dto.getFundName().equals(modifiedDto.getFundName())) {
+                            modifiedDto.setQtd(dto.getQtd());
+                            modifiedDto.setYtd(dto.getYtd());
+                            modifiedDto.setContributionToYTD(dto.getContributionToYTD());
+                            modifiedDto.setContributionToVAR(dto.getContributionToVAR());
+                        }
+                    }
+                }
+            }
+        }
+
+        topFundAllocations.addAll(modifiedTopFundAllocations);
+//        topFundAllocations.addAll(valueList.subList(0, 10));
 
         MonitoringRiskHedgeFundFundAllocationDto top10TotalRecord = new MonitoringRiskHedgeFundFundAllocationDto();
         top10TotalRecord.setFundName("TOP 10");
@@ -1214,8 +1233,8 @@ public class MonitoringRiskServiceImpl implements MonitoringRiskService {
             Employee employee = this.employeeRepository.findByUsername(updater);
 
             if (employee == null) {
-                logger.error("Failed to update Sub-strategy data: the user is not found in the database!");
-                return new MonitoringRiskHedgeFundAllocationResultDto(null, ResponseStatusType.FAIL, "", "Failed to update Sub-strategy data: the user is not found in the database!", "");
+                logger.error("Failed to update Top Portfolio data: the user is not found in the database!");
+                return new MonitoringRiskHedgeFundAllocationResultDto(null, ResponseStatusType.FAIL, "", "Failed to update Top Portfolio data: the user is not found in the database!", "");
             }
 
             FilesDto filesDto;
@@ -1235,7 +1254,7 @@ public class MonitoringRiskServiceImpl implements MonitoringRiskService {
                 rowIterator = sheet.iterator();
             } catch (Exception ex) {
                 logger.error("Failed to update Top Portfolio data: the file or the sheet 'Database' cannot be opened, ", ex);
-                return new MonitoringRiskHedgeFundAllocationResultDto(null, ResponseStatusType.FAIL, "", "Failed to update Sub-strategy data: the file or the sheet 'Database' cannot be opened!", "");
+                return new MonitoringRiskHedgeFundAllocationResultDto(null, ResponseStatusType.FAIL, "", "Failed to update Top Portfolio data: the file or the sheet 'Database' cannot be opened!", "");
             }
 
             for (int i = 0; i < 1; i++) {
@@ -1244,7 +1263,7 @@ public class MonitoringRiskServiceImpl implements MonitoringRiskService {
                     rowNumber++;
                 } else {
                     logger.error("Failed to update Top Portfolio data: the sheet 'Database' contains less than 10 rows!");
-                    return new MonitoringRiskHedgeFundAllocationResultDto(null, ResponseStatusType.FAIL, "", "Failed to update Sub-strategy data: the sheet 'Database' contains less than 15 rows!", "");
+                    return new MonitoringRiskHedgeFundAllocationResultDto(null, ResponseStatusType.FAIL, "", "Failed to update Top Portfolio data: the sheet 'Database' contains less than 10 rows!", "");
                 }
             }
 
@@ -1260,8 +1279,8 @@ public class MonitoringRiskServiceImpl implements MonitoringRiskService {
                 try {
                     allocationByTopPortfolioList.add(this.createTopPortfolio(previousRow, employee));
                 } catch (Exception ex) {
-                    logger.error("Failed to update Sub-strategy data: error parsing row #" + rowNumber + ", ", ex);
-                    return new MonitoringRiskHedgeFundAllocationResultDto(null, ResponseStatusType.FAIL, "", "Failed to update Sub-strategy data: error parsing row #" + rowNumber + "!", "");
+                    logger.error("Failed to update Top Portfolio data: error parsing row #" + rowNumber + ", ", ex);
+                    return new MonitoringRiskHedgeFundAllocationResultDto(null, ResponseStatusType.FAIL, "", "Failed to update Top Portfolio data: error parsing row #" + rowNumber + "!", "");
                 }
 
                 previousRow = currentRow;
@@ -1301,17 +1320,17 @@ public class MonitoringRiskServiceImpl implements MonitoringRiskService {
 //                    }
                 }
             } catch (Exception ex) {
-                logger.error("Failed to update Sub-strategy data: repository problem, ", ex);
-                return new MonitoringRiskHedgeFundAllocationResultDto(null, ResponseStatusType.FAIL, "", "Failed to update Sub-strategy data: repository problem!", "");
+                logger.error("Failed to update Top Portfolio data: repository problem, ", ex);
+                return new MonitoringRiskHedgeFundAllocationResultDto(null, ResponseStatusType.FAIL, "", "Failed to update Top Portfolio data: repository problem!", "");
             }
 
-            logger.info("Sub-strategy data has been updated successfully, updater: " + updater);
+            logger.info("Top Portfolio data has been updated successfully, updater: " + updater);
             List<MonitoringRiskHedgeFundFundAllocationDto> allocationSubStrategyDtos = this.topPortfolioEntityConverter.disassembleList(this.topPortfolioRepository.findAllByOrderByDateAsc());
-            return new MonitoringRiskHedgeFundAllocationResultDto(allocationSubStrategyDtos, ResponseStatusType.SUCCESS, "", "Sub-strategy data has been updated successfully!", "");
+            return new MonitoringRiskHedgeFundAllocationResultDto(allocationSubStrategyDtos, ResponseStatusType.SUCCESS, "", "Top Portfolio data has been updated successfully!", "");
 
         } catch (Exception ex) {
-            logger.error("Failed to update Sub-strategy data, ", ex);
-            return new MonitoringRiskHedgeFundAllocationResultDto(null, ResponseStatusType.FAIL, "", "Failed to update Sub-strategy data!", "");
+            logger.error("Failed to update Top Portfolio data, ", ex);
+            return new MonitoringRiskHedgeFundAllocationResultDto(null, ResponseStatusType.FAIL, "", "Failed to update Top Portfolio data!", "");
         }
     }
 
@@ -1331,7 +1350,7 @@ public class MonitoringRiskServiceImpl implements MonitoringRiskService {
                     ExcelUtils.getDoubleValueFromCell(row.getCell(8))
             );
         } catch (Exception ex) {
-            logger.error("Failed to update Allocation by Sub-strategy data: row parsing error, ", ex);
+            logger.error("Failed to update Allocation by Top Portfolio data: row parsing error, ", ex);
             throw ex;
         }
     }
