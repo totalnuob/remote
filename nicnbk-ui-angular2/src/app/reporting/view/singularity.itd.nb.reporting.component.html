@@ -33,6 +33,12 @@
         <li>
             <a data-toggle="tab" href="#trancheB">Tranche B</a>
         </li>
+        <li>
+            <a data-toggle="tab" href="#trancheAHRS">Tranche A HRS</a>
+        </li>
+        <li>
+            <a data-toggle="tab" href="#trancheBHRS">Tranche B HRS</a>
+        </li>
     </ul>
     <div class="tab-content" *ngIf="recordsHolder != null">
         <div id="trancheA" class="tab-pane fade in active">
@@ -71,6 +77,47 @@
                         <td>{{record.profitLoss != null ? (record.profitLoss | number:'1.2-2'): ''}}</td>
                         <td>{{record.redemptions != null ? (record.redemptions | number:'1.2-2'): ''}}</td>
                         <td>{{record.closingBalance != null ? (record.closingBalance | number:'1.2-2'): ''}}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <div id="trancheAHRS" class="tab-pane fade">
+            <div class="row withpadding">
+                <table [ngBusy]="busy" class="table table-hover table-condensed" style="font-size: small">
+                    <tr bgcolor="#e7e7e7">
+                        <td>Period</td>
+                        <td>Manager Fund</td>
+                        <td>Portfolio</td>
+                        <td>Net Contribution</td>
+                        <td>Ending Balance</td>
+                    </tr>
+                    <tr *ngFor="let record of recordsHolder.recordsITDTrancheAHRS">
+                        <td>{{record.date}}</td>
+                        <td>{{record.fundName}}</td>
+                        <td>{{record.portfolio}}</td>
+                        <td>{{record.netContribution != null ? (record.netContribution | number:'1.2-2'): ''}}</td>
+                        <td>{{record.endingBalance != null ? (record.endingBalance | number:'1.2-2'): ''}}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div id="trancheBHRS" class="tab-pane fade">
+            <div class="row withpadding">
+                <table [ngBusy]="busy" class="table table-hover table-condensed" style="font-size: small">
+                    <tr bgcolor="#e7e7e7">
+                        <td>Period</td>
+                        <td>Manager Fund</td>
+                        <td>Portfolio</td>
+                        <td>Net Contribution</td>
+                        <td>Ending Balance</td>
+                    </tr>
+                    <tr *ngFor="let record of recordsHolder.recordsITDTrancheBHRS">
+                        <td>{{record.date}}</td>
+                        <td>{{record.fundName}}</td>
+                        <td>{{record.portfolio}}</td>
+                        <td>{{record.netContribution != null ? (record.netContribution | number:'1.2-2'): ''}}</td>
+                        <td>{{record.endingBalance != null ? (record.endingBalance | number:'1.2-2'): ''}}</td>
                     </tr>
                 </table>
             </div>

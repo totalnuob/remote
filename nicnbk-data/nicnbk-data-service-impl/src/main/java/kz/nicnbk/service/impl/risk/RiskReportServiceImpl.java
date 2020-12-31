@@ -1,6 +1,6 @@
-package kz.nicnbk.service.impl.riskmanagement;
+package kz.nicnbk.service.impl.risk;
 
-import kz.nicnbk.service.api.riskmanagement.RiskManagementReportService;
+import kz.nicnbk.service.api.risk.RiskReportService;
 import kz.nicnbk.service.dto.riskmanagement.LiquidPortfolioReportDto;
 import kz.nicnbk.service.dto.riskmanagement.TableColumnDto;
 import org.springframework.stereotype.Service;
@@ -12,7 +12,7 @@ import java.util.List;
  * Created by magzumov on 01.11.2016.
  */
 @Service
-public class RiskManagementReportServiceImpl implements RiskManagementReportService {
+public class RiskReportServiceImpl implements RiskReportService {
 
     @Override
     public LiquidPortfolioReportDto getLiquidPortfolioReport() {

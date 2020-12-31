@@ -23,6 +23,8 @@ public interface PeriodicReportService extends BaseService {
 
     PeriodicReportDto findReportByReportDate(Date date);
 
+    PeriodicReportDto findMostRecentReport();
+
     List<PeriodicReportDto> getAllPeriodicReports();
 
     PeriodicReportInputFilesHolder getPeriodicReportInputFiles(Long reportId);

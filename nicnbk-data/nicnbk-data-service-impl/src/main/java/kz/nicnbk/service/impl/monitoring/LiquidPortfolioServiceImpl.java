@@ -342,13 +342,14 @@ public class LiquidPortfolioServiceImpl implements LiquidPortfolioService {
                         InputStream inputStream = new FileInputStream(path+name);
                         excelFile.setInputStream(inputStream);
 
-                        setExportZipContent("file_" + String.valueOf(i) + ".xlsx", out, excelFile);
+                        setExportZipContent(i + "_" + excelFile.getFileName(), out, excelFile);
                     }
 
                     out.close();
 
                     zipFile.setInputStream(new FileInputStream(zipFileName));
-                    zipFile.setFileName(zipFileName);
+                    //zipFile.setFileName(zipFileName);
+                    zipFile.setFileName("LIQ_PORTFOLIO");
                     zipFile.setMimeType("application/zip");
 
                     return zipFile;

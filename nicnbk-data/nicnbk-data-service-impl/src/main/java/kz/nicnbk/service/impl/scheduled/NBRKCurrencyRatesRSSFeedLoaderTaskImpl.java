@@ -47,6 +47,7 @@ public class NBRKCurrencyRatesRSSFeedLoaderTaskImpl {
                 if(entry.getTitle() != null && entry.getTitle().equalsIgnoreCase(CurrencyLookup.USD.getCode()) && entry.getDescription() != null &&
                         entry.getDescription().getValue() != null) {
                     CurrencyRatesDto currencyRatesDto = new CurrencyRatesDto();
+                    // TODO: change implementation, to get <pubDate></pubDate>
                     currencyRatesDto.setDate(new Date());
                     try{
                         Double value = Double.parseDouble(entry.getDescription().getValue());

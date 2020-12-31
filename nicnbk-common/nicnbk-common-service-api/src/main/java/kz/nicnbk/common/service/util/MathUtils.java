@@ -13,6 +13,8 @@ import org.apache.commons.math3.util.MedianOf3PivotingStrategy;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -28,6 +30,12 @@ public class MathUtils {
 
     public static double calculateSlope(double[][] data){
         SimpleRegression simpleRegression = new SimpleRegression();
+        simpleRegression.addData(data);
+        return simpleRegression.getSlope();
+    }
+
+    public static double calculateSlope(double[][] data, boolean includeIntercept){
+        SimpleRegression simpleRegression = new SimpleRegression(includeIntercept);
         simpleRegression.addData(data);
         return simpleRegression.getSlope();
     }
@@ -155,6 +163,28 @@ public class MathUtils {
 
     }
 
+    public static Double getSharpeRatio(int scale, double[] returns, double[] tbills, boolean isBiasCorrected){
+        Double annReturns = getAnnualizedReturn(returns, scale);
+        Double annTbills = getAnnualizedReturn(tbills, scale);
+        Double annSTD = MathUtils.multiply(scale, getStandardDeviation(returns, isBiasCorrected), Math.sqrt(12));
+        return MathUtils.divide(scale, MathUtils.subtract(scale, annReturns, annTbills), annSTD);
+    }
+
+    public static Double getSharpeRatioAvg12MReturns(int scale, double[] returns, double[] tbills, boolean isBiasCorrected){
+        if(returns == null || returns.length == 0 || tbills == null || tbills.length == 0){
+            return null;
+        }
+        Double sumReturns = 0.0;
+        for(int i = 0; i < returns.length; i++){
+            sumReturns = MathUtils.add(scale, sumReturns, returns[i]);
+        }
+        Double avgReturns = MathUtils.divide(scale, sumReturns, new Double(returns.length));
+        Double annTbills = getAnnualizedReturn(tbills, scale);
+        Double annSTD = MathUtils.multiply(scale, getStandardDeviation(returns, isBiasCorrected), Math.sqrt(12));
+        //return MathUtils.divide(scale, MathUtils.subtract(scale, annAvgReturns, annTbills), annSTD);
+        return MathUtils.divide(scale, MathUtils.subtract(scale, MathUtils.multiply(scale, avgReturns, 12.0), annTbills), annSTD);
+    }
+
     public static Double getSortinoRatio(Double fundAnnualizedReturn, Double benchmarkAnnualizedReturn, double[] returns, int scale){
         if(returns == null || returns.length == 0 || fundAnnualizedReturn == null || benchmarkAnnualizedReturn == null) {
             return null;
@@ -173,7 +203,25 @@ public class MathUtils {
         //return getRoundedValue(value);
         value = MathUtils.multiply(scale, value, 100.0);
         return (new BigDecimal(value).setScale(scale, RoundingMode.HALF_UP)).doubleValue();
+    }
 
+    public static Double getSortinoRatioAvgReturns(Double benchmarkAnnualizedReturn, double[] returns, int scale){
+        if(returns == null || returns.length == 0 || benchmarkAnnualizedReturn == null) {
+            return null;
+        }
+        Double sumReturns = 0.0;
+        for(int i = 0; i < returns.length; i++){
+            sumReturns = MathUtils.add(scale, sumReturns, returns[i]);
+        }
+        Double avgReturns = MathUtils.divide(scale, sumReturns, new Double(returns.length));
+        double[] negativeReturns = new double[returns.length];
+        for(int i = 0; i < returns.length; i++){
+            negativeReturns[i] = returns[i] < 0 ? returns[i] : 0.0;
+        }
+        Double annSTD = MathUtils.multiply(scale, getStandardDeviation(negativeReturns, true), Math.sqrt(12));
+        //Double value = MathUtils.divide(scale, MathUtils.subtract(scale, annAvgReturns, benchmarkAnnualizedReturn), annSTD);
+        Double value = MathUtils.divide(scale, MathUtils.subtract(scale, MathUtils.multiply(scale, avgReturns, 12.0), benchmarkAnnualizedReturn), annSTD);
+        return value;
     }
 
     /**
@@ -318,6 +366,28 @@ public class MathUtils {
         return standardDeviation.evaluate(values);
     }
 
+    public static Double getStandardDeviation(double[] values, boolean isBiasCorrected){
+        StandardDeviation standardDeviation = new StandardDeviation(isBiasCorrected);
+        return standardDeviation.evaluate(values);
+    }
+
+    public static Double getAnnualizedDownsideDeviation(int scale, double[] values){
+        if(values == null || values.length == 0){
+            return null;
+        }
+//        List<Double> negatives = new ArrayList<>();
+//        for(int i = 0; i < values.length; i++){
+//            if(values[i] < 0){
+//                negatives.add(values[i]);
+//            }
+//        }
+        double[] returns = new double[values.length];
+        for(int i = 0; i < returns.length; i++){
+            returns[i] = values[i] < 0 ? values[i] : 0.0;
+        }
+        return MathUtils.multiply(scale, getStandardDeviation(returns, true), Math.sqrt(12));
+    }
+
     public static Double getMean(double[] values){
         Mean mean = new Mean();
         return mean.evaluate(values);
@@ -371,10 +441,29 @@ public class MathUtils {
                 value = MathUtils.multiply(scale, MathUtils.add(scale, returns[i], 1.0), value);
                 cumulativeReturns[i] = MathUtils.subtract(scale, value, 1.0);
             }
-
         }
         return cumulativeReturns;
     }
+
+    public static double[] getCumulativeReturnsFromInitial(int scale, double[] returns, Double initial){
+        if(returns == null){
+            return null;
+        }
+        double[] cumulativeReturns = new double[returns.length];
+        Double previous = initial;
+        for(int i = 0; i < returns.length; i++){
+            Double value = MathUtils.multiply(scale, MathUtils.add(scale, returns[i], 1.0), previous);
+            cumulativeReturns[i] = value;
+
+            previous = value;
+        }
+        return cumulativeReturns;
+    }
+
+    public static double[] getCumulativeReturnsFromInitial(double[] returns, Double initial){
+        return getCumulativeReturnsFromInitial(returns, initial);
+    }
+
 
     public static Double[] getCumulativeReturns(Double[] returns){
         return getCumulativeReturns(2, returns);
@@ -389,8 +478,82 @@ public class MathUtils {
         return MathUtils.subtract(scale, value, 1.0);
     }
 
+    public static Double getCumulativeReturn(int scale, Double[] returns){
+        if(returns == null || returns.length == 0){
+            return null;
+        }
+        Double cumulative = 1.0;
+        for(Double r: returns){
+            cumulative = MathUtils.multiply(scale, cumulative, MathUtils.add(scale, 1.0, r));
+        }
+        return MathUtils.subtract(scale, cumulative, 1.0);
+
+    }
+
+    public static Double getCumulativeReturn(Double[] returns){
+        return getCumulativeReturn(2, returns);
+    }
+
     public static Double getCumulativeReturn(Double previousCumulative, Double currentValue){
         return getCumulativeReturn(2, previousCumulative, currentValue);
+    }
+
+    public static WorstDrawdownDto getWorstDrawdown(int scale, double[] cumulativeReturns){
+        WorstDrawdownDto worstDDDto = new WorstDrawdownDto();
+        double[] calculatedValues = new double[cumulativeReturns.length];
+        if(cumulativeReturns != null && cumulativeReturns.length > 0) {
+            Double worstDrawdown = null;
+            int drowdownIndex = -1;
+            for (int i = 0; i < cumulativeReturns.length; i++) {
+                Double minValue = null;
+                for (int j = i + 1; j < cumulativeReturns.length; j++) {
+                    if(minValue == null || cumulativeReturns[j] < minValue.doubleValue()){
+                        minValue = cumulativeReturns[j];
+                    }
+                }
+                if(minValue != null) {
+                    Double value = MathUtils.subtract(scale, MathUtils.divide(scale, minValue, cumulativeReturns[i]), 1.0);
+                    calculatedValues[i] = value;
+                    if (worstDrawdown == null || value.doubleValue() < worstDrawdown.doubleValue()) {
+                        worstDrawdown = value;
+                        drowdownIndex = i;
+                    }
+                }else{
+                    calculatedValues[i] = 0.0;
+                }
+            }
+            worstDDDto.setWorstDDValue(worstDrawdown);
+
+            if(drowdownIndex >= 0) {
+                Integer drawdownPeriod = null;
+                Double minValue = null;
+                int minValueIndex = -1;
+                for (int i = drowdownIndex + 1; i < cumulativeReturns.length; i++) {
+                    if (minValue == null || cumulativeReturns[i] < minValue.doubleValue()) {
+                        minValue = cumulativeReturns[i];
+                        minValueIndex = i;
+                    }
+                }
+                if(minValueIndex >= 0){
+                    drawdownPeriod = minValueIndex - drowdownIndex;
+                }
+                worstDDDto.setWorstDDPeriod(drawdownPeriod);
+            }
+
+            return worstDDDto;
+
+        }
+        return null;
+    }
+
+    public static Integer getRecoveryMonths(int scale, double[] returns){
+        if(returns != null && returns.length > 0) {
+        }
+        return null;
+    }
+
+    public static Double abs(Double value){
+        return value != null ? Math.abs(value) : null;
     }
 
 
@@ -435,7 +598,4 @@ public class MathUtils {
                 {0.27, 2.30}};
         System.out.println(calculateSlope(data));
     }
-
-
-
 }

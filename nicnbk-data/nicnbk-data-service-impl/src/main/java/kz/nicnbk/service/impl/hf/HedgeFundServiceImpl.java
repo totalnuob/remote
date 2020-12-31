@@ -224,7 +224,7 @@ public class HedgeFundServiceImpl implements HedgeFundService {
                 // beta
                 Date dateFrom = fundDto.getReturns().get(0).getFirstNotNullMonth();
                 Date dateTo = fundDto.getReturns().get(fundDto.getReturns().size() - 1).getLastNotNullMonth();
-                double[] SNPBenchmarkReturns = this.benchmarkService.getReturnValuesBetweenDatesAsArray(dateFrom, dateTo, BenchmarkLookup.S_AND_P.getCode());
+                double[] SNPBenchmarkReturns = this.benchmarkService.getReturnValuesBetweenDatesAsArray(dateFrom, dateTo, BenchmarkLookup.SNP_500_SPTR.getCode());
                 if (fundReturnsArray == null) {
                     logger.error("HF fund calculations: returns missing for fund=" + fundDto.getId() + ". Beta - will not be calculated");
                 }else if(SNPBenchmarkReturns == null ){

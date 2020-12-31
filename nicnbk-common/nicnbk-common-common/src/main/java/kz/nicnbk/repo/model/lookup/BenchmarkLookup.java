@@ -5,9 +5,22 @@ package kz.nicnbk.repo.model.lookup;
  */
 public enum BenchmarkLookup {
 
-    S_AND_P("S_AND_P"),
+    SNP_500_SPTR("SP500_SPTR"),
+    SNP_500_SPX("SP500_SPX"),
     T_BILLS("T_BILLS"),
-    HFRI("HFRI");
+    US_HIGH_YIELDS("US_HIGHYLD"),
+    MSCI_WORLD("MSCI_WRLD"),
+    MSCI_ACWI_IMI("MSCIACWIIM"),
+    US_IG_CREDIT("US_IG_CRED"),
+    MSCI_EM("MSCI_EM"),
+    OIL("OIL"),
+    DOLLAR("USD"),
+    GOLD("GOLD"),
+    GLOBAL_FI("GLOBAL_FI"),
+    BARCLAYS_GLOBAL_AGG("BRCL_G_AGG"),
+    HFRI("HFRI"),
+    HFRIFOF("HFRI_FOF"),
+    HFRIAWC("HFRI_AWC");
 
     private String code;
 
