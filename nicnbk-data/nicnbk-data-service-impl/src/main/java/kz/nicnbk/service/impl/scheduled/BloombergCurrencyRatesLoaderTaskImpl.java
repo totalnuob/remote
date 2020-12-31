@@ -131,7 +131,7 @@ public class BloombergCurrencyRatesLoaderTaskImpl {
                 case "SPX Index": {
                     Double value = Double.valueOf(spxDto.getFieldDataDtoList().get(0).getValue());
                     spx.setReturnValue(value);
-                    spx.setBenchmark(new BaseDictionaryDto(BenchmarkLookup.S_AND_P.getCode(), null, null, null));
+                    spx.setBenchmark(new BaseDictionaryDto(BenchmarkLookup.SNP_500_SPX.getCode(), null, null, null));
                     EntitySaveResponseDto saveResponseDto = this.benchmarkService.save(spx, JOBNAME);
                     if(saveResponseDto.getStatus().getCode().equalsIgnoreCase(ResponseStatusType.SUCCESS.getCode())){
                         logger.info("Successfully saved SPX values (from Bloomberg): " + spx.getReturnValue());
