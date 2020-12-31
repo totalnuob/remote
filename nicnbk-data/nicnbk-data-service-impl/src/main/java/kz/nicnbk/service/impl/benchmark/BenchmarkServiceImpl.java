@@ -309,8 +309,6 @@ public class BenchmarkServiceImpl implements BenchmarkService {
                 return "HFRIFOF";
             case "HFRI_AWC":
                 return "HFRIAWC";
-            case "BRCL_G_AGG":
-                return  "LEGATRUH";
             case "MSCI_WRLD":
                 return "MXWO";
             case "MSCIACWIIM":
@@ -321,6 +319,8 @@ public class BenchmarkServiceImpl implements BenchmarkService {
                 return "H0A0";
             case "SP500_SPX":
                 return "SPX";
+            case "GLOBAL_FI":
+                return "LEGATRUH";
             default:
                 return "";
         }

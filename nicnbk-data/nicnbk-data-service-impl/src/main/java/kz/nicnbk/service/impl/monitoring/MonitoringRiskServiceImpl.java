@@ -882,48 +882,47 @@ public class MonitoringRiskServiceImpl implements MonitoringRiskService {
         // Benchmarks map
         Map<String, List<BenchmarkValueDto>> benchmarksMap = getBenchmarksMap(dateFromSinceInception, dateFrom12M, dateTo);
 
-        // HFRI 12M
+        // HFRIFOF 12M
         setFactorBeta(responseDto, records, dateFromSinceInception, dateFrom12M, dateTo, benchmarksMap.get(BenchmarkLookup.T_BILLS.getCode()), benchmarksMap.get(BenchmarkLookup.T_BILLS.getCode() + "_SI"),
-                "HFRI FoF", BenchmarkLookup.HFRI.getCode(), benchmarksMap.get(BenchmarkLookup.HFRI.getCode()), benchmarksMap.get(BenchmarkLookup.HFRI.getCode() + "_SI"), nicPortfolioResultDto);
-        // US High Yields 12M
+                "HFRI FoF", BenchmarkLookup.HFRIFOF.getCode(), benchmarksMap.get(BenchmarkLookup.HFRIFOF.getCode()), benchmarksMap.get(BenchmarkLookup.HFRIFOF.getCode() + "_SI"), nicPortfolioResultDto);
+        //HFRIAWC
         setFactorBeta(responseDto, records, dateFromSinceInception, dateFrom12M, dateTo, benchmarksMap.get(BenchmarkLookup.T_BILLS.getCode()), benchmarksMap.get(BenchmarkLookup.T_BILLS.getCode() + "_SI"),
-                "US High Yield", BenchmarkLookup.US_HIGH_YIELDS.getCode(), benchmarksMap.get(BenchmarkLookup.US_HIGH_YIELDS.getCode()), benchmarksMap.get(BenchmarkLookup.US_HIGH_YIELDS.getCode() + "_SI"), nicPortfolioResultDto);
-
-        // MSCI World
-        setFactorBeta(responseDto, records, dateFromSinceInception, dateFrom12M, dateTo, benchmarksMap.get(BenchmarkLookup.T_BILLS.getCode()), benchmarksMap.get(BenchmarkLookup.T_BILLS.getCode() + "_SI"),
-                "MSCI World", BenchmarkLookup.MSCI_WORLD.getCode(), benchmarksMap.get(BenchmarkLookup.MSCI_WORLD.getCode()), benchmarksMap.get(BenchmarkLookup.MSCI_WORLD.getCode() + "_SI"), nicPortfolioResultDto);
-
+                "HFRI AWC", BenchmarkLookup.HFRIAWC.getCode(), benchmarksMap.get(BenchmarkLookup.HFRIAWC.getCode()), benchmarksMap.get(BenchmarkLookup.HFRIAWC.getCode() + "_SI"), nicPortfolioResultDto);
         // MSCI ACWI IMI
         setFactorBeta(responseDto, records, dateFromSinceInception, dateFrom12M, dateTo, benchmarksMap.get(BenchmarkLookup.T_BILLS.getCode()), benchmarksMap.get(BenchmarkLookup.T_BILLS.getCode() + "_SI"),
                 "MSCI ACWIIMI", BenchmarkLookup.MSCI_ACWI_IMI.getCode(), benchmarksMap.get(BenchmarkLookup.MSCI_ACWI_IMI.getCode()), benchmarksMap.get(BenchmarkLookup.MSCI_ACWI_IMI.getCode() + "_SI"), nicPortfolioResultDto);
-
+        // MSCI World
+        setFactorBeta(responseDto, records, dateFromSinceInception, dateFrom12M, dateTo, benchmarksMap.get(BenchmarkLookup.T_BILLS.getCode()), benchmarksMap.get(BenchmarkLookup.T_BILLS.getCode() + "_SI"),
+                "MSCI World", BenchmarkLookup.MSCI_WORLD.getCode(), benchmarksMap.get(BenchmarkLookup.MSCI_WORLD.getCode()), benchmarksMap.get(BenchmarkLookup.MSCI_WORLD.getCode() + "_SI"), nicPortfolioResultDto);
         // S&P 12M
         setFactorBeta(responseDto, records, dateFromSinceInception, dateFrom12M, dateTo, benchmarksMap.get(BenchmarkLookup.T_BILLS.getCode()), benchmarksMap.get(BenchmarkLookup.T_BILLS.getCode() + "_SI"),
                 "S&P 500", BenchmarkLookup.SNP_500_SPX.getCode(), benchmarksMap.get(BenchmarkLookup.SNP_500_SPX.getCode()), benchmarksMap.get(BenchmarkLookup.SNP_500_SPX.getCode() + "_SI"), nicPortfolioResultDto);
+        // MSCI EM
+        setFactorBeta(responseDto, records, dateFromSinceInception, dateFrom12M, dateTo, benchmarksMap.get(BenchmarkLookup.T_BILLS.getCode()), benchmarksMap.get(BenchmarkLookup.T_BILLS.getCode() + "_SI"),
+                "MSCI EM", BenchmarkLookup.MSCI_EM.getCode(), benchmarksMap.get(BenchmarkLookup.MSCI_EM.getCode()), benchmarksMap.get(BenchmarkLookup.MSCI_EM.getCode() + "_SI"), nicPortfolioResultDto);
+        // Global FI
+        setFactorBeta(responseDto, records, dateFromSinceInception, dateFrom12M, dateTo, benchmarksMap.get(BenchmarkLookup.T_BILLS.getCode()), benchmarksMap.get(BenchmarkLookup.T_BILLS.getCode() + "_SI"),
+                "Barclays Global Agg Index Hedged", BenchmarkLookup.GLOBAL_FI.getCode(), benchmarksMap.get(BenchmarkLookup.GLOBAL_FI.getCode()), benchmarksMap.get(BenchmarkLookup.GLOBAL_FI.getCode() + "_SI"), nicPortfolioResultDto);
+        // US High Yields 12M
+        setFactorBeta(responseDto, records, dateFromSinceInception, dateFrom12M, dateTo, benchmarksMap.get(BenchmarkLookup.T_BILLS.getCode()), benchmarksMap.get(BenchmarkLookup.T_BILLS.getCode() + "_SI"),
+                "US High Yield", BenchmarkLookup.US_HIGH_YIELDS.getCode(), benchmarksMap.get(BenchmarkLookup.US_HIGH_YIELDS.getCode()), benchmarksMap.get(BenchmarkLookup.US_HIGH_YIELDS.getCode() + "_SI"), nicPortfolioResultDto);
 
         // US IG Credit
         setFactorBeta(responseDto, records, dateFromSinceInception, dateFrom12M, dateTo, benchmarksMap.get(BenchmarkLookup.T_BILLS.getCode()), benchmarksMap.get(BenchmarkLookup.T_BILLS.getCode() + "_SI"),
                 "US IG Credit", BenchmarkLookup.US_IG_CREDIT.getCode(), benchmarksMap.get(BenchmarkLookup.US_IG_CREDIT.getCode()), benchmarksMap.get(BenchmarkLookup.US_IG_CREDIT.getCode() + "_SI"), nicPortfolioResultDto);
 
-        // MSCI EM
-        setFactorBeta(responseDto, records, dateFromSinceInception, dateFrom12M, dateTo, benchmarksMap.get(BenchmarkLookup.T_BILLS.getCode()), benchmarksMap.get(BenchmarkLookup.T_BILLS.getCode() + "_SI"),
-                "MSCI EM", BenchmarkLookup.MSCI_EM.getCode(), benchmarksMap.get(BenchmarkLookup.MSCI_EM.getCode()), benchmarksMap.get(BenchmarkLookup.MSCI_EM.getCode() + "_SI"), nicPortfolioResultDto);
+//        // OIL
+//        setFactorBeta(responseDto, records, dateFromSinceInception, dateFrom12M, dateTo, benchmarksMap.get(BenchmarkLookup.T_BILLS.getCode()), benchmarksMap.get(BenchmarkLookup.T_BILLS.getCode() + "_SI"),
+//                "Oil", BenchmarkLookup.OIL.getCode(), benchmarksMap.get(BenchmarkLookup.OIL.getCode()), benchmarksMap.get(BenchmarkLookup.OIL.getCode() + "_SI"), nicPortfolioResultDto);
+//
+//        // Dollar
+//        setFactorBeta(responseDto, records, dateFromSinceInception, dateFrom12M, dateTo, benchmarksMap.get(BenchmarkLookup.T_BILLS.getCode()), benchmarksMap.get(BenchmarkLookup.T_BILLS.getCode() + "_SI"),
+//                "Dollar", BenchmarkLookup.DOLLAR.getCode(), benchmarksMap.get(BenchmarkLookup.DOLLAR.getCode()), benchmarksMap.get(BenchmarkLookup.DOLLAR.getCode() + "_SI"), nicPortfolioResultDto);
+//
+//        // Gold
+//        setFactorBeta(responseDto, records, dateFromSinceInception, dateFrom12M, dateTo, benchmarksMap.get(BenchmarkLookup.T_BILLS.getCode()), benchmarksMap.get(BenchmarkLookup.T_BILLS.getCode() + "_SI"),
+//                "Gold", BenchmarkLookup.GOLD.getCode(), benchmarksMap.get(BenchmarkLookup.GOLD.getCode()), benchmarksMap.get(BenchmarkLookup.GOLD.getCode() + "_SI"), nicPortfolioResultDto);
 
-        // OIL
-        setFactorBeta(responseDto, records, dateFromSinceInception, dateFrom12M, dateTo, benchmarksMap.get(BenchmarkLookup.T_BILLS.getCode()), benchmarksMap.get(BenchmarkLookup.T_BILLS.getCode() + "_SI"),
-                "Oil", BenchmarkLookup.OIL.getCode(), benchmarksMap.get(BenchmarkLookup.OIL.getCode()), benchmarksMap.get(BenchmarkLookup.OIL.getCode() + "_SI"), nicPortfolioResultDto);
-
-        // Dollar
-        setFactorBeta(responseDto, records, dateFromSinceInception, dateFrom12M, dateTo, benchmarksMap.get(BenchmarkLookup.T_BILLS.getCode()), benchmarksMap.get(BenchmarkLookup.T_BILLS.getCode() + "_SI"),
-                "Dollar", BenchmarkLookup.DOLLAR.getCode(), benchmarksMap.get(BenchmarkLookup.DOLLAR.getCode()), benchmarksMap.get(BenchmarkLookup.DOLLAR.getCode() + "_SI"), nicPortfolioResultDto);
-
-        // Gold
-        setFactorBeta(responseDto, records, dateFromSinceInception, dateFrom12M, dateTo, benchmarksMap.get(BenchmarkLookup.T_BILLS.getCode()), benchmarksMap.get(BenchmarkLookup.T_BILLS.getCode() + "_SI"),
-                "Gold", BenchmarkLookup.GOLD.getCode(), benchmarksMap.get(BenchmarkLookup.GOLD.getCode()), benchmarksMap.get(BenchmarkLookup.GOLD.getCode() + "_SI"), nicPortfolioResultDto);
-
-        // Global FI
-        setFactorBeta(responseDto, records, dateFromSinceInception, dateFrom12M, dateTo, benchmarksMap.get(BenchmarkLookup.T_BILLS.getCode()), benchmarksMap.get(BenchmarkLookup.T_BILLS.getCode() + "_SI"),
-                "Global FI", BenchmarkLookup.GLOBAL_FI.getCode(), benchmarksMap.get(BenchmarkLookup.GLOBAL_FI.getCode()), benchmarksMap.get(BenchmarkLookup.GLOBAL_FI.getCode() + "_SI"), nicPortfolioResultDto);
 
         responseDto.setRecords(records);
         if(responseDto.getStatus() == null){
