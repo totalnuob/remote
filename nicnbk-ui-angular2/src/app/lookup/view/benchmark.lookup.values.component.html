@@ -45,7 +45,7 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="col-md-2 pull-right">
-                    <a class="btn btn-primary" data-toggle="modal" data-target="#benchmarkUploadModal" style="cursor: pointer">
+                    <a class="btn btn-primary" data-toggle="modal" data-target="#bloombergModal" style="cursor: pointer">
                         <!--<span class="glyphicon glyphicon-edit"></span>-->Bloomberg
                     </a>
                 </div>
@@ -298,7 +298,7 @@
                                     </select>
                                 </div>
                                 <div class="col-md-3">
-                                    <label for="fromDateDTPickeer">From</label>
+                                    <label for="fromDateDTPickeerBB">From</label>
                                     <div class='input-group date col-md-3' id='fromDateDTPickeerBB' style="width: 100%">
                                         <input type='text' class="form-control" id="fromDateBB" [(ngModel)]="searchParams.fromDate"/>
                                         <span class="input-group-addon">
@@ -307,7 +307,7 @@
                                     </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <label for="untilDateDTPickeer">To</label>
+                                    <label for="untilDateDTPickeerBB">To</label>
                                     <div class='input-group date col-md-3' id='untilDateDTPickeerBB' style="width: 100%">
                                         <input type='text' class="form-control" id="toDateBB" [(ngModel)]="searchParams.toDate"/>
                                         <span class="input-group-addon">
@@ -322,11 +322,6 @@
                             <button type="button"class="btn-xs btn-default pull-left" (click)="clearSearchForm()">
                                 <!--<i class="glyphicon glyphicon-trash"></i>-->Reset
                             </button>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <button type="button" class="btn btn-success pull-right" (click)="search()">Search</button>
-                            </div>
                         </div>
 
                     <div class="modal-footer">

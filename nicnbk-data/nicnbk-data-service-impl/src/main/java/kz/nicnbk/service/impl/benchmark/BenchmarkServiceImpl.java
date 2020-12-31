@@ -260,8 +260,9 @@ public class BenchmarkServiceImpl implements BenchmarkService {
             ResponseDto result = mapper.readValue(response, new TypeReference<ResponseDto>() {});
 
             SecurityDataDto securityData = new SecurityDataDto();
+            String benchmarkCode = renameCode(searchParams.getBenchmarkCode()) + " " + "Index";
             for (int i = 0; i < result.getSecurityDataDtoList().size(); i++) {
-                if (result.getSecurityDataDtoList().get(i).getSecurity().equals(searchParams.getBenchmarkCode() + " " + "Index")){
+                if (result.getSecurityDataDtoList().get(i).getSecurity().equals(benchmarkCode)){
                     securityData = result.getSecurityDataDtoList().get(i);
                 }
             }
@@ -270,7 +271,7 @@ public class BenchmarkServiceImpl implements BenchmarkService {
             }
             if (securityData != null || !securityData.getFieldDataDtoList().isEmpty()) {
                 List<FieldDataDto> fieldDataDtoList = new ArrayList<>(securityData.getFieldDataDtoList());
-                SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
                 for (int i = 0; i < fieldDataDtoList.size(); i++) {
                     Date date = formatter.parse(fieldDataDtoList.get(i).getDate());
                     BenchmarkValueDto benchmark = new BenchmarkValueDto();
@@ -296,6 +297,30 @@ public class BenchmarkServiceImpl implements BenchmarkService {
     private Double getRateOfReturn(Double startIndex, Double endIndex) {
         Double diff = endIndex - startIndex;
         return diff/startIndex;
+    }
+
+    private String renameCode(String benchmarkCode) {
+        switch (benchmarkCode) {
+            case "HFRI_FOF":
+                return "HFRIFOF";
+            case "HFRI_AWC":
+                return "HFRIAWC";
+            case "BRCL_G_AGG":
+                return  "LEGATRUH";
+            case "MSCI_WRLD":
+                return "MXWO";
+            case "MSCIACWIIM":
+                return "MXWDIM";
+            case "MSCI_EM":
+                return "MXEF";
+            case "US_HIGHYLD":
+                return "H0A0";
+            case "SP500_SPX":
+                return "SPX";
+            default:
+                return "";
+        }
+
     }
 
     @Override

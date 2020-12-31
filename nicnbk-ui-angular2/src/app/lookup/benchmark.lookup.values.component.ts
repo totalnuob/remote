@@ -134,9 +134,8 @@ export class BenchmarkLookupValuesComponent extends CommonNBReportingComponent i
 
         this.searchParams.page = page;
 
-        this.searchParams.fromDate = $('#fromDate').val();
-        this.searchParams.toDate = $('#toDate').val();
-        this.selectedBenchmark.date = $('#valueDateBB').val();
+        this.searchParams.fromDate = $('#fromDateBB').val();
+        this.searchParams.toDate = $('#toDateBB').val();
 
         this.busy = this.lookupService.getBenchmarksBB(this.searchParams)
             .subscribe(
