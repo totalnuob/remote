@@ -125,6 +125,52 @@ export class BenchmarkLookupValuesComponent extends CommonNBReportingComponent i
 
     }
 
+    getBenchmarkBB(page){
+        if(this.searchParams == null){
+            this.searchParams = new BenchmarkSearchParams();
+        }
+
+        this.searchParams.pageSize = 20;
+
+        this.searchParams.page = page;
+
+        this.searchParams.fromDate = $('#fromDate').val();
+        this.searchParams.toDate = $('#toDate').val();
+        this.selectedBenchmark.date = $('#valueDateBB').val();
+
+        this.busy = this.lookupService.getBenchmarksBB(this.searchParams)
+            .subscribe(
+
+                (saveResponse: SaveResponse) => {
+                    if(saveResponse.status === 'SUCCESS' ){
+                        //console.log(saveResponse);
+
+                        // TODO: Search params
+                        this.search(0);
+
+                        this.successMessageSaveBenchmark = saveResponse.message.nameEn;
+                        this.errorMessageSaveBenchmark = null;
+
+                    }else{
+                        if(saveResponse.message != null){
+                            var message = saveResponse.message.nameEn != null ? saveResponse.message.nameEn :
+                                saveResponse.message.nameRu != null ? saveResponse.message.nameRu : saveResponse.message.nameKz;
+                            if(message != null && message != ''){
+                                this.postAction(null, message);
+                            }else{
+                                this.postAction(null, "Error saving benchmark");
+                            }
+                        }
+                    }
+                },
+                (error: ErrorResponse) => {
+                    this.successMessageSaveBenchmark = null;
+                    this.errorMessageSaveBenchmark = error && error.message ? error.message : "Error saving benchmark.";
+                    //this.processErrorMessage(error);
+                }
+            );
+    }
+
     clearSearchForm(){
         this.searchParams = new BenchmarkSearchParams();
     }

@@ -28,6 +28,8 @@ public interface BenchmarkService extends BaseService {
 
     EntityListSaveResponseDto save(List<BenchmarkValueDto> dtoList, String username);
 
+    EntityListSaveResponseDto getBenchmarksBB(BenchmarkSearchParams searchParams, String username);
+
     List<BenchmarkValueDto> getBenchmarkValuesForDatesAndType(Date dateFrom, Date dateTo, String benchmarkCode);
 
     List<BenchmarkValueDto> getBenchmarkValuesEndOfMonthForDateRangeAndTypes(Date dateFrom, Date dateTo, int daysRange, String[] benchmarkCodes);

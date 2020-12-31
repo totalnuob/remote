@@ -42,6 +42,16 @@
             </div>
         </div>
         <br/>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="col-md-2 pull-right">
+                    <a class="btn btn-primary" data-toggle="modal" data-target="#benchmarkUploadModal" style="cursor: pointer">
+                        <!--<span class="glyphicon glyphicon-edit"></span>-->Bloomberg
+                    </a>
+                </div>
+            </div>
+        </div>
+        <br/>
 
         <div class="jumbotron">
             <div class="row">
@@ -256,6 +266,74 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default pull-left" data-dismiss="modal" (click)='closeBenchmarkUploadModal()'>Close</button>
                         <button type="button" class="btn btn-success pull-right" (click)="parseBenchmarkValues()">Save</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="bloombergModal" role="dialog">
+            <div class="modal-dialog" style="overflow-y: scroll; max-height:85%;  margin-top: 50px; margin-bottom:50px; width:65%;">
+                <div class="modal-content" style="min-height: 400px">
+                    <div class="modal-header">
+                        <h3 class="modal-title"  style="word-wrap: break-word">Get Benchmark from Bloomberg</h3>
+                    </div>
+                    <div class="modal-body">
+
+                        <div class="row top-buffer" >
+                            <div class="col-md-12">
+                                <div class="alert alert-danger" *ngIf="errorMessageSaveBenchmark != null"><span style="white-space: pre-wrap">{{errorMessageSaveBenchmark}}</span>
+                                </div>
+                                <div class="alert alert-info" *ngIf="successMessageSaveBenchmark != null"><span>{{successMessageSaveBenchmark}}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="col-md-3">
+                                    <label for="benchmarkCodeParam">Type</label>
+                                    <select class="form-control" style="width: 100%" [(ngModel)]="searchParams.benchmarkCode" id="benchmarkCodeParamBB"
+                                            [ngModelOptions]="{standalone: true}">
+                                        <option *ngFor="let type of benchmarkTypes" [value]="type.code">{{type.nameEn}}</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="fromDateDTPickeer">From</label>
+                                    <div class='input-group date col-md-3' id='fromDateDTPickeerBB' style="width: 100%">
+                                        <input type='text' class="form-control" id="fromDateBB" [(ngModel)]="searchParams.fromDate"/>
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="untilDateDTPickeer">To</label>
+                                    <div class='input-group date col-md-3' id='untilDateDTPickeerBB' style="width: 100%">
+                                        <input type='text' class="form-control" id="toDateBB" [(ngModel)]="searchParams.toDate"/>
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <br/>
+                        <div class="row">
+                            <button type="button"class="btn-xs btn-default pull-left" (click)="clearSearchForm()">
+                                <!--<i class="glyphicon glyphicon-trash"></i>-->Reset
+                            </button>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <button type="button" class="btn btn-success pull-right" (click)="search()">Search</button>
+                            </div>
+                        </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-success" (click)="getBenchmarkBB()">Get Benchmark</button>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" (click)='closeBenchmarkEditModal()' data-dismiss="modal">Close</button>
                     </div>
                 </div>
             </div>

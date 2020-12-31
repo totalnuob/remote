@@ -15,6 +15,7 @@ import {
     SAVE_PORTFOLIO_VARS_URL, SAVE_STRESS_TESTS_URL,
     SEARCH_PORTFOLIO_VARS_URL, SEARCH_STRESS_TESTS_URL
 } from "./lookup.service.url";
+import {GET_BENCHMARKS_BB_URL, PE_STRATEGIES_URL} from "./lookup.service.url";
 import {ALL_STRATEGIES_URL} from "./lookup.service.url";
 import {RE_STRATEGIES_URL} from "./lookup.service.url";
 import {HF_STRATEGIES_URL, HF_SUBSTRATEGIES_URL} from "./lookup.service.url";
@@ -506,6 +507,14 @@ export class LookupService extends CommonService{
         let body = JSON.stringify(searchParams);
 
         return this.http.post(SEARCH_STRESS_TESTS_URL, body, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+    getBenchmarksBB(searchParams){
+        let body = JSON.stringify(searchParams);
+
+        return this.http.post(GET_BENCHMARKS_BB_URL, body, this.getOptionsWithCredentials())
             .map(this.extractData)
             .catch(this.handleErrorResponse);
     }

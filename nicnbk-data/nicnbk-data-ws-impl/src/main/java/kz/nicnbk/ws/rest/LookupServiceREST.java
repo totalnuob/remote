@@ -291,6 +291,16 @@ public class LookupServiceREST extends CommonServiceREST{
         return searchResult;
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/benchmarks/bloomberg", method = RequestMethod.POST)
+    public ResponseEntity getBenchmarksBB(@RequestBody BenchmarkSearchParams searchParams){
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
+
+        EntityListSaveResponseDto saveResponse = this.benchmarkService.getBenchmarksBB(searchParams, username);
+        return buildEntityListSaveResponse(saveResponse);
+    }
+
     @PreAuthorize("hasRole('ROLE_LOOKUPS_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/currencyRates/save", method = RequestMethod.POST)
     public ResponseEntity saveCurrencyRates(@RequestBody CurrencyRatesDto currencyRatesDto){

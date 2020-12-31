@@ -55,6 +55,7 @@ export const SEARCH_CURRENCY_RATES_URL = LOOKUP_SERVICE_URL + "currencyRates/";
 export const SEARCH_BENCHMARKS_URL = LOOKUP_SERVICE_URL + "benchmarks/";
 export const SEARCH_PORTFOLIO_VARS_URL = LOOKUP_SERVICE_URL + "portfolioVars/";
 export const SEARCH_STRESS_TESTS_URL = LOOKUP_SERVICE_URL + "stressTests/";
+export const GET_BENCHMARKS_BB_URL = LOOKUP_SERVICE_URL + "benchmarks/bloomberg/";
 export const SAVE_CURRENCY_RATES_URL = LOOKUP_SERVICE_URL + "currencyRates/save/";
 export const SAVE_CURRENCY_RATES_LIST_URL = LOOKUP_SERVICE_URL + "currencyRates/saveList/";
 export const SAVE_BENCHMARKS_LIST_URL = LOOKUP_SERVICE_URL + "benchmarks/saveList/";
