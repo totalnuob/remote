@@ -250,6 +250,10 @@ public class BenchmarkServiceImpl implements BenchmarkService {
     }
 
     private List<BenchmarkValueDto> loadBenchmarksBB(BenchmarkSearchParams searchParams) {
+        Date nextMonth = DateUtils.getLastDayOfNextMonth(searchParams.getToDate());
+        if (nextMonth.before(new Date())) {
+            searchParams.setToDate(nextMonth);
+        }
         List<BenchmarkValueDto> benchmarks = new ArrayList<>();
         String url = "http://10.10.165.123:8080/bloomberg/benchmark";
         ResponseEntity<String> responseEntity = (new RestTemplate()).postForEntity(url, searchParams, String.class);
