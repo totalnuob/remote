@@ -10,6 +10,7 @@ export class MonitoringRiskHedgeFundService extends CommonService {
     private MONITORING_RISK_MONTHLY_HF_GET_URL = this.MONITORING_RISK_BASE_URL + "hfMonthly/";
     private MONITORING_RISK_MONTHLY_HF_AVAILABLE_DATES_GET_URL = this.MONITORING_RISK_BASE_URL + "dateList/";
     private MONITORING_RISK_SUB_STRATEGY_UPLOAD_URL = this.MONITORING_RISK_BASE_URL + "strategy/upload/";
+    private MONITORING_RISK_TOP_PORTFOLIO_UPLOAD_URL = this.MONITORING_RISK_BASE_URL + "topPortfolio/upload/";
 
     constructor(
         private uploadService: FileUploadService,
@@ -33,5 +34,9 @@ export class MonitoringRiskHedgeFundService extends CommonService {
 
     postFiles(files) {
         return this.uploadService.postFiles(this.MONITORING_RISK_SUB_STRATEGY_UPLOAD_URL, [], files, null);
+    }
+
+    postFilesTopPortfolio(files) {
+        return this.uploadService.postFiles(this.MONITORING_RISK_TOP_PORTFOLIO_UPLOAD_URL, [], files, null);
     }
 }

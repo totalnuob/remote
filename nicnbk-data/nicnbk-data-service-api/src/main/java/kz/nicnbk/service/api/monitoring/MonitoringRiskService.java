@@ -2,10 +2,7 @@ package kz.nicnbk.service.api.monitoring;
 
 import kz.nicnbk.repo.model.files.Files;
 import kz.nicnbk.service.dto.files.FilesDto;
-import kz.nicnbk.service.dto.monitoring.LiquidPortfolioResultDto;
-import kz.nicnbk.service.dto.monitoring.MonitoringRiskHedgeFundAllocationSubStrategyResultDto;
-import kz.nicnbk.service.dto.monitoring.MonitoringRiskHedgeFundReportDto;
-import kz.nicnbk.service.dto.monitoring.MonitoringRiskReportSearchParamsDto;
+import kz.nicnbk.service.dto.monitoring.*;
 
 import java.util.Date;
 import java.util.List;
@@ -22,4 +19,8 @@ public interface MonitoringRiskService {
     List<Date> getDateList();
 
     MonitoringRiskHedgeFundAllocationSubStrategyResultDto uploadStrategy(Set<FilesDto> filesDtoSet, String updater);
+
+    MonitoringRiskHedgeFundAllocationResultDto uploadTopPortfolio(Set<FilesDto> filesDtoSet, String updater);
+
+
 }

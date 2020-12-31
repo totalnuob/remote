@@ -33,6 +33,7 @@ public enum FileTypeLookup {
     MONITORING_NIC_PORTFOLIO("MON_NIC", "monitoring/nic_portfolio"),
     MONITORING_LIQUID_PORTFOLIO("MON_LIQ", "monitoring/liquid_portfolio"),
     MONITORING_RISK_ALLOCATION_BY_SUB_STRATEGY("MON_SUB_STR", "risk/allocation_sub_strategy"),
+    MONITORING_RISK_ALLOCATION_BY_TOP_PORTFOLIO("MON_TOP_PFO", "risk/allocation_top_portfolio"),
 
     HR_DOCS("HR_DOCS", "hr/docs"),
 

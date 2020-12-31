@@ -68,4 +68,21 @@ public class MonitoringRiskServiceREST extends CommonServiceREST {
         }
     }
 
+    @PreAuthorize("hasRole('ROLE_RISKS_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/topPortfolio/upload", method = RequestMethod.POST)
+    public ResponseEntity uploadTopPortfolio(@RequestParam(value = "file", required = false) MultipartFile[] files) {
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
+
+        Set<FilesDto> filesDtoSet = buildFilesDtoFromMultipart(files, null);
+
+        MonitoringRiskHedgeFundAllocationResultDto resultDto = this.riskService.uploadTopPortfolio(filesDtoSet, username);
+
+        if (resultDto.getStatus().getCode().equals("SUCCESS")) {
+            return new ResponseEntity<>(resultDto, null, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(resultDto, null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 }

@@ -178,6 +178,17 @@
             <div class="alert alert-warning small" *ngIf="selectedDateMonitoringInfo?.topFundAllocationsWarning != null">
                 <span>* {{selectedDateMonitoringInfo.topFundAllocationsWarning}}</span>
             </div>
+            <div *ngIf="canEdit()">
+                <form #yourForm="ngForm" (ngSubmit)="onSubmitTopPortfolio()">
+                    <label class="btn btn-sm btn-primary">
+                        <input type="file" #fileupload id="fileuploadTopPortfolio" (change)="fileChangeTopPortfolio(fileupload.files)" style="display: none"/>Update
+                    </label>
+                    <button type="submit" class="btn btn-sm btn-success" *ngIf="this.myFilesTopPortfolio.length > 0">Submit</button>
+                </form>
+                <div *ngFor="let file of this.myFilesTopPortfolio" class="label label-info">
+                    <span>{{file.name}}</span>
+                </div>
+            </div>
             <table class="table table-hover table-responsive table-condensed">
                 <thead>
                     <tr style="background-color: #3664ab; color: white;">
@@ -214,7 +225,7 @@
         <div *ngIf="canEdit()">
             <form #yourForm="ngForm" (ngSubmit)="onSubmitSubStrategy()">
                 <label class="btn btn-sm btn-primary">
-                    <input type="file" #fileupload id="fileupload" (change)="fileChange(fileupload.files)" style="display: none"/>Update
+                    <input type="file" #fileupload id="fileuploadSubStrategy" (change)="fileChange(fileupload.files)" style="display: none"/>Update
                 </label>
                 <button type="submit" class="btn btn-sm btn-success" *ngIf="this.myFiles.length > 0">Submit</button>
             </form>

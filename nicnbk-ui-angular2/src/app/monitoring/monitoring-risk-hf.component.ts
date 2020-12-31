@@ -30,7 +30,11 @@ export class MonitoringRiskHedgeFundComponent extends GoogleChartComponent {
 
     private subStrategyList = [];
 
+    private topPortfolioList = [];
+
     private myFiles: File[];
+
+    private myFilesTopPortfolio: File[];
 
     busy: Subscription;
 
@@ -46,6 +50,7 @@ export class MonitoringRiskHedgeFundComponent extends GoogleChartComponent {
         super();
 
         this.myFiles = [];
+        this,this.myFilesTopPortfolio = [];
 
          Observable.forkJoin(
                     // Load dates
@@ -303,6 +308,11 @@ export class MonitoringRiskHedgeFundComponent extends GoogleChartComponent {
         console.log(this.myFiles);
     }
 
+    fileChangeTopPortfolio(files: any){
+        this.myFilesTopPortfolio = files;
+        console.log(this.myFilesTopPortfolio);
+    }
+
     private getDataByDate(tableDate){
         for(var i = 0; i < this.subStrategyList.length; i++){
             if(this.subStrategyList[i].date === tableDate){
@@ -310,6 +320,39 @@ export class MonitoringRiskHedgeFundComponent extends GoogleChartComponent {
             }
         }
         return null;
+    }
+
+    private onSubmitTopPortfolio() {
+        this.busy = this.monitoringRiskHFService.postFilesTopPortfolio(this.myFilesTopPortfolio)
+            .subscribe(
+                (response) => {
+                    this.topPortfolioList = response.MonitoringRiskHedgeFundFundAllocationDtoList;
+
+                    console.log(response);
+                    console.log(response.message.nameEn);
+
+                    this.postAction(response.message.nameEn, null);
+
+                    if(this.topPortfolioList.length > 0) {
+                        // this.tableDate = this.getAllDates()[0];
+                        // this.tableDate = this.getAllDates()[0];
+                        // this.drawActualAllocationChart(this.tableDate);
+                        // this.drawNewlyCreatedAllocationChart(this.subStrategyList);
+
+                        this.postAction(response.message.nameEn, null);
+                        console.log("topPortfolioList > 0");
+
+                        this.myFilesTopPortfolio = [];
+                        $("#fileuploadTopPortfolio").val(null);
+                    }
+                },
+                error => {
+                    // this.processErrorMessage(error);
+                    this.postAction(null, JSON.parse(error).message.nameEn);
+                    console.log(error);
+                    console.log(JSON.parse(error).message.nameEn);
+                }
+            )
     }
 
     private onSubmitSubStrategy() {
@@ -332,7 +375,7 @@ export class MonitoringRiskHedgeFundComponent extends GoogleChartComponent {
                         this.postAction(response.message.nameEn, null);
 
                         this.myFiles = [];
-                        $("#fileupload").val(null);
+                        $("#fileuploadSubStrategy").val(null);
                     }
                 },
                 error => {
