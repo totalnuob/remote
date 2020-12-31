@@ -242,7 +242,7 @@
     <br/>
 
     <!-- STRESS TESTS -->
-    <div class="row" [hidden]="selectedDateMonitoringInfo == null">
+    <div class="row">
         <div class="col-md-12">
             <div class="alert alert-danger small" *ngIf="selectedDateMonitoringInfo?.stressTestsError != null">
                 <span>{{selectedDateMonitoringInfo?.stressTestsError}}</span>
