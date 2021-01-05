@@ -6,8 +6,6 @@ import kz.nicnbk.repo.api.reporting.*;
 import kz.nicnbk.repo.model.employee.Employee;
 import kz.nicnbk.repo.model.lookup.CurrencyLookup;
 import kz.nicnbk.repo.model.lookup.FileTypeLookup;
-import kz.nicnbk.repo.model.lookup.reporting.InvestmentTypeLookup;
-import kz.nicnbk.repo.model.lookup.reporting.PETrancheTypeLookup;
 import kz.nicnbk.repo.model.lookup.reporting.TerraNICChartAccountsLookup;
 import kz.nicnbk.repo.model.reporting.*;
 import kz.nicnbk.service.api.common.CurrencyRatesService;
@@ -49,15 +47,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.*;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -402,6 +396,21 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
         PeriodicReport report = this.periodReportRepository.findByReportDate(date);
         if(report != null){
             return this.periodicReportConverter.disassemble(report);
+        }
+        return null;
+    }
+
+    @Override
+    public PeriodicReportDto findMostRecentReport() {
+        List<PeriodicReportDto> allReports = getAllPeriodicReports();
+        if(allReports != null && !allReports.isEmpty()){
+            PeriodicReportDto mostRecentReport = null;
+            for(PeriodicReportDto report: allReports){
+                if(mostRecentReport == null || mostRecentReport.getReportDate().before(report.getReportDate())){
+                    mostRecentReport = report;
+                }
+            }
+            return mostRecentReport;
         }
         return null;
     }
@@ -3783,7 +3792,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
         }
 
         // Singularity - ITD
-        ConsolidatedReportRecordHolderDto singularityGLHolder = this.hfITDService.get(reportId);
+        ConsolidatedReportRecordHolderDto singularityGLHolder = this.hfITDService.getParsedData(reportId);
         Map<String, Double> singularityNetCostByFundName = new HashMap<>();
         if(singularityGLHolder != null){
             List<SingularityITDRecordDto> recordsITD = singularityGLHolder.getRecordsITDTrancheA() != null ? singularityGLHolder.getRecordsITDTrancheA() : new ArrayList<>();
@@ -9690,7 +9699,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
     @Override
     public ConsolidatedReportRecordHolderDto getSingularityITD(Long reportId) {
         if(reportId != null) {
-            ConsolidatedReportRecordHolderDto holderDto = this.hfITDService.get(reportId);
+            ConsolidatedReportRecordHolderDto holderDto = this.hfITDService.getParsedData(reportId);
             holderDto.setReport(getPeriodicReport(reportId));
             return holderDto;
         }

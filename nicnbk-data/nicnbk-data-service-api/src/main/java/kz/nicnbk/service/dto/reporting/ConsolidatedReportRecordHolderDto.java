@@ -41,6 +41,9 @@ public class ConsolidatedReportRecordHolderDto implements BaseDto {
     private List<SingularityITDRecordDto> recordsITDTrancheA;
     private List<SingularityITDRecordDto> recordsITDTrancheB;
 
+    private List<SingularityITDHistoricalRecordDto> recordsITDTrancheAHRS;
+    private List<SingularityITDHistoricalRecordDto> recordsITDTrancheBHRS;
+
     private List<SingularityGeneralLedgerBalanceRecordDto> realEstateGeneralLedgerBalanceList;
 
     private PeriodicReportDto report;
@@ -173,6 +176,22 @@ public class ConsolidatedReportRecordHolderDto implements BaseDto {
         this.recordsITDTrancheB = recordsITDTrancheB;
     }
 
+    public List<SingularityITDHistoricalRecordDto> getRecordsITDTrancheAHRS() {
+        return recordsITDTrancheAHRS;
+    }
+
+    public void setRecordsITDTrancheAHRS(List<SingularityITDHistoricalRecordDto> recordsITDTrancheAHRS) {
+        this.recordsITDTrancheAHRS = recordsITDTrancheAHRS;
+    }
+
+    public List<SingularityITDHistoricalRecordDto> getRecordsITDTrancheBHRS() {
+        return recordsITDTrancheBHRS;
+    }
+
+    public void setRecordsITDTrancheBHRS(List<SingularityITDHistoricalRecordDto> recordsITDTrancheBHRS) {
+        this.recordsITDTrancheBHRS = recordsITDTrancheBHRS;
+    }
+
     public void merge(ConsolidatedReportRecordHolderDto other){
         if(other.trancheA != null && !other.trancheA.isEmpty()){
             this.trancheA = other.trancheA;
@@ -216,8 +235,16 @@ public class ConsolidatedReportRecordHolderDto implements BaseDto {
         if(other.recordsITDTrancheB != null && !other.recordsITDTrancheB.isEmpty()){
             this.recordsITDTrancheB = other.recordsITDTrancheB;
         }
+        if(other.recordsITDTrancheAHRS != null && !other.recordsITDTrancheAHRS.isEmpty()){
+            this.recordsITDTrancheAHRS = other.recordsITDTrancheAHRS;
+        }
+        if(other.recordsITDTrancheBHRS != null && !other.recordsITDTrancheBHRS.isEmpty()){
+            this.recordsITDTrancheBHRS = other.recordsITDTrancheBHRS;
+        }
         if(other.realEstateGeneralLedgerBalanceList != null && !other.realEstateGeneralLedgerBalanceList.isEmpty()){
             this.realEstateGeneralLedgerBalanceList = other.realEstateGeneralLedgerBalanceList;
         }
     }
+
+
 }

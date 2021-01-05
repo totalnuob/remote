@@ -17,11 +17,6 @@ import kz.nicnbk.service.dto.benchmark.BenchmarkValueDto;
 import kz.nicnbk.service.dto.common.ListResponseDto;
 import kz.nicnbk.service.dto.common.ResponseStatusType;
 import kz.nicnbk.service.dto.hf.*;
-import org.apache.commons.math3.exception.MathIllegalArgumentException;
-import org.apache.commons.math3.stat.descriptive.rank.Percentile;
-import org.apache.commons.math3.stat.ranking.NaNStrategy;
-import org.apache.commons.math3.util.KthSelector;
-import org.apache.commons.math3.util.MedianOf3PivotingStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -171,7 +166,7 @@ public class HedgeFundScoringServiceImpl implements HedgeFundScoringService {
             }
 
             //S & P
-            List<BenchmarkValueDto> snp = this.benchmarkService.getBenchmarkValuesForDatesAndType(dateFrom, dateTo, BenchmarkLookup.S_AND_P.getCode());
+            List<BenchmarkValueDto> snp = this.benchmarkService.getBenchmarkValuesForDatesAndType(dateFrom, dateTo, BenchmarkLookup.SNP_500_SPTR.getCode());
             if(snp.size() != filteredResultDto.getTrackRecord().intValue()){
                 String errorMessage = "HF Scoring calculation failed: missing S&P return values for selected track record period (found " + snp.size() + " values)";
                 logger.error(errorMessage);

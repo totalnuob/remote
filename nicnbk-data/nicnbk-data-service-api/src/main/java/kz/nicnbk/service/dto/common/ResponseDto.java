@@ -11,6 +11,7 @@ public class ResponseDto implements BaseDto {
 
     private ResponseStatusType status;
     private ResponseMessageDto message;
+    private ResponseMessageDto warningMessage;
 
     public ResponseDto(){}
 
@@ -65,6 +66,27 @@ public class ResponseDto implements BaseDto {
         this.message.setNameKz(messageKz);
     }
 
+    public void setWarningMessageEn(String messageEn){
+        if(this.warningMessage == null){
+            this.warningMessage = new ResponseMessageDto();
+        }
+        this.warningMessage.setNameEn(messageEn);
+    }
+
+    public void setWarningMessageRu(String messageRu){
+        if(this.warningMessage == null){
+            this.warningMessage = new ResponseMessageDto();
+        }
+        this.warningMessage.setNameRu(messageRu);
+    }
+
+    public void setWarningMessageKz(String messageKz){
+        if(this.warningMessage == null){
+            this.warningMessage = new ResponseMessageDto();
+        }
+        this.warningMessage.setNameKz(messageKz);
+    }
+
     public void setErrorMessageEn(String messageEn){
         this.setStatus(ResponseStatusType.FAIL);
         this.setMessageEn(messageEn);
@@ -74,6 +96,17 @@ public class ResponseDto implements BaseDto {
         String existingMessage = getErrorMessageEn() != null ? getErrorMessageEn() : "";
         setErrorMessageEn(existingMessage + " " + message);
         setStatus(ResponseStatusType.FAIL);
+    }
+    public void appendWarningMessageEn(String message){
+        String existingMessage = getWarningMessageEn() != null ? getWarningMessageEn() : "";
+        setWarningMessageEn(existingMessage + " " + message);
+    }
+
+    public String getWarningMessageEn(){
+        if(this.warningMessage != null){
+            return this.warningMessage.getNameEn();
+        }
+        return null;
     }
 
     public void setSuccessMessageEn(String messageEn){
@@ -86,5 +119,13 @@ public class ResponseDto implements BaseDto {
             return this.message.getNameEn();
         }
         return null;
+    }
+
+    public ResponseMessageDto getWarningMessage() {
+        return warningMessage;
+    }
+
+    public void setWarningMessage(ResponseMessageDto warningMessage) {
+        this.warningMessage = warningMessage;
     }
 }

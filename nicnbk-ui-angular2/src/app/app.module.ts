@@ -30,6 +30,8 @@ import {TripMemoListComponent} from "./tripMemo/trip-memo-list.component";
 import {TripMemoEditComponent} from "./tripMemo/trip-memo-edit.component";
 import {MemoAttachmentDownloaderComponent} from "./m2s2/memo-attachment-downloader.component";
 
+
+import {MonitoringRiskHedgeFundComponent} from "./monitoring/monitoring-risk-hf.component";
 import {MonitoringPortfolioComponent} from "./monitoring/monitoring-portfolio.component";
 import {MonitoringHedgeFundsComponent} from "./monitoring/monitoring-hedge-funds.component";
 import {MonitoringLiquidPortfolioComponent} from "./monitoring/monitoring-liquid-portfolio.component";
@@ -133,6 +135,10 @@ import {HRNewsEditComponent} from "./hr/hr-news-edit.component";
 import {AdminMainComponent} from "./admin/admin.main.component";
 import {AdminUserManagementComponent} from "./admin/admin.user-management.component";
 import {MonitoringHedgeFundsEditComponent} from "./monitoring/monitoring-hedge-funds-edit.component";
+import {PortfolioVarLookupValuesComponent} from "./lookup/portfolio.var.lookup.values.component";
+import {StressTestLookupValuesComponent} from "./lookup/stress.test.lookup.values.component";
+
+//import {CorpMeetingEditComponent} from "./corpmeetings/ic-meeting-topic-edit.component";
 
 @NgModule({
     imports: [
@@ -159,7 +165,7 @@ import {MonitoringHedgeFundsEditComponent} from "./monitoring/monitoring-hedge-f
         MemoAttachmentDownloaderComponent, FileAttachmentDownloaderComponent,
         GeneralMemoEditComponent, PrivateEquityMemoEditComponent, HedgeFundsMemoEditComponent, RealEstateMemoEditComponent,InfrastructureMemoEditComponent,
         TripMemoListComponent, TripMemoEditComponent, RiskManagementAxiomaReportingComponent, MonitoringHedgeFundsComponent, MonitoringLiquidPortfolioComponent,
-        MonitoringMacroMonitorComponent, MonitoringPortfolioComponent, MonitoringPrivateEquityComponent, MonitoringPrivateEquityFundComponent,
+        MonitoringMacroMonitorComponent, MonitoringPortfolioComponent, MonitoringPrivateEquityComponent, MonitoringPrivateEquityFundComponent, MonitoringRiskHedgeFundComponent,
         MonitoringHedgeFunds2Component,MonitoringHedgeFundsEditComponent, MonitoringHedgeFunds2PrintComponent, MonitoringHFListComponent, MonitoringHFResearchComponent,
         MainNBReportingComponent, InputFileUploadNBReportingComponent,
 
@@ -182,6 +188,8 @@ import {MonitoringHedgeFundsEditComponent} from "./monitoring/monitoring-hedge-f
         AccessDeniedComponent, MMEditComponent, MMViewComponent,NotFoundComponent,
         CorpMeetingsListComponent, CorpMeetingEditComponent, CorpMeetingICEditComponent,LookupValuesCorpMeetingsComponent,
         LookupValuesComponent, CurrencyRatesLookupValuesComponent, BenchmarkLookupValuesComponent,
+        CorpMeetingsListComponent, CorpMeetingEditComponent,
+        LookupValuesComponent, CurrencyRatesLookupValuesComponent, BenchmarkLookupValuesComponent, PortfolioVarLookupValuesComponent, StressTestLookupValuesComponent,
         HRNewsListComponent, HRNewsEditComponent, HREmployeesListComponent, HRDocsListComponent,
         LegalUpdateEditComponent,
         AdminMainComponent, AdminUserManagementComponent

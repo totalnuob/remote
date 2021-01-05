@@ -91,7 +91,8 @@ public class MonitoringLiquidPortfolioServiceREST extends CommonServiceREST {
         response.setContentType(filesDto.getMimeType());
 
         try {
-            response.setHeader("Content-disposition", "attachment;");
+            response.addHeader("Access-Control-Expose-Headers", "Content-Disposition");
+            response.setHeader("Content-disposition", "attachment; filename=\"" + filesDto.getFileName() + "\"");
             org.apache.commons.io.IOUtils.copy(filesDto.getInputStream(), response.getOutputStream());
             response.flushBuffer();
         } catch (UnsupportedEncodingException e) {

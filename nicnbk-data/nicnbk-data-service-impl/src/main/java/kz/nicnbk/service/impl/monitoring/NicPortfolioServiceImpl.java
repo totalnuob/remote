@@ -84,6 +84,8 @@ public class NicPortfolioServiceImpl implements NicPortfolioService {
         return new NicPortfolioResultDto(null, ResponseStatusType.FAIL, "", "Failed to load NIC Portfolio data!", "");
     }
 
+
+
     @Override
     public NicPortfolioResultDto upload(Set<FilesDto> filesDtoSet, String updater) {
 
@@ -302,7 +304,7 @@ public class NicPortfolioServiceImpl implements NicPortfolioService {
                         InputStream inputStream = new FileInputStream(path+name);
                         excelFile.setInputStream(inputStream);
 
-                        setExportZipContent("file_" + String.valueOf(i) + ".xlsx", out, excelFile);
+                        setExportZipContent(excelFile.getOutputFileName(), out, excelFile);
                     }
 
                     out.close();
@@ -317,6 +319,12 @@ public class NicPortfolioServiceImpl implements NicPortfolioService {
             }
         }
         return null;
+    }
+
+    @Override
+    public Date getMostRecentDate() {
+        Date mostRecentDate = this.repository.getMostRecentDate();
+        return mostRecentDate;
     }
 
     private void setExportZipContent(String fileName, ZipOutputStream out, FilesDto filesDto){

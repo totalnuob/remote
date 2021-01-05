@@ -36,6 +36,7 @@ import kz.nicnbk.repo.model.reporting.hedgefunds.HFChartOfAccountsType;
 import kz.nicnbk.repo.model.reporting.hedgefunds.SingularityNICChartOfAccounts;
 import kz.nicnbk.repo.model.reporting.privateequity.*;
 import kz.nicnbk.repo.model.reporting.realestate.*;
+import kz.nicnbk.repo.model.risk.PortfolioVar;
 import kz.nicnbk.repo.model.tripmemo.TripType;
 import kz.nicnbk.service.api.reporting.PeriodicReportService;
 import kz.nicnbk.service.api.reporting.hedgefunds.HFGeneralLedgerBalanceService;
@@ -255,6 +256,9 @@ public class LookupServiceImpl implements LookupService {
     @Autowired
     private BenchmarkRepository benchmarkTypeRepository;
 
+    @Autowired
+    private PortfolioVarRepository portfolioTypeRepository;
+
 
     @Override
     public <T extends BaseTypeEntity> T findByTypeAndCode(Class<T> clazz, String code) {
@@ -338,6 +342,8 @@ public class LookupServiceImpl implements LookupService {
                 return (T) this.icMeetingTypeRepository.findByCode(code);
             } else if (clazz.equals(Benchmark.class)) {
                 return (T) this.benchmarkTypeRepository.findByCode(code);
+            } else if (clazz.equals(PortfolioVar.class)) {
+                return (T) this.portfolioTypeRepository.findByCode(code);
             } else if (clazz.equals(REChartOfAccountsType.class)) {
                 return (T) this.reChartOfAccountsTypeRepository.findByCode(code);
             }else if(clazz.equals(PETrancheType.class)){
@@ -411,6 +417,24 @@ public class LookupServiceImpl implements LookupService {
         }catch (Exception ex){
             logger.error("Failed to load lookup: Benchmark", ex);
         }
+        return null;
+    }
+
+    @Override
+    public List<BaseDictionaryDto> getPortfolioVarTypes() {
+        try {
+            List<BaseDictionaryDto> dtoList = new ArrayList<>();
+            Iterator<PortfolioVar> iterator = this.portfolioTypeRepository.findAll().iterator();
+            while (iterator.hasNext()) {
+                PortfolioVar entity = iterator.next();
+                BaseDictionaryDto dto = disassemble(entity);
+                dtoList.add(dto);
+            }
+            return dtoList;
+        } catch (Exception ex) {
+            logger.error("Failed to load lokup: Portfolio VaR", ex);
+        }
+
         return null;
     }
 

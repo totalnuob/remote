@@ -86,7 +86,7 @@ export class HFScoringEditComponent extends CommonFormViewComponent implements O
                                 this.busy = this.scoringService.get(this.scoringId)
                                     .subscribe(
                                         entity => {
-                                            this.scoring = entity;F
+                                            this.scoring = entity;
                                             //console.log(this.screening);
                                         },
                                         (error: ErrorResponse) => {

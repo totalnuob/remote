@@ -9,7 +9,13 @@ import {Strategy} from "./model/strategy";
 import { Http, Response, Headers, RequestOptions } from '@angular/http';
 import {Observable} from "rxjs/Observable";
 import {CommonService} from "./common.service";
-import {PE_STRATEGIES_URL} from "./lookup.service.url";
+import {
+    PE_STRATEGIES_URL,
+    PORTFOLIO_VAR_TYPE_URL,
+    SAVE_PORTFOLIO_VARS_URL, SAVE_STRESS_TESTS_URL,
+    SEARCH_PORTFOLIO_VARS_URL, SEARCH_STRESS_TESTS_URL
+} from "./lookup.service.url";
+import {GET_BENCHMARKS_BB_URL, PE_STRATEGIES_URL} from "./lookup.service.url";
 import {ALL_STRATEGIES_URL} from "./lookup.service.url";
 import {RE_STRATEGIES_URL} from "./lookup.service.url";
 import {HF_STRATEGIES_URL, HF_SUBSTRATEGIES_URL} from "./lookup.service.url";
@@ -183,6 +189,12 @@ export class LookupService extends CommonService{
 
     getBenchmarkTypeList(){
         return this.http.get(BENCHMARK_TYPE_URL, this.getOptionsWithCredentials())
+            .map(this.extractDataList)
+            .catch(this.handleErrorResponse);
+    }
+
+    getPortfolioVarTypeList(){
+        return this.http.get(PORTFOLIO_VAR_TYPE_URL, this.getOptionsWithCredentials())
             .map(this.extractDataList)
             .catch(this.handleErrorResponse);
     }
@@ -483,6 +495,30 @@ export class LookupService extends CommonService{
             .catch(this.handleErrorResponse);
     }
 
+    getPortfolioVars(searchParams){
+        let body = JSON.stringify(searchParams);
+
+        return this.http.post(SEARCH_PORTFOLIO_VARS_URL, body, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+    getStressTests(searchParams){
+        let body = JSON.stringify(searchParams);
+
+        return this.http.post(SEARCH_STRESS_TESTS_URL, body, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+    getBenchmarksBB(searchParams){
+        let body = JSON.stringify(searchParams);
+
+        return this.http.post(GET_BENCHMARKS_BB_URL, body, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
     saveCurrencyRates(item){
         let body = JSON.stringify(item);
         return this.http.post(SAVE_CURRENCY_RATES_URL, body, this.getOptionsWithCredentials())
@@ -507,6 +543,20 @@ export class LookupService extends CommonService{
     saveBenchmark(item){
         let body = JSON.stringify(item);
         return this.http.post(SAVE_BENCHMARK_URL, body, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+    savePortfolioVar(item){
+        let body = JSON.stringify(item);
+        return this.http.post(SAVE_PORTFOLIO_VARS_URL, body, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+    saveStressTest(item){
+        let body = JSON.stringify(item);
+        return this.http.post(SAVE_STRESS_TESTS_URL, body, this.getOptionsWithCredentials())
             .map(this.extractData)
             .catch(this.handleErrorResponse);
     }

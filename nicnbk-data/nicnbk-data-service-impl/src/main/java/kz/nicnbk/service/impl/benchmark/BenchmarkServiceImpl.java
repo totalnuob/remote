@@ -1,15 +1,23 @@
 package kz.nicnbk.service.impl.benchmark;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import kz.nicnbk.common.service.model.BaseDictionaryDto;
 import kz.nicnbk.common.service.util.DateUtils;
 import kz.nicnbk.common.service.util.PaginationUtils;
 import kz.nicnbk.repo.api.benchmark.BenchmarkValueRepository;
 import kz.nicnbk.repo.model.benchmark.BenchmarkValue;
+import kz.nicnbk.repo.model.bloomberg.SecurityData;
 import kz.nicnbk.repo.model.employee.Employee;
 import kz.nicnbk.repo.model.lookup.BenchmarkLookup;
 import kz.nicnbk.service.api.benchmark.BenchmarkService;
 import kz.nicnbk.service.api.employee.EmployeeService;
 import kz.nicnbk.service.converter.benchmark.BenchmarkValueEntityConverter;
+import kz.nicnbk.service.datamanager.LookupService;
 import kz.nicnbk.service.dto.benchmark.BenchmarkValueDto;
+import kz.nicnbk.service.dto.bloomberg.FieldDataDto;
+import kz.nicnbk.service.dto.bloomberg.ResponseDto;
+import kz.nicnbk.service.dto.bloomberg.SecurityDataDto;
 import kz.nicnbk.service.dto.common.EntityListSaveResponseDto;
 import kz.nicnbk.service.dto.common.EntitySaveResponseDto;
 import kz.nicnbk.service.dto.common.ResponseStatusType;
@@ -22,8 +30,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -48,6 +59,9 @@ public class BenchmarkServiceImpl implements BenchmarkService {
 
     @Autowired
     private EmployeeService employeeService;
+
+    @Autowired
+    private LookupService lookupService;
 
     @Override
     public List<BenchmarkValueDto> getValuesFromDateAsList(Date fromDate, String benchmarkCode) {
@@ -227,6 +241,90 @@ public class BenchmarkServiceImpl implements BenchmarkService {
         }
         saveListResponse.setSuccessMessageEn("Successfully saved benchmark rate list");
         return saveListResponse;
+    }
+
+    @Override
+    public EntityListSaveResponseDto getBenchmarksBB(BenchmarkSearchParams searchParams, String username) {
+        List<BenchmarkValueDto> dtoList = loadBenchmarksBB(searchParams);
+        return save(dtoList, username);
+    }
+
+    private List<BenchmarkValueDto> loadBenchmarksBB(BenchmarkSearchParams searchParams) {
+        Date nextMonth = DateUtils.getLastDayOfNextMonth(searchParams.getToDate());
+        if (nextMonth.before(new Date())) {
+            searchParams.setToDate(nextMonth);
+        }
+        List<BenchmarkValueDto> benchmarks = new ArrayList<>();
+        String url = "http://10.10.165.123:8080/bloomberg/benchmark";
+        ResponseEntity<String> responseEntity = (new RestTemplate()).postForEntity(url, searchParams, String.class);
+        String response = responseEntity.getBody();
+
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            ResponseDto result = mapper.readValue(response, new TypeReference<ResponseDto>() {});
+
+            SecurityDataDto securityData = new SecurityDataDto();
+            String benchmarkCode = renameCode(searchParams.getBenchmarkCode()) + " " + "Index";
+            for (int i = 0; i < result.getSecurityDataDtoList().size(); i++) {
+                if (result.getSecurityDataDtoList().get(i).getSecurity().equals(benchmarkCode)){
+                    securityData = result.getSecurityDataDtoList().get(i);
+                }
+            }
+            if (securityData == null || securityData.getFieldDataDtoList().isEmpty()) {
+                return benchmarks;
+            }
+            if (securityData != null || !securityData.getFieldDataDtoList().isEmpty()) {
+                List<FieldDataDto> fieldDataDtoList = new ArrayList<>(securityData.getFieldDataDtoList());
+                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+                for (int i = 0; i < fieldDataDtoList.size(); i++) {
+                    Date date = formatter.parse(fieldDataDtoList.get(i).getDate());
+                    BenchmarkValueDto benchmark = new BenchmarkValueDto();
+                    benchmark.setBenchmark(new BaseDictionaryDto(searchParams.getBenchmarkCode(), null, null, null));
+                    benchmark.setDate(date);
+
+                    if (i + 1 < fieldDataDtoList.size()) {
+                        Double startIndex = Double.valueOf(fieldDataDtoList.get(i).getValue());
+                        Double endIndex = Double.valueOf(fieldDataDtoList.get(i+1).getValue());
+                        benchmark.setReturnValue(getRateOfReturn(startIndex, endIndex));
+                    } else {
+                        benchmark.setReturnValue(null);
+                    }
+                    benchmarks.add(benchmark);
+                }
+            }
+        } catch (Exception e) {
+            logger.error("Error parsing Benchmark from Bloomberg with exception" + e);
+        }
+        return benchmarks;
+    }
+
+    private Double getRateOfReturn(Double startIndex, Double endIndex) {
+        Double diff = endIndex - startIndex;
+        return diff/startIndex;
+    }
+
+    private String renameCode(String benchmarkCode) {
+        switch (benchmarkCode) {
+            case "HFRI_FOF":
+                return "HFRIFOF";
+            case "HFRI_AWC":
+                return "HFRIAWC";
+            case "MSCI_WRLD":
+                return "MXWO";
+            case "MSCIACWIIM":
+                return "MXWDIM";
+            case "MSCI_EM":
+                return "MXEF";
+            case "US_HIGHYLD":
+                return "H0A0";
+            case "SP500_SPX":
+                return "SPX";
+            case "GLOBAL_FI":
+                return "LEGATRUH";
+            default:
+                return "";
+        }
+
     }
 
     @Override
