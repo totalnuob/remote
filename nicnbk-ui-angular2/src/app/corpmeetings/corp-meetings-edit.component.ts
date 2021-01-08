@@ -358,12 +358,12 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
                 this.postAction(null, 'Decision required');
                 return false;
             }
-            if(this.icMeetingTopic.icMeeting != null){
-                if((this.icMeetingTopic.explanatoryNote == null || this.icMeetingTopic.explanatoryNote.id == null ||
-                    this.icMeetingTopic.explanatoryNote.id == 0) && this.uploadExplanatoryNoteFile == null){
-                    this.postAction(null, 'IC Meeting selected: Explanatory Note is required');
-                    return false;
-                }
+            if(this.icMeetingTopic.icMeeting != null && this.icMeetingTopic.icMeeting.id > 0){
+                //if((this.icMeetingTopic.explanatoryNote == null || this.icMeetingTopic.explanatoryNote.id == null ||
+                //    this.icMeetingTopic.explanatoryNote.id == 0) && this.uploadExplanatoryNoteFile == null){
+                //    this.postAction(null, 'IC Meeting selected: Explanatory Note is required');
+                //    return false;
+                //}
                 if(this.icMeetingTopic.speaker == null || this.icMeetingTopic.speaker.id == null || this.icMeetingTopic.speaker.id == 0){
                     this.postAction(null, 'IC Meeting selected: Speaker is required');
                     return false;
