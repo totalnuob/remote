@@ -396,11 +396,11 @@ public class PeriodicReportREServiceImpl implements PeriodicReportREService {
                     recordDto.setId(reserveCalculationDto.getId());
                     String acronym = reserveCalculationDto.getRecipient().getCode().equalsIgnoreCase(ReserveCalculationsEntityTypeLookup.TERRA_A.getCode()) ? "Terra A" :
                             reserveCalculationDto.getRecipient().getCode().equalsIgnoreCase(ReserveCalculationsEntityTypeLookup.TERRA_B.getCode()) ? "Terra B" : "Terra";
-                    if(acronym.equalsIgnoreCase("TERRA")) {
-                        logger.error("Error generating Terra GL Form: capital call recipient is specified as 'Terra', must be either 'Terra A' or 'Terra B'");
-                        responseDto.setErrorMessageEn("Error generating Terra GL Form: capital call recipient is specified as 'Terra', must be either 'Terra A' or 'Terra B'");
-                        return responseDto;
-                    }
+//                    if(acronym.equalsIgnoreCase("TERRA")) {
+//                        logger.error("Error generating Terra GL Form: capital call recipient is specified as 'Terra', must be either 'Terra A' or 'Terra B'");
+//                        responseDto.setErrorMessageEn("Error generating Terra GL Form: capital call recipient is specified as 'Terra', must be either 'Terra A' or 'Terra B'");
+//                        return responseDto;
+//                    }
                     recordDto.setAcronym(acronym);
                     recordDto.setBalanceDate(report.getReportDate());
 

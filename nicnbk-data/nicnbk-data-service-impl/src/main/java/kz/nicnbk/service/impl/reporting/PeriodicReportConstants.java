@@ -134,6 +134,8 @@ public final class PeriodicReportConstants {
     public static final String KZT_FORM_14 = "KZT_FORM_14";
     public static final String KZT_FORM_19 = "KZT_FORM_19";
     public static final String KZT_FORM_22 = "KZT_FORM_22";
+
+    public static final String TARRAGON_GENERATED_GL = "TARRAGON_GENERATED_GL";
     /* ****************************************************************************************************************/
 
     /* GENERATED REPORT KZT LITERALS **********************************************************************************/

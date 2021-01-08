@@ -118,18 +118,21 @@
     <br/>
 
     <div class="row withpadding">
-        <div class="col-md-6">
-            <div class="col-md-1 pull-left">
-                <button class="btn btn-primary" [routerLink]="['/reporting/NBReporting/NICKMFInput/', reportId]">PREVIOUS
-                </button>
-            </div>
+        <div class="col-md-1 pull-left">
+            <button class="btn btn-primary" [routerLink]="['/reporting/NBReporting/NICKMFInput/', reportId]">PREVIOUS
+            </button>
         </div>
-        <div class="col-md-6">
-            <div class="col-md-1 pull-right">
-                <button class="btn btn-primary" [routerLink]="['/reporting/NBReporting/TerraGeneratedForm/', reportId]" [disabled]="!showNextButton()">NEXT
-                </button>
+        <div class="col-md-1 pull-right">
+            <button class="btn btn-primary" [routerLink]="['/reporting/NBReporting/TerraGeneratedForm/', reportId]" [disabled]="!showNextButton()">NEXT
+            </button>
 
-            </div>
+        </div>
+    </div>
+    <br/>
+    <div class="row withpadding">
+        <div class="col-md-1 pull-right">
+            <button class="btn btn-xs btn-success" (click)="exportTable()">export XLSX
+            </button>
         </div>
     </div>
 

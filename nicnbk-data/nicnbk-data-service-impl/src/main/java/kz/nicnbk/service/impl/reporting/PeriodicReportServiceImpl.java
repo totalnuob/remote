@@ -30,6 +30,7 @@ import kz.nicnbk.service.dto.files.FilesDto;
 import kz.nicnbk.service.dto.lookup.CurrencyRatesDto;
 import kz.nicnbk.service.dto.reporting.*;
 import kz.nicnbk.service.dto.reporting.PeriodicReportType;
+import kz.nicnbk.service.dto.reporting.privateequity.TarragonGeneratedGeneralLedgerFormDto;
 import kz.nicnbk.service.dto.reporting.privateequity.TarragonStatementBalanceOperationsHolderDto;
 import kz.nicnbk.service.dto.reporting.realestate.*;
 import kz.nicnbk.service.impl.reporting.lookup.NICChartAccountsLookup;
@@ -7582,6 +7583,8 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
             return getConsolidatedForm19KZTReportInputStream(reportId);
         }else if(type.equalsIgnoreCase(PeriodicReportConstants.KZT_FORM_22)){
             return getConsolidatedForm22KZTReportInputStream(reportId);
+        }else if(type.equalsIgnoreCase(PeriodicReportConstants.TARRAGON_GENERATED_GL)){
+            return getTarragonGeneratedGeneralLedgerInputStream(reportId);
         }
 
         return null;
@@ -11561,6 +11564,108 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
             // TODO: log error
             //e.printStackTrace();
             logger.error("IO Exception when exporting KZT_FORM_22", e);
+        }
+
+        return null;
+    }
+
+    private FilesDto getTarragonGeneratedGeneralLedgerInputStream(Long reportId) {
+
+        FilesDto filesDto = new FilesDto();
+        PeriodicReport report = this.periodReportRepository.findOne(reportId);
+        if(report == null){
+            logger.error("No report found for id=" + (reportId != null ? reportId.longValue() : null));
+            return null;
+        }
+
+        List<TarragonGeneratedGeneralLedgerFormDto> records;
+        try {
+            ListResponseDto responseDto = this.periodicReportPEService.getTarragonGeneratedFormWithoutExcluded(reportId);
+            if (responseDto.getStatus() == ResponseStatusType.FAIL) {
+                String errorMessage = StringUtils.isNotEmpty(responseDto.getMessage().getNameEn()) ? responseDto.getMessage().getNameEn() :
+                        "Error occurred when generating Tarragon GL";
+                logger.error(errorMessage);
+            }
+            records = responseDto.getRecords();
+
+            // Create a Workbook
+            XSSFWorkbook  workbook = new XSSFWorkbook();
+        /* CreationHelper helps us create instances of various things like DataFormat,
+           Hyperlink, RichTextString etc, in a format (HSSF, XSSF) independent way */
+            CreationHelper createHelper = workbook.getCreationHelper();
+
+            // Create a Sheet
+            Sheet sheet = workbook.createSheet("Tarragon GL");
+            // Create a Font for styling header cells
+            Font headerFont = workbook.createFont();
+            headerFont.setBold(true);
+            headerFont.setFontHeightInPoints((short) 11);
+
+            // Create a CellStyle with the font
+            CellStyle headerCellStyle = workbook.createCellStyle();
+            headerCellStyle.setFont(headerFont);
+
+            String[] headers = {"Acronym", "Balance Date", "Financial Statement Category","GL Account", "Financial Statement Category Description",
+            "Chart of Accounts Long Description", "Investor Account/Portfolio Fund", "NB Account Number", "NIC Account Name","GL Account Balance",
+            "Seg Val CCY", "Fund CCY"};
+            // Create a Row
+            Row headerRow = sheet.createRow(0);
+
+            // Create cells
+            for(int i = 0; i < headers.length; i++) {
+                Cell cell = headerRow.createCell(i);
+                cell.setCellValue(headers[i]);
+                cell.setCellStyle(headerCellStyle);
+            }
+
+            // Create Cell Style for formatting Date
+            CellStyle dateCellStyle = workbook.createCellStyle();
+            dateCellStyle.setDataFormat(createHelper.createDataFormat().getFormat("dd-MM-yyyy"));
+
+            // Create Other rows and cells with employees data
+            int rowNum = 1;
+            for(TarragonGeneratedGeneralLedgerFormDto record: records) {
+                Row row = sheet.createRow(rowNum++);
+                row.createCell(0).setCellValue(record.getAcronym());
+                Cell dateCell = row.createCell(1);
+                dateCell.setCellValue(record.getBalanceDate());
+                dateCell.setCellStyle(dateCellStyle);
+                row.createCell(2).setCellValue(record.getFinancialStatementCategory());
+                row.createCell(3).setCellValue(record.getGLAccount());
+                row.createCell(4).setCellValue(record.getFinancialStatementCategoryDescription());
+                row.createCell(5).setCellValue(record.getChartAccountsLongDescription());
+                row.createCell(6).setCellValue(record.getSubscriptionRedemptionEntity());
+                row.createCell(7).setCellValue(record.getNbAccountNumber());
+                row.createCell(8).setCellValue(record.getNicAccountName());
+                row.createCell(9).setCellValue(record.getGLAccountBalance());
+                row.createCell(10).setCellValue(record.getSegValCCY());
+                row.createCell(11).setCellValue(record.getFundCCY());
+            }
+
+            // Resize all columns to fit the content size
+//            for(int i = 0; i < headers.length; i++) {
+//                sheet.autoSizeColumn(i);
+//            }
+
+            File tmpDir = new File(this.rootDirectory + "/tmp/nbrk_reporting");
+
+            if(!tmpDir.exists()){
+                tmpDir.mkdir();
+            }
+
+            // write to new
+            String filePath = tmpDir + "/TARRAGON_GL_" + MathUtils.getRandomNumber(0, 10000) + ".xlsx";
+            try (FileOutputStream outputStream = new FileOutputStream(filePath)) {
+                workbook.write(outputStream);
+            }
+
+            InputStream inputStream = new FileInputStream(filePath);
+            filesDto.setInputStream(inputStream);
+            filesDto.setFileName(filePath);
+            return filesDto;
+        }catch (Exception ex){
+            logger.error("Error exporting Tarragon GL for report id=" + reportId.longValue() + " with exception", ex);
+            //throw ex;
         }
 
         return null;
