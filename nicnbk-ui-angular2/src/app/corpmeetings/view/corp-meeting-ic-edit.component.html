@@ -186,6 +186,15 @@
                                         </div>
                                         <div class="row">
                                             <div class="col-md-12">
+                                                <div class="col-md-10" *ngIf="topic.authenticatedUserVote === 'NO' || topic.authenticatedUserVote === '-'">
+                                                    <textarea fz-elastic type="text" id="voteComment" class="form-control"
+                                                              placeholder="Enter comment..."
+                                                              maxlength="250" name="voteComment" [(ngModel)]="topic.authenticatedUserVoteComment"></textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
                                                 <div class="col-md-10">
                                                     <span>
                                                         <i>{{topic.decisionUpd}}</i>

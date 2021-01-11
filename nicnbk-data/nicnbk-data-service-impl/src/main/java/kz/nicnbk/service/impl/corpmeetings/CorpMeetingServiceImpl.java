@@ -1388,6 +1388,7 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
                 EmployeeDto employeeDto = this.employeeService.getEmployeeById(vote.getEmployee().getId());
                 voteDto.setEmployee(employeeDto);
                 voteDto.setVote(vote.getVote().getCode());
+                voteDto.setComment(vote.getComment());
                 votes.add(voteDto);
             }
         }
@@ -3514,6 +3515,7 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
                         }else{
                             return false;
                         }
+                        vote.setComment(voteDto.getComment());
                         this.icMeetingVoteRepository.deleteByTopicIdAndUserId(voteDto.getIcMeetingTopicId(), employeeDto.getId());
                         this.icMeetingVoteRepository.save(vote);
                     }
