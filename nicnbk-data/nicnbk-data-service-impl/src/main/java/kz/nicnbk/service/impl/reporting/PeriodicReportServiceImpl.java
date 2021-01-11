@@ -11577,75 +11577,76 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
             logger.error("No report found for id=" + (reportId != null ? reportId.longValue() : null));
             return null;
         }
-
-        List<TarragonGeneratedGeneralLedgerFormDto> records;
+        List<TarragonGeneratedGeneralLedgerFormDto> records = null;
         try {
             ListResponseDto responseDto = this.periodicReportPEService.getTarragonGeneratedFormWithoutExcluded(reportId);
             if (responseDto.getStatus() == ResponseStatusType.FAIL) {
                 String errorMessage = StringUtils.isNotEmpty(responseDto.getMessage().getNameEn()) ? responseDto.getMessage().getNameEn() :
                         "Error occurred when generating Tarragon GL";
+                //throw new IllegalStateException(errorMessage);
                 logger.error(errorMessage);
             }
             records = responseDto.getRecords();
+        }catch (Exception ex){
+            throw ex;
+        }
 
-            // Create a Workbook
-            XSSFWorkbook  workbook = new XSSFWorkbook();
-        /* CreationHelper helps us create instances of various things like DataFormat,
-           Hyperlink, RichTextString etc, in a format (HSSF, XSSF) independent way */
-            CreationHelper createHelper = workbook.getCreationHelper();
+        Resource resource = new ClassPathResource("export_template/reporting/TEMPLATE_REP_TARRAGON_GL.xlsx");
+        InputStream excelFileToRead = null;
+        try {
+            excelFileToRead = resource.getInputStream();
+        } catch (IOException e) {
+            logger.error("Reporting: Export file template not found: 'TEMPLATE_REP_TARRAGON_GL.xlsx'");
+            return null;
+            //e.printStackTrace();
+        }
+        try {
+            XSSFWorkbook  workbook = new XSSFWorkbook(excelFileToRead);
+            XSSFSheet sheet = workbook.getSheetAt(0);
 
-            // Create a Sheet
-            Sheet sheet = workbook.createSheet("Tarragon GL");
-            // Create a Font for styling header cells
-            Font headerFont = workbook.createFont();
-            headerFont.setBold(true);
-            headerFont.setFontHeightInPoints((short) 11);
+            final int templateRowIndex = 1;
+            final int columnNum = 12;
+            int added = 0;
+            if(records != null && !records.isEmpty()){
+                sheet.shiftRows(templateRowIndex + 1, sheet.getLastRowNum(), records.size() - 1);
+                for(TarragonGeneratedGeneralLedgerFormDto record: records) {
+                    Row newRow = sheet.createRow(templateRowIndex + 1 + added);
+                    newRow.createCell(0).setCellValue(record.getAcronym());
 
-            // Create a CellStyle with the font
-            CellStyle headerCellStyle = workbook.createCellStyle();
-            headerCellStyle.setFont(headerFont);
+                    CreationHelper createHelper = workbook.getCreationHelper();
+                    CellStyle dateCellStyle = workbook.createCellStyle();
+                    dateCellStyle.setDataFormat(createHelper.createDataFormat().getFormat("dd.MM.yyyy"));
+                    Cell dateCell = newRow.createCell(1);
+                    dateCell.setCellValue(record.getBalanceDate());
+                    dateCell.setCellStyle(dateCellStyle);
 
-            String[] headers = {"Acronym", "Balance Date", "Financial Statement Category","GL Account", "Financial Statement Category Description",
-            "Chart of Accounts Long Description", "Investor Account/Portfolio Fund", "NB Account Number", "NIC Account Name","GL Account Balance",
-            "Seg Val CCY", "Fund CCY"};
-            // Create a Row
-            Row headerRow = sheet.createRow(0);
+                    newRow.createCell(2).setCellValue(record.getFinancialStatementCategory());
+                    newRow.createCell(3).setCellValue(record.getGLAccount());
+                    newRow.createCell(4).setCellValue(record.getFinancialStatementCategoryDescription());
+                    newRow.createCell(5).setCellValue(record.getChartAccountsLongDescription());
+                    newRow.createCell(6).setCellValue(record.getSubscriptionRedemptionEntity());
+                    newRow.createCell(7).setCellValue(record.getNbAccountNumber());
+                    newRow.createCell(8).setCellValue(record.getNicAccountName());
+                    newRow.createCell(9).setCellValue(record.getGLAccountBalance());
+                    newRow.createCell(10).setCellValue(record.getSegValCCY());
+                    newRow.createCell(11).setCellValue(record.getFundCCY());
 
-            // Create cells
-            for(int i = 0; i < headers.length; i++) {
-                Cell cell = headerRow.createCell(i);
-                cell.setCellValue(headers[i]);
-                cell.setCellStyle(headerCellStyle);
+                    // set styles
+                    for(int i = 0; i < columnNum; i++){
+                        if(newRow.getCell(i) != null && sheet.getRow(templateRowIndex) != null &&
+                                sheet.getRow(templateRowIndex).getCell(i) != null){
+                            newRow.getCell(i).setCellStyle(sheet.getRow(templateRowIndex).getCell(i).getCellStyle());
+                        }
+                    }
+
+                    added++;
+                }
+                sheet.shiftRows(templateRowIndex + 1, sheet.getLastRowNum(), -1);
+
+                // merger last row cells 0 and 1
+                sheet.addMergedRegion(new CellRangeAddress(templateRowIndex + added - 1, templateRowIndex + added - 1,0, 1));
+                sheet.getRow(templateRowIndex + added - 1).getCell(0).getCellStyle().setAlignment(HorizontalAlignment.LEFT);
             }
-
-            // Create Cell Style for formatting Date
-            CellStyle dateCellStyle = workbook.createCellStyle();
-            dateCellStyle.setDataFormat(createHelper.createDataFormat().getFormat("dd-MM-yyyy"));
-
-            // Create Other rows and cells with employees data
-            int rowNum = 1;
-            for(TarragonGeneratedGeneralLedgerFormDto record: records) {
-                Row row = sheet.createRow(rowNum++);
-                row.createCell(0).setCellValue(record.getAcronym());
-                Cell dateCell = row.createCell(1);
-                dateCell.setCellValue(record.getBalanceDate());
-                dateCell.setCellStyle(dateCellStyle);
-                row.createCell(2).setCellValue(record.getFinancialStatementCategory());
-                row.createCell(3).setCellValue(record.getGLAccount());
-                row.createCell(4).setCellValue(record.getFinancialStatementCategoryDescription());
-                row.createCell(5).setCellValue(record.getChartAccountsLongDescription());
-                row.createCell(6).setCellValue(record.getSubscriptionRedemptionEntity());
-                row.createCell(7).setCellValue(record.getNbAccountNumber());
-                row.createCell(8).setCellValue(record.getNicAccountName());
-                row.createCell(9).setCellValue(record.getGLAccountBalance());
-                row.createCell(10).setCellValue(record.getSegValCCY());
-                row.createCell(11).setCellValue(record.getFundCCY());
-            }
-
-            // Resize all columns to fit the content size
-//            for(int i = 0; i < headers.length; i++) {
-//                sheet.autoSizeColumn(i);
-//            }
 
             File tmpDir = new File(this.rootDirectory + "/tmp/nbrk_reporting");
 
@@ -11654,7 +11655,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
             }
 
             // write to new
-            String filePath = tmpDir + "/TARRAGON_GL_" + MathUtils.getRandomNumber(0, 10000) + ".xlsx";
+            String filePath = tmpDir + "/REP_TARRAGON_GL_" + MathUtils.getRandomNumber(0, 10000) + ".xlsx";
             try (FileOutputStream outputStream = new FileOutputStream(filePath)) {
                 workbook.write(outputStream);
             }
@@ -11663,9 +11664,10 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
             filesDto.setInputStream(inputStream);
             filesDto.setFileName(filePath);
             return filesDto;
-        }catch (Exception ex){
-            logger.error("Error exporting Tarragon GL for report id=" + reportId.longValue() + " with exception", ex);
-            //throw ex;
+        } catch (IOException e) {
+            // TODO: log error
+            //e.printStackTrace();
+            logger.error("IO Exception when exporting Tarragon GL", e);
         }
 
         return null;
