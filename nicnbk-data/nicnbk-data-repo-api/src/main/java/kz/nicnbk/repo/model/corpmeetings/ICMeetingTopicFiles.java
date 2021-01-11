@@ -51,7 +51,7 @@ public class ICMeetingTopicFiles extends BaseEntity {
         this.file = file;
     }
 
-    @Column(name="custom_name")
+    @Column(name="custom_name", columnDefinition="TEXT")
     public String getCustomName() {
         return customName;
     }
