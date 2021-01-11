@@ -1397,7 +1397,7 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
     private void limitFieldsICMeetingTopics(List<ICMeetingTopicDto> topics){
         if(topics != null){
             for(ICMeetingTopicDto topic: topics){
-                topic.setDecision(null);
+                //topic.setDecision(null);
                 topic.setDescription(null);
                 topic.setExplanatoryNote(null);
                 topic.setMaterials(null);
