@@ -349,7 +349,7 @@ public class MonitoringRiskServiceImpl implements MonitoringRiskService {
                 mergedBenchmarkResponse.setRecords(hfriFofResponse.getRecords());
             }
             if (hfriAwcResponse.getRecords() != null && !hfriAwcResponse.getRecords().isEmpty()) {
-                if (mergedBenchmarkResponse.getRecords() == null && mergedBenchmarkResponse.getRecords().isEmpty()) {
+                if (mergedBenchmarkResponse.getRecords() == null || mergedBenchmarkResponse.getRecords().isEmpty()) {
                     mergedBenchmarkResponse.setRecords(hfriAwcResponse.getRecords());
                 } else {
                     //Merge benchmark values
