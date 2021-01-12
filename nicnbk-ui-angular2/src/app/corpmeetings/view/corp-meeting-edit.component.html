@@ -199,7 +199,7 @@
                                             </td>
                                             <td>
                                                 <input class="form-control" [attr.id]="'material_file_' + j" type="text" placeholder="name for protocol..." style="width: 100%"
-                                                [(ngModel)]="newFile.name" [ngModelOptions]="{standalone: true}"/>
+                                                       [(ngModel)]="newFile.name" [ngModelOptions]="{standalone: true}"/>
                                             </td>
                                         </tr>
                                     </table>
@@ -234,21 +234,31 @@
                             <div class="row withpadding">
                                 <div class="col-md-12">
                                     <div class="col-md-6">
-                                        <div class="col-md-4">
-                                            <span>Approve list</span>&nbsp;
-                                            <button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#addApproveListModal"
-                                                    [disabled]="!canEdit()" (click)="addApproveListEmployee()">
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <span>Approve list</span>&nbsp;
+                                                <button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#addApproveListModal"
+                                                        [disabled]="!canEdit()" (click)="addApproveListEmployee()">
 
-                                                <span class="glyphicon glyphicon-pencil"></span>
-                                            </button>
-                                        </div>
-                                        <div class="col-md-8">
-                                            <div class="row" *ngFor="let item of icMeetingTopic?.approveList">
-                                                <span *ngIf="item.approved" class="glyphicon glyphicon-ok-circle" style="color: green"></span>
-                                                <span *ngIf="!item.approved"class="glyphicon glyphicon-hourglass" style="color: grey"></span>
-                                                {{item.employee.fullName != null ? item.employee.fullName : (item.employee.firstName + ' ' + item.employee.lastName)}}
+                                                    <span class="glyphicon glyphicon-pencil"></span>
+                                                </button>
+                                            </div>
+                                            <div class="col-md-8">
+                                                <div class="row" *ngFor="let item of icMeetingTopic?.approveList">
+                                                    <span *ngIf="item.approved" class="glyphicon glyphicon-ok-circle" style="color: green"></span>
+                                                    <span *ngIf="!item.approved"class="glyphicon glyphicon-hourglass" style="color: grey"></span>
+                                                    {{item.employee.fullName != null ? item.employee.fullName : (item.employee.firstName + ' ' + item.employee.lastName)}}
+                                                </div>
                                             </div>
                                         </div>
+                                        <br/>
+                                        <div class="row" *ngIf="icMeetingTopic?.approveList?.length > 0">
+                                            <div class="col-md-4">
+                                                <span>Export Approve List </span>
+                                                <img src="../../../../public/img/ms_word.png" height="25" width="25" (click)="exportApproveList()"/>
+                                            </div>
+                                        </div>
+
                                     </div>
                                     <div class="col-md-6">
                                         <tag-input name="tags"

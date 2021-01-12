@@ -175,7 +175,7 @@
             <div *ngIf="canEdit()">
                 <form #yourForm="ngForm" (ngSubmit)="onSubmitTopPortfolio()">
                     <label class="btn btn-sm btn-primary">
-                        <input type="file" #fileupload id="fileuploadTopPortfolio" (change)="fileChangeTopPortfolio(fileupload.files)" style="display: none"/>Update
+                        <input type="file" #fileupload id="fileuploadTopPortfolio" (change)="fileChangeTopPortfolio(fileupload.files)" style="display: none"/>Upload
                     </label>
                     <button type="submit" class="btn btn-sm btn-success" *ngIf="this.myFilesTopPortfolio.length > 0">Submit</button>
                 </form>
@@ -226,7 +226,7 @@
         <div *ngIf="canEdit()">
             <form #yourForm="ngForm" (ngSubmit)="onSubmitSubStrategy()">
                 <label class="btn btn-sm btn-primary">
-                    <input type="file" #fileupload id="fileuploadSubStrategy" (change)="fileChange(fileupload.files)" style="display: none"/>Update
+                    <input type="file" #fileupload id="fileuploadSubStrategy" (change)="fileChange(fileupload.files)" style="display: none"/>Upload
                 </label>
                 <button type="submit" class="btn btn-sm btn-success" *ngIf="this.myFiles.length > 0">Submit</button>
             </form>

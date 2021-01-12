@@ -8,6 +8,7 @@ public class ICMeetingTopicsVoteDto implements BaseDto {
     private Long icMeetingTopicId;
     private EmployeeDto employee;
     private String vote;
+    private String comment;
 
     public Long getIcMeetingTopicId() {
         return icMeetingTopicId;
@@ -31,6 +32,14 @@ public class ICMeetingTopicsVoteDto implements BaseDto {
 
     public void setEmployee(EmployeeDto employee) {
         this.employee = employee;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
     }
 }
 

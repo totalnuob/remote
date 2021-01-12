@@ -5,6 +5,7 @@ import kz.nicnbk.repo.model.employee.Employee;
 import kz.nicnbk.repo.model.files.Files;
 
 import javax.persistence.*;
+import java.util.Date;
 
 /**
  * Created by magzumov
@@ -16,6 +17,8 @@ public class ICMeetingTopicApproval extends BaseEntity {
     private ICMeetingTopic icMeetingTopic;
     private Employee employee;
     private Boolean approved;
+    private Date approveDate;
+    private String hash;
 
     public ICMeetingTopicApproval(){}
 
@@ -54,5 +57,23 @@ public class ICMeetingTopicApproval extends BaseEntity {
 
     public void setApproved(Boolean approved) {
         this.approved = approved;
+    }
+
+    @Column(name = "approve_date"/*, nullable = false*/)
+    @Temporal(value = TemporalType.TIMESTAMP)
+    public Date getApproveDate() {
+        return approveDate;
+    }
+
+    public void setApproveDate(Date approveDate) {
+        this.approveDate = approveDate;
+    }
+
+    public String getHash() {
+        return hash;
+    }
+
+    public void setHash(String hash) {
+        this.hash = hash;
     }
 }

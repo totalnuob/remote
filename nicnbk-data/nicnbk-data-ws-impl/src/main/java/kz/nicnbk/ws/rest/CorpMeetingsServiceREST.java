@@ -445,6 +445,54 @@ public class CorpMeetingsServiceREST extends CommonServiceREST{
     }
 
     @PreAuthorize(IC_MEETING_VIEWER)
+    @RequestMapping(value="/ICMeeting/exportTopicApproveList/{id}", method= RequestMethod.GET)
+    @ResponseBody
+    public void exportICMeetingTopicApproveList(@PathVariable(value="id") Long icTopicId,
+                                      HttpServletResponse response) {
+
+        // TODO: control file download by user role
+        // TODO: Check rights
+
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
+
+        FilesDto filesDto = null;
+        try{
+            filesDto = this.corpMeetingService.getICMeetingTopicApproveListFileStream(icTopicId, username);
+        }catch (IllegalStateException ex){
+            filesDto = null;
+        }
+
+        if(filesDto == null || filesDto.getInputStream() == null){
+            try {
+                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                return;
+            } catch (IOException e) {
+                return;
+            }
+        }
+
+        response.setContentType("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+        try {
+            response.setHeader("Content-disposition", "attachment;");
+            org.apache.commons.io.IOUtils.copy(filesDto.getInputStream(), response.getOutputStream());
+            response.flushBuffer();
+        } catch (UnsupportedEncodingException e) {
+            logger.error("(IC Meeting) File export (topic approve list) request failed: unsupported encoding", e);
+        } catch (IOException e) {
+            logger.error("(IC Meeting) File export (topic approve list) request failed: io exception", e);
+        } catch (Exception e){
+            logger.error("(IC Meeting) File export (topic approve list) request failed", e);
+        }
+        try {
+            filesDto.getInputStream().close();
+            new File(filesDto.getFileName()).delete();
+        } catch (IOException e) {
+            logger.error("(IC Meeting) File export (topic approve list): failed to close input stream", e);
+        }
+    }
+
+    @PreAuthorize(IC_MEETING_VIEWER)
     @RequestMapping(value="/ICMeeting/exportProtocol/{id}", method= RequestMethod.GET)
     @ResponseBody
     public void exportICMeetingProtocol(@PathVariable(value="id") Long icMeetingId,

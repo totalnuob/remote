@@ -168,6 +168,7 @@ export class CorpMeetingICEditComponent extends CommonFormViewComponent implemen
                             for(var j = 0;  this.icMeeting.topics[i].votes != null && j < this.icMeeting.topics[i].votes.length; j++){
                                  if(this.icMeeting.topics[i].votes[j].employee.username === localStorage.getItem("authenticatedUser")){
                                     this.icMeeting.topics[i].authenticatedUserVote = this.icMeeting.topics[i].votes[j].vote;
+                                    this.icMeeting.topics[i].authenticatedUserVoteComment = this.icMeeting.topics[i].votes[j].comment;
                                  }
                             }
                         }
@@ -548,8 +549,11 @@ export class CorpMeetingICEditComponent extends CommonFormViewComponent implemen
 
     saveVote(){
         let votes = [];
+        console.log(this.icMeeting.topics);
         for(let i = 0; i < this.icMeeting.topics.length; i++){
-            votes.push({"icMeetingTopicId": this.icMeeting.topics[i].id, "vote": this.icMeeting.topics[i].authenticatedUserVote});
+            votes.push({"icMeetingTopicId": this.icMeeting.topics[i].id, "vote": this.icMeeting.topics[i].authenticatedUserVote,
+            "comment": this.icMeeting.topics[i].authenticatedUserVoteComment}
+            );
         }
 
         this.busy = this.corpMeetingService.voteICMeetingTopics({"icMeetingId": this.icMeeting.id, "votes": votes})

@@ -3,7 +3,6 @@ package kz.nicnbk.service.impl.monitoring;
 import kz.nicnbk.common.service.util.DateUtils;
 import kz.nicnbk.common.service.util.ExcelUtils;
 import kz.nicnbk.common.service.util.HashUtils;
-import kz.nicnbk.common.service.util.MathUtils;
 import kz.nicnbk.repo.api.employee.EmployeeRepository;
 import kz.nicnbk.repo.api.files.FilesRepository;
 import kz.nicnbk.repo.api.lookup.FilesTypeRepository;
@@ -459,8 +458,8 @@ public class LiquidPortfolioServiceImpl implements LiquidPortfolioService {
                 portfolio.setTotalEquity(ExcelUtils.getDoubleValueFromCell(row.getCell(9)));
                 portfolio.setTotalEquityFlow(ExcelUtils.getDoubleValueFromCell(row.getCell(8)));
                 portfolio.setCashEquity(ExcelUtils.getDoubleValueFromCell(row.getCell(15)));
-                portfolio.setEtf(ExcelUtils.getDoubleValueFromCell(row.getCell(30)));
-                portfolio.setEtfFlow(ExcelUtils.getDoubleValueFromCell(row.getCell(29)));
+                portfolio.setEtf(ExcelUtils.getDoubleValueFromCell(row.getCell(31)));
+                portfolio.setEtfFlow(ExcelUtils.getDoubleValueFromCell(row.getCell(30)));
 
                 alreadyExists = true;
             }
@@ -492,8 +491,8 @@ public class LiquidPortfolioServiceImpl implements LiquidPortfolioService {
                     ExcelUtils.getDoubleValueFromCell(row.getCell(9)),
                     ExcelUtils.getDoubleValueFromCell(row.getCell(8)),
                     ExcelUtils.getDoubleValueFromCell(row.getCell(15)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(31)),
                     ExcelUtils.getDoubleValueFromCell(row.getCell(30)),
-                    ExcelUtils.getDoubleValueFromCell(row.getCell(29)),
                     null,
                     null,
                     null,

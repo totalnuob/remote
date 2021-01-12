@@ -39,7 +39,7 @@ public class BloombergCurrencyRatesLoaderTaskImpl {
 
     @Scheduled(cron = "0 0 7 ? * MON-FRI") //Every weekday, at 7:00 am
     public void loadCurrencyRates() {
-        String url = "http://10.10.165.123:8080/bloomberg/currencyRates3";
+        String url = "http://10.10.165.123:8080/bloomberg/currencyRates";
         String authStr = "unic:qwerty123";
         ResponseDto result = new ResponseDto();
         ResponseEntity<String> responseEntity = (new RestTemplate()).getForEntity(url, String.class);
