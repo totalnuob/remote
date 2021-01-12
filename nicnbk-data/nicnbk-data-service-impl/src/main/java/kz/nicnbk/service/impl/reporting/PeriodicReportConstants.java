@@ -116,6 +116,8 @@ public final class PeriodicReportConstants {
     public static final String TERRA_CAPITAL_CASE = "TERRA";
     public static final String TERRA_LOWER_CASE = "Terra";
 
+    public static final String NICKMF_CAPITAL_CASE = "NICK MF";
+
     public static final String TRANCHE_LOWER_CASE = "Tranche";
     public static final String TRANCHE_A_LOWER_CASE = "Tranche A";
 
