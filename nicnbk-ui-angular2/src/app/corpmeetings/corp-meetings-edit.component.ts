@@ -21,6 +21,8 @@ import {ICMeeting} from "./model/ic-meeting";
 import {BaseDictionary} from "../common/model/base-dictionary";
 import {FileEntity} from "../common/model/file-entity";
 
+import {DATA_APP_URL} from "../common/common.service.constants";
+
 //import { TagInputModule } from 'ng2-tag-input';
 declare var $:any
 
@@ -392,10 +394,25 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
         if(this.uploadMaterialsFiles != null && this.uploadMaterialsFiles.length > 0){
             this.icMeetingTopic.uploadMaterials = this.icMeetingTopic.uploadMaterials == null ? [] : this.icMeetingTopic.uploadMaterials;
             for(var i = 0; i < this.uploadMaterialsFiles.length; i++){
+                if(this.uploadMaterialsFiles[i].name == null || this.uploadMaterialsFiles[i].name.trim() === ''){
+                   this.postAction(null, "Materials upload: file name for protocol required.");
+                   this.icMeetingTopic.uploadMaterials = [];
+                   return;
+                }
                 this.icMeetingTopic.uploadMaterials.push({"file": {"fileName": this.uploadMaterialsFiles[i].file.name},
                 "name": this.uploadMaterialsFiles[i].name);
             }
         }
+
+        if(this.icMeetingTopic.materials != null && this.icMeetingTopic.materials.length > 0){
+            for(var i = 0; i < this.icMeetingTopic.materials.length; i++){
+                if(this.icMeetingTopic.materials[i].name == null || this.icMeetingTopic.materials[i].name.trim() === ''){
+                    this.postAction(null, "Materials upload: file name for protocol required.");
+                    return;
+                }
+            }
+        }
+
         //console.log(this.uploadExplanatoryNoteFile);
         if(this.icMeetingTopic.id != null && this.icMeetingTopic.id == 0){
             this.icMeetingTopic.id = null;
@@ -790,6 +807,12 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
         if(this.icMeetingTopic.icMeeting != null && this.icMeetingTopic.icMeeting.deleted){
             return false;
         }
+        if(this.icMeetingTopic.icMeeting != null && this.icMeetingTopic.icMeeting.lockedByDeadline){
+            if(this.moduleAccessChecker.checkAccessICMeetingAdmin()){
+                return true;
+            }
+            return false;
+        }
         if(this.showUpdateBlock() && (this.icMeetingTopic.status === 'TO BE FINALIZED' || this.icMeetingTopic.status === 'FINALIZED')){
             // check deadline
             if(this.icMeetingTopic.icMeeting.updateLockedByDeadline){
@@ -862,6 +885,22 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
         for (var i = 0; i < files.length; i++) {
             this.uploadExplanatoryNoteFileUpd.push(files[i]);
         }
+    }
+
+    exportApproveList(){
+        var fileName = "Лист согласования";
+            //fileName = fileName.replace(".", ",");
+            this.busy = this.corpMeetingService.makeFileRequest(DATA_APP_URL + `corpMeetings/ICMeeting/exportTopicApproveList/${this.icMeetingTopic.id}`,
+                fileName, 'POST')
+                .subscribe(
+                    response  => {
+                        console.log("export topic approve list response ok");
+                    },
+                    error => {
+                        //console.log("fails")
+                        this.postAction(null, "Error exporting topic approve list");
+                    }
+                );
     }
 
 }

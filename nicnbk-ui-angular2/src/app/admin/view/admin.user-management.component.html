@@ -71,8 +71,9 @@
             <tr>
                 <th>LASTNAME</th>
                 <th>FIRSTNAME</th>
-                <th>DATE OF BIRTH</th>
+                <th>DEPARTMENT</th>
                 <th>USERNAME</th>
+                <th>DATE OF BIRTH</th>
                 <th>SYSTEM STATUS</th>
             </tr>
             </thead>
@@ -80,8 +81,9 @@
             <tr *ngFor="let employee of searchResult?.employees"  style="cursor: pointer" (click)="navigate(employee.username)">
                 <td>{{employee.lastName}}</td>
                 <td>{{employee.firstName}}</td>
-                <td>{{getDateMonthTextDay(employee.birthDate)}}</td>
+                <td>{{employee.position?.department?.code}}</td>
                 <td>{{employee.username}}</td>
+                <td>{{getDateMonthTextDay(employee.birthDate)}}</td>
                 <td>
                     <button *ngIf="employee.active == null || employee.active" disabled="true" class="btn btn-xs btn-success">ACTIVE</button>
                     <button *ngIf="employee.active != null && !employee.active" disabled="true" class="btn btn-xs btn-default">IN-ACTIVE</button>

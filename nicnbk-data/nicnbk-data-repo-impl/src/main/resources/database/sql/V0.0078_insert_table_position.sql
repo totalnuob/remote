@@ -103,6 +103,6 @@ INSERT INTO public.position(id, code, name_en, name_kz, name_ru, department_id) 
 INSERT INTO public.position(id, code, name_en, name_kz, name_ru, department_id) VALUES (123, 'MNG_DIR', 'Managing Director', null, 'Управляющий Директор - член Правления', null);
 
 --
-INSERT INTO public.position(id, code, name_en, name_kz, name_ru, department_id) VALUES (131, 'IN_AUDIT', 'Internal Auditor', null, 'Внутренний аудитор', null);
+INSERT INTO public.position(id, code, name_en, name_kz, name_ru, department_id) VALUES (131, 'IN_AUDIT', 'Internal Auditor', null, 'Внутренний аудитор', 13);
 INSERT INTO public.position(id, code, name_en, name_kz, name_ru, department_id) VALUES (132, 'CORP_SEC', 'Corporate Secretary', null, 'Корпоративный секретарь', null);
 INSERT INTO public.position(id, code, name_en, name_kz, name_ru, department_id) VALUES (133, 'COMPLNC', 'Compliance Controller', null, 'Комплаенс-контроллер', null);
