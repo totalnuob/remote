@@ -903,10 +903,12 @@ public class MonitoringRiskServiceImpl implements MonitoringRiskService {
         // Global FI
         setFactorBeta(responseDto, records, dateFromSinceInception, dateFrom12M, dateTo, benchmarksMap.get(BenchmarkLookup.T_BILLS.getCode()), benchmarksMap.get(BenchmarkLookup.T_BILLS.getCode() + "_SI"),
                 "Barclays Global Agg Index Hedged", BenchmarkLookup.GLOBAL_FI.getCode(), benchmarksMap.get(BenchmarkLookup.GLOBAL_FI.getCode()), benchmarksMap.get(BenchmarkLookup.GLOBAL_FI.getCode() + "_SI"), nicPortfolioResultDto);
+        // Global FI Unhedged
+//        setFactorBeta(responseDto, records, dateFromSinceInception, dateFrom12M, dateTo, benchmarksMap.get(BenchmarkLookup.T_BILLS.getCode()), benchmarksMap.get(BenchmarkLookup.T_BILLS.getCode() + "_SI"),
+//                "Barclays Global Agg Index Unhedged", BenchmarkLookup.GLOBAL_FI_U.getCode(), benchmarksMap.get(BenchmarkLookup.GLOBAL_FI_U.getCode()), benchmarksMap.get(BenchmarkLookup.GLOBAL_FI_U.getCode() + "_SI"), nicPortfolioResultDto);
         // US High Yields 12M
         setFactorBeta(responseDto, records, dateFromSinceInception, dateFrom12M, dateTo, benchmarksMap.get(BenchmarkLookup.T_BILLS.getCode()), benchmarksMap.get(BenchmarkLookup.T_BILLS.getCode() + "_SI"),
                 "US High Yield", BenchmarkLookup.US_HIGH_YIELDS.getCode(), benchmarksMap.get(BenchmarkLookup.US_HIGH_YIELDS.getCode()), benchmarksMap.get(BenchmarkLookup.US_HIGH_YIELDS.getCode() + "_SI"), nicPortfolioResultDto);
-
         // US IG Credit
         setFactorBeta(responseDto, records, dateFromSinceInception, dateFrom12M, dateTo, benchmarksMap.get(BenchmarkLookup.T_BILLS.getCode()), benchmarksMap.get(BenchmarkLookup.T_BILLS.getCode() + "_SI"),
                 "US IG Credit", BenchmarkLookup.US_IG_CREDIT.getCode(), benchmarksMap.get(BenchmarkLookup.US_IG_CREDIT.getCode()), benchmarksMap.get(BenchmarkLookup.US_IG_CREDIT.getCode() + "_SI"), nicPortfolioResultDto);
