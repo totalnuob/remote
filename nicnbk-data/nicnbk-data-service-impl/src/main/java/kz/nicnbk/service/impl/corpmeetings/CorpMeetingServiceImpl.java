@@ -70,6 +70,7 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
     public static final String IC_PROTOCOL_QUESTION_DISCUSSION_PLACEHOLDER = "DISCUSSION";
     public static final String IC_PROTOCOL_DECISION_PLACEHOLDER = "DECISION";
     public static final String IC_PROTOCOL_VOTING_PLACEHOLDER = "VOTING";
+    public static final String IC_PROTOCOL_ICADMIN_PLACEHOLDER = "ICADMIN";
 
     public static final String IC_BULLETIN_DECISION_PLACEHOLDER = "DECISION";
     public static final String IC_BULLETIN_NAME_PLACEHOLDER = "NAME";
@@ -379,15 +380,17 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
                 }
             }
 
-            if(dto.getIcMeeting() != null){
-                ICMeetingTopic currentEntity = this.icMeetingTopicRepository.findOne(dto.getId());
-                if(currentEntity.getExplanatoryNote() == null && explanatoryNote == null){
-                    String errorMessage = "Error saving IC meeting topic: When IC Meeting selected, Explanatory Note is required";
-                    logger.error(errorMessage);
-                    saveResponseDto = new EntitySaveResponseDto();
-                    saveResponseDto.setErrorMessageEn(errorMessage);
-                    return saveResponseDto;
-                }
+            if(dto.getIcMeeting() != null && dto.getIcMeeting().getId() != null){
+//                if(dto.getId() != null) {
+//                    ICMeetingTopic currentEntity = this.icMeetingTopicRepository.findOne(dto.getId());
+//                    if (currentEntity.getExplanatoryNote() == null && explanatoryNote == null) {
+//                        String errorMessage = "Error saving IC meeting topic: When IC Meeting selected, Explanatory Note is required";
+//                        logger.error(errorMessage);
+//                        saveResponseDto = new EntitySaveResponseDto();
+//                        saveResponseDto.setErrorMessageEn(errorMessage);
+//                        return saveResponseDto;
+//                    }
+//                }
                 if(dto.getSpeaker() == null){
                     String errorMessage = "Error saving IC meeting topic: When IC Meeting selected, Speaker is required";
                     logger.error(errorMessage);
@@ -1385,6 +1388,7 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
                 EmployeeDto employeeDto = this.employeeService.getEmployeeById(vote.getEmployee().getId());
                 voteDto.setEmployee(employeeDto);
                 voteDto.setVote(vote.getVote().getCode());
+                voteDto.setComment(vote.getComment());
                 votes.add(voteDto);
             }
         }
@@ -1394,7 +1398,7 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
     private void limitFieldsICMeetingTopics(List<ICMeetingTopicDto> topics){
         if(topics != null){
             for(ICMeetingTopicDto topic: topics){
-                topic.setDecision(null);
+                //topic.setDecision(null);
                 topic.setDescription(null);
                 topic.setExplanatoryNote(null);
                 topic.setMaterials(null);
@@ -2966,6 +2970,17 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
                             text = text.replace("NUMIC", "");
                         }
                         r.setText(text, 0);
+                    }else if (text != null && text.contains(IC_PROTOCOL_ICADMIN_PLACEHOLDER)) {
+                        // get IC ADMIN user
+                        String[] roles = {UserRoles.IC_ADMIN.getCode()};
+                        List<EmployeeDto> icAdmins = this.employeeService.findEmployeesByRoleCodes(roles);
+                        if(icAdmins != null && !icAdmins.isEmpty()) {
+                            text = text.replace(IC_PROTOCOL_ICADMIN_PLACEHOLDER, icAdmins.get(0).getFullNameInitialsRu());
+
+                        }else{
+                            text = text.replace(IC_PROTOCOL_ICADMIN_PLACEHOLDER, "");
+                        }
+                        r.setText(text, 0);
                     }
                 }
             }
@@ -3500,6 +3515,7 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
                         }else{
                             return false;
                         }
+                        vote.setComment(voteDto.getComment());
                         this.icMeetingVoteRepository.deleteByTopicIdAndUserId(voteDto.getIcMeetingTopicId(), employeeDto.getId());
                         this.icMeetingVoteRepository.save(vote);
                     }

@@ -197,7 +197,7 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
                 daysOfWeek = [];
              }
         }
-        if(daysOfWeek.length != 7){
+        if(daysOfWeek.length != 7 && daysOfWeek.length > 0){
             daysOfMonth.push(daysOfWeek);
         }
         //console.log(daysOfMonth);

@@ -20,6 +20,7 @@ public class ICMeetingVote extends CreateUpdateBaseEntity{
     private ICMeetingTopic icMeetingTopic;
     private Employee employee;
     private ICMeetingVoteType vote;
+    private String comment;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "topic_id", nullable = false)
@@ -49,5 +50,14 @@ public class ICMeetingVote extends CreateUpdateBaseEntity{
 
     public void setVote(ICMeetingVoteType vote) {
         this.vote = vote;
+    }
+
+    @Column(name="comment", columnDefinition="TEXT")
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
     }
 }

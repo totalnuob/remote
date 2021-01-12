@@ -281,14 +281,14 @@ public class ICMeetingTopicDto extends CreateUpdateBaseEntityDto<ICMeetingTopic>
     }
 
     public String getPublishedNameUpd(){
-        if(this.nameUpd != null && this.publishedUpd){
+        if(this.nameUpd != null && this.publishedUpd != null && this.publishedUpd.booleanValue()){
             return nameUpd;
         }
         return this.name;
     }
 
     public String getPublishedDecisionUpd(){
-        if(this.decisionUpd != null && this.publishedUpd){
+        if(this.decisionUpd != null && this.publishedUpd != null && this.publishedUpd.booleanValue()){
             return decisionUpd;
         }
         return this.decision;
