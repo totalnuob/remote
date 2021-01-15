@@ -3050,8 +3050,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
             if(KZTForm3ResponseDto.getStatus() == ResponseStatusType.FAIL){
                 responseDto.appendErrorMessageEn("Error generating KZT Form3 report: " + KZTForm3ResponseDto.getErrorMessageEn());
             }
-            List<ConsolidatedBalanceFormRecordDto> formKZT3Records = KZTForm3ResponseDto.getStatus() == ResponseStatusType.SUCCESS ?
-                    KZTForm3ResponseDto.getRecords() : new ArrayList<>();
+            List<ConsolidatedBalanceFormRecordDto> formKZT3Records = KZTForm3ResponseDto.getRecords();
             if(formKZT3Records != null){
                 for(ConsolidatedBalanceFormRecordDto form3Record: formKZT3Records){
                     // 1
@@ -4317,6 +4316,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                     prevRecord.setStartPeriodAssets(prevRecord.getEndPeriodAssets());
                     prevRecord.setStartPeriodBalance(prevRecord.getEndPeriodBalance());
 
+                    prevRecord.setTurnoverPurchased(null);
                     prevRecord.setTurnoverOther(null);
                     prevRecord.setEndPeriodAssets(null);
                     prevRecord.setEndPeriodBalance(null);
@@ -4371,7 +4371,9 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
 
                                     double endPeriodAssets = record.getEndPeriodAssets() != null ? record.getEndPeriodAssets() : 0.0;
                                     double startPeriodAssets = record.getStartPeriodAssets() != null ? record.getStartPeriodAssets() : 0.0;
-                                    record.setTurnoverOther( MathUtils.subtract(endPeriodAssets, startPeriodAssets));
+                                    double turnoverValue = MathUtils.subtract(endPeriodAssets, startPeriodAssets);
+                                    record.setTurnoverPurchased(turnoverValue > 0 ? turnoverValue: null);
+                                    record.setTurnoverOther( turnoverValue < 0 ? turnoverValue: null);
                                     recordExists = true;
                                     break;
                                 }
@@ -4386,7 +4388,9 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
 
                                 double endPeriodAssets = newRecord.getEndPeriodAssets() != null ? newRecord.getEndPeriodAssets() : 0.0;
                                 double startPeriodAssets = newRecord.getStartPeriodAssets() != null ? newRecord.getStartPeriodAssets() : 0.0;
-                                newRecord.setTurnoverOther(MathUtils.subtract(endPeriodAssets, startPeriodAssets));
+                                double turnoverValue = MathUtils.subtract(endPeriodAssets, startPeriodAssets);
+                                newRecord.setTurnoverPurchased(turnoverValue > 0 ? turnoverValue: null);
+                                newRecord.setTurnoverOther( turnoverValue < 0 ? turnoverValue: null);
 
                                 records.add(indexLineToAdd3, newRecord);
 
@@ -4417,7 +4421,9 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
 
                                     double endPeriodAssets = record.getEndPeriodAssets() != null ? record.getEndPeriodAssets() : 0.0;
                                     double startPeriodAssets = record.getStartPeriodAssets() != null ? record.getStartPeriodAssets() : 0.0;
-                                    record.setTurnoverOther(MathUtils.subtract(endPeriodAssets, startPeriodAssets));
+                                    double turnoverValue = MathUtils.subtract(endPeriodAssets, startPeriodAssets);
+                                    record.setTurnoverPurchased(turnoverValue > 0 ? turnoverValue: null);
+                                    record.setTurnoverOther( turnoverValue < 0 ? turnoverValue: null);
                                     recordExists = true;
                                     break;
                                 }
@@ -4433,7 +4439,9 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
 
                                 double endPeriodAssets = newRecord.getEndPeriodAssets() != null ? newRecord.getEndPeriodAssets() : 0.0;
                                 double startPeriodAssets = newRecord.getStartPeriodAssets() != null ? newRecord.getStartPeriodAssets() : 0.0;
-                                newRecord.setTurnoverOther(MathUtils.subtract(endPeriodAssets, startPeriodAssets));
+                                double turnoverValue = MathUtils.subtract(endPeriodAssets, startPeriodAssets);
+                                newRecord.setTurnoverPurchased(turnoverValue > 0 ? turnoverValue: null);
+                                newRecord.setTurnoverOther( turnoverValue < 0 ? turnoverValue: null);
 
                                 records.add(indexLineToAdd8, newRecord);
 
@@ -4461,7 +4469,9 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
 
                 double endPeriodAssets = record.getEndPeriodAssets() != null ? record.getEndPeriodAssets() : 0.0;
                 double startPeriodAssets = record.getStartPeriodAssets() != null ? record.getStartPeriodAssets() : 0.0;
-                record.setTurnoverOther(MathUtils.subtract(endPeriodAssets, startPeriodAssets));
+                double turnoverValue = MathUtils.subtract(endPeriodAssets, startPeriodAssets);
+                record.setTurnoverPurchased(turnoverValue > 0 ? turnoverValue: null);
+                record.setTurnoverOther( turnoverValue < 0 ? turnoverValue: null);
 
                 record.setStartPeriodBalance(record.getStartPeriodAssets());
                 record.setEndPeriodBalance(record.getEndPeriodAssets());
@@ -5213,6 +5223,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
 //                        record7313_010RE = MathUtils.add(record7313_010RE, MathUtils.multiply(recordDto.getCurrentAccountBalance(), averageRate));
 //                    }
                 }
+
 
 
 
@@ -10136,6 +10147,9 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                     newRow.getCell(2).setCellValue(StringUtils.isEmpty(record.getAccountNumber()) ? record.getLineNumber() + "" : "");
                     if(record.getStartPeriodAssets() != null) {
                         newRow.getCell(4).setCellValue(record.getStartPeriodAssets());
+                    }
+                    if(record.getTurnoverPurchased() != null) {
+                        newRow.getCell(6).setCellValue(record.getTurnoverPurchased());
                     }
                     if(record.getTurnoverOther() != null) {
                         newRow.getCell(14).setCellValue(record.getTurnoverOther());
