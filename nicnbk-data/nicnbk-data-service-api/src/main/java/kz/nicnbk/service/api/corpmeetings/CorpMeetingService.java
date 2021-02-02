@@ -114,6 +114,8 @@ public interface CorpMeetingService extends BaseService {
     FilesDto getICMeetingProtocolFileStream(Long icMeetingId, String username);
     FilesDto getICMeetingBulletinFileStream(Long icMeetingId, String username);
 
+    FilesDto getICMeetingTopicApproveListFileStream(Long icMeetingId, String username);
+
 
     boolean deleteICMeetingAgenda(Long icMeetingId, String username);
 
