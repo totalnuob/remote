@@ -1,8 +1,10 @@
 package kz.nicnbk.ws.rest;
 
+import kz.nicnbk.repo.model.lookup.DepartmentLookup;
 import kz.nicnbk.service.api.email.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,6 +24,12 @@ public class EmailServiceRest {
     public String sendMail() {
         emailService.sendMail("tleugabylov@nicnbk.kz", "Test Email Subject", "This is test text");
         return "Simple mail send is success";
+    }
+
+    @RequestMapping(path = "/sendMailByGroup", method = RequestMethod.GET)
+    public String sendMailByGroup() {
+        emailService.sendMailByGroup("Test subject for group", "Test text for group", DepartmentLookup.DEV.getCode());
+        return "Simple mail for group is outgoing";
     }
 
     @RequestMapping(path = "/sendMailWithAttachment", method = RequestMethod.GET)
