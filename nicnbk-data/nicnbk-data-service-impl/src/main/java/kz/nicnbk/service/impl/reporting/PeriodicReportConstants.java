@@ -122,6 +122,8 @@ public final class PeriodicReportConstants {
     public static final String TERRA_CAPITAL_CASE = "TERRA";
     public static final String TERRA_LOWER_CASE = "Terra";
 
+    public static final String NICKMF_CAPITAL_CASE = "NICK MF";
+
     public static final String TRANCHE_LOWER_CASE = "Tranche";
     public static final String TRANCHE_A_LOWER_CASE = "Tranche A";
 
@@ -140,6 +142,8 @@ public final class PeriodicReportConstants {
     public static final String KZT_FORM_14 = "KZT_FORM_14";
     public static final String KZT_FORM_19 = "KZT_FORM_19";
     public static final String KZT_FORM_22 = "KZT_FORM_22";
+
+    public static final String TARRAGON_GENERATED_GL = "TARRAGON_GENERATED_GL";
     /* ****************************************************************************************************************/
 
     /* GENERATED REPORT KZT LITERALS **********************************************************************************/

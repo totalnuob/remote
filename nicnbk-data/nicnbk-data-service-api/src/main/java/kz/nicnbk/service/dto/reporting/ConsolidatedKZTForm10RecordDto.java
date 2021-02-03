@@ -11,7 +11,9 @@ public class ConsolidatedKZTForm10RecordDto implements BaseDto {
     private Integer lineNumber;
 
     private Double startPeriodAssets;
-    private Double turnoverOther;
+
+    private Double turnoverPurchased; // positive values
+    private Double turnoverOther; // negative values
     private Double endPeriodAssets;
 
     private Double startPeriodBalance;
@@ -86,5 +88,13 @@ public class ConsolidatedKZTForm10RecordDto implements BaseDto {
 
     public void setEndPeriodBalance(Double endPeriodBalance) {
         this.endPeriodBalance = endPeriodBalance;
+    }
+
+    public Double getTurnoverPurchased() {
+        return turnoverPurchased;
+    }
+
+    public void setTurnoverPurchased(Double turnoverPurchased) {
+        this.turnoverPurchased = turnoverPurchased;
     }
 }

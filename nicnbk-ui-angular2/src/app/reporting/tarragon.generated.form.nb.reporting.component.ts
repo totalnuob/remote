@@ -555,4 +555,19 @@ export class TarragonGeneratedFormNBReportingComponent extends CommonNBReporting
     isRecordExcluded(record){
         return record.excludeFromTarragonCalculation;
     }
+
+    exportTable(){
+        var fileName = "Tarragon GL";
+        //fileName = fileName.replace(".", ",");
+        this.busy = this.periodicReportService.makeFileRequest(DATA_APP_URL + `periodicReport/export/${this.reportId}/TARRAGON_GENERATED_GL`, fileName)
+            .subscribe(
+                response  => {
+                    //console.log("ok");
+                },
+                error => {
+                    //console.log("fails")
+                    this.postAction(null, "Error exporting Tarragon GL");
+                }
+            );
+    }
 }
