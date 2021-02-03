@@ -142,6 +142,30 @@ public class EmployeeServiceImpl implements EmployeeService{
         return null;
     }
 
+    @Override
+    public List<EmployeeDto> findExecutivesAndActive(){
+        try {
+            List<EmployeeDto> dtoList = new ArrayList<>();
+            String[] executives = {"CEO", "DEP_CEO", "MNG_DIR"};
+            List<Employee> entities = this.employeeRepository.findByPositionCodesAndActive( true, executives);
+            for(Employee employee: entities) {
+                EmployeeDto employeeDto = this.employeeEntityConverter.disassemble(employee);
+                dtoList.add(employeeDto);
+            }
+            return dtoList;
+        }catch (Exception ex){
+            logger.error("Failed to load employee list by department", ex);
+        }
+        return null;
+    }
+
+    @Override
+    public List<EmployeeDto> findByDepartmentAndActiveWithExecutives(int departmentId){
+        List<EmployeeDto> employees = findByDepartmentAndActive(departmentId);
+        employees.addAll(findExecutivesAndActive());
+        return employees;
+    }
+
 
     private List<EmployeeDto> findEmployeesByRoleCode(String code){
         List<EmployeeDto> icList = new ArrayList<>();

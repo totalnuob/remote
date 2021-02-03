@@ -47,8 +47,7 @@
                                 <label class="control-label col-md-1" for="questionName">Name:</label>
                                 <div class="col-md-11">
                                     <textarea fz-elastic type="text" id="questionName" class="form-control"
-                                              placeholder="Enter question name (will be added to IC Protocol)..."
-                                              maxlength="250" name="questionName" [(ngModel)]="icMeetingTopic.name"></textarea>
+``                                              placeholder="Enter question name (will be added to IC Protocol)..." name="questionName" [(ngModel)]="icMeetingTopic.name"></textarea>
                                 </div>
                             </div>
                         </div>
@@ -60,7 +59,7 @@
                                         <div class="col-md-10">
                                             <textarea fz-elastic type="text" id="description" class="form-control"
                                                       placeholder="Enter description (will not be added to IC Protocol)..."
-                                                      maxlength="250" name="description" [(ngModel)]="icMeetingTopic.description"></textarea>
+                                                      maxlength="500" name="description" [(ngModel)]="icMeetingTopic.description"></textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -89,25 +88,31 @@
                                                     </div>
                                                 </div>
                                                 <div class="row" *ngIf="icMeetingTopic?.explanatoryNote != null">
-                                                    <div class="col-md-2">&nbsp;</div>
-                                                    <div class="col-md-8">
-                                                        <file-attachment-downloader fileId="{{icMeetingTopic.explanatoryNote?.id}}"
-                                                                                    fileName="{{icMeetingTopic.explanatoryNote?.fileName |  slice:0:55 }}"
-                                                                                    fileType="IC_EXPNOTE"
-                                                                                    showIcon="true">
-                                                        </file-attachment-downloader>
+<!--                                                    <div class="col-md-2">&nbsp;</div>-->
+                                                    <div class="col-md-12">
+                                                        <div class="col-md-7">
+                                                            <div class="pull-right">
+                                                            <file-attachment-downloader fileId="{{icMeetingTopic.explanatoryNote?.id}}"
+                                                                                        fileName="{{(icMeetingTopic.explanatoryNote?.fileName |  slice:0:55) +
+                                                                                        (icMeetingTopic.explanatoryNote?.fileName?.length > 55 ? '...' : '')}}"
+                                                                                        fileType="IC_EXPNOTE"
+                                                                                        showIcon="true">
+                                                            </file-attachment-downloader>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-1">
+                                                            <button class="btn btn-xs"  (click)="deleteExplanatoryNote()" *ngIf="icMeetingTopic.explanatoryNote.id > 0 && canEdit()">
+                                                                <i class="glyphicon glyphicon-trash"></i>
+                                                            </button>
+                                                        </div>
                                                     </div>
-                                                    <div class="col-md-2">
-                                                        <button class="btn btn-xs"  (click)="deleteExplanatoryNote()" *ngIf="icMeetingTopic.explanatoryNote.id > 0 && canEdit()">
-                                                            <i class="glyphicon glyphicon-trash"></i>
-                                                        </button>
-                                                    </div>
-
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
+
+
                                 <div class="col-md-3">
                                     <label class="control-label col-md-2" for="speakerList">Speaker (your department):</label>
                                     <select class="form-control" id="speakerList" name="speakerList" [(ngModel)]="icMeetingTopic.speaker.id"  [ngModelOptions]="{standalone: true}">
@@ -137,7 +142,7 @@
                                 <div class="row withpadding">
                                     <span>Decision</span>
                                     <textarea fz-elastic spellcheck="false"  type="text" placeholder="..." class="form-control"
-                                          maxlength="1000" id="decision" name="decision" [(ngModel)]="icMeetingTopic.decision"></textarea>
+                                          id="decision" name="decision" [(ngModel)]="icMeetingTopic.decision"></textarea>
                                 </div>
                                 <div class="row">
                                     &nbsp;
@@ -206,16 +211,20 @@
                                 </div>
                                 <br/>
                                 <div class="row">
-                                    <table style="width: 100%; table-layout: fixed;" >
+                                    <table class="table" >
                                         <tr *ngFor="let attachment of icMeetingTopic?.materials; let j = index" [attr.data-index]="j">
-                                            <td width="45%">
+                                            <td width="10%">
+                                                <a *ngIf="j > 0" class="btn btn-primary btn-xs glyphicon glyphicon-arrow-up" (click)="moveTopicMaterialUp(j)"></a>
+                                                <a *ngIf="j < icMeetingTopic?.materials.length - 1" class="btn btn-primary btn-xs glyphicon glyphicon-arrow-down" (click)="moveTopicMaterialDown(j)"></a>
+                                            </td>
+                                            <td width="35%">
                                                 <file-attachment-downloader fileId="{{attachment.file.id}}"
                                                                             displayFileName="{{(j + 1) + '. ' + attachment?.file?.fileName | slice:0:60}} ..."
                                                                             fileName="{{attachment?.file?.fileName}}"
                                                                             fileType="IC_MATRL" showIcon="true">
                                                 </file-attachment-downloader>
                                             </td>
-                                            <td width="45%">
+                                            <td width="35%">
                                                 <input class="form-control" type="text" style="width: 100%" [(ngModel)]="attachment.name" [ngModelOptions]="{standalone: true}"/>
                                             </td>
                                             <td width="10%">&nbsp;
@@ -299,13 +308,13 @@
                 </form>
             </div>
             <div *ngIf="showUpdateBlock()" class="jumbotron col-md-12" style="padding-top: 5px; padding-bottom: 5px;">
-                <fieldset [disabled]="!canEditUpdateBlock()">
+                <fieldset [disabled]="!canEditUpdateBlock()"> {{canEditUpdateBlock()}}
                     <div class="row">
                         <div class="col-md-12 form-group form-horizontal">
                             <label class="control-label col-md-1" for="questionNameUpd">Updated Name:</label>
                             <div class="col-md-11">
                                         <textarea fz-elastic type="text" id="questionNameUpd" class="form-control"
-                                                  maxlength="250" name="questionNameUpd" [(ngModel)]="icMeetingTopic.nameUpd"></textarea>
+                                                  name="questionNameUpd" [(ngModel)]="icMeetingTopic.nameUpd"></textarea>
                             </div>
                         </div>
                     </div>
@@ -314,7 +323,7 @@
                             <label class="control-label col-md-1" for="decisionUpd">Updated Decision:</label>
                             <div class="col-md-11">
                                         <textarea fz-elastic type="text" id="decisionUpd" class="form-control"
-                                                  maxlength="250" name="decisionUpd" [(ngModel)]="icMeetingTopic.decisionUpd"></textarea>
+                                                  name="decisionUpd" [(ngModel)]="icMeetingTopic.decisionUpd"></textarea>
                             </div>
                         </div>
                     </div>

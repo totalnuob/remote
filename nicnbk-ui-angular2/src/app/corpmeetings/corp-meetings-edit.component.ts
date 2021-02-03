@@ -92,7 +92,8 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
             // Load lookups
             this.corpMeetingService.getAllICMeetings(),
             this.corpMeetingService.getAvailableApproveList(),
-            this.employeeService.findByDepartmentAndActive(departmentId),
+            //this.employeeService.findByDepartmentAndActive(departmentId),
+            this.employeeService.findByDepartmentAndActiveWithExecutives(departmentId),
             //this.employeeService.findActiveAll(),
             this.lookupService.getAvailableTagsByType("IC")
             )
@@ -110,6 +111,7 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
                         this.departmentEmployeeList.push({id: element.id, text: element.firstName + " " + element.lastName,
                                                     firstName: element.firstName, lastName: element.lastName});
                     });
+                    console.log(this.departmentEmployeeList);
                     data4.forEach(element => {
                         this.availableTags.push(element.name);
                     });
@@ -139,7 +141,7 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
                                     this.icMeetingTopic.executor = new Employee();
                                 }
                             }
-                            console.log(this.icMeetingTopic);
+                            //console.log(this.icMeetingTopic);
                         });
                 });
     }
@@ -164,12 +166,12 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
                         if(!this.icMeetingTopic.executor){
                             this.icMeetingTopic.executor = new Employee();
                         }
-                        console.log(this.icMeetingTopic.department);
+                        //console.log(this.icMeetingTopic.department);
                         if(this.icMeetingTopic.department != null && this.icMeetingTopic.department.id > 0){
-                            this.employeeService.findByDepartmentAndActive(this.icMeetingTopic.department.id)
+                            this.employeeService.findByDepartmentAndActiveWithExecutives(this.icMeetingTopic.department.id)
                                .subscribe(
                                     employeeList => {
-                                        console.log(employeeList);
+                                        //console.log(employeeList);
                                         this.departmentEmployeeList = employeeList;
                                      },
                                      error => {
@@ -312,7 +314,7 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
     onFileChangeMaterials(event) {
         var target = event.target || event.srcElement;
         var files = target.files;
-        this.uploadMaterialsFiles.length = 0;
+        //this.uploadMaterialsFiles.length = 0;
         for (let i = 0; i < files.length; i++) {
             var material = new FileEntity();
             material.file = files[i];
@@ -347,6 +349,28 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
         this.uploadExplanatoryNoteFile.length = 0;
         for (var i = 0; i < files.length; i++) {
             this.uploadExplanatoryNoteFile.push(files[i]);
+        }
+    }
+
+    moveTopicMaterialUp(i){
+        if(this.icMeetingTopic != null && this.icMeetingTopic.materials != null && this.icMeetingTopic.materials.length > 0){
+            if(i == 0 || i >= this.icMeetingTopic.materials.length){
+                return;
+            }
+            var prev = this.icMeetingTopic.materials[i - 1];
+            this.icMeetingTopic.materials[i - 1] = this.icMeetingTopic.materials[i];
+            this.icMeetingTopic.materials[i] = prev;
+        }
+    }
+
+    moveTopicMaterialDown(i){
+        if(this.icMeetingTopic != null && this.icMeetingTopic.materials != null && this.icMeetingTopic.materials.length > 0){
+            if(i >= this.icMeetingTopic.materials.length - 1){
+                return;
+            }
+            var next = this.icMeetingTopic.materials[i + 1];
+            this.icMeetingTopic.materials[i + 1] = this.icMeetingTopic.materials[i];
+            this.icMeetingTopic.materials[i] = next;
         }
     }
 
@@ -640,7 +664,7 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
     }
 
     public onTagAdded(item) {
-        console.log(item);
+        //console.log(item);
         if(this.icMeetingTopic.tags == null) {
             this.icMeetingTopic.tags = [];
         }
@@ -807,12 +831,12 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
         if(this.icMeetingTopic.icMeeting != null && this.icMeetingTopic.icMeeting.deleted){
             return false;
         }
-        if(this.icMeetingTopic.icMeeting != null && this.icMeetingTopic.icMeeting.lockedByDeadline){
-            if(this.moduleAccessChecker.checkAccessICMeetingAdmin()){
-                return true;
-            }
-            return false;
-        }
+        //if(this.icMeetingTopic.icMeeting != null && this.icMeetingTopic.icMeeting.lockedByDeadline){
+        //    if(this.moduleAccessChecker.checkAccessICMeetingAdmin()){
+        //        return true;
+        //    }
+        //    return false;
+        //}
         if(this.showUpdateBlock() && (this.icMeetingTopic.status === 'TO BE FINALIZED' || this.icMeetingTopic.status === 'FINALIZED')){
             // check deadline
             if(this.icMeetingTopic.icMeeting.updateLockedByDeadline){
@@ -894,7 +918,7 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
                 fileName, 'POST')
                 .subscribe(
                     response  => {
-                        console.log("export topic approve list response ok");
+                        //console.log("export topic approve list response ok");
                     },
                     error => {
                         //console.log("fails")

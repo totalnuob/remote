@@ -1,6 +1,7 @@
 package kz.nicnbk.service.dto.corpmeetings;
 
 import kz.nicnbk.common.service.model.CreateUpdateBaseEntityDto;
+import kz.nicnbk.common.service.util.StringUtils;
 import kz.nicnbk.repo.model.corpmeetings.ICMeetingTopic;
 import kz.nicnbk.service.dto.common.EmployeeApproveDto;
 import kz.nicnbk.service.dto.employee.DepartmentDto;
@@ -281,14 +282,14 @@ public class ICMeetingTopicDto extends CreateUpdateBaseEntityDto<ICMeetingTopic>
     }
 
     public String getPublishedNameUpd(){
-        if(this.nameUpd != null && this.publishedUpd != null && this.publishedUpd.booleanValue()){
+        if(this.nameUpd != null && StringUtils.isNotEmpty(this.nameUpd) && this.publishedUpd != null && this.publishedUpd.booleanValue()){
             return nameUpd;
         }
         return this.name;
     }
 
     public String getPublishedDecisionUpd(){
-        if(this.decisionUpd != null && this.publishedUpd != null && this.publishedUpd.booleanValue()){
+        if(this.decisionUpd != null && StringUtils.isNotEmpty(this.decisionUpd) && this.publishedUpd != null && this.publishedUpd.booleanValue()){
             return decisionUpd;
         }
         return this.decision;
