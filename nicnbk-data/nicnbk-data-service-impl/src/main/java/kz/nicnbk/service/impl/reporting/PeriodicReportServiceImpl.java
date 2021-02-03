@@ -408,6 +408,21 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
     }
 
     @Override
+    public PeriodicReportDto findMostRecentReport() {
+        List<PeriodicReportDto> allReports = getAllPeriodicReports();
+        if(allReports != null && !allReports.isEmpty()){
+            PeriodicReportDto mostRecentReport = null;
+            for(PeriodicReportDto report: allReports){
+                if(mostRecentReport == null || mostRecentReport.getReportDate().before(report.getReportDate())){
+                    mostRecentReport = report;
+                }
+            }
+            return mostRecentReport;
+        }
+        return null;
+    }
+
+    @Override
     public boolean safeDeleteFile(Long fileId, String username) {
         try{
             PeriodicReportFiles periodicReportFiles = this.periodicReportFilesRepository.getEntityByFileId(fileId);
@@ -3911,7 +3926,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
         }
 
         // Singularity - ITD
-        ConsolidatedReportRecordHolderDto singularityGLHolder = this.hfITDService.get(reportId);
+        ConsolidatedReportRecordHolderDto singularityGLHolder = this.hfITDService.getParsedData(reportId);
         Map<String, Double> singularityNetCostByFundName = new HashMap<>();
         if(singularityGLHolder != null){
             List<SingularityITDRecordDto> recordsITD = singularityGLHolder.getRecordsITDTrancheA() != null ? singularityGLHolder.getRecordsITDTrancheA() : new ArrayList<>();
@@ -11601,7 +11616,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
     @Override
     public ConsolidatedReportRecordHolderDto getSingularityITD(Long reportId) {
         if(reportId != null) {
-            ConsolidatedReportRecordHolderDto holderDto = this.hfITDService.get(reportId);
+            ConsolidatedReportRecordHolderDto holderDto = this.hfITDService.getParsedData(reportId);
             holderDto.setReport(getPeriodicReport(reportId));
             return holderDto;
         }

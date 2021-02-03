@@ -7,10 +7,6 @@ import kz.nicnbk.repo.model.common.TagType;
 import javax.persistence.*;
 import java.util.Date;
 
-/**
- * Created by zhambyl on 04-Aug-16.
- */
-
 @Entity
 @Table(name = "tag")
 public class Tag extends BaseEntity {
