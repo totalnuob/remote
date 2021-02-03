@@ -2093,7 +2093,6 @@ public class LookupServiceImpl implements LookupService {
                 return saveResponseDto;
             }
         }else{
-            //logger.error("Error saving value for NIC_SINGULARITY_CHART_ACCOUNTS: missing required field 'nicReportingChartOfAccounts'");
             String errorMessage = "Error saving value for NIC_SINGULARITY_CHART_ACCOUNTS: missing required field 'nicReportingChartOfAccounts'";
             logger.error(errorMessage);
             saveResponseDto.setErrorMessageEn(errorMessage);
@@ -2101,50 +2100,54 @@ public class LookupServiceImpl implements LookupService {
         }
 
         // Positive/Negative only
-//        List<SingularityNICChartOfAccounts> existingRecords =
-//                this.singularityNICChartOfAccountsRepository.findBySingularityAccountNumber(dto.getAccountNumber());
-//        if(existingRecords != null && !existingRecords.isEmpty()){
-//            if(existingRecords.size() > 1){
-//                // cannot add
-//                String errorMessage = "Error saving value for NIC_SINGULARITY_CHART_ACCOUNTS: already exist more " +
-//                        "than 1 record matching account number (" + dto.getAccountNumber() + ")";
-//                logger.error(errorMessage);
-//                saveResponseDto.setErrorMessageEn(errorMessage);
-//                return saveResponseDto;
-//            }else{ //== 1
-//                SingularityNICChartOfAccounts record = existingRecords.get(0);
-//                if(dto.getId() != null && dto.getId().longValue() != record.getId().longValue()) {
-//                    if (record.getPositiveOnly() != null && record.getPositiveOnly().booleanValue()) {
-//                        if (dto.getNegativeOnly() == null || !dto.getNegativeOnly().booleanValue()) {
-//                            String errorMessage = "Error saving value for NIC_SINGULARITY_CHART_ACCOUNTS: exists " +
-//                                    "record matching account number (" + dto.getAccountNumber() + ") with 'Positive only' flag," +
-//                                    " 'Negative only' flag must be set for this record";
-//                            logger.error(errorMessage);
-//                            saveResponseDto.setErrorMessageEn(errorMessage);
-//                            return saveResponseDto;
-//                        }
-//                    } else if (record.getNegativeOnly() != null && record.getNegativeOnly().booleanValue()) {
-//                        if (dto.getPositiveOnly() == null || !dto.getPositiveOnly().booleanValue()) {
-//                            String errorMessage = "Error saving value for NIC_SINGULARITY_CHART_ACCOUNTS: exists " +
-//                                    "record matching account number (" + dto.getAccountNumber() + ") with 'Positive only' flag," +
-//                                    " 'Negative only' flag must be set for this record";
-//                            logger.error(errorMessage);
-//                            saveResponseDto.setErrorMessageEn(errorMessage);
-//                            return saveResponseDto;
-//                        }
-//                    } else {
-//                        String errorMessage = "Error saving value for NIC_SINGULARITY_CHART_ACCOUNTS: exists " +
-//                                "record matching account number (" + dto.getAccountNumber() + ") with 'Positive only' or 'Negative only' " +
-//                                "flags not set. When more than 1 record matches, flags must be set.";
-//                        logger.error(errorMessage);
-//                        saveResponseDto.setErrorMessageEn(errorMessage);
-//                        return saveResponseDto;
-//                    }
-//                }
-//            }
-//        }
-//        entity.setPositiveOnly(dto.getPositiveOnly());
-//        entity.setNegativeOnly(dto.getNegativeOnly());
+        List<SingularityNICChartOfAccounts> existingRecords =
+                this.singularityNICChartOfAccountsRepository.findBySingularityAccountNumber(dto.getAccountNumber());
+        if(existingRecords != null && !existingRecords.isEmpty()){
+            int existingPos = 0;
+            int existingNeg = 0;
+            for(SingularityNICChartOfAccounts existingRecord: existingRecords){
+                if(dto.getId() != null && existingRecord.getId().longValue() == dto.getId().longValue()){
+                    continue;
+                }
+                if(existingRecord.getChartAccountsType() != null && existingRecord.getChartAccountsType().getCode().equalsIgnoreCase("POSITIVE")){
+                    existingPos++;
+                }else if(existingRecord.getChartAccountsType() != null && existingRecord.getChartAccountsType().getCode().equalsIgnoreCase("NEGATIVE")){
+                    existingNeg++;
+                }else if(existingRecord.getChartAccountsType() != null && existingRecord.getChartAccountsType().getCode().equalsIgnoreCase("ALL")){
+                    String errorMessage = "Error saving value for NIC_SINGULARITY_CHART_ACCOUNTS: exists " +
+                            "record matching name '" + dto.getNameEn() + "' with 'ALL' (Negative and Positive) flag.'";
+                    logger.error(errorMessage);
+                    saveResponseDto.setErrorMessageEn(errorMessage);
+                    return saveResponseDto;
+                }
+            }
+            if(dto.getChartAccountsType() != null && dto.getChartAccountsType().getCode() != null) {
+                if (dto.getChartAccountsType().getCode().equalsIgnoreCase("POSITIVE")) {
+                    if (existingPos > 0) {
+                        String errorMessage = "Error saving value for NIC_SINGULARITY_CHART_ACCOUNTS: exists " +
+                                "record matching name '" + dto.getNameEn() + "' with 'Positive only' flag.";
+                        logger.error(errorMessage);
+                        saveResponseDto.setErrorMessageEn(errorMessage);
+                        return saveResponseDto;
+                    }
+                } else if (dto.getChartAccountsType().getCode().equalsIgnoreCase("NEGATIVE")) {
+                    if (existingNeg > 0) {
+                        String errorMessage = "Error saving value for NIC_SINGULARITY_CHART_ACCOUNTS: exists " +
+                                "record matching name '" + dto.getNameEn() + "' with 'Negative only' flag.";
+                        logger.error(errorMessage);
+                        saveResponseDto.setErrorMessageEn(errorMessage);
+                        return saveResponseDto;
+                    }
+                }else if (dto.getChartAccountsType().getCode().equalsIgnoreCase("ALL")) {
+                    String errorMessage = "Error saving value for NIC_SINGULARITY_CHART_ACCOUNTS: exists " +
+                            "record matching name '" + dto.getNameEn() + "' cannot create record with 'ALL' flag.";
+                    logger.error(errorMessage);
+                    saveResponseDto.setErrorMessageEn(errorMessage);
+                    return saveResponseDto;
+
+                }
+            }
+        }
 
         if(dto.getChartAccountsType() != null && dto.getChartAccountsType().getCode() != null) {
             PeriodicDataChartAccountsType type = this.chartAccountsTypeRepository.findByCode(dto.getChartAccountsType().getCode());
@@ -2174,8 +2177,6 @@ public class LookupServiceImpl implements LookupService {
         if(dto.getAddable() != null) {
             entity.setAddable(dto.getAddable());
         }
-//        entity.setPositiveOnly(dto.getPositiveOnly());
-//        entity.setNegativeOnly(dto.getNegativeOnly());
         if(dto.getNICChartOfAccounts() != null && dto.getNICChartOfAccounts().getCode() != null) {
             NICReportingChartOfAccounts nicReportingChartOfAccounts =
                     this.nicReportingChartOfAccountsRepository.findByCode(dto.getNICChartOfAccounts().getCode());
@@ -2189,7 +2190,6 @@ public class LookupServiceImpl implements LookupService {
                 return saveResponseDto;
             }
         }else{
-            //logger.error("Error saving value for NIC_TARRAGON_CHART_ACCOUNTS: missing required field 'nicReportingChartOfAccounts'");
             String errorMessage = "Error saving value for NIC_TARRAGON_CHART_ACCOUNTS: missing required field 'nicReportingChartOfAccounts'";
             logger.error(errorMessage);
             saveResponseDto.setErrorMessageEn(errorMessage);
@@ -2197,50 +2197,55 @@ public class LookupServiceImpl implements LookupService {
         }
 
         // Positive/Negative only
-//        List<TarragonNICChartOfAccounts> existingRecords =
-//                this.tarragonNICChartOfAccountsRepository.findByTarragonChartOfAccountsName(dto.getNameEn());
-//        if(existingRecords != null && !existingRecords.isEmpty()){
-//            if(existingRecords.size() > 1){
-//                // cannot add
-//                String errorMessage = "Error saving value for NIC_TARRAGON_CHART_ACCOUNTS: already exist more " +
-//                        "than 1 record matching name en (" + dto.getNameEn() + ")";
-//                logger.error(errorMessage);
-//                saveResponseDto.setErrorMessageEn(errorMessage);
-//                return saveResponseDto;
-//            }else{ //== 1
-//                TarragonNICChartOfAccounts record = existingRecords.get(0);
-//                if(dto.getId() != null && dto.getId().longValue() != record.getId().longValue()) {
-//                    if (record.getPositiveOnly() != null && record.getPositiveOnly().booleanValue()) {
-//                        if (dto.getNegativeOnly() == null || !dto.getNegativeOnly().booleanValue()) {
-//                            String errorMessage = "Error saving value for NIC_TARRAGON_CHART_ACCOUNTS: exists " +
-//                                    "record matching name en(" + dto.getNameEn() + ") with 'Positive only' flag," +
-//                                    " 'Negative only' flag must be set for this record";
-//                            logger.error(errorMessage);
-//                            saveResponseDto.setErrorMessageEn(errorMessage);
-//                            return saveResponseDto;
-//                        }
-//                    } else if (record.getNegativeOnly() != null && record.getNegativeOnly().booleanValue()) {
-//                        if (dto.getPositiveOnly() == null || !dto.getPositiveOnly().booleanValue()) {
-//                            String errorMessage = "Error saving value for NIC_TARRAGON_CHART_ACCOUNTS: exists " +
-//                                    "record matching name en (" + dto.getNameEn() + ") with 'Positive only' flag," +
-//                                    " 'Negative only' flag must be set for this record";
-//                            logger.error(errorMessage);
-//                            saveResponseDto.setErrorMessageEn(errorMessage);
-//                            return saveResponseDto;
-//                        }
-//                    } else {
-//                        String errorMessage = "Error saving value for NIC_TARRAGON_CHART_ACCOUNTS: exists " +
-//                                "record matching name en(" + dto.getNameEn() + ") with 'Positive only' or 'Negative only' " +
-//                                "flags not set. When more than 1 record matches, flags must be set.";
-//                        logger.error(errorMessage);
-//                        saveResponseDto.setErrorMessageEn(errorMessage);
-//                        return saveResponseDto;
-//                    }
-//                }
-//            }
-//        }
-//        entity.setPositiveOnly(dto.getPositiveOnly());
-//        entity.setNegativeOnly(dto.getNegativeOnly());
+        List<TarragonNICChartOfAccounts> existingRecords =
+                this.tarragonNICChartOfAccountsRepository.findByTarragonChartOfAccountsName(dto.getNameEn());
+        if(existingRecords != null && !existingRecords.isEmpty()){
+            int existingPos = 0;
+            int existingNeg = 0;
+            for(TarragonNICChartOfAccounts existingRecord: existingRecords){
+                if(dto.getId() != null && existingRecord.getId().longValue() == dto.getId().longValue()){
+                    continue;
+                }
+                if(existingRecord.getChartAccountsType() != null && existingRecord.getChartAccountsType().getCode().equalsIgnoreCase("POSITIVE")){
+                    existingPos++;
+                }else if(existingRecord.getChartAccountsType() != null && existingRecord.getChartAccountsType().getCode().equalsIgnoreCase("NEGATIVE")){
+                    existingNeg++;
+                }else if(existingRecord.getChartAccountsType() != null && existingRecord.getChartAccountsType().getCode().equalsIgnoreCase("ALL")){
+                    String errorMessage = "Error saving value for NIC_TARRAGON_CHART_ACCOUNTS: exists " +
+                            "record matching name '" + dto.getNameEn() + "' with 'ALL' (Negative and Positive) flag.'";
+                    logger.error(errorMessage);
+                    saveResponseDto.setErrorMessageEn(errorMessage);
+                    return saveResponseDto;
+                }
+            }
+            if(dto.getChartAccountsType() != null && dto.getChartAccountsType().getCode() != null) {
+                if (dto.getChartAccountsType().getCode().equalsIgnoreCase("POSITIVE")) {
+                    if (existingPos > 0) {
+                        String errorMessage = "Error saving value for NIC_TARRAGON_CHART_ACCOUNTS: exists " +
+                                "record matching name '" + dto.getNameEn() + "' with 'Positive only' flag.";
+                        logger.error(errorMessage);
+                        saveResponseDto.setErrorMessageEn(errorMessage);
+                        return saveResponseDto;
+                    }
+                } else if (dto.getChartAccountsType().getCode().equalsIgnoreCase("NEGATIVE")) {
+                    if (existingNeg > 0) {
+                        String errorMessage = "Error saving value for NIC_TARRAGON_CHART_ACCOUNTS: exists " +
+                                "record matching name '" + dto.getNameEn() + "' with 'Negative only' flag.";
+                        logger.error(errorMessage);
+                        saveResponseDto.setErrorMessageEn(errorMessage);
+                        return saveResponseDto;
+                    }
+                }else if (dto.getChartAccountsType().getCode().equalsIgnoreCase("ALL")) {
+                    String errorMessage = "Error saving value for NIC_TARRAGON_CHART_ACCOUNTS: exists " +
+                            "record matching name '" + dto.getNameEn() + "' cannot create record with 'ALL' flag.";
+                    logger.error(errorMessage);
+                    saveResponseDto.setErrorMessageEn(errorMessage);
+                    return saveResponseDto;
+
+                }
+            }
+        }
+
         if(dto.getChartAccountsType() != null && dto.getChartAccountsType().getCode() != null) {
             PeriodicDataChartAccountsType type = this.chartAccountsTypeRepository.findByCode(dto.getChartAccountsType().getCode());
             entity.setChartAccountsType(type);
@@ -2251,8 +2256,6 @@ public class LookupServiceImpl implements LookupService {
             saveResponseDto.setErrorMessageEn(errorMessage);
             return saveResponseDto;
         }
-
-
 
         this.tarragonNICChartOfAccountsRepository.save(entity);
         saveResponseDto.setSuccessMessageEn("Successfully saved lookup value for NIC_TARRAGON_CHART_ACCOUNTS");
@@ -2269,8 +2272,7 @@ public class LookupServiceImpl implements LookupService {
         if(dto.getAddable() != null) {
             entity.setAddable(dto.getAddable());
         }
-//        entity.setPositiveOnly(dto.getPositiveOnly());
-//        entity.setNegativeOnly(dto.getNegativeOnly());
+
         if(dto.getNICChartOfAccounts() != null && dto.getNICChartOfAccounts().getCode() != null) {
             NICReportingChartOfAccounts nicReportingChartOfAccounts =
                     this.nicReportingChartOfAccountsRepository.findByCode(dto.getNICChartOfAccounts().getCode());
@@ -2284,7 +2286,6 @@ public class LookupServiceImpl implements LookupService {
                 return saveResponseDto;
             }
         }else{
-            //logger.error("Error saving value for NIC_TERRA_CHART_ACCOUNTS: missing required field 'nicReportingChartOfAccounts'");
             String errorMessage = "Error saving value for NIC_TERRA_CHART_ACCOUNTS: missing required field 'nicReportingChartOfAccounts'";
             logger.error(errorMessage);
             saveResponseDto.setErrorMessageEn(errorMessage);
@@ -2292,48 +2293,55 @@ public class LookupServiceImpl implements LookupService {
         }
 
         // Positive/Negative only
-//        List<TerraNICChartOfAccounts> existingRecords =
-//                this.terraNICChartOfAccountsRepository.findByTerraChartOfAccountsName(dto.getNameEn());
-//        if(existingRecords != null && !existingRecords.isEmpty()){
-//            if(existingRecords.size() > 1){
-//                // cannot add
-//                String errorMessage = "Error saving value for NIC_TERRA_CHART_ACCOUNTS: already exist more " +
-//                        "than 1 record matching name en (" + dto.getNameEn() + ")";
-//                logger.error(errorMessage);
-//                saveResponseDto.setErrorMessageEn(errorMessage);
-//                return saveResponseDto;
-//            }else{ //== 1
-//                TerraNICChartOfAccounts record = existingRecords.get(0);
-//                if(dto.getId() != null && dto.getId().longValue() != record.getId().longValue()) {
-//                    if (record.getPositiveOnly() != null && record.getPositiveOnly().booleanValue()) {
-//                        if (dto.getNegativeOnly() == null || !dto.getNegativeOnly().booleanValue()) {
-//                            String errorMessage = "Error saving value for NIC_TERRA_CHART_ACCOUNTS: exists " +
-//                                    "record matching name en(" + dto.getNameEn() + ") with 'Positive only' flag," +
-//                                    " 'Negative only' flag must be set for this record";
-//                            logger.error(errorMessage);
-//                            saveResponseDto.setErrorMessageEn(errorMessage);
-//                            return saveResponseDto;
-//                        }
-//                    } else if (record.getNegativeOnly() != null && record.getNegativeOnly().booleanValue()) {
-//                        if (dto.getPositiveOnly() == null || !dto.getPositiveOnly().booleanValue()) {
-//                            String errorMessage = "Error saving value for NIC_TERRA_CHART_ACCOUNTS: exists " +
-//                                    "record matching name en (" + dto.getNameEn() + ") with 'Positive only' flag," +
-//                                    " 'Negative only' flag must be set for this record";
-//                            logger.error(errorMessage);
-//                            saveResponseDto.setErrorMessageEn(errorMessage);
-//                            return saveResponseDto;
-//                        }
-//                    } else {
-//                        String errorMessage = "Error saving value for NIC_TERRA_CHART_ACCOUNTS: exists " +
-//                                "record matching name en(" + dto.getNameEn() + ") with 'Positive only' or 'Negative only' " +
-//                                "flags not set. When more than 1 record matches, flags must be set.";
-//                        logger.error(errorMessage);
-//                        saveResponseDto.setErrorMessageEn(errorMessage);
-//                        return saveResponseDto;
-//                    }
-//                }
-//            }
-//        }
+        List<TerraNICChartOfAccounts> existingRecords =
+                this.terraNICChartOfAccountsRepository.findByTerraChartOfAccountsName(dto.getNameEn());
+        if(existingRecords != null && !existingRecords.isEmpty()){
+            int existingPos = 0;
+            int existingNeg = 0;
+            for(TerraNICChartOfAccounts existingRecord: existingRecords){
+                if(dto.getId() != null && existingRecord.getId().longValue() == dto.getId().longValue()){
+                    continue;
+                }
+                if(existingRecord.getChartAccountsType() != null && existingRecord.getChartAccountsType().getCode().equalsIgnoreCase("POSITIVE")){
+                    existingPos++;
+                }else if(existingRecord.getChartAccountsType() != null && existingRecord.getChartAccountsType().getCode().equalsIgnoreCase("NEGATIVE")){
+                    existingNeg++;
+                }else if(existingRecord.getChartAccountsType() != null && existingRecord.getChartAccountsType().getCode().equalsIgnoreCase("ALL")){
+                    String errorMessage = "Error saving value for NIC_TERRA_CHART_ACCOUNTS: exists " +
+                            "record matching name '" + dto.getNameEn() + "' with 'ALL' (Negative and Positive) flag.'";
+                    logger.error(errorMessage);
+                    saveResponseDto.setErrorMessageEn(errorMessage);
+                    return saveResponseDto;
+                }
+            }
+            if(dto.getChartAccountsType() != null && dto.getChartAccountsType().getCode() != null) {
+                if (dto.getChartAccountsType().getCode().equalsIgnoreCase("POSITIVE")) {
+                    if (existingPos > 0) {
+                        String errorMessage = "Error saving value for NIC_TERRA_CHART_ACCOUNTS: exists " +
+                                "record matching name '" + dto.getNameEn() + "' with 'Positive only' flag.";
+                        logger.error(errorMessage);
+                        saveResponseDto.setErrorMessageEn(errorMessage);
+                        return saveResponseDto;
+                    }
+                } else if (dto.getChartAccountsType().getCode().equalsIgnoreCase("NEGATIVE")) {
+                    if (existingNeg > 0) {
+                        String errorMessage = "Error saving value for NIC_TERRA_CHART_ACCOUNTS: exists " +
+                                "record matching name '" + dto.getNameEn() + "' with 'Negative only' flag.";
+                        logger.error(errorMessage);
+                        saveResponseDto.setErrorMessageEn(errorMessage);
+                        return saveResponseDto;
+                    }
+                }else if (dto.getChartAccountsType().getCode().equalsIgnoreCase("ALL")) {
+                    String errorMessage = "Error saving value for NIC_TERRA_CHART_ACCOUNTS: exists " +
+                            "record matching name '" + dto.getNameEn() + "' cannot create record with 'ALL' flag.";
+                    logger.error(errorMessage);
+                    saveResponseDto.setErrorMessageEn(errorMessage);
+                    return saveResponseDto;
+
+                }
+            }
+        }
+
         if(dto.getChartAccountsType() != null && dto.getChartAccountsType().getCode() != null) {
             PeriodicDataChartAccountsType type = this.chartAccountsTypeRepository.findByCode(dto.getChartAccountsType().getCode());
             entity.setChartAccountsType(type);

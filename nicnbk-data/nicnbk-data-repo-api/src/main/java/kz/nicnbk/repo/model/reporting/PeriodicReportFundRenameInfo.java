@@ -18,11 +18,13 @@ public class PeriodicReportFundRenameInfo extends CreateUpdateBaseEntity{
     private String currentFundName;
     private String previousFundName;
 
+    private Boolean usePreviousFundName;
+
     private String type;
 
     public PeriodicReportFundRenameInfo(){}
 
-    public PeriodicReportFundRenameInfo(Long reportId, String currentFundName, String previousFundName, String type){
+    public PeriodicReportFundRenameInfo(Long reportId, String currentFundName, String previousFundName, String type, Boolean usePreviousFundName){
         if(this.report == null){
             this.report = new PeriodicReport();
         }
@@ -30,6 +32,7 @@ public class PeriodicReportFundRenameInfo extends CreateUpdateBaseEntity{
         this.currentFundName = currentFundName;
         this.previousFundName = previousFundName;
         this.type = type;
+        this.usePreviousFundName = usePreviousFundName;
     }
 
 
@@ -68,5 +71,14 @@ public class PeriodicReportFundRenameInfo extends CreateUpdateBaseEntity{
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    @Column(name="use_prev_fund_name")
+    public Boolean isUsePreviousFundName() {
+        return usePreviousFundName;
+    }
+
+    public void setUsePreviousFundName(Boolean usePreviousFundName) {
+        this.usePreviousFundName = usePreviousFundName;
     }
 }

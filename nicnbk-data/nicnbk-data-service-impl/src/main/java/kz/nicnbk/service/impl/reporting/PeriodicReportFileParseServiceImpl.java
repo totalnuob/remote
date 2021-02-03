@@ -219,6 +219,8 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
             //return parseScheduleInvestments(filesDto, reportId);
         }else if(fileType.equals(FileTypeLookup.NB_REP_TARR_SOI_REPORT.getCode())){
             return parseTarragonSOIReport(filesDto, reportId);
+            //form1(filesDto, reportId);
+            //return null;
         }else if(fileType.equals(FileTypeLookup.NB_REP_TARR_STMT_BALANCE_OPERATIONS.getCode())){
             return parseStatementAssetsLiabilities(filesDto, reportId);
         }else if(fileType.equals(FileTypeLookup.NB_REP_TARR_STMT_CASHFLOW.getCode())){
@@ -2585,7 +2587,8 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
                 }
 
                 /* GL Account Balance */
-                if(ExcelUtils.isNotEmptyCell(row.getCell(12)) && row.getCell(12).getCellType() == Cell.CELL_TYPE_NUMERIC){
+                if(ExcelUtils.isNotEmptyCell(row.getCell(12)) && (row.getCell(12).getCellType() == Cell.CELL_TYPE_NUMERIC ||
+                        row.getCell(12).getCellType() == Cell.CELL_TYPE_FORMULA)){
                     record.setGLAccountBalance(row.getCell(12).getNumericCellValue());
                 }else{
 //                    logger.error("Error parsing 'Singularity General Ledger Balance' file: 'GL Account Balance' is missing or invalid");
@@ -3090,7 +3093,8 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
                     }
 
                     /* Transaction Amount*/
-                    if(ExcelUtils.isNotEmptyCell(row.getCell(11)) && row.getCell(11).getCellType() == Cell.CELL_TYPE_NUMERIC){
+                    if(ExcelUtils.isNotEmptyCell(row.getCell(11)) && (row.getCell(11).getCellType() == Cell.CELL_TYPE_NUMERIC ||
+                            row.getCell(11).getCellType() == Cell.CELL_TYPE_FORMULA)){
                         record.setTransactionAmount(row.getCell(11).getNumericCellValue());
                     }else{
                         //logger.error("Error parsing 'Singularity NOAL' file: 'Transaction Amount' is missing or invalid");
@@ -3106,7 +3110,8 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
                     }
 
                     /* Functional Amount*/
-                    if(ExcelUtils.isNotEmptyCell(row.getCell(17)) && row.getCell(17).getCellType() == Cell.CELL_TYPE_NUMERIC){
+                    if(ExcelUtils.isNotEmptyCell(row.getCell(17)) && (row.getCell(17).getCellType() == Cell.CELL_TYPE_NUMERIC ||
+                            row.getCell(17).getCellType() == Cell.CELL_TYPE_FORMULA)){
                         record.setFunctionalAmount(row.getCell(17).getNumericCellValue());
                     }else{
                         //logger.error("Error parsing 'Singularity NOAL' file: 'Functional Amount' is missing");

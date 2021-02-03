@@ -15,14 +15,16 @@ public class ReportingFundRenamePairDto implements BaseDto {
 
     private String currentFundName;
     private String previousFundName;
+    private Boolean usePreviousFundName;
     private String type;
 
     public ReportingFundRenamePairDto(){}
 
-    public ReportingFundRenamePairDto(String currentFundName, String previousFundName, String type){
+    public ReportingFundRenamePairDto(String currentFundName, String previousFundName, String type, Boolean usePreviousFundName){
         this.currentFundName = currentFundName;
         this.previousFundName = previousFundName;
         this.type = type;
+        this.usePreviousFundName = usePreviousFundName;
     }
 
     public String getCurrentFundName() {
@@ -59,5 +61,17 @@ public class ReportingFundRenamePairDto implements BaseDto {
 
     public boolean isRealEstateFund(){
         return this.type != null && this.type.equalsIgnoreCase("RE");
+    }
+
+    public Boolean getUsePreviousFundName() {
+        return usePreviousFundName;
+    }
+
+    public void setUsePreviousFundName(Boolean usePreviousFundName) {
+        this.usePreviousFundName = usePreviousFundName;
+    }
+
+    public boolean isUsePreviousFundName(){
+        return this.usePreviousFundName != null && this.usePreviousFundName.booleanValue();
     }
 }

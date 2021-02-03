@@ -122,7 +122,7 @@
                         <td>&nbsp;</td>
                         <td style="background-color: #50b569">{{record.startPeriodAssets != null && record.startPeriodAssets != 0 ? (record.startPeriodAssets | number:'1.2-2') : ''}} </td>
                         <td>&nbsp;</td>
-                        <td>&nbsp;</td>
+                        <td>{{record.turnoverPurchased}}</td>
                         <td>&nbsp;</td>
                         <td>&nbsp;</td>
                         <td>&nbsp;</td>
@@ -156,7 +156,7 @@
                         <td rowspan="3">Наименование актива/дебитора</td>
                         <td rowspan="3">Код строки</td>
                         <td colspan="1">Остаток на начало отчетного периода</td>
-                        <td colspan="1">Обороты</td>
+                        <td colspan="2">Обороты</td>
                         <td colspan="1">Остаток на конец отчетного периода</td>
                         <td rowspan="3">Балансовая стоимость на начало (гр.5+гр.18+гр.22)</td>
                         <td rowspan="3">Балансовая стоимость на конец (гр.17+гр.19+гр.23)</td>
@@ -164,12 +164,14 @@
                     <tr>
                         <!--<td rowspan="2">Количество</td>-->
                         <td rowspan="2">Сумма</td>
+                        <td colspan="1">Приобретено</td>
                         <td colspan="1">Другие</td>
                         <!--<td rowspan="2">Количество (гр.4+гр.6+гр.8+гр.10+гр.12+гр.14)</td>-->
                         <td rowspan="2">Сумма (гр.5+гр.7+гр.9+гр.11+гр.13+гр.15)</td>
                     </tr>
                     <tr>
                         <!--<td>Количество</td>-->
+                        <td>Сумма</td>
                         <td>Сумма</td>
                     </tr>
                     <tr>
@@ -178,6 +180,7 @@
                         <td>3</td>
                         <!--<td>4</td>-->
                         <td>5</td>
+                        <td>7</td>
                         <!--<td>14</td>-->
                         <td>15</td>
                         <!--<td>16</td>-->
@@ -192,6 +195,7 @@
                         <!--<td>&nbsp;</td>-->
                         <td style="background-color: #50b569">{{record.startPeriodAssets != null && record.startPeriodAssets != 0 ? (record.startPeriodAssets | number:'1.2-2') : ''}} </td>
                         <!--<td>&nbsp;</td>-->
+                        <td>{{record.turnoverPurchased != null && record.turnoverPurchased != 0 ? (record.turnoverPurchased | number:'1.2-2') : ''}}</td>
                         <td>{{record.turnoverOther != null && record.turnoverOther != 0 ? (record.turnoverOther | number:'1.2-2') : ''}}</td>
                         <!--<td>&nbsp;</td>-->
                         <td>{{record.endPeriodAssets != null && record.endPeriodAssets != 0 ? (record.endPeriodAssets | number:'1.2-2') : ''}}</td>

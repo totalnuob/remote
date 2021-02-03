@@ -5,5 +5,6 @@ export class ReportingFundRenamePair{
     currentFundName: string;
     previousFundName: string;
     type: string;
+    usePreviousFundName: boolean;
 
 }
