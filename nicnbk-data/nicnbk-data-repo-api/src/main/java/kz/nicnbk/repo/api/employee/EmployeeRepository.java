@@ -31,4 +31,9 @@ public interface EmployeeRepository extends PagingAndSortingRepository<Employee,
     List<Employee> findActiveAll();
 
     List<Employee> findByPositionDepartmentIdAndActive(int departmentId, boolean active);
+
+    @Query("SELECT e FROM Employee e WHERE e.active=?1" +
+            " AND e.position.code IN ?2"
+    )
+    List<Employee> findByPositionCodesAndActive(boolean active, String[] positionCodes);
 }

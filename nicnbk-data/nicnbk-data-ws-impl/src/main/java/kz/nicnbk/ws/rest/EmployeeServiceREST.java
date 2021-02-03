@@ -79,6 +79,28 @@ public class EmployeeServiceREST extends CommonServiceREST{
         }
     }
 
+    @RequestMapping(value = "/findExecutivesAndActive", method = RequestMethod.GET)
+    public ResponseEntity findExecutivesAndActive(){
+        List<EmployeeDto> employees = this.employeeService.findExecutivesAndActive();
+        if(employees == null){
+            // error occurred
+            return new ResponseEntity<>(null, null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }else{
+            return new ResponseEntity<>(employees, null, HttpStatus.OK);
+        }
+    }
+
+    @RequestMapping(value = "/findByDepartmentAndActiveWithExecutives/{departmentId}", method = RequestMethod.GET)
+    public ResponseEntity findByDepartmentAndActiveWithExecutives(@PathVariable int departmentId){
+        List<EmployeeDto> employees = this.employeeService.findByDepartmentAndActiveWithExecutives(departmentId);
+        if(employees == null){
+            // error occurred
+            return new ResponseEntity<>(null, null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }else{
+            return new ResponseEntity<>(employees, null, HttpStatus.OK);
+        }
+    }
+
     @RequestMapping(value = "/findUsersWithRole/{role}", method = RequestMethod.GET)
     public ResponseEntity findUsersWithRole(@PathVariable String role){
         List<EmployeeDto> employees = this.employeeService.findUsersWithRole(role);

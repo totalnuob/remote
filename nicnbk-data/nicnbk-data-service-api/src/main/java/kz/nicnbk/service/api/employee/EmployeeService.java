@@ -23,6 +23,10 @@ public interface EmployeeService extends BaseService {
 
     List<EmployeeDto> findByDepartmentAndActive(int id);
 
+    List<EmployeeDto> findExecutivesAndActive();
+
+    List<EmployeeDto> findByDepartmentAndActiveWithExecutives(int id);
+
     List<EmployeeDto> findEmployeesByRoleCodes(String[] codes);
 
     EmployeeDto getEmployeeById(Long empoyeeId);

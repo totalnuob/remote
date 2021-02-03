@@ -2,7 +2,6 @@ package kz.nicnbk.repo.model.corpmeetings;
 
 import kz.nicnbk.repo.model.base.BaseEntity;
 import kz.nicnbk.repo.model.files.Files;
-import kz.nicnbk.repo.model.tripmemo.TripMemo;
 
 import javax.persistence.*;
 
@@ -17,6 +16,7 @@ public class ICMeetingTopicFiles extends BaseEntity {
     private Files file;
     private String customName;
     private boolean update;
+    private Integer topicOrder;
 
     public ICMeetingTopicFiles(){}
 
@@ -67,5 +67,13 @@ public class ICMeetingTopicFiles extends BaseEntity {
 
     public void setUpdate(boolean update) {
         this.update = update;
+    }
+
+    public Integer getTopicOrder() {
+        return topicOrder;
+    }
+
+    public void setTopicOrder(Integer topicOrder) {
+        this.topicOrder = topicOrder;
     }
 }

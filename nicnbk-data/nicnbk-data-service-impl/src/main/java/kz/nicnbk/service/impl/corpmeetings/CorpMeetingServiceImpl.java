@@ -444,7 +444,8 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
                         }
                     }
                 }
-            }
+            };
+
             entity = icMeetingTopicRepository.save(entity);
             logger.info(dto.getId() == null ? "IC meeting topic created: " + entity.getId() + ", by " + entity.getCreator().getUsername() :
                     "IC meeting topic updated: " + entity.getId() + ", by " + updater);
@@ -725,6 +726,7 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
 
             // set files
             dto.setMaterials(getICMeetingTopicAttachments(id, false));
+            Collections.sort(dto.getMaterials());
 
             dto.setMaterialsUpd(getICMeetingTopicAttachments(id, true));
 
@@ -789,6 +791,7 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
                         NamedFilesDto namedFilesDto = new NamedFilesDto();
                         namedFilesDto.setFile(fileDto);
                         namedFilesDto.setName(icMeetingTopicFiles.getCustomName());
+                        namedFilesDto.setTopicOrder(icMeetingTopicFiles.getTopicOrder());
                         files.add(namedFilesDto);
                     }
                 }
@@ -1435,9 +1438,11 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
     private boolean saveICMeetingTopicAttachments(Long topicId, List<NamedFilesDto> attachments, boolean update, String username) {
         try {
             if (attachments != null && !attachments.isEmpty()) {
-                Iterator<NamedFilesDto> iterator = attachments.iterator();
-                while (iterator.hasNext()) {
-                    NamedFilesDto namedFilesDto = iterator.next();
+                //Iterator<NamedFilesDto> iterator = attachments.iterator();
+                //while (iterator.hasNext()) {
+                    //NamedFilesDto namedFilesDto = iterator.next();
+                int i = 1;
+                for(NamedFilesDto namedFilesDto: attachments){
                     if(StringUtils.isEmpty(namedFilesDto.getName())){
                         logger.error("Failed to save IC meeting topic attachment: file name required (topic id=" + topicId.longValue() + ") [user]=" + username);
                         return false;
@@ -1453,6 +1458,8 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
                         ICMeetingTopicFiles icMeetingTopicFiles = icMeetingTopicFilesRepository.getFilesByFileId(namedFilesDto.getFile().getId());
                         if(icMeetingTopicFiles != null){
                             icMeetingTopicFiles.setCustomName(namedFilesDto.getName());
+                            icMeetingTopicFiles.setTopicOrder(i);
+                            i++;
                             icMeetingTopicFilesRepository.save(icMeetingTopicFiles);
                         }
                     }
@@ -2399,8 +2406,8 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
                     }
 
                     String signatureTimestamp = approveDto.isApproved() ?
-                            "согласовано в UNIC" + ( approveDto.getApproveDate() != null ?
-                                    " " + DateUtils.getDateFormattedWithTime(approveDto.getApproveDate()) : "")
+                            "согласовано в UNIC" /*+ ( approveDto.getApproveDate() != null ?
+                                    " " + DateUtils.getDateFormattedWithTime(approveDto.getApproveDate()) : "")*/
                                     + (approveDto.getHash() != null ? " [" + approveDto.getHash() + "]": "") :
                             "ожидает согласования";
                     newRow.getCell(2).removeParagraph(0);
@@ -2430,6 +2437,13 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
                                     text = text.replace("DECISION",icMeetingTopic.getPublishedDecisionUpd());
                                 }else{
                                     text = text.replace("DECISION", "");
+                                }
+                                r.setText(text, 0);
+                            }else if (text != null && text.contains("QUESTION")) {
+                                if(icMeetingTopic.getPublishedNameUpd() != null) {
+                                    text = text.replace("QUESTION",icMeetingTopic.getPublishedNameUpd());
+                                }else{
+                                    text = text.replace("QUESTION", "");
                                 }
                                 r.setText(text, 0);
                             }
@@ -2487,6 +2501,7 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
             for (String value : values) {
                 XmlCursor cursor = document.getParagraphs().get(paragraphIndex).getCTP().newCursor();
                 XWPFParagraph newParagraph = document.insertNewParagraph(cursor);
+                newParagraph.setAlignment(ParagraphAlignment.BOTH);
                 newParagraph.setIndentationLeft(indentLeft);
                 newParagraph.setSpacingAfter(spacingAfter);
                 newParagraph.setNumID(numId);
@@ -2893,6 +2908,42 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
             insertNumberedList(document, decisionsIndex, values);
             index += values.size();
 
+            // Add CEO as voted YES, if missing
+            if(topics != null && !topics.isEmpty()){
+                for(ICMeetingTopicDto topic:topics){
+                    boolean ceoExists = false;
+                    if(topic.getVotes() != null){
+                        for(ICMeetingTopicsVoteDto voteDto: topic.getVotes()){
+                            if(voteDto.getEmployee() != null && voteDto.getEmployee().getPosition() != null &&
+                            voteDto.getEmployee().getPosition().getCode().equalsIgnoreCase("CEO")){
+                                // TODO: Refactor
+                                ceoExists = true;
+                                break;
+                            }
+                        }
+                    }else{
+                        topic.setVotes(new ArrayList<ICMeetingTopicsVoteDto>());
+                    }
+                    if(!ceoExists){
+                        // insert ceo vote "YES:
+                        List<EmployeeDto> execs = this.employeeService.findExecutivesAndActive();
+                        if(execs != null && !execs.isEmpty()){
+                            for(EmployeeDto exec: execs){
+                                if(exec.getPosition() != null && exec.getPosition().getCode().equalsIgnoreCase("CEO")){
+                                    ICMeetingTopicsVoteDto voteDto = new ICMeetingTopicsVoteDto();
+                                    voteDto.setEmployee(exec);
+                                    voteDto.setIcMeetingTopicId(topic.getId());
+                                    voteDto.setVote("YES");
+                                    topic.getVotes().add(voteDto);
+                                    break;
+                                }
+                            }
+                        }
+
+                    }
+
+                }
+            }
             List<String[]> votesCombined = getVotesCombined(topics);
 
             for(int i = 0; i < votesCombined.size(); i++){
@@ -3495,7 +3546,7 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
         }else if(number == 3){
             return "третьему";
         }else if(number == 4){
-            return "чевертому";
+            return "четвертому";
         }else if(number == 5){
             return "пятому";
         }else if(number == 6){
@@ -3508,13 +3559,23 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
             return "девятому";
         }else if(number == 10){
             return "десятому";
+        }else if(number == 11){
+            return "одиннадцатому";
+        }else if(number == 12){
+            return "двенадцатому";
+        }else if(number == 13){
+            return "тринадцатому";
+        }else if(number == 14){
+            return "четырнадцатому";
+        }else if(number == 15){
+            return "пятнадцатому";
         }else{
             return number + "";
         }
     }
 
     private String getDiscussionsHeader(String speakerName, String topicName){
-        String header = "выступил ";
+        String header = "выступил(-а) ";
         if(speakerName != null ){
             header +=  speakerName + ", который предоставил Комитету информацию ";
             if(topicName != null){
@@ -3525,7 +3586,7 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
     }
 
     private String getDecisionHeader(int number){
-        return "Комитет по " + getNumberRussian(number) + " вопросу поставновил:";
+        return "Комитет по " + getNumberRussian(number) + " вопросу постановил:";
     }
 
     @Deprecated
