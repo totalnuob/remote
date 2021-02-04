@@ -14,8 +14,8 @@ public class CommonNICReportingChartOfAccountsDto implements BaseDto {
     private NICReportingChartOfAccountsDto NICChartOfAccounts;
     private Boolean addable;
     private Boolean editable;
-    private Boolean negativeOnly;
-    private Boolean positiveOnly;
+//    private Boolean negativeOnly;
+//    private Boolean positiveOnly;
     private Boolean deletable;
     private BaseDictionaryDto chartAccountsType;
 
@@ -59,21 +59,21 @@ public class CommonNICReportingChartOfAccountsDto implements BaseDto {
         this.addable = addable;
     }
 
-    public Boolean getNegativeOnly() {
-        return negativeOnly;
-    }
-
-    public void setNegativeOnly(Boolean negativeOnly) {
-        this.negativeOnly = negativeOnly;
-    }
-
-    public Boolean getPositiveOnly() {
-        return positiveOnly;
-    }
-
-    public void setPositiveOnly(Boolean positiveOnly) {
-        this.positiveOnly = positiveOnly;
-    }
+//    public Boolean getNegativeOnly() {
+//        return negativeOnly;
+//    }
+//
+//    public void setNegativeOnly(Boolean negativeOnly) {
+//        this.negativeOnly = negativeOnly;
+//    }
+//
+//    public Boolean getPositiveOnly() {
+//        return positiveOnly;
+//    }
+//
+//    public void setPositiveOnly(Boolean positiveOnly) {
+//        this.positiveOnly = positiveOnly;
+//    }
 
     public Boolean getEditable() {
         return editable;

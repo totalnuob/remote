@@ -10,6 +10,7 @@ INSERT INTO public.department(id, code, name_en, name_kz, name_ru) VALUES (9, 'O
 INSERT INTO public.department(id, code, name_en, name_kz, name_ru) VALUES (10, 'ACCOUNT', 'Accounting', null, 'Управление бухгалтерского учета');
 INSERT INTO public.department(id, code, name_en, name_kz, name_ru) VALUES (11, 'HR', 'Human Resources', null, 'Управление по работе с персоналом');
 
-INSERT INTO public.department(id, code, name_en, name_kz, name_ru) VALUES (13, 'AUDIT', 'Internal Audit', null, 'Служба внутреннего аудита');
+INSERT INTO public.department(id, code, name_en, name_kz, name_ru) VALUES (12, 'COMPL', 'Compliance', null, 'Комплаенс-контролер');
+INSERT INTO public.department(id, code, name_en, name_kz, name_ru) VALUES (13, 'AUDIT', 'Auditor', null, 'Внутренний аудитор');
 
 

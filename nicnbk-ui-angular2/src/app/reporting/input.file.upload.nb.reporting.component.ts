@@ -1068,30 +1068,38 @@ export class InputFileUploadNBReportingComponent extends CommonFormViewComponent
     }
 
     saveFundRenames(){
-        //alert("saveFundRenames");
-
-        // TODO: check for duplicate values
-
         this.fundRenameInfo.fundRenames = [];
+        // TODO: check for duplicate values        this.fundRenameInfo.fundRenames = [];
         if(this.fundRenamesPE != null && this.fundRenamesPE.length > 0){
             for(var i = 0; i < this.fundRenamesPE.length; i++){
+                if($('#checkbox_pe_' + i).prop("checked")){
+                   this.fundRenamesPE[i].usePreviousFundName = true;
+                }else{
+                    this.fundRenamesPE[i].usePreviousFundName = false;
+                }
                 this.fundRenameInfo.fundRenames.push(this.fundRenamesPE[i]);
             }
         }
         if(this.fundRenamesHF != null && this.fundRenamesHF.length > 0){
             for(var i = 0; i < this.fundRenamesHF.length; i++){
+                if($('#checkbox_hf_' + i).prop("checked")){
+                   this.fundRenamesHF[i].usePreviousFundName = true;
+                }else{
+                    this.fundRenamesHF[i].usePreviousFundName = false;
+                }
                 this.fundRenameInfo.fundRenames.push(this.fundRenamesHF[i]);
             }
         }
         if(this.fundRenamesRE != null && this.fundRenamesRE.length > 0){
             for(var i = 0; i < this.fundRenamesRE.length; i++){
+                if($('#checkbox_re_' + i).prop("checked")){
+                   this.fundRenamesRE[i].usePreviousFundName = true;
+                }else{
+                    this.fundRenamesRE[i].usePreviousFundName = false;
+                }
                 this.fundRenameInfo.fundRenames.push(this.fundRenamesRE[i]);
             }
         }
-
-
-        //console.log(this.fundRenameInfo);
-        //console.log(this.fundRenamesPE);
 
         this.fundRenameInfo.report = new PeriodicReport(this.reportId);
         this.busyFundRenameDialog = this.periodicReportService.saveFundRenameInfo(this.fundRenameInfo)

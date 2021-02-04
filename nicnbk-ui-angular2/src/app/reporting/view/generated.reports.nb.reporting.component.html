@@ -32,6 +32,8 @@
     </div>
     <br/>
 
+    <h3>{{periodicReport.reportDate != null ? getReportDateShortFormatted(periodicReport.reportDate): ''}}</h3>
+
     <ul class="nav nav-tabs">
         <li [ngClass]="getReportsTabClass()">
         <!--<li class="active">-->

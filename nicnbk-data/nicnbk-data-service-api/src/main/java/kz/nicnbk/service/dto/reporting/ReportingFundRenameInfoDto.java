@@ -29,11 +29,11 @@ public class ReportingFundRenameInfoDto implements BaseDto {
         this.fundRenames = fundRenames;
     }
 
-    public void addFundRenamePair(String current, String previous, String type){
+    public void addFundRenamePair(String current, String previous, String type, Boolean usePreviousFundName){
         if(fundRenames == null){
             this.fundRenames = new ArrayList<>();
         }
-        this.fundRenames.add(new ReportingFundRenamePairDto(current, previous, type));
+        this.fundRenames.add(new ReportingFundRenamePairDto(current, previous, type,usePreviousFundName));
     }
 
     public boolean isEmpty(){

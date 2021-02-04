@@ -94,7 +94,7 @@ public class ExcelUtils {
         }else if(cell.getCellType() == Cell.CELL_TYPE_ERROR){
             return null;
         }else if(cell.getCellType() == Cell.CELL_TYPE_FORMULA){
-            return cell.getCellFormula();
+            return cell.getNumericCellValue() + "";
         }else {
             return null;
         }
