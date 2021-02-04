@@ -259,6 +259,7 @@ export class CorpMeetingICEditComponent extends CommonFormViewComponent implemen
             this.successMessage = null;
             return;
         }
+        this.icMeeting.time = $('#icTimeValue').val();
         if(this.icMeeting.number == null || this.icMeeting.number.trim() === ''){
             console.log(this.icMeeting);
             this.errorMessage = "Number required";
@@ -281,7 +282,7 @@ export class CorpMeetingICEditComponent extends CommonFormViewComponent implemen
             }
         }
 
-        //console.log(this.icMeeting);
+        console.log(this.icMeeting);
         this.busy = this.corpMeetingService.saveICMeeting(this.icMeeting, this.uploadAgendaFile)
             .subscribe(
                 (response: SaveResponse)  => {
