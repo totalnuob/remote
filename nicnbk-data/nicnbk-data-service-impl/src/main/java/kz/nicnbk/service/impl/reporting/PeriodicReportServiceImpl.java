@@ -4225,6 +4225,17 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                             ConsolidatedKZTForm8RecordDto newRecord = new ConsolidatedKZTForm8RecordDto();
                             newRecord.setLineNumber(record1283_020LineNumber);
                             newRecord.setName(recordUSD.getName());
+                            if(!fundRenameInfo.isEmpty()){
+                                for(ReportingFundRenamePairDto pairDto: fundRenameInfo.getFundRenames()){
+                                    if(newRecord.getName() .contains(pairDto.getPreviousFundName()) && !pairDto.isUsePreviousFundName()){
+                                        String newName = newRecord.getName() .replace(pairDto.getPreviousFundName(), pairDto.getCurrentFundName());
+                                        newRecord.setName(newName);
+                                    }else if(newRecord.getName() .contains(pairDto.getCurrentFundName()) && pairDto.isUsePreviousFundName()){
+                                        String newName = newRecord.getName() .replace(pairDto.getCurrentFundName(), pairDto.getPreviousFundName());
+                                        newRecord.setName(newName);
+                                    }
+                                }
+                            }
                             newRecord.setAccountNumber(recordUSD.getAccountNumber());
 
                             //newRecord.setDebtStartPeriod(MathUtils.multiply(record.getPreviousAccountBalance() != null ? record.getPreviousAccountBalance() : 0.0, startCurrencyRatesDto.getValue()));

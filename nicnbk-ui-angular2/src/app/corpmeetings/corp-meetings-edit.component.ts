@@ -840,6 +840,9 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
         if(this.showUpdateBlock() && (this.icMeetingTopic.status === 'TO BE FINALIZED' || this.icMeetingTopic.status === 'FINALIZED')){
             // check deadline
             if(this.icMeetingTopic.icMeeting.updateLockedByDeadline){
+                if(this.moduleAccessChecker.checkAccessICMeetingAdmin()){
+                    return true;
+                }
                 return false;
             }
             var departmentId = this.icMeetingTopic != null && this.icMeetingTopic.department != null ? this.icMeetingTopic.department.id : 0;
