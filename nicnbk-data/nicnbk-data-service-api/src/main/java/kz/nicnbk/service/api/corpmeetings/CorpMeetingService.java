@@ -84,7 +84,8 @@ public interface CorpMeetingService extends BaseService {
 
     /* IC MEETING *****************************************************************************************************/
 
-    EntitySaveResponseDto saveICMeeting(ICMeetingDto icMeetingDto, FilesDto agendaFile, String updater);
+    EntitySaveResponseDto saveICMeeting(ICMeetingDto icMeetingDto, FilesDto agendaFile,  FilesDto protocolFile,
+                                        FilesDto bulletinFile, String updater);
 
     Set<FilesDto> saveICMeetingProtocol(Long meetingId, Set<FilesDto> attachments, String username);
 
@@ -114,10 +115,14 @@ public interface CorpMeetingService extends BaseService {
     FilesDto getICMeetingProtocolFileStream(Long icMeetingId, String username);
     FilesDto getICMeetingBulletinFileStream(Long icMeetingId, String username);
 
+    FilesDto getICMeetingProtocolRegistryFileStream(String username);
+
     FilesDto getICMeetingTopicApproveListFileStream(Long icMeetingId, String username);
 
 
     boolean deleteICMeetingAgenda(Long icMeetingId, String username);
+    boolean deleteICMeetingProtocol(Long icMeetingId, String username);
+    boolean deleteICMeetingBulletin(Long icMeetingId, String username);
 
     List<CorpMeetingUpcomingEventDto> getUpcomingEvents(String username);
 }

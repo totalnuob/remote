@@ -257,6 +257,9 @@
                                                     <span *ngIf="item.approved" class="glyphicon glyphicon-ok-circle" style="color: green"></span>
                                                     <span *ngIf="!item.approved"class="glyphicon glyphicon-hourglass" style="color: grey"></span>
                                                     {{item.employee.fullName != null ? item.employee.fullName : (item.employee.firstName + ' ' + item.employee.lastName)}}
+                                                    <span *ngIf="autoAddedApproveListMember(item)">
+                                                        <small><i>(auto-added, can be removed)</i></small>
+                                                    </span>
                                                 </div>
                                             </div>
                                         </div>

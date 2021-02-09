@@ -26,6 +26,9 @@ import kz.nicnbk.service.dto.employee.EmployeeDto;
 import kz.nicnbk.service.dto.files.FilesDto;
 import kz.nicnbk.service.dto.files.NamedFilesDto;
 import kz.nicnbk.service.dto.notification.NotificationDto;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.xwpf.usermodel.*;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
@@ -1309,7 +1312,7 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
 
     @Override
     public List<EmployeeDto> getAvailableApproveList(){
-        String[] roles = {UserRoles.IC_TOPIC_RESTR.getCode(), UserRoles.IC_MEMBER.getCode()};
+        String[] roles = {UserRoles.IC_TOPIC_RESTR.getCode(), UserRoles.IC_ADMIN.getCode(), UserRoles.IC_MEMBER.getCode()};
         return this.employeeService.findEmployeesByRoleCodes(roles);
     }
 
@@ -1633,7 +1636,8 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
     /* IC MEETING *****************************************************************************************************/
     @Transactional
     @Override
-    public EntitySaveResponseDto saveICMeeting(ICMeetingDto icMeetingDto, FilesDto agendaFile, String updater) {
+    public EntitySaveResponseDto saveICMeeting(ICMeetingDto icMeetingDto, FilesDto agendaFile, FilesDto protocolFile,
+                                               FilesDto bulletinFile, String updater) {
         EntitySaveResponseDto saveResponseDto = new EntitySaveResponseDto();
         try {
             ICMeeting entity = icMeetingsEntityConverter.assemble(icMeetingDto);
@@ -1694,6 +1698,30 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
                 }
                 Long fileId = fileService.save(agendaFile, FileTypeLookup.IC_AGENDA.getCatalog());
                 entity.setAgenda(new Files(fileId));
+            }
+
+            if(protocolFile != null){
+                if(entity.getProtocol() != null){
+                    String errorMessage = "Error saving IC meeting : protocol exists, please delete the current file before uploading new one.";
+                    logger.error(errorMessage);
+                    saveResponseDto = new EntitySaveResponseDto();
+                    saveResponseDto.setErrorMessageEn(errorMessage);
+                    return saveResponseDto;
+                }
+                Long fileId = fileService.save(protocolFile, FileTypeLookup.IC_PROTOCOL.getCatalog());
+                entity.setProtocol(new Files(fileId));
+            }
+
+            if(bulletinFile != null){
+                if(entity.getBulletin() != null){
+                    String errorMessage = "Error saving IC meeting : bulletin exists, please delete the current file before uploading new one.";
+                    logger.error(errorMessage);
+                    saveResponseDto = new EntitySaveResponseDto();
+                    saveResponseDto.setErrorMessageEn(errorMessage);
+                    return saveResponseDto;
+                }
+                Long fileId = fileService.save(bulletinFile, FileTypeLookup.IC_BULLETIN.getCatalog());
+                entity.setBulletin(new Files(fileId));
             }
 
             entity = icMeetingsRepository.save(entity);
@@ -1822,6 +1850,60 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
             }
         }catch (Exception e){
             logger.error("Failed to delete(safe) IC meeting agenda with error: IC id =" + icMeetingId.longValue() + ", by " + username, e);
+        }
+        return false;
+    }
+
+    @Override
+    public boolean deleteICMeetingProtocol(Long icMeetingId, String username) {
+        try {
+            ICMeetingDto icMeeting = getICMeeting(icMeetingId, username);
+            if(icMeeting != null && !checkEditableICMeeting(icMeeting, username)){
+                String errorMessage = "Error saving IC Meeting with id " + icMeeting.getId().longValue() + ": entity not editable";
+                logger.error(errorMessage);
+                return false;
+            }
+            ICMeeting entity = this.icMeetingsRepository.findOne(icMeetingId);
+            if (entity != null && entity.getProtocol() != null) {
+                boolean deleted = fileService.safeDelete(entity.getProtocol().getId());
+                long fileId = entity.getProtocol().getId().longValue();
+                entity.setProtocol(null);
+                this.icMeetingsRepository.save(entity);
+                logger.info("Deleted(safe) IC meeting protocol: IC id =" + icMeetingId.longValue() + ", file=" +
+                        fileId + ", by " + username);
+                return deleted;
+            }else{
+                logger.error("Error save deleting IC meeting protocol: ic meeting not found with id=" + icMeetingId.longValue());
+            }
+        }catch (Exception e){
+            logger.error("Failed to delete(safe) IC meeting protocol with error: IC id =" + icMeetingId.longValue() + ", by " + username, e);
+        }
+        return false;
+    }
+
+    @Override
+    public boolean deleteICMeetingBulletin(Long icMeetingId, String username) {
+        try {
+            ICMeetingDto icMeeting = getICMeeting(icMeetingId, username);
+            if(icMeeting != null && !checkEditableICMeeting(icMeeting, username)){
+                String errorMessage = "Error saving IC Meeting with id " + icMeeting.getId().longValue() + ": entity not editable";
+                logger.error(errorMessage);
+                return false;
+            }
+            ICMeeting entity = this.icMeetingsRepository.findOne(icMeetingId);
+            if (entity != null && entity.getBulletin() != null) {
+                boolean deleted = fileService.safeDelete(entity.getBulletin().getId());
+                long fileId = entity.getBulletin().getId().longValue();
+                entity.setBulletin(null);
+                this.icMeetingsRepository.save(entity);
+                logger.info("Deleted(safe) IC meeting bulletin: IC id =" + icMeetingId.longValue() + ", file=" +
+                        fileId + ", by " + username);
+                return deleted;
+            }else{
+                logger.error("Error save deleting IC meeting bulletin: ic meeting not found with id=" + icMeetingId.longValue());
+            }
+        }catch (Exception e){
+            logger.error("Failed to delete(safe) IC meeting bulletin with error: IC id =" + icMeetingId.longValue() + ", by " + username, e);
         }
         return false;
     }
@@ -2225,6 +2307,98 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
             logger.error("Failed to delete(safe) IC meeting attachment with error: IC topic =" + meetingId + ", file=" + fileId + ", by " + username, e);
         }
         return false;
+    }
+
+    @Override
+    public FilesDto getICMeetingProtocolRegistryFileStream(String username){
+        FilesDto filesDto = new FilesDto();
+
+        final String exportFileTemplatePath = "export_template/corp_meetings/IC_PROTOCOL_REGISTRY_TEMPLATE.xlsx";
+        Resource resource = new ClassPathResource(exportFileTemplatePath);
+        InputStream excelFileToRead = null;
+        try {
+            excelFileToRead = resource.getInputStream();
+        } catch (IOException e) {
+            logger.error("IC Meeting: Export file template not found: '" + exportFileTemplatePath + "'");
+            e.printStackTrace();
+            return null;
+        }
+
+        try {
+            ICMeetingsPagedSearchResult icMeetingsResult = searchICMeetings(null);
+            List<ICMeetingDto> icMeetings = icMeetingsResult != null ? icMeetingsResult.getIcMeetings() : new ArrayList<>();
+            XSSFWorkbook workbook = new XSSFWorkbook(excelFileToRead);
+            XSSFSheet sheet = workbook.getSheetAt(0);
+
+            final int templateRowIndex = 2;
+            final int columnNum = 5;
+            int added = 0;
+            if(icMeetings != null && !icMeetings.isEmpty()){
+                sheet.shiftRows(templateRowIndex + 1, sheet.getLastRowNum(), icMeetings.size() - 1);
+                for(ICMeetingDto ic: icMeetings) {
+                    Row newRow = sheet.createRow(templateRowIndex + 1 + added);
+                    added++;
+
+                    for(int i = 0; i < columnNum; i++){
+                        newRow.createCell(i);
+                    }
+                    newRow.getCell(0).setCellValue(ic.getNumber());
+                    newRow.getCell(1).setCellValue(DateUtils.getDateFormatted(ic.getDate()));
+                    if(ic.getTopics() != null && !ic.getTopics().isEmpty()){
+                        int i = 1;
+                        String topics = "";
+                        String speakers = "";
+                        String decisions = "";
+                        for(ICMeetingTopicDto topic: ic.getTopics()){
+                            topics += (i > 1 ? "\n" : "") + i + "." + topic.getNameUpd();
+
+                            if(topic.getSpeaker() != null){
+                                speakers += (i > 1 ? "\n" : "") + i + "." + topic.getSpeaker().getFullNameInitialsRu();
+                            }else{
+                                // department
+                                if(topic.getDepartment() != null){
+                                    speakers += (i > 1 ? "\n" : "") + i + "." + topic.getDepartment().getNameRu();
+                                }
+                            }
+                            decisions += (i > 1 ? "\n" : "") + i + "." + topic.getDecisionUpd();
+                            i++;
+                        }
+                        newRow.getCell(2).setCellValue(topics);
+                        newRow.getCell(3).setCellValue(speakers);
+                        newRow.getCell(4).setCellValue(decisions);
+                    }
+
+                    // set styles
+                    for(int i = 0; i < columnNum; i++){
+                        if(newRow.getCell(i) != null && sheet.getRow(templateRowIndex) != null &&
+                                sheet.getRow(templateRowIndex).getCell(i) != null){
+                            newRow.getCell(i).setCellStyle(sheet.getRow(templateRowIndex).getCell(i).getCellStyle());
+                        }
+                    }
+
+                    // TODO: bold
+                }
+                sheet.shiftRows(templateRowIndex + 1, sheet.getLastRowNum(), -1);
+            }
+
+            File tmpDir = new File(this.rootDirectory + "/tmp/corp_meetings");
+
+            // write to new
+            String filePath = tmpDir + "/IC_PROTOCOL_REGISTRY_" + MathUtils.getRandomNumber(0, 10000) + ".xlsx";
+            try (FileOutputStream outputStream = new FileOutputStream(filePath)) {
+                workbook.write(outputStream);
+            }
+
+            InputStream inputStream = new FileInputStream(filePath);
+            filesDto.setInputStream(inputStream);
+            filesDto.setFileName(filePath);
+            return filesDto;
+        } catch (IOException e) {
+            logger.error("IO Exception when exporting IC Meeting Protocol Registry", e);
+            //e.printStackTrace();
+        }
+
+        return null;
     }
 
     @Override

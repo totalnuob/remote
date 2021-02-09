@@ -34,6 +34,8 @@ public class ICMeeting extends CreateUpdateBaseEntity{
     private Boolean unlockedForFinalize;
 
     private Files agenda;
+    private Files protocol;
+    private Files bulletin;
 
     public ICMeeting(){}
 
@@ -102,6 +104,26 @@ public class ICMeeting extends CreateUpdateBaseEntity{
 
     public void setAgenda(Files agenda) {
         this.agenda = agenda;
+    }
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "protocol_file_id")
+    public Files getProtocol() {
+        return protocol;
+    }
+
+    public void setProtocol(Files protocol) {
+        this.protocol = protocol;
+    }
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "bulletin_file_id")
+    public Files getBulletin() {
+        return bulletin;
+    }
+
+    public void setBulletin(Files bulletin) {
+        this.bulletin = bulletin;
     }
 
     @Column(name="unlocked_for_finalize")

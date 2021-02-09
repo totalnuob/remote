@@ -44,6 +44,9 @@ public enum FileTypeLookup {
     IC_PROTOCOL("IC_PRTCL", "ic_meeting"),
     IC_EXPLANATORY_NOTE("IC_EXPNOTE", "ic_meeting"),
     IC_AGENDA("IC_AGENDA", "ic_meeting"),
+    IC_BULLETIN("IC_BLTN", "ic_meeting"),
+
+
     HF_SCREENING_DATA_FILE("HFSCRNDATA", "hf_screening"),
     HF_SCREENING_UCITS_FILE("HFSCRNUCTS", "hf_screening");
 

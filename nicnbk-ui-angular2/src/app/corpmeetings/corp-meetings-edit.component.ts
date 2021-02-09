@@ -65,6 +65,8 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
     availableApproveList = [];
     departmentEmployeeList = [];
 
+    icAdminEmployee;
+
     tagOptions = {
         placeholder: "+ tag",
         secondaryPlaceholder: "Enter a new tag",
@@ -106,12 +108,20 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
                     data2.forEach(element => {
                         this.availableApproveList.push({id: element.id, text: element.firstName + " " + element.lastName,
                                                     firstName: element.firstName, lastName: element.lastName});
+                        if(element.roles != null && element.roles.length > 0){
+                            for(var i = 0; i < element.roles.length; i++){
+                                if(element.roles[i].code === 'IC_ADMIN'){
+                                    this.icAdminEmployee = element;
+                                    break;
+                                }
+                            }
+                        }
+
                     });
                     data3.forEach(element => {
                         this.departmentEmployeeList.push({id: element.id, text: element.firstName + " " + element.lastName,
                                                     firstName: element.firstName, lastName: element.lastName});
                     });
-                    console.log(this.departmentEmployeeList);
                     data4.forEach(element => {
                         this.availableTags.push(element.name);
                     });
@@ -139,6 +149,13 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
                                 }
                                 if(!this.icMeetingTopic.executor){
                                     this.icMeetingTopic.executor = new Employee();
+                                }
+                                // default approve list
+                                this.icMeetingTopic.approveList = [];
+                                if(this.icAdminEmployee != null){
+                                    this.icMeetingTopic.approveList.push({"employee": {"id": this.icAdminEmployee.id,
+                                                        "fullName":  this.icAdminEmployee.firstName + " " + this.icAdminEmployee.lastName},
+                                                        "approved": false});
                                 }
                             }
                             //console.log(this.icMeetingTopic);
@@ -928,6 +945,10 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
                         this.postAction(null, "Error exporting topic approve list");
                     }
                 );
+    }
+    autoAddedApproveListMember(item){
+        return (this.icMeetingTopic.id == null || this.icMeetingTopic.id == 0) && this.icAdminEmployee != null &&
+                item.employee != null && item.employee.id == this.icAdminEmployee.id;
     }
 
 }
