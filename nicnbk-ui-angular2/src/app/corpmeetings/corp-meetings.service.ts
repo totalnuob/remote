@@ -31,6 +31,7 @@ export class CorpMeetingService extends CommonService {
 
     private IC_MEETING_AGENDA_DELETE_URL = this.CORP_MEETINGS_BASE_URL + "ICMeeting/agenda/delete/";
     private IC_MEETING_PROTOCOL_DELETE_URL = this.CORP_MEETINGS_BASE_URL + "ICMeeting/protocol/delete/";
+    private IC_MEETING_BULLETIN_DELETE_URL = this.CORP_MEETINGS_BASE_URL + "ICMeeting/bulletin/delete/";
     private IC_MEETING_UNLOCK_FOR_FINALIZE_URL = this.CORP_MEETINGS_BASE_URL + "ICMeeting/unlockForFinalize/";
     private IC_MEETING_VOTE_URL = this.CORP_MEETINGS_BASE_URL + "ICMeeting/vote/";
 
@@ -250,6 +251,12 @@ export class CorpMeetingService extends CommonService {
 
     deleteICMeetingProtocol(icMeetingId): Observable<any> {
         return this.http.delete(this.IC_MEETING_PROTOCOL_DELETE_URL + icMeetingId, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+    deleteICMeetingBulletin(icMeetingId): Observable<any> {
+        return this.http.delete(this.IC_MEETING_BULLETIN_DELETE_URL + icMeetingId, this.getOptionsWithCredentials())
             .map(this.extractData)
             .catch(this.handleErrorResponse);
     }
