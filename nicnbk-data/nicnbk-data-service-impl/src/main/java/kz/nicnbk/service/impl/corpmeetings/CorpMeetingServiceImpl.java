@@ -2125,23 +2125,25 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
 
             // closeable
             boolean closeable = true;
-            if(dto.getTopics() != null && !dto.getTopics().isEmpty()){
-                for(ICMeetingTopicDto topic: dto.getTopics()){
-                    int attendingICMembersNum = 0;
-                    if(dto.getAttendees() != null && !dto.getAttendees().isEmpty()){
-                        for(ICMeetingAttendeesDto attendeesDto: dto.getAttendees()){
-                            attendingICMembersNum += (attendeesDto.isPresent() ? 1 : 0);
-                        }
-                    }
-                    if(topic.getVotes() == null || topic.getVotes().isEmpty() || topic.getVotes().size() != attendingICMembersNum){
-                        closeable = false;
-                        break;
-                    }
-                }
-            }else{
-                // TODO: closeable ?
-                //closeable = true;
-            }
+            // TODO: cannot close if not everyone voted?
+            // TODO: NOTE, CEO auto added as voted, but does not vote
+//            if(dto.getTopics() != null && !dto.getTopics().isEmpty()){
+//                for(ICMeetingTopicDto topic: dto.getTopics()){
+//                    int attendingICMembersNum = 0;
+//                    if(dto.getAttendees() != null && !dto.getAttendees().isEmpty()){
+//                        for(ICMeetingAttendeesDto attendeesDto: dto.getAttendees()){
+//                            attendingICMembersNum += (attendeesDto.isPresent() ? 1 : 0);
+//                        }
+//                    }
+//                    if(topic.getVotes() == null || topic.getVotes().isEmpty() || topic.getVotes().size() != attendingICMembersNum){
+//                        closeable = false;
+//                        break;
+//                    }
+//                }
+//            }else{
+//                // TODO: closeable ?
+//                //closeable = true;
+//            }
             dto.setCloseable(closeable);
 
             return dto;
