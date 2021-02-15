@@ -249,7 +249,7 @@
                                         <div class="col-md-10">
                                             <file-attachment-downloader fileId="{{icMeeting.agenda?.id}}"
                                                                         fileName="{{icMeeting.agenda?.fileName |  slice:0:55 }} {{icMeeting.agenda?.fileName?.length > 55 ? '...': ''}}"
-                                                                        fileType="IC_AGENDA">
+                                                                        fileType="IC_AGENDA" mimeType="{{icMeeting.agenda?.mimeType}}">
                                             </file-attachment-downloader>
                                         </div>
                                         <div class="col-md-2">
@@ -282,7 +282,7 @@
                                         <div class="col-md-10">
                                             <file-attachment-downloader fileId="{{icMeeting.protocol?.id}}"
                                                                         fileName="{{icMeeting.protocol?.fileName |  slice:0:55 }} {{icMeeting.protocol?.fileName?.length > 55 ? '...': ''}}"
-                                                                        fileType="IC_PRTCL">
+                                                                        fileType="IC_PRTCL" mimeType="{{icMeeting.protocol?.mimeType}}">
                                             </file-attachment-downloader>
                                         </div>
                                         <div class="col-md-2">
@@ -315,7 +315,7 @@
                                         <div class="col-md-10">
                                             <file-attachment-downloader fileId="{{icMeeting.bulletin?.id}}"
                                                                         fileName="{{icMeeting.bulletin?.fileName |  slice:0:55 }} {{icMeeting.bulletin?.fileName?.length > 55 ? '...': ''}}"
-                                                                        fileType="IC_PRTCL">
+                                                                        fileType="IC_BLTN" mimeType="{{icMeeting.bulletin?.mimeType}}">
                                             </file-attachment-downloader>
                                         </div>
                                         <div class="col-md-2">
