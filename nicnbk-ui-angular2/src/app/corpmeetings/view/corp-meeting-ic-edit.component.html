@@ -221,9 +221,9 @@
                             <thead>
                             <tr>
                                 <th width="5%"></th>
-                                <th width="40%">NAME</th>
+                                <th width="30%">NAME</th>
                                 <th width="10%">DOWNLOAD</th>
-                                <th class="text-center" width="40%" align="center">UPLOAD</th>
+                                <th class="text-center" width="50%" align="center">UPLOAD</th>
                                 <th width="5%">&nbsp;</th>
                             </tr>
                             </thead>
@@ -232,76 +232,98 @@
                                 <td>1.</td>
                                 <td>Agenda</td>
                                 <td (click)="exportAgenda()">
-                                    <img src="../../../../public/img/ms_word.png" height="25" width="25" *ngIf="icMeeting.id > 0"/>
+                                    <img *ngIf="icMeeting.id > 0 && icMeeting.agenda == null" src="../../../../public/img/ms_word.png" height="25" width="25" />
                                 </td>
-<!--                                    <td>-->
-<!--                                        <div *ngIf="icMeeting.agenda == null && canEdit()" align="center">-->
-<!--                                            <label class="btn btn-primary btn-xs " [ngClass]="icMeeting.agenda != null && icMeeting.agenda.id > 0 ? 'disabled' : ''"  for="agenda">-->
-<!--                                            <input type="file" id="agenda" (change)="onFileChangeAgenda($event)" [disabled]="icMeeting.agenda != null && icMeeting.agenda.id > 0" name="agendaScan" style="display:none;"/>Upload</label>-->
-<!--                                            <div  *ngFor="let aFile of uploadAgendaFile"  class="label label-info" style="display: table;">-->
-<!--                                                <span>{{aFile.name}}</span> &nbsp;-->
-<!--                                                <button class="btn btn-xs btn-danger" (click)="deleteUnsavedAgenda(aFile)">-->
-<!--                                                    <i class="glyphicon glyphicon-trash"></i>-->
-<!--                                                </button>-->
-<!--                                            </div>-->
-<!--                                        </div>-->
-<!--                                        <div *ngIf="icMeeting.agenda != null">-->
-<!--                                            <div class="col-md-10">-->
-<!--                                                <file-attachment-downloader fileId="{{icMeeting.agenda?.id}}"-->
-<!--                                                                            fileName="{{icMeeting.agenda?.fileName |  slice:0:55 }}"-->
-<!--                                                                            fileType="IC_AGENDA">-->
-<!--                                                </file-attachment-downloader>-->
-<!--                                            </div>-->
-<!--                                            <div class="col-md-2">-->
-<!--                                                <button class="btn btn-xs pull-left"  (click)="deleteAgenda()" *ngIf="icMeeting.agenda.id > 0 && canEdit()">-->
-<!--                                                    <i class="glyphicon glyphicon-trash"></i>-->
-<!--                                                </button>-->
-<!--                                            </div>-->
-<!--                                        </div>-->
-<!--                                    </td>-->
+                                <td>
+                                    <div *ngIf="icMeeting.agenda == null && canEdit()" align="center">
+                                        <label class="btn btn-primary btn-xs " [ngClass]="icMeeting.agenda != null && icMeeting.agenda.id > 0 ? 'disabled' : ''"  for="agenda">
+                                        <input type="file" id="agenda" (change)="onFileChangeAgenda($event)" [disabled]="icMeeting.agenda != null && icMeeting.agenda.id > 0" name="agendaScan" style="display:none;"/>Upload</label>
+                                        <div  *ngFor="let aFile of uploadAgendaFile"  class="label label-info" style="display: table;">
+                                            <span>{{aFile.name}}</span> &nbsp;
+                                            <button class="btn btn-xs btn-danger" (click)="deleteUnsavedAgenda(aFile)">
+                                                <i class="glyphicon glyphicon-trash"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div *ngIf="icMeeting.agenda != null">
+                                        <div class="col-md-10">
+                                            <file-attachment-downloader fileId="{{icMeeting.agenda?.id}}"
+                                                                        fileName="{{icMeeting.agenda?.fileName |  slice:0:55 }} {{icMeeting.agenda?.fileName?.length > 55 ? '...': ''}}"
+                                                                        fileType="IC_AGENDA" mimeType="{{icMeeting.agenda?.mimeType}}">
+                                            </file-attachment-downloader>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <button class="btn btn-xs pull-left"  (click)="deleteAgenda()" *ngIf="icMeeting.agenda.id > 0 && canEdit()">
+                                                <i class="glyphicon glyphicon-trash"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </td>
                                 <td>&nbsp;</td>
                             </tr>
                             <tr>
                                 <td>2.</td>
                                 <td>Protocol</td>
                                 <td (click)="exportProtocol()">
-                                    <img src="../../../../public/img/ms_word.png" height="25" width="25" *ngIf="icMeeting.id > 0"/>
+                                    <img *ngIf="icMeeting.id > 0 && icMeeting.protocol == null" src="../../../../public/img/ms_word.png" height="25" width="25" />
                                 </td>
-<!--                                    <td>-->
-<!--                                        <div *ngIf="icMeeting.protocol == null && canEdit()" align="center">-->
-<!--                                            <label class="btn btn-primary btn-xs " [ngClass]="icMeeting.protocol != null && icMeeting.protocol.id > 0 ? 'disabled' : ''"  for="protocol">-->
-<!--                                                <input type="file" id="protocol" (change)="onFileChangeProtocol($event)" [disabled]="icMeeting.protocol != null && icMeeting.protocol.id > 0" name="protocolScan" style="display:none;"/>Upload</label>-->
-<!--                                            <div  *ngFor="let aFile of uploadProtocolFile"  class="label label-info" style="display: table;">-->
-<!--                                                <span>{{aFile.name}}</span> &nbsp;-->
-<!--                                                <button class="btn btn-xs btn-danger" (click)="deleteUnsavedProtocol(aFile)">-->
-<!--                                                    <i class="glyphicon glyphicon-trash"></i>-->
-<!--                                                </button>-->
-<!--                                            </div>-->
-<!--                                        </div>-->
-<!--                                        <div *ngIf="icMeeting.protocol != null">-->
-<!--                                            <div class="col-md-10">-->
-<!--                                                <file-attachment-downloader fileId="{{icMeeting.protocol?.id}}"-->
-<!--                                                                            fileName="{{icMeeting.protocol?.fileName |  slice:0:55 }}"-->
-<!--                                                                            fileType="IC_PROTOCOL">-->
-<!--                                                </file-attachment-downloader>-->
-<!--                                            </div>-->
-<!--                                            <div class="col-md-2">-->
-<!--                                                <button class="btn btn-xs pull-left"  (click)="deleteProtocol()" *ngIf="icMeeting.protocol.id > 0 && canEdit()">-->
-<!--                                                    <i class="glyphicon glyphicon-trash"></i>-->
-<!--                                                </button>-->
-<!--                                            </div>-->
-<!--                                        </div>-->
-<!--                                    </td>-->
+                                <td>
+                                    <div *ngIf="icMeeting.protocol == null && canEdit()" align="center">
+                                        <label class="btn btn-primary btn-xs " [ngClass]="icMeeting.protocol != null && icMeeting.protocol.id > 0 ? 'disabled' : ''"  for="protocol">
+                                            <input type="file" id="protocol" (change)="onFileChangeProtocol($event)" [disabled]="icMeeting.protocol != null && icMeeting.protocol.id > 0" name="protocolScan" style="display:none;"/>Upload</label>
+                                        <div  *ngFor="let aFile of uploadProtocolFile"  class="label label-info" style="display: table;">
+                                            <span>{{aFile.name}}</span> &nbsp;
+                                            <button class="btn btn-xs btn-danger" (click)="deleteUnsavedProtocol(aFile)">
+                                                <i class="glyphicon glyphicon-trash"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div *ngIf="icMeeting.protocol != null">
+                                        <div class="col-md-10">
+                                            <file-attachment-downloader fileId="{{icMeeting.protocol?.id}}"
+                                                                        fileName="{{icMeeting.protocol?.fileName |  slice:0:55 }} {{icMeeting.protocol?.fileName?.length > 55 ? '...': ''}}"
+                                                                        fileType="IC_PRTCL" mimeType="{{icMeeting.protocol?.mimeType}}">
+                                            </file-attachment-downloader>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <button class="btn btn-xs pull-left"  (click)="deleteProtocol()" *ngIf="icMeeting.protocol.id > 0 && canEdit()">
+                                                <i class="glyphicon glyphicon-trash"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </td>
                                 <td>&nbsp;</td>
                             </tr>
                             <tr>
                                 <td>3.</td>
                                 <td>Bulletin</td>
                                 <td (click)="exportBulletin()">
-                                    <img src="../../../../public/img/ms_word.png" height="25" width="25" *ngIf="icMeeting.id > 0"/>
+                                    <img *ngIf="icMeeting.id > 0 && icMeeting.bulletin == null" src="../../../../public/img/ms_word.png" height="25" width="25"/>
                                 </td>
                                 <td>
-                                    &nbsp;
+                                    <div *ngIf="icMeeting.bulletin == null && canEdit()" align="center">
+                                        <label class="btn btn-primary btn-xs " [ngClass]="icMeeting.bulletin != null && icMeeting.bulletin.id > 0 ? 'disabled' : ''"  for="bulletin">
+                                            <input type="file" id="bulletin" (change)="onFileChangeBulletin($event)" [disabled]="icMeeting.bulletin != null && icMeeting.bulletin.id > 0" name="bulletinScan" style="display:none;"/>Upload</label>
+                                        <div  *ngFor="let aFile of uploadBulletinFile"  class="label label-info" style="display: table;">
+                                            <span>{{aFile.name}}</span> &nbsp;
+                                            <button class="btn btn-xs btn-danger" (click)="deleteUnsavedBulletin(aFile)">
+                                                <i class="glyphicon glyphicon-trash"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div *ngIf="icMeeting.bulletin != null">
+                                        <div class="col-md-10">
+                                            <file-attachment-downloader fileId="{{icMeeting.bulletin?.id}}"
+                                                                        fileName="{{icMeeting.bulletin?.fileName |  slice:0:55 }} {{icMeeting.bulletin?.fileName?.length > 55 ? '...': ''}}"
+                                                                        fileType="IC_BLTN" mimeType="{{icMeeting.bulletin?.mimeType}}">
+                                            </file-attachment-downloader>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <button class="btn btn-xs pull-left"  (click)="deleteBulletin()" *ngIf="icMeeting.bulletin.id > 0 && canEdit()">
+                                                <i class="glyphicon glyphicon-trash"></i>
+                                            </button>
+                                        </div>
+                                    </div>&nbsp;
                                 </td>
                                 <td>&nbsp;</td>
                             </tr>

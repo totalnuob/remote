@@ -40,10 +40,10 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
     icList: ICMeeting[];
 
     uploadExplanatoryNoteFile = [];
-    uploadExplanatoryNoteFileUpd = [];
+    //uploadExplanatoryNoteFileUpd = [];
 
     public uploadMaterialsFiles: Array<any> = [];
-    public uploadMaterialsFilesUpd: Array<any> = [];
+    //public uploadMaterialsFilesUpd: Array<any> = [];
 
     icMeetingTopic: ICMeetingTopic;
 
@@ -64,6 +64,8 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
     departmentEmployees = [];
     availableApproveList = [];
     departmentEmployeeList = [];
+
+    icAdminEmployee;
 
     tagOptions = {
         placeholder: "+ tag",
@@ -106,12 +108,20 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
                     data2.forEach(element => {
                         this.availableApproveList.push({id: element.id, text: element.firstName + " " + element.lastName,
                                                     firstName: element.firstName, lastName: element.lastName});
+                        if(element.roles != null && element.roles.length > 0){
+                            for(var i = 0; i < element.roles.length; i++){
+                                if(element.roles[i].code === 'IC_ADMIN'){
+                                    this.icAdminEmployee = element;
+                                    break;
+                                }
+                            }
+                        }
+
                     });
                     data3.forEach(element => {
                         this.departmentEmployeeList.push({id: element.id, text: element.firstName + " " + element.lastName,
                                                     firstName: element.firstName, lastName: element.lastName});
                     });
-                    console.log(this.departmentEmployeeList);
                     data4.forEach(element => {
                         this.availableTags.push(element.name);
                     });
@@ -140,6 +150,13 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
                                 if(!this.icMeetingTopic.executor){
                                     this.icMeetingTopic.executor = new Employee();
                                 }
+                                // default approve list
+                                this.icMeetingTopic.approveList = [];
+                                if(this.icAdminEmployee != null){
+                                    this.icMeetingTopic.approveList.push({"employee": {"id": this.icAdminEmployee.id,
+                                                        "fullName":  this.icAdminEmployee.firstName + " " + this.icAdminEmployee.lastName},
+                                                        "approved": false});
+                                }
                             }
                             //console.log(this.icMeetingTopic);
                         });
@@ -150,13 +167,14 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
     getICMeetingTopic(id, successMessage, errorMessage){
         this.uploadExplanatoryNoteFile = [];
         this.uploadMaterialsFiles = [];
-        this.uploadExplanatoryNoteFileUpd = [];
-        this.uploadMaterialsFilesUpd = [];
+        //this.uploadExplanatoryNoteFileUpd = [];
+        //this.uploadMaterialsFilesUpd = [];
 
         this.busy = this.corpMeetingService.getICMeetingTopic(id)
                 .subscribe(
                     (topic: ICMeetingTopic)=> {
                         this.icMeetingTopic = topic;
+                        //console.log(this.icMeetingTopic);
                         if(!this.icMeetingTopic.icMeeting){
                             this.icMeetingTopic.icMeeting = new ICMeeting();
                         }
@@ -166,7 +184,6 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
                         if(!this.icMeetingTopic.executor){
                             this.icMeetingTopic.executor = new Employee();
                         }
-                        //console.log(this.icMeetingTopic.department);
                         if(this.icMeetingTopic.department != null && this.icMeetingTopic.department.id > 0){
                             this.employeeService.findByDepartmentAndActiveWithExecutives(this.icMeetingTopic.department.id)
                                .subscribe(
@@ -181,14 +198,14 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
                          }
 
                         // Update block
-                        if(this.icMeetingTopic != null && this.icMeetingTopic.status === 'TO BE FINALIZED'){
+                        /*if(this.icMeetingTopic != null && this.icMeetingTopic.status === 'TO BE FINALIZED'){
                             if(this.icMeetingTopic.nameUpd == null || this.icMeetingTopic.nameUpd.trim() === ''){
                                 this.icMeetingTopic.nameUpd = this.icMeetingTopic.name;
                             }
                             if(this.icMeetingTopic.decisionUpd == null || this.icMeetingTopic.decisionUpd.trim() === ''){
                                 this.icMeetingTopic.decisionUpd = this.icMeetingTopic.decision;
                             }
-                        }
+                        }*/
 
                         this.postAction(successMessage, errorMessage);
                     },
@@ -218,7 +235,7 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
         if(this.icMeetingTopic == null || this.icMeetingTopic.id == null || this.icMeetingTopic.id == 0){
             return true;
         }
-        if(this.icMeetingTopic.closed){
+        if(this.icMeetingTopic.closed || this.icMeetingTopic.deleted){
             return false;
         }
         if(this.icMeetingTopic.icMeeting != null && this.icMeetingTopic.icMeeting.closed){
@@ -227,11 +244,19 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
         if(this.icMeetingTopic.icMeeting != null && this.icMeetingTopic.icMeeting.deleted){
             return false;
         }
+
         if(this.icMeetingTopic.icMeeting != null && this.icMeetingTopic.icMeeting.lockedByDeadline){
             if(this.moduleAccessChecker.checkAccessICMeetingAdmin()){
                 return true;
             }
-            return false;
+            if(this.icMeetingTopic.status === 'TO BE FINALIZED' || this.icMeetingTopic.status === 'FINALIZED'){
+                // check deadline
+                if(this.icMeetingTopic.icMeeting.updateLockedByDeadline){
+                    return false;
+                }
+            }else{
+                return false;
+            }
         }
         var departmentId = this.icMeetingTopic != null && this.icMeetingTopic.department != null ? this.icMeetingTopic.department.id : 0;
         var accessOk = this.moduleAccessChecker.checkAccessICMeetingTopicsEdit(departmentId);
@@ -239,10 +264,13 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
     }
 
     public canDelete(){
-        if(this.icMeetingTopic.closed){
+        if(this.icMeetingTopic.closed || this.icMeetingTopic.deleted){
             return false;
         }
         if(this.icMeetingTopic.icMeeting != null && this.icMeetingTopic.icMeeting.closed){
+            return false;
+        }
+        if(this.icMeetingTopic.icMeeting != null && this.icMeetingTopic.icMeeting.deleted){
             return false;
         }
         if(this.icMeetingTopic.icMeeting != null && this.icMeetingTopic.icMeeting.lockedByDeadline){
@@ -278,39 +306,6 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
         return 'label label-default';
     }
 
-
- /*   getStatus(){
-        if(!this.icMeetingTopic.published){
-            return 'DRAFT';
-        }else if(this.icMeetingTopic.closed){
-            return 'CLOSED';
-        }else{
-
-            // Check if sent to IC
-            if(this.icMeetingTopic.icMeeting.lockedByDeadline){
-                return 'LOCKED FOR IC';
-            }
-
-            // Check if to be finalized after IC
-            if(this.icMeetingTopic.icMeeting.unlockedForFinalize){
-                return 'TO BE FINALIZED';
-            }
-
-            if(this.icMeetingTopic.approveList == null || this.icMeetingTopic.approveList.length == 0){
-                return 'READY';
-            }else{
-                for(var i = 0; i < this.icMeetingTopic.approveList.length; i++){
-                    if(!this.icMeetingTopic.approveList[i].approved){
-                        return 'UNDER REVIEW';
-                    }
-                }
-                // Approved
-                return 'APPROVED';
-            }
-        }
-    }
-*/
-
     onFileChangeMaterials(event) {
         var target = event.target || event.srcElement;
         var files = target.files;
@@ -333,7 +328,8 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
         }
         return filesList;
     }
-    getUploadFileMaterialsAsFilesUpd(){
+
+    /*getUploadFileMaterialsAsFilesUpd(){
         var filesList = [];
         if(this.uploadMaterialsFilesUpd != null && this.uploadMaterialsFilesUpd.length > 0){
             for (var i = 0; i < this.uploadMaterialsFilesUpd.length; i++) {
@@ -341,7 +337,7 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
             }
         }
         return filesList;
-    }
+    }*/
 
     onFileChangeExplanatoryNote(event) {
         var target = event.target || event.srcElement;
@@ -437,7 +433,6 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
             }
         }
 
-        //console.log(this.uploadExplanatoryNoteFile);
         if(this.icMeetingTopic.id != null && this.icMeetingTopic.id == 0){
             this.icMeetingTopic.id = null;
         }
@@ -478,13 +473,13 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
 
     }
 
-    deleteUnsavedAttachmentUpd(newFile){
+    /*deleteUnsavedAttachmentUpd(newFile){
         for(var i = this.uploadMaterialsFilesUpd.length - 1; i >= 0; i--) {
             if(this.uploadMaterialsFilesUpd[i] == newFile) {
                 this.uploadMaterialsFilesUpd.splice(i, 1);
             }
         }
-    }
+    }*/
 
     deleteUnsavedExplanatoryNote(aFile){
         for(var i = this.uploadExplanatoryNoteFile.length - 1; i >= 0; i--) {
@@ -494,13 +489,13 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
         }
     }
 
-    deleteUnsavedExplanatoryNoteUpd(aFile){
+    /*deleteUnsavedExplanatoryNoteUpd(aFile){
         for(var i = this.uploadExplanatoryNoteFileUpd.length - 1; i >= 0; i--) {
             if(this.uploadExplanatoryNoteFileUpd[i] == aFile) {
                 this.uploadExplanatoryNoteFileUpd.splice(i, 1);
             }
         }
-    }
+    }*/
 
     deleteAttachment(fileId, isUpdate){
         var confirmed = window.confirm("Are you sure want to delete");
@@ -578,7 +573,7 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
         }
     }
 
-    deleteExplanatoryNoteUpd(){
+    /*deleteExplanatoryNoteUpd(){
         var confirmed = window.confirm("Are you sure want to delete");
         if(confirmed) {
             this.corpMeetingService.deleteICMeetingTopicExplanatoryNoteUpd(this.icMeetingTopic.id)
@@ -596,7 +591,7 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
                     }
                 );
         }
-    }
+    }*/
 
     deleteICMeetingTopic(){
         if(confirm("Are you sure want to delete?")) {
@@ -737,7 +732,7 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
     }
 
     canChangeApproveStatus(approved){
-        if(this.icMeetingTopic.deleted){
+        if(this.icMeetingTopic.closed || this.icMeetingTopic.deleted){
             return false;
         }
         if(this.icMeetingTopic.icMeeting != null && this.icMeetingTopic.icMeeting.closed){
@@ -747,7 +742,16 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
             return false;
         }
         if(this.icMeetingTopic.icMeeting != null && this.icMeetingTopic.icMeeting.lockedByDeadline){
-            return false;
+            if(this.icMeetingTopic.status === 'TO BE FINALIZED' || this.icMeetingTopic.status === 'FINALIZED'){
+                // check deadline
+                if(this.icMeetingTopic.icMeeting.updateLockedByDeadline){
+                    return false;
+                }else{
+                     // OK
+                }
+            }else{
+                return false;
+            }
         }
         if(this.icMeetingTopic != null && this.icMeetingTopic.approveList != null && this.icMeetingTopic.approveList.length > 0){
             for(var i = 0; i < this.icMeetingTopic.approveList.length; i++){
@@ -803,7 +807,7 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
         }
     }
 
-    showUpdateBlock(){
+    /*showUpdateBlock(){
         if(this.icMeetingTopic != null && this.icMeetingTopic.id > 0 && this.icMeetingTopic.published){
             if(this.icMeetingTopic.icMeeting != null){
                 if(this.icMeetingTopic.icMeeting.closed || this.icMeetingTopic.status === 'TO BE FINALIZED'
@@ -813,9 +817,9 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
             }
         }
         return false;
-    }
+    }*/
 
-    canEditUpdateBlock(){
+    /*canEditUpdateBlock(){
         if(this.icMeetingTopic == null || this.icMeetingTopic.id == null || this.icMeetingTopic.id == 0){
                 return true;
         }
@@ -851,9 +855,9 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
             }
         }
         return false;
-    }
+    }*/
 
-    saveUpd(){
+    /*saveUpd(){
         //alert("TODO: saveUpd()");
         if(this.uploadMaterialsFilesUpd != null && this.uploadMaterialsFilesUpd.length > 0){
             this.icMeetingTopic.materialsUpd = this.icMeetingTopic.materialsUpd == null ? [] : this.icMeetingTopic.materialsUpd;
@@ -891,9 +895,9 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
                 }
             }
         );
-    }
+    }*/
 
-    onFileChangeMaterialsUpd(event){
+    /*onFileChangeMaterialsUpd(event){
         var target = event.target || event.srcElement;
         var files = target.files;
         this.uploadMaterialsFilesUpd.length = 0;
@@ -903,16 +907,16 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
             material.name = files[i].protocolName;
             this.uploadMaterialsFilesUpd.push(material);
         }
-    }
+    }*/
 
-    onFileChangeExplanatoryNoteUpd(event){
+    /*onFileChangeExplanatoryNoteUpd(event){
         var target = event.target || event.srcElement;
         var files = target.files;
         this.uploadExplanatoryNoteFileUpd.length = 0;
         for (var i = 0; i < files.length; i++) {
             this.uploadExplanatoryNoteFileUpd.push(files[i]);
         }
-    }
+    }*/
 
     exportApproveList(){
         var fileName = "Лист согласования";
@@ -928,6 +932,10 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
                         this.postAction(null, "Error exporting topic approve list");
                     }
                 );
+    }
+    autoAddedApproveListMember(item){
+        return (this.icMeetingTopic.id == null || this.icMeetingTopic.id == 0) && this.icAdminEmployee != null &&
+                item.employee != null && item.employee.id == this.icAdminEmployee.id;
     }
 
 }

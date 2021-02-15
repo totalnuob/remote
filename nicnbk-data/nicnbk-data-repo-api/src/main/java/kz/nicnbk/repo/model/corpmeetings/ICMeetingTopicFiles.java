@@ -15,12 +15,12 @@ public class ICMeetingTopicFiles extends BaseEntity {
     private ICMeetingTopic icMeetingTopic;
     private Files file;
     private String customName;
-    private boolean update;
+    //private boolean update;
     private Integer topicOrder;
 
     public ICMeetingTopicFiles(){}
 
-    public ICMeetingTopicFiles(Long icMeetingTopicId, Long fileId, String customName, boolean update){
+    public ICMeetingTopicFiles(Long icMeetingTopicId, Long fileId, String customName/*, boolean update*/){
         ICMeetingTopic icMeetingTopic = new ICMeetingTopic();
         icMeetingTopic.setId(icMeetingTopicId);
         Files file = new Files();
@@ -28,7 +28,7 @@ public class ICMeetingTopicFiles extends BaseEntity {
         this.icMeetingTopic = icMeetingTopic;
         this.file = file;
         this.customName = customName;
-        this.update = update;
+        //this.update = update;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -60,14 +60,14 @@ public class ICMeetingTopicFiles extends BaseEntity {
         this.customName = customName;
     }
 
-    @Column(name="update", nullable = false)
-    public boolean isUpdate() {
-        return update;
-    }
-
-    public void setUpdate(boolean update) {
-        this.update = update;
-    }
+//    @Column(name="update", nullable = false)
+//    public boolean isUpdate() {
+//        return update;
+//    }
+//
+//    public void setUpdate(boolean update) {
+//        this.update = update;
+//    }
 
     public Integer getTopicOrder() {
         return topicOrder;

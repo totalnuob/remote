@@ -65,6 +65,7 @@ export class CorpMeetingICEditComponent extends CommonFormViewComponent implemen
 
     uploadAgendaFile = [];
     uploadProtocolFile = [];
+    uploadBulletinFile = [];
 
     //icMeetingTopicTypes: BaseDictionary[];
 
@@ -282,18 +283,24 @@ export class CorpMeetingICEditComponent extends CommonFormViewComponent implemen
             }
         }
 
-        console.log(this.icMeeting);
-        this.busy = this.corpMeetingService.saveICMeeting(this.icMeeting, this.uploadAgendaFile)
+        //console.log(this.uploadAgendaFile);
+        this.busy = this.corpMeetingService.saveICMeeting(this.icMeeting,
+                                      (this.uploadAgendaFile != null && this.uploadAgendaFile.length > 0 ? this.uploadAgendaFile[0]: null),
+                                      (this.uploadProtocolFile != null && this.uploadProtocolFile.length > 0 ? this.uploadProtocolFile[0]: null),
+                                      (this.uploadBulletinFile != null && this.uploadBulletinFile.length > 0 ? this.uploadBulletinFile[0]: null))
             .subscribe(
                 (response: SaveResponse)  => {
-                    this.icMeeting.id = response.entityId;
-                    this.postAction("Successfully saved IC meeting.", null);
+                    this.uploadAgendaFile = [];
+                    this.uploadProtocolFile = [];
+                    this.uploadBulletinFile = [];
+                    this.getICMeeting(response.entityId, "Successfully saved IC meeting.", null);
                 },
                 (error: ErrorResponse) => {
                     this.postAction(null, error.message != null ? error.message : "Failed to save IC Meeting");
                 }
             );
     }
+
     getICMeetingTopicClassByStatus(topic){
         if(topic.status != null){
             if(topic.status === 'DRAFT'){
@@ -394,11 +401,11 @@ export class CorpMeetingICEditComponent extends CommonFormViewComponent implemen
             fileName, 'POST')
             .subscribe(
                 response  => {
-                    //console.log("export protocol response ok");
+                    //console.log("export bulletin response ok");
                 },
                 error => {
                     //console.log("fails")
-                    this.postAction(null, "Error exporting protocol");
+                    this.postAction(null, "Error exporting bulletin");
                 }
             );
     }
@@ -421,6 +428,15 @@ export class CorpMeetingICEditComponent extends CommonFormViewComponent implemen
         }
     }
 
+    onFileChangeBulletin(event){
+            var target = event.target || event.srcElement;
+            var files = target.files;
+            this.uploadBulletinFile.length = 0;
+            for (var i = 0; i < files.length; i++) {
+                this.uploadBulletinFile.push(files[i]);
+            }
+        }
+
     deleteUnsavedAgenda(aFile){
         for(var i = this.uploadAgendaFile.length - 1; i >= 0; i--) {
             if(this.uploadAgendaFile[i] == aFile) {
@@ -435,9 +451,15 @@ export class CorpMeetingICEditComponent extends CommonFormViewComponent implemen
             }
         }
     }
-
+    deleteUnsavedBulletin(aFile){
+        for(var i = this.uploadBulletinFile.length - 1; i >= 0; i--) {
+            if(this.uploadBulletinFile[i] == aFile) {
+                this.uploadBulletinFile.splice(i, 1);
+            }
+        }
+    }
     deleteAgenda(){
-        if(confirm("Are you sure want to delete");) {
+        if(confirm("Are you sure want to delete")) {
             this.busy = this.corpMeetingService.deleteICMeetingAgenda(this.icMeeting.id)
                 .subscribe(
                     response => {
@@ -455,15 +477,33 @@ export class CorpMeetingICEditComponent extends CommonFormViewComponent implemen
         }
     }
     deleteProtocol(){
-        if(confirm("Are you sure want to delete");) {
+        if(confirm("Are you sure want to delete")) {
             this.busy = this.corpMeetingService.deleteICMeetingProtocol(this.icMeeting.id)
                 .subscribe(
                     response => {
-                        this.icMeeting.agenda = null;
+                        this.icMeeting.protocol = null;
                         this.postAction("IC Meeting Protocol deleted.", null);
                     },
                     (error: ErrorResponse) => {
                         this.errorMessage = "Error deleting IC Meeting Protocol";
+                        if(error && !error.isEmpty()){
+                            this.processErrorMessage(error);
+                        }
+                        this.postAction(null, null);
+                    }
+                );
+        }
+    }
+    deleteBulletin(){
+        if(confirm("Are you sure want to delete")) {
+            this.busy = this.corpMeetingService.deleteICMeetingBulletin(this.icMeeting.id)
+                .subscribe(
+                    response => {
+                        this.icMeeting.bulletin = null;
+                        this.postAction("IC Meeting Bulletin deleted.", null);
+                    },
+                    (error: ErrorResponse) => {
+                        this.errorMessage = "Error deleting IC Meeting Bulletin";
                         if(error && !error.isEmpty()){
                             this.processErrorMessage(error);
                         }

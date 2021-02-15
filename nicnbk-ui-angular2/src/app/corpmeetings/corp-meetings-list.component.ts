@@ -21,6 +21,7 @@ import {SaveResponse} from "../common/save-response";
 import {ICMeetingSearchParams} from "./model/ic-meeting-search-params";
 import {ICMeetingTopicSearchParams} from "./model/ic-meeting-topic-search-params";
 import {ICMeetingTopicSearchResults} from "./model/ic-meeting-topic-search-results";
+import {DATA_APP_URL} from "../common/common.service.constants";
 
 import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/observable/forkJoin';
@@ -616,4 +617,22 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
             return 'OPEN';
         }
     }*/
+
+
+    exportRegistry(){
+        var fileName = "Журнал регистрации рещений протолколов Инвесткома";
+        //fileName = fileName.replace(".", ",");
+        this.busy = this.corpMeetingService.makeFileRequest(DATA_APP_URL + `corpMeetings/ICMeeting/exportProtocolRegistry`,
+            fileName, 'POST')
+            .subscribe(
+                response  => {
+                    console.log("export protocol registry response ok");
+                },
+                error => {
+                    //console.log("fails")
+                    this.postAction(null, "Error exporting protocol registry");
+                }
+            );
+    }
+
 }

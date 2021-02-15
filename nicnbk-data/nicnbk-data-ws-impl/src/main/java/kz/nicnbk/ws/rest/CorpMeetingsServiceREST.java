@@ -141,7 +141,8 @@ public class CorpMeetingsServiceREST extends CommonServiceREST{
             consumes = { MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE })
     public ResponseEntity<?> saveICMeetingTopic(
             @RequestPart("data") String data,
-            @RequestPart(name="file", required=false) MultipartFile[] files, @RequestPart(name="exp_note", required=false) MultipartFile explanatoryNotes
+            @RequestPart(name="file", required=false) MultipartFile[] files,
+            @RequestPart(name="exp_note", required=false) MultipartFile explanatoryNotes
     ) {
 
         String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
@@ -166,35 +167,35 @@ public class CorpMeetingsServiceREST extends CommonServiceREST{
 //        }
     }
 
-    @PreAuthorize(IC_MEETING_TOPIC_EDITOR)
-    @RequestMapping(value = "/ICMeetingTopic/saveUpdate", method = RequestMethod.POST,
-            consumes = { MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE })
-    public ResponseEntity<?> saveICMeetingTopicUpdate(
-            @RequestPart("data") String data,
-            @RequestPart(name="file", required=false) MultipartFile[] files, @RequestPart(name="exp_note", required=false) MultipartFile explanatoryNotes
-    ) {
-
-        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
-        String username = this.tokenService.decode(token).getUsername();
-
-        // Deserialize string to object
-        SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
-        ObjectMapper objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        objectMapper.setDateFormat(df);
-        try {
-            ICMeetingTopicUpdateDto updateDto = objectMapper.readValue(data, ICMeetingTopicUpdateDto.class);
-            List<FilesDto> filesDtoSet = files != null ? buildFilesListDtoFromMultipart(files, FileTypeLookup.IC_MATERIALS.getCode()) : null;
-            FilesDto explanatoryNote = explanatoryNotes != null ? buildFilesDtoFromMultipart(explanatoryNotes, FileTypeLookup.IC_EXPLANATORY_NOTE.getCode()) : null;
-            EntitySaveResponseDto saveResponseDto = this.corpMeetingService.saveICMeetingTopicUpdate(updateDto, explanatoryNote, filesDtoSet, username);
-            return buildEntitySaveResponse(saveResponseDto);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return buildEntitySaveResponseEntity(false);
-//        if(!this.corpMeetingService.checkUserRolesForICMeetingTopicByTypeAndUsername(dto.getType(), username, true)){
-//            return buildUnauthorizedResponse();
+//    @PreAuthorize(IC_MEETING_TOPIC_EDITOR)
+//    @RequestMapping(value = "/ICMeetingTopic/saveUpdate", method = RequestMethod.POST,
+//            consumes = { MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE })
+//    public ResponseEntity<?> saveICMeetingTopicUpdate(
+//            @RequestPart("data") String data,
+//            @RequestPart(name="file", required=false) MultipartFile[] files, @RequestPart(name="exp_note", required=false) MultipartFile explanatoryNotes
+//    ) {
+//
+//        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+//        String username = this.tokenService.decode(token).getUsername();
+//
+//        // Deserialize string to object
+//        SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
+//        ObjectMapper objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+//        objectMapper.setDateFormat(df);
+//        try {
+//            ICMeetingTopicUpdateDto updateDto = objectMapper.readValue(data, ICMeetingTopicUpdateDto.class);
+//            List<FilesDto> filesDtoSet = files != null ? buildFilesListDtoFromMultipart(files, FileTypeLookup.IC_MATERIALS.getCode()) : null;
+//            FilesDto explanatoryNote = explanatoryNotes != null ? buildFilesDtoFromMultipart(explanatoryNotes, FileTypeLookup.IC_EXPLANATORY_NOTE.getCode()) : null;
+//            EntitySaveResponseDto saveResponseDto = this.corpMeetingService.saveICMeetingTopicUpdate(updateDto, explanatoryNote, filesDtoSet, username);
+//            return buildEntitySaveResponse(saveResponseDto);
+//        } catch (IOException e) {
+//            e.printStackTrace();
 //        }
-    }
+//        return buildEntitySaveResponseEntity(false);
+////        if(!this.corpMeetingService.checkUserRolesForICMeetingTopicByTypeAndUsername(dto.getType(), username, true)){
+////            return buildUnauthorizedResponse();
+////        }
+//    }
 
     @PreAuthorize(IC_MEETING_TOPIC_APPROVAL)
     @RequestMapping(value = "/ICMeetingTopic/approve/{id}", method = RequestMethod.POST)
@@ -288,16 +289,16 @@ public class CorpMeetingsServiceREST extends CommonServiceREST{
         return buildDeleteResponseEntity(deleted);
     }
 
-    @PreAuthorize(IC_MEETING_TOPIC_EDITOR)
-    @ResponseBody
-    @RequestMapping(value="/explanatoryNoteUpd/delete/{topicId}", method=RequestMethod.DELETE)
-    public ResponseEntity<?> safeDeleteExplanatoryNoteUpdFile(@PathVariable(value="topicId") Long topicId){
-        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
-        String username = this.tokenService.decode(token).getUsername();
-
-        boolean deleted = this.corpMeetingService.deleteICMeetingTopicExplanatoryNoteUpd(topicId, username);
-        return buildDeleteResponseEntity(deleted);
-    }
+//    @PreAuthorize(IC_MEETING_TOPIC_EDITOR)
+//    @ResponseBody
+//    @RequestMapping(value="/explanatoryNoteUpd/delete/{topicId}", method=RequestMethod.DELETE)
+//    public ResponseEntity<?> safeDeleteExplanatoryNoteUpdFile(@PathVariable(value="topicId") Long topicId){
+//        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+//        String username = this.tokenService.decode(token).getUsername();
+//
+//        boolean deleted = this.corpMeetingService.deleteICMeetingTopicExplanatoryNoteUpd(topicId, username);
+//        return buildDeleteResponseEntity(deleted);
+//    }
 
 
     /* IC MEETING *****************************************************************************************************/
@@ -305,7 +306,9 @@ public class CorpMeetingsServiceREST extends CommonServiceREST{
     @RequestMapping(value = "/ICMeeting/save", method = RequestMethod.POST,
             consumes = { MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE })
     public ResponseEntity<?> saveICMeeting(@RequestPart(name="data") String data,
-                                           @RequestPart(name="file", required=false) MultipartFile file) {
+                                           @RequestPart(name="agenda", required=false) MultipartFile agendaFile,
+                                           @RequestPart(name="protocol", required=false) MultipartFile protocolFile,
+                                           @RequestPart(name="bulletin", required=false) MultipartFile bulletinFile) {
 
         String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
         String username = this.tokenService.decode(token).getUsername();
@@ -316,8 +319,11 @@ public class CorpMeetingsServiceREST extends CommonServiceREST{
         objectMapper.setDateFormat(df);
         try {
             ICMeetingDto icMeetingDto = objectMapper.readValue(data, ICMeetingDto.class);
-            FilesDto filesDto = file != null ? buildFilesDtoFromMultipart(file, FileTypeLookup.IC_AGENDA.getCode()) : null;
-            EntitySaveResponseDto saveResponseDto = this.corpMeetingService.saveICMeeting(icMeetingDto, filesDto, username);
+            FilesDto agendaFileDto = agendaFile != null ? buildFilesDtoFromMultipart(agendaFile, FileTypeLookup.IC_AGENDA.getCode()) : null;
+            FilesDto protocolFileDto = protocolFile != null ? buildFilesDtoFromMultipart(protocolFile, FileTypeLookup.IC_PROTOCOL.getCode()) : null;
+            FilesDto bulletinFileDto = bulletinFile != null ? buildFilesDtoFromMultipart(bulletinFile, FileTypeLookup.IC_BULLETIN.getCode()) : null;
+            EntitySaveResponseDto saveResponseDto = this.corpMeetingService.saveICMeeting(icMeetingDto, agendaFileDto,
+                    protocolFileDto, bulletinFileDto, username);
             return buildEntitySaveResponse(saveResponseDto);
         } catch (IOException e) {
             e.printStackTrace();
@@ -325,7 +331,7 @@ public class CorpMeetingsServiceREST extends CommonServiceREST{
         return buildEntitySaveResponseEntity(false);
     }
 
-    @PreAuthorize(IC_MEETING_EDITOR)
+    @PreAuthorize(IC_MEETING_ADMIN)
     @ResponseBody
     @RequestMapping(value="/ICMeeting/agenda/delete/{icMeetingId}", method=RequestMethod.DELETE)
     public ResponseEntity<?> safeDeleteICMeetingAgendaFile(@PathVariable(value="icMeetingId") Long icMeetingId){
@@ -333,6 +339,28 @@ public class CorpMeetingsServiceREST extends CommonServiceREST{
         String username = this.tokenService.decode(token).getUsername();
 
         boolean deleted = this.corpMeetingService.deleteICMeetingAgenda(icMeetingId, username);
+        return buildDeleteResponseEntity(deleted);
+    }
+
+    @PreAuthorize(IC_MEETING_ADMIN)
+    @ResponseBody
+    @RequestMapping(value="/ICMeeting/protocol/delete/{icMeetingId}", method=RequestMethod.DELETE)
+    public ResponseEntity<?> safeDeleteICMeetingProtocolFile(@PathVariable(value="icMeetingId") Long icMeetingId){
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
+
+        boolean deleted = this.corpMeetingService.deleteICMeetingProtocol(icMeetingId, username);
+        return buildDeleteResponseEntity(deleted);
+    }
+
+    @PreAuthorize(IC_MEETING_ADMIN)
+    @ResponseBody
+    @RequestMapping(value="/ICMeeting/bulletin/delete/{icMeetingId}", method=RequestMethod.DELETE)
+    public ResponseEntity<?> safeDeleteICMeetingBulletinFile(@PathVariable(value="icMeetingId") Long icMeetingId){
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
+
+        boolean deleted = this.corpMeetingService.deleteICMeetingBulletin(icMeetingId, username);
         return buildDeleteResponseEntity(deleted);
     }
 
@@ -349,7 +377,7 @@ public class CorpMeetingsServiceREST extends CommonServiceREST{
         String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
         String username = this.tokenService.decode(token).getUsername();
 
-        ICMeetingDto icMeetingDto = corpMeetingService.getICMeeting(id, username);
+        ICMeetingDto icMeetingDto = corpMeetingService.getICMeeting(id);
         return buildNonNullResponse(icMeetingDto);
     }
 
@@ -391,6 +419,56 @@ public class CorpMeetingsServiceREST extends CommonServiceREST{
 
         boolean deleted = this.corpMeetingService.safeDeleteICMeeting(id, username);
         return buildDeleteResponseEntity(deleted);
+    }
+
+    @PreAuthorize(IC_MEETING_VIEWER)
+    @RequestMapping(value="/ICMeeting/exportProtocolRegistry", method= RequestMethod.GET)
+    @ResponseBody
+    public void exportICMeetingAgenda(HttpServletResponse response) {
+
+        // TODO: control file download by user role
+        // TODO: Check rights
+
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
+
+        FilesDto filesDto = null;
+        try{
+            filesDto = this.corpMeetingService.getICMeetingProtocolRegistryFileStream(username);
+        }catch (IllegalStateException ex){
+            filesDto = null;
+        }
+
+        if(filesDto == null || filesDto.getInputStream() == null){
+            try {
+                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                return;
+            } catch (IOException e) {
+                return;
+            }
+        }
+
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        try {
+            //fileName = URLEncoder.encode(fileName, "UTF-8");
+            //fileName = URLDecoder.decode(fileName, "ISO8859_1");
+            //response.setHeader("Content-disposition", "attachment; filename=\""+ fileName + "\"");
+            response.setHeader("Content-disposition", "attachment;");
+            org.apache.commons.io.IOUtils.copy(filesDto.getInputStream(), response.getOutputStream());
+            response.flushBuffer();
+        } catch (UnsupportedEncodingException e) {
+            logger.error("(IC Meeting) File export (protocol registry) request failed: unsupported encoding", e);
+        } catch (IOException e) {
+            logger.error("(IC Meeting) File export (protocol registry) request failed: io exception", e);
+        } catch (Exception e){
+            logger.error("(IC Meeting) File export (protocol registry) request failed", e);
+        }
+        try {
+            filesDto.getInputStream().close();
+            new File(filesDto.getFileName()).delete();
+        } catch (IOException e) {
+            logger.error("(IC Meeting) File export (protocol registry): failed to close input stream", e);
+        }
     }
 
     @PreAuthorize(IC_MEETING_VIEWER)

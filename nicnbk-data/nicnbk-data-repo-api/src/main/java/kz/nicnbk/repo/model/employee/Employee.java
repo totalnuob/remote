@@ -36,6 +36,7 @@ public class Employee extends BaseEntity {
 
     private Boolean mfaEnabled;
     private String secret;
+    private String email;
 
     public Employee(){}
 
@@ -84,6 +85,11 @@ public class Employee extends BaseEntity {
         return username;
     }
 
+    @Column(name = "email", unique = true)
+    public String getEmail() {
+        return email;
+    }
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "position_id")
     public Position getPosition() {
@@ -96,6 +102,10 @@ public class Employee extends BaseEntity {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     @Column(name="password", length = 512)

@@ -18,6 +18,7 @@ public class EmployeeDto extends BaseEntityDto<Employee> {
     private String patronymic;
     private Date birthDate;
     private PositionDto position;
+    private String email;
 
     private String lastNameRu;
     private String firstNameRu;
@@ -93,6 +94,14 @@ public class EmployeeDto extends BaseEntityDto<Employee> {
 
     public void setPosition(PositionDto position) {
         this.position = position;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public Boolean getMfaEnabled() {

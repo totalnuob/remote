@@ -30,6 +30,8 @@ export class CorpMeetingService extends CommonService {
     private MEETING_EXPLANATORY_NOTE_UPD_DELETE_URL = this.CORP_MEETINGS_BASE_URL + "explanatoryNoteUpd/delete/";
 
     private IC_MEETING_AGENDA_DELETE_URL = this.CORP_MEETINGS_BASE_URL + "ICMeeting/agenda/delete/";
+    private IC_MEETING_PROTOCOL_DELETE_URL = this.CORP_MEETINGS_BASE_URL + "ICMeeting/protocol/delete/";
+    private IC_MEETING_BULLETIN_DELETE_URL = this.CORP_MEETINGS_BASE_URL + "ICMeeting/bulletin/delete/";
     private IC_MEETING_UNLOCK_FOR_FINALIZE_URL = this.CORP_MEETINGS_BASE_URL + "ICMeeting/unlockForFinalize/";
     private IC_MEETING_VOTE_URL = this.CORP_MEETINGS_BASE_URL + "ICMeeting/vote/";
 
@@ -153,13 +155,9 @@ export class CorpMeetingService extends CommonService {
                                                         exp_notes, 'exp_note');
     }
 
-    saveICMeeting(entity, files): Observable<any>{
-        //let body = JSON.stringify(entity);
-        //return this.http.post(this.IC_MEETING_SAVE_URL, body, this.getOptionsWithCredentials())
-        //    .map(this.extractData)
-        //    .catch(this.handleErrorResponse);
-        return this.uploadService.postJsonWithFiles(this.IC_MEETING_SAVE_URL, [], entity, files, 'file',
-                                                                null, null);
+    saveICMeeting(entity, agendaFile, protocolFile, bulletinFile): Observable<any>{
+        return this.uploadService.postJsonWithFiles_(this.IC_MEETING_SAVE_URL, [], entity,
+                                                        [agendaFile, protocolFile, bulletinFile], ['agenda','protocol', 'bulletin']);
     }
 
     postFiles(meetingId, params, files){
@@ -247,6 +245,18 @@ export class CorpMeetingService extends CommonService {
 
     deleteICMeetingAgenda(icMeetingId): Observable<any> {
         return this.http.delete(this.IC_MEETING_AGENDA_DELETE_URL + icMeetingId, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+    deleteICMeetingProtocol(icMeetingId): Observable<any> {
+        return this.http.delete(this.IC_MEETING_PROTOCOL_DELETE_URL + icMeetingId, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+    deleteICMeetingBulletin(icMeetingId): Observable<any> {
+        return this.http.delete(this.IC_MEETING_BULLETIN_DELETE_URL + icMeetingId, this.getOptionsWithCredentials())
             .map(this.extractData)
             .catch(this.handleErrorResponse);
     }

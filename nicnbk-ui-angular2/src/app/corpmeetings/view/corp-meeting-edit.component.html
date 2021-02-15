@@ -95,7 +95,7 @@
                                                             <file-attachment-downloader fileId="{{icMeetingTopic.explanatoryNote?.id}}"
                                                                                         fileName="{{(icMeetingTopic.explanatoryNote?.fileName |  slice:0:55) +
                                                                                         (icMeetingTopic.explanatoryNote?.fileName?.length > 55 ? '...' : '')}}"
-                                                                                        fileType="IC_EXPNOTE"
+                                                                                        fileType="IC_EXPNOTE" mimeType="{{icMeetingTopic.explanatoryNote?.mimeType}}"
                                                                                         showIcon="true">
                                                             </file-attachment-downloader>
                                                             </div>
@@ -220,7 +220,7 @@
                                             <td width="35%">
                                                 <file-attachment-downloader fileId="{{attachment.file.id}}"
                                                                             displayFileName="{{(j + 1) + '. ' + attachment?.file?.fileName | slice:0:60}} ..."
-                                                                            fileName="{{attachment?.file?.fileName}}"
+                                                                            fileName="{{attachment?.file?.fileName}}" mimeType="{{attachment?.file?.mimeType}}"
                                                                             fileType="IC_MATRL" showIcon="true">
                                                 </file-attachment-downloader>
                                             </td>
@@ -229,7 +229,7 @@
                                             </td>
                                             <td width="10%">&nbsp;
                                                 <small>
-                                                    <span style="cursor: pointer" (click)="deleteAttachment(attachment.file.id, false)" *ngIf="canEdit() || canEditUpdateBlock()">
+                                                    <span style="cursor: pointer" (click)="deleteAttachment(attachment.file.id, false)" *ngIf="canEdit()">
                                                         <i class="glyphicon glyphicon-trash"></i>
                                                     </span>
                                                 </small>
@@ -257,6 +257,9 @@
                                                     <span *ngIf="item.approved" class="glyphicon glyphicon-ok-circle" style="color: green"></span>
                                                     <span *ngIf="!item.approved"class="glyphicon glyphicon-hourglass" style="color: grey"></span>
                                                     {{item.employee.fullName != null ? item.employee.fullName : (item.employee.firstName + ' ' + item.employee.lastName)}}
+                                                    <span *ngIf="autoAddedApproveListMember(item)">
+                                                        <small><i>(auto-added, can be removed)</i></small>
+                                                    </span>
                                                 </div>
                                             </div>
                                         </div>
@@ -292,7 +295,6 @@
                                 <button *ngIf="canDelete() && icMeetingTopic != null && icMeetingTopic.id != null" type="button" class="btn btn-danger pull-left" (click)="deleteICMeetingTopic()">Delete</button>
 
                                 <button *ngIf="canEdit()" type="submit" class="btn btn-success pull-right" (click)="save()" >Save</button>
-<!--                                <button  *ngIf="canEdit() && icMeetingTopic.published" type="submit" class="btn btn-success pull-right" (click)="save(true)" name="saveCorpMeeting">Save & Publish</button>-->
                             </div>
                         </div>
                         <div class="row top-buffer">
@@ -305,135 +307,136 @@
                         <button class="btn btn-success pull-right" (click)="approve()" *ngIf="canApprove()">Approve</button>
                         <button class="btn btn-danger pull-right" (click)="cancelApprove()" *ngIf="canCancelApprove()">Dis-approve</button>
                     </div>
+
                 </form>
             </div>
-            <div *ngIf="showUpdateBlock()" class="jumbotron col-md-12" style="padding-top: 5px; padding-bottom: 5px;">
-                <fieldset [disabled]="!canEditUpdateBlock()"> {{canEditUpdateBlock()}}
-                    <div class="row">
-                        <div class="col-md-12 form-group form-horizontal">
-                            <label class="control-label col-md-1" for="questionNameUpd">Updated Name:</label>
-                            <div class="col-md-11">
-                                        <textarea fz-elastic type="text" id="questionNameUpd" class="form-control"
-                                                  name="questionNameUpd" [(ngModel)]="icMeetingTopic.nameUpd"></textarea>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12 form-group form-horizontal">
-                            <label class="control-label col-md-1" for="decisionUpd">Updated Decision:</label>
-                            <div class="col-md-11">
-                                        <textarea fz-elastic type="text" id="decisionUpd" class="form-control"
-                                                  name="decisionUpd" [(ngModel)]="icMeetingTopic.decisionUpd"></textarea>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row withpadding">
-                        <div class="jumbotron col-md-7" style="padding-top: 5px; padding-bottom: 5px;">
-                            <div class="row">
-                                <span>ADDITIONAL MATERIALS</span>
-                                <label class="btn btn-primary btn-xs" for="attachmentFileUpd" *ngIf="canEditUpdateBlock()">
-                                    <input type="file" id="attachmentFileUpd" (change)="onFileChangeMaterialsUpd($event)" name="fileUpd" multiple style="display:none;"/>Upload
-                                </label>
-                            </div>
-                            <div class="row">
-                                <table style="width: 100%; table-layout: fixed;" >
-                                    <tr *ngFor="let newFile of uploadMaterialsFilesUpd; let j = index" [attr.data-index]="j">
-                                        <td>
-                                            <span class="label label-info ">
-                                                {{newFile.file.name | slice:0:30 }} &nbsp;
-                                                {{newFile?.file?.name?.length > 30 ? '...' : ''}}
-                                            </span> &nbsp;
-                                            <button class="btn btn-xs"  (click)="deleteUnsavedAttachmentUpd(newFile)">
-                                                <i class="glyphicon glyphicon-trash"></i>
-                                            </button>
-                                        </td>
-                                        <td>
-                                            <input class="form-control" [attr.id]="'material_file_upd_' + j" type="text" placeholder="name for protocol..." style="width: 100%"
-                                                   [(ngModel)]="newFile.name" [ngModelOptions]="{standalone: true}"/>
-                                        </td>
-                                    </tr>
-                                </table>
-                            </div>
-                            <br/>
-                            <div class="row">
-                                <table style="width: 100%; table-layout: fixed;" >
-                                    <tr *ngFor="let attachment of icMeetingTopic?.materialsUpd; let j = index" [attr.data-index]="j">
-                                        <td width="45%">
-                                            <file-attachment-downloader fileId="{{attachment.file.id}}"
-                                                                        displayFileName="{{(j + 1) + '. ' + attachment?.file?.fileName | slice:0:40}}
-                                                                        {{attachment?.file?.fileName?.length > 40 ? '...' : ''}}"
-                                                                        fileName="{{attachment?.file?.fileName}}"
-                                                                        fileType="IC_MATRL" showIcon="true">
-                                            </file-attachment-downloader>
-                                        </td>
-                                        <td width="45%">
-                                            <input class="form-control" type="text" style="width: 100%" [(ngModel)]="attachment.name" [ngModelOptions]="{standalone: true}"/>
-                                        </td>
-                                        <td width="10%">&nbsp;
-                                            <button class="btn btn-xs" (click)="deleteAttachment(attachment.file.id, true)" *ngIf="canEditUpdateBlock()">
-                                                <i class="glyphicon glyphicon-trash"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                </table>
-                            </div>
-                        </div>
-                        <div class="jumbotron col-md-5" style="padding-top: 5px; padding-bottom: 5px;">
-                            <div class="row">
-                                <span>Explanatory Note UPD:</span>
-                                <label class="btn btn-primary btn-xs"  *ngIf="canEditUpdateBlock()" [ngClass]="icMeetingTopic.explanatoryNoteUpd != null && icMeetingTopic.explanatoryNoteUpd.id > 0 ? 'disabled' : ''"  for="explanatoryNoteFileUpd">
-                                    <input type="file" id="explanatoryNoteFileUpd" (change)="onFileChangeExplanatoryNoteUpd($event)" [disabled]="icMeetingTopic.explanatoryNoteUpd != null && icMeetingTopic.explanatoryNoteUpd.id > 0" name="explanatoryNoteFileUpd" style="display:none;"/>Upload
-                                </label>
-                            </div>
-                            <div class="row">
-                                <table style="width: 100%; table-layout: fixed;" >
-                                    <tr *ngFor="let newFile of uploadExplanatoryNoteFileUpd; let j = index" [attr.data-index]="j">
-                                        <td>
-                                            <span class="label label-info ">
-                                                {{newFile.name | slice:0:30 }} &nbsp;
-                                                {{newFile?.name?.length > 30 ? '...' : ''}}
-                                            </span>&nbsp;
-                                            <button class="btn btn-xs"  (click)="deleteUnsavedExplanatoryNoteUpd(newFile)">
-                                                <i class="glyphicon glyphicon-trash"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                </table>
-                            </div>
-                            <div class="row">
-                                <br/>
-                                <table style="width: 100%; table-layout: fixed;" >
-                                    <tr *ngIf="icMeetingTopic.explanatoryNoteUpd != null">
-                                        <td width="90%">
-                                            <file-attachment-downloader fileId="{{icMeetingTopic.explanatoryNoteUpd.id}}"
-                                                                        displayFileName="{{icMeetingTopic.explanatoryNoteUpd.fileName | slice:0:40}}
-                                                                    {{icMeetingTopic.explanatoryNoteUpd.fileName?.length > 40 ? '...' : ''}}"
-                                                                        fileName="{{icMeetingTopic.explanatoryNoteUpd.fileName}}"
-                                                                        fileType="IC_EXPNOTE" showIcon="true">
-                                            </file-attachment-downloader>
-                                        </td>
-                                        <td width="10%">&nbsp;
-                                            <button class="btn btn-xs" (click)="deleteExplanatoryNoteUpd()" *ngIf="icMeetingTopic.explanatoryNoteUpd.id > 0 && canEditUpdateBlock()">
-                                                <i class="glyphicon glyphicon-trash"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <label class="checkbox pull-right">
-                            <input type="checkbox" [checked]="icMeetingTopic.publishedUpd" id="publishedUpdCheckbox">update is final
-                        </label>
-                    </div>
-                    <div class="row top-buffer">
-                        <div class="col-md-12">
-                            <button  *ngIf="canEditUpdateBlock()" type="button" class="btn btn-success pull-right" (click)="saveUpd()" >Save Update</button>
-                        </div>
-                    </div>
-                </fieldset>
-            </div>
+<!--            <div *ngIf="showUpdateBlock()" class="jumbotron col-md-12" style="padding-top: 5px; padding-bottom: 5px;">-->
+<!--                <fieldset [disabled]="!canEditUpdateBlock()"> {{canEditUpdateBlock()}}-->
+<!--                    <div class="row">-->
+<!--                        <div class="col-md-12 form-group form-horizontal">-->
+<!--                            <label class="control-label col-md-1" for="questionNameUpd">Updated Name:</label>-->
+<!--                            <div class="col-md-11">-->
+<!--                                        <textarea fz-elastic type="text" id="questionNameUpd" class="form-control"-->
+<!--                                                  name="questionNameUpd" [(ngModel)]="icMeetingTopic.nameUpd"></textarea>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                    <div class="row">-->
+<!--                        <div class="col-md-12 form-group form-horizontal">-->
+<!--                            <label class="control-label col-md-1" for="decisionUpd">Updated Decision:</label>-->
+<!--                            <div class="col-md-11">-->
+<!--                                        <textarea fz-elastic type="text" id="decisionUpd" class="form-control"-->
+<!--                                                  name="decisionUpd" [(ngModel)]="icMeetingTopic.decisionUpd"></textarea>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                    <div class="row withpadding">-->
+<!--                        <div class="jumbotron col-md-7" style="padding-top: 5px; padding-bottom: 5px;">-->
+<!--                            <div class="row">-->
+<!--                                <span>ADDITIONAL MATERIALS</span>-->
+<!--                                <label class="btn btn-primary btn-xs" for="attachmentFileUpd" *ngIf="canEditUpdateBlock()">-->
+<!--                                    <input type="file" id="attachmentFileUpd" (change)="onFileChangeMaterialsUpd($event)" name="fileUpd" multiple style="display:none;"/>Upload-->
+<!--                                </label>-->
+<!--                            </div>-->
+<!--                            <div class="row">-->
+<!--                                <table style="width: 100%; table-layout: fixed;" >-->
+<!--                                    <tr *ngFor="let newFile of uploadMaterialsFilesUpd; let j = index" [attr.data-index]="j">-->
+<!--                                        <td>-->
+<!--                                            <span class="label label-info ">-->
+<!--                                                {{newFile.file.name | slice:0:30 }} &nbsp;-->
+<!--                                                {{newFile?.file?.name?.length > 30 ? '...' : ''}}-->
+<!--                                            </span> &nbsp;-->
+<!--                                            <button class="btn btn-xs"  (click)="deleteUnsavedAttachmentUpd(newFile)">-->
+<!--                                                <i class="glyphicon glyphicon-trash"></i>-->
+<!--                                            </button>-->
+<!--                                        </td>-->
+<!--                                        <td>-->
+<!--                                            <input class="form-control" [attr.id]="'material_file_upd_' + j" type="text" placeholder="name for protocol..." style="width: 100%"-->
+<!--                                                   [(ngModel)]="newFile.name" [ngModelOptions]="{standalone: true}"/>-->
+<!--                                        </td>-->
+<!--                                    </tr>-->
+<!--                                </table>-->
+<!--                            </div>-->
+<!--                            <br/>-->
+<!--                            <div class="row">-->
+<!--                                <table style="width: 100%; table-layout: fixed;" >-->
+<!--                                    <tr *ngFor="let attachment of icMeetingTopic?.materialsUpd; let j = index" [attr.data-index]="j">-->
+<!--                                        <td width="45%">-->
+<!--                                            <file-attachment-downloader fileId="{{attachment.file.id}}"-->
+<!--                                                                        displayFileName="{{(j + 1) + '. ' + attachment?.file?.fileName | slice:0:40}}-->
+<!--                                                                        {{attachment?.file?.fileName?.length > 40 ? '...' : ''}}"-->
+<!--                                                                        fileName="{{attachment?.file?.fileName}}"-->
+<!--                                                                        fileType="IC_MATRL" showIcon="true">-->
+<!--                                            </file-attachment-downloader>-->
+<!--                                        </td>-->
+<!--                                        <td width="45%">-->
+<!--                                            <input class="form-control" type="text" style="width: 100%" [(ngModel)]="attachment.name" [ngModelOptions]="{standalone: true}"/>-->
+<!--                                        </td>-->
+<!--                                        <td width="10%">&nbsp;-->
+<!--                                            <button class="btn btn-xs" (click)="deleteAttachment(attachment.file.id, true)" *ngIf="canEditUpdateBlock()">-->
+<!--                                                <i class="glyphicon glyphicon-trash"></i>-->
+<!--                                            </button>-->
+<!--                                        </td>-->
+<!--                                    </tr>-->
+<!--                                </table>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                        <div class="jumbotron col-md-5" style="padding-top: 5px; padding-bottom: 5px;">-->
+<!--                            <div class="row">-->
+<!--                                <span>Explanatory Note UPD:</span>-->
+<!--                                <label class="btn btn-primary btn-xs"  *ngIf="canEditUpdateBlock()" [ngClass]="icMeetingTopic.explanatoryNoteUpd != null && icMeetingTopic.explanatoryNoteUpd.id > 0 ? 'disabled' : ''"  for="explanatoryNoteFileUpd">-->
+<!--                                    <input type="file" id="explanatoryNoteFileUpd" (change)="onFileChangeExplanatoryNoteUpd($event)" [disabled]="icMeetingTopic.explanatoryNoteUpd != null && icMeetingTopic.explanatoryNoteUpd.id > 0" name="explanatoryNoteFileUpd" style="display:none;"/>Upload-->
+<!--                                </label>-->
+<!--                            </div>-->
+<!--                            <div class="row">-->
+<!--                                <table style="width: 100%; table-layout: fixed;" >-->
+<!--                                    <tr *ngFor="let newFile of uploadExplanatoryNoteFileUpd; let j = index" [attr.data-index]="j">-->
+<!--                                        <td>-->
+<!--                                            <span class="label label-info ">-->
+<!--                                                {{newFile.name | slice:0:30 }} &nbsp;-->
+<!--                                                {{newFile?.name?.length > 30 ? '...' : ''}}-->
+<!--                                            </span>&nbsp;-->
+<!--                                            <button class="btn btn-xs"  (click)="deleteUnsavedExplanatoryNoteUpd(newFile)">-->
+<!--                                                <i class="glyphicon glyphicon-trash"></i>-->
+<!--                                            </button>-->
+<!--                                        </td>-->
+<!--                                    </tr>-->
+<!--                                </table>-->
+<!--                            </div>-->
+<!--                            <div class="row">-->
+<!--                                <br/>-->
+<!--                                <table style="width: 100%; table-layout: fixed;" >-->
+<!--                                    <tr *ngIf="icMeetingTopic.explanatoryNoteUpd != null">-->
+<!--                                        <td width="90%">-->
+<!--                                            <file-attachment-downloader fileId="{{icMeetingTopic.explanatoryNoteUpd.id}}"-->
+<!--                                                                        displayFileName="{{icMeetingTopic.explanatoryNoteUpd.fileName | slice:0:40}}-->
+<!--                                                                    {{icMeetingTopic.explanatoryNoteUpd.fileName?.length > 40 ? '...' : ''}}"-->
+<!--                                                                        fileName="{{icMeetingTopic.explanatoryNoteUpd.fileName}}"-->
+<!--                                                                        fileType="IC_EXPNOTE" showIcon="true">-->
+<!--                                            </file-attachment-downloader>-->
+<!--                                        </td>-->
+<!--                                        <td width="10%">&nbsp;-->
+<!--                                            <button class="btn btn-xs" (click)="deleteExplanatoryNoteUpd()" *ngIf="icMeetingTopic.explanatoryNoteUpd.id > 0 && canEditUpdateBlock()">-->
+<!--                                                <i class="glyphicon glyphicon-trash"></i>-->
+<!--                                            </button>-->
+<!--                                        </td>-->
+<!--                                    </tr>-->
+<!--                                </table>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                    <div class="row">-->
+<!--                        <label class="checkbox pull-right">-->
+<!--                            <input type="checkbox" [checked]="icMeetingTopic.publishedUpd" id="publishedUpdCheckbox">update is final-->
+<!--                        </label>-->
+<!--                    </div>-->
+<!--                    <div class="row top-buffer">-->
+<!--                        <div class="col-md-12">-->
+<!--                            <button  *ngIf="canEditUpdateBlock()" type="button" class="btn btn-success pull-right" (click)="saveUpd()" >Save Update</button>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </fieldset>-->
+<!--            </div>-->
         </div>
     </div>
     <br>

@@ -31,10 +31,10 @@ public class ICMeetingTopicDto extends CreateUpdateBaseEntityDto<ICMeetingTopic>
 
     private ICMeetingDto icMeeting;
     private String name;
-    private String nameUpd;
+    //private String nameUpd;
     private String description;
     private String decision;
-    private String decisionUpd;
+   // private String decisionUpd;
     private Set<EmployeeApproveDto> approveList;
 
     private Boolean published;
@@ -241,21 +241,21 @@ public class ICMeetingTopicDto extends CreateUpdateBaseEntityDto<ICMeetingTopic>
         this.deleted = deleted;
     }
 
-    public String getNameUpd() {
-        return nameUpd;
-    }
-
-    public void setNameUpd(String nameUpd) {
-        this.nameUpd = nameUpd;
-    }
-
-    public String getDecisionUpd() {
-        return decisionUpd;
-    }
-
-    public void setDecisionUpd(String decisionUpd) {
-        this.decisionUpd = decisionUpd;
-    }
+//    public String getNameUpd() {
+//        return nameUpd;
+//    }
+//
+//    public void setNameUpd(String nameUpd) {
+//        this.nameUpd = nameUpd;
+//    }
+//
+//    public String getDecisionUpd() {
+//        return decisionUpd;
+//    }
+//
+//    public void setDecisionUpd(String decisionUpd) {
+//        this.decisionUpd = decisionUpd;
+//    }
 
     public FilesDto getExplanatoryNoteUpd() {
         return explanatoryNoteUpd;
@@ -281,19 +281,19 @@ public class ICMeetingTopicDto extends CreateUpdateBaseEntityDto<ICMeetingTopic>
         this.publishedUpd = publishedUpd;
     }
 
-    public String getPublishedNameUpd(){
-        if(this.nameUpd != null && StringUtils.isNotEmpty(this.nameUpd) && this.publishedUpd != null && this.publishedUpd.booleanValue()){
-            return nameUpd;
-        }
-        return this.name;
-    }
-
-    public String getPublishedDecisionUpd(){
-        if(this.decisionUpd != null && StringUtils.isNotEmpty(this.decisionUpd) && this.publishedUpd != null && this.publishedUpd.booleanValue()){
-            return decisionUpd;
-        }
-        return this.decision;
-    }
+//    public String getPublishedNameUpd(){
+//        if(this.nameUpd != null && StringUtils.isNotEmpty(this.nameUpd) && this.publishedUpd != null && this.publishedUpd.booleanValue()){
+//            return nameUpd;
+//        }
+//        return this.name;
+//    }
+//
+//    public String getPublishedDecisionUpd(){
+//        if(this.decisionUpd != null && StringUtils.isNotEmpty(this.decisionUpd) && this.publishedUpd != null && this.publishedUpd.booleanValue()){
+//            return decisionUpd;
+//        }
+//        return this.decision;
+//    }
 
     public Integer getMaterialsCount() {
         return materialsCount;

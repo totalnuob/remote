@@ -24,17 +24,16 @@ public interface ICMeetingTopicRepository extends PagingAndSortingRepository<ICM
             "LEFT JOIN approve.employee emp LEFT JOIN approve.employee.position pos LEFT JOIN approve.employee.position.department dep where " +
             " (e.icMeeting.id is null OR (e.icMeeting.date >= :dateFrom AND e.icMeeting.date <= :dateTo)) " +
             " AND (:searchText='' OR (LOWER(e.name) LIKE CONCAT('%', :searchText, '%')) " +
-            " OR (LOWER(e.nameUpd) LIKE CONCAT('%', :searchText,'%')) " +
+            //" OR (LOWER(e.nameUpd) LIKE CONCAT('%', :searchText,'%')) " +
             " OR (LOWER(e.description) LIKE CONCAT('%', :searchText,'%')) " +
             " OR (LOWER(e.decision) LIKE CONCAT('%', :searchText,'%')) " +
-            " OR (LOWER(e.decisionUpd) LIKE CONCAT('%', :searchText,'%')) " +
+            //" OR (LOWER(e.decisionUpd) LIKE CONCAT('%', :searchText,'%')) " +
             " OR (LOWER(tags.name) LIKE CONCAT('%', :searchText,'%'))" +
             ") " +
             " AND (:icNumber='' OR  e.icMeeting.number=:icNumber)" +
             " AND (:departmentId IS NULL OR e.department.id=:departmentId OR (:isICMember=true AND e.published=true) OR " +
             " (e.published=true AND e.id=approve.icMeetingTopic.id AND approve.employee.position.department.id=:departmentId))" +
-            " AND (e.deleted is null OR e.deleted=false)" +
-            " ORDER BY e.id ASC")
+            " AND (e.deleted is null OR e.deleted=false)")
     Page<ICMeetingTopic> searchNonDeleted(@Param("departmentId") Integer departmentId,
                                           @Param("isICMember") Boolean isICMember,
                                           @Param("dateFrom") @Temporal(TemporalType.DATE)  Date dateFrom,
@@ -46,8 +45,7 @@ public interface ICMeetingTopicRepository extends PagingAndSortingRepository<ICM
             " LEFT JOIN b.employee emp LEFT JOIN b.employee.position pos LEFT JOIN b.employee.position.department dep WHERE " +
             " (:departmentId IS NULL OR e.department.id=:departmentId OR (:viewICTopicAll=true AND e.published=true) OR " +
             " (e.published=true AND e.id=b.icMeetingTopic.id AND b.employee.position.department.id=:departmentId)) " +
-            " AND (e.deleted is null OR e.deleted=false) " +
-            " ORDER BY e.id ASC")
+            " AND (e.deleted is null OR e.deleted=false) ")
     Page<ICMeetingTopic> searchAllByDepartmentAndUserNonDeleted(@Param("departmentId") Integer departmentId,
                                                                 @Param("viewICTopicAll") Boolean viewICTopicAll,
                                                                 Pageable pageable);
@@ -69,8 +67,7 @@ public interface ICMeetingTopicRepository extends PagingAndSortingRepository<ICM
     List<ICMeetingTopic> findByICMeetingIdNotDeleted(Long id);
 
     @Query("select e from ICMeetingTopic e where e.explanatoryNote.id=?1 AND " +
-            " (e.icMeeting.deleted is null OR e.icMeeting.deleted=false) AND (e.deleted is null OR e.deleted=false) " +
-            " ORDER BY e.id ASC")
+            " (e.icMeeting.deleted is null OR e.icMeeting.deleted=false) AND (e.deleted is null OR e.deleted=false) ")
     ICMeetingTopic findByExplanatoryNoteIdNotDeleted(Long id);
 
     @Deprecated

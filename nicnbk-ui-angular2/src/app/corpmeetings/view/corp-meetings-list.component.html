@@ -416,6 +416,9 @@
                 <div>
                     <label>Total found:  <span>{{icMeetingsSearchResult?.totalElements > 0 ? icMeetingsSearchResult?.totalElements : 0}}</span></label>
                 </div>
+                <div class="row">
+                    <button class="btn btn-success btn-xs pull-right" (click)="exportRegistry()">XLSX registry</button>
+                </div>
 
                 <div class="row">
                     <div class="row pull-right">

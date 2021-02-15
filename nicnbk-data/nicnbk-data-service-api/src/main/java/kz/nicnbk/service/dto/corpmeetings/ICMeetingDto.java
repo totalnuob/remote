@@ -36,6 +36,8 @@ public class ICMeetingDto extends CreateUpdateBaseEntityDto<ICMeeting> implement
     private List<EmployeeDto> invitees;
     private List<ICMeetingTopicDto> topics;
     private FilesDto agenda;
+    private FilesDto protocol;
+    private FilesDto bulletin;
 
     private Boolean unlockedForFinalize;
     private Boolean closed;
@@ -130,6 +132,22 @@ public class ICMeetingDto extends CreateUpdateBaseEntityDto<ICMeeting> implement
 
     public void setAgenda(FilesDto agenda) {
         this.agenda = agenda;
+    }
+
+    public FilesDto getProtocol() {
+        return protocol;
+    }
+
+    public void setProtocol(FilesDto protocol) {
+        this.protocol = protocol;
+    }
+
+    public FilesDto getBulletin() {
+        return bulletin;
+    }
+
+    public void setBulletin(FilesDto bulletin) {
+        this.bulletin = bulletin;
     }
 
     @Override
