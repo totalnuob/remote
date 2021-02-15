@@ -181,7 +181,7 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
         var daysOfMonth = [];
         var daysOfWeek = [];
         var todayDate = new Date().getDate();
-        console.log(todayDate);
+        //console.log(todayDate);
         for (var d = new Date(now.getFullYear(), now.getMonth(), 1); d.getMonth() == now.getMonth(); d.setDate(d.getDate() + 1)) {
             var dayOfWeek = d.getDay() == 0 ? 7: d.getDay();
             if(d.getDate() == 1 && dayOfWeek > 1){
