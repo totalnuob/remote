@@ -180,6 +180,8 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
 
         var daysOfMonth = [];
         var daysOfWeek = [];
+        var todayDate = new Date().getDate();
+        //console.log(todayDate);
         for (var d = new Date(now.getFullYear(), now.getMonth(), 1); d.getMonth() == now.getMonth(); d.setDate(d.getDate() + 1)) {
             var dayOfWeek = d.getDay() == 0 ? 7: d.getDay();
             if(d.getDate() == 1 && dayOfWeek > 1){
@@ -188,11 +190,12 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
                 while(diff > 1){
                     date.setDate(date.getDate() - (diff - 1));
                     var pushDate = new Date(date);
-                    daysOfWeek.push({date: pushDate, day: pushDate.getDate(), isCurrentMonth: false, isWeekend: (dayOfWeek > 5), events: []});
+                    daysOfWeek.push({date: pushDate, day: pushDate.getDate(), isToday: (pushDate.getDate() == todayDate), isCurrentMonth: false, isWeekend: (dayOfWeek > 5), events: []});
                     diff--;
                 }
             }
-            daysOfWeek.push({date: new Date(d), day: d.getDate(), isCurrentMonth: true, isWeekend: (dayOfWeek > 5), events: []});
+
+            daysOfWeek.push({date: new Date(d), day: d.getDate(), isToday: (d.getDate() == todayDate), isCurrentMonth: true, isWeekend: (dayOfWeek > 5), events: []});
              if(dayOfWeek == 7){
                 daysOfMonth.push(daysOfWeek);
                 daysOfWeek = [];
@@ -210,7 +213,8 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
             while(lastDay < 7){
                 nextMonthDate.setDate(nextMonthDate.getDate() + 1);
                 var dayOfWeek = nextMonthDate.getDay() == 0 ? 7 : nextMonthDate.getDay();
-                lastWeek.push({date: new Date(nextMonthDate), day: nextMonthDate.getDate(), isCurrentMonth: false,
+                lastWeek.push({date: new Date(nextMonthDate), day: nextMonthDate.getDate(),
+                                isToday: (nextMonthDate.getDate() == todayDate), isCurrentMonth: false,
                                 isWeekend: (dayOfWeek > 5), events: []})
                 lastDay++;
             }
@@ -268,8 +272,7 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
                 {date: "27-09-2020", day: "27", isCurrentMonth: true, events: []}, {date: "28-09-2020", day: "28", isCurrentMonth: true, events: []}, {date: "29-09-2020", day: "29", isCurrentMonth: true, events: []},
                 {date: "30-09-2020", day: "30", isCurrentMonth: true, events: []}, {date: "01-10-2020", day: "01", isCurrentMonth: false, isWeekend: true, events: []}, {date: "02-10-2020", day: "02", isCurrentMonth: false, isWeekend: true, events: []}, ]);
         */
-
-        console.log(this.upcomingEventsCalendar);
+        //console.log(this.upcomingEventsCalendar);
     }
 
 
