@@ -11,7 +11,7 @@
 
 
 <a *ngIf="mimeType != null && mimeType === 'application/pdf'" style="cursor: pointer" target="_blank"
-                    [attr.href]="'http://localhost:8089/files/open/' + fileType + '/' + fileId">
+                    [attr.href]="'https://unic.nicnbk.kz:8089/files/open/' + fileType + '/' + fileId">
     <small><span *ngIf="showIcon" class="glyphicon glyphicon-file" style="font-size:15px"></span></small>
     <div *ngIf="showIcon" class="row" style="font-size:10px">
         {{displayFileName != null ? displayFileName : fileName}}
