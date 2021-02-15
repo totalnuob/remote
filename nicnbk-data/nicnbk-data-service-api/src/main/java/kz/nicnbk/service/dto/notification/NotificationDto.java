@@ -7,7 +7,8 @@ import kz.nicnbk.service.dto.employee.EmployeeDto;
 public class NotificationDto extends HistoryBaseEntityDto<Notification> {
 
     private EmployeeDto employee;
-    private String name;
+    private String inAppName;
+    private String emailName;
     private boolean closed;
 
     public EmployeeDto getEmployee() {
@@ -18,12 +19,20 @@ public class NotificationDto extends HistoryBaseEntityDto<Notification> {
         this.employee = employee;
     }
 
-    public String getName() {
-        return name;
+    public String getInAppName() {
+        return inAppName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setInAppName(String inAppName) {
+        this.inAppName = inAppName;
+    }
+
+    public String getEmailName() {
+        return emailName;
+    }
+
+    public void setEmailName(String emailName) {
+        this.emailName = emailName;
     }
 
     public boolean isClosed() {

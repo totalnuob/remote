@@ -25,6 +25,9 @@ export class FileAttachmentDownloaderComponent  extends CommonService{
     @Input()
     showIcon: boolean;
 
+    @Input()
+    mimeType: string;
+
     public pending:boolean = false;
 
     constructor() {
@@ -35,7 +38,9 @@ export class FileAttachmentDownloaderComponent  extends CommonService{
 
         // Xhr creates new context so we need to create reference to this
         let self = this;
-
+        if(self.mimeType != null && self.mimeType === 'application/pdf'){
+            return;
+        }
         // Status flag used in the template.
         this.pending = true;
 

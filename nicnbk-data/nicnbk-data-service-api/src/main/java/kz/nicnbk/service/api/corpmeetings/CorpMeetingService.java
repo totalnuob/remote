@@ -45,7 +45,7 @@ public interface CorpMeetingService extends BaseService {
     /* IC MEETING TOPIC ***********************************************************************************************/
     EntitySaveResponseDto saveICMeetingTopic(ICMeetingTopicDto dto, FilesDto explanatoryNote, List<FilesDto> filesDtoSet,  String updater);
 
-    EntitySaveResponseDto saveICMeetingTopicUpdate(ICMeetingTopicUpdateDto dto, FilesDto explanatoryNote, List<FilesDto> filesDtoSet,  String updater);
+    //EntitySaveResponseDto saveICMeetingTopicUpdate(ICMeetingTopicUpdateDto dto, FilesDto explanatoryNote, List<FilesDto> filesDtoSet,  String updater);
 
     ICMeetingTopicDto getICMeetingTopic(Long id, String username);
 
@@ -67,7 +67,7 @@ public interface CorpMeetingService extends BaseService {
 
     //Set<FilesDto> saveICMeetingTopicAttachments(Long topicId, Set<FilesDto> attachments, String username);
 
-    List<NamedFilesDto> getICMeetingTopicAttachments(Long id, Boolean update);
+    List<NamedFilesDto> getICMeetingTopicAttachments(Long id/*, Boolean update*/);
 
     boolean checkViewICMeetingTopicByTopicIdAndUsername(Long id, String username);
 
@@ -77,7 +77,7 @@ public interface CorpMeetingService extends BaseService {
 
     boolean deleteICMeetingTopicExplanatoryNote(Long topicId, String username);
 
-    boolean deleteICMeetingTopicExplanatoryNoteUpd(Long topicId, String username);
+    //boolean deleteICMeetingTopicExplanatoryNoteUpd(Long topicId, String username);
 
     @Deprecated
     boolean checkUserRolesForICMeetingTopicByTypeAndUsername(String type, String username, boolean editing);
@@ -89,7 +89,7 @@ public interface CorpMeetingService extends BaseService {
 
     Set<FilesDto> saveICMeetingProtocol(Long meetingId, Set<FilesDto> attachments, String username);
 
-    ICMeetingDto getICMeeting(Long id, String username);
+    ICMeetingDto getICMeeting(Long id);
 
     boolean safeDeleteICMeeting(Long id, String username);
 

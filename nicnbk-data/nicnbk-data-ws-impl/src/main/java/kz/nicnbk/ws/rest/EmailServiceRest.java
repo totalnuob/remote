@@ -22,7 +22,7 @@ public class EmailServiceRest {
     //Currently testing using Postman
     @RequestMapping(path = "/sendMail", method = RequestMethod.GET)
     public String sendMail() {
-        emailService.sendMail("tleugabylov@nicnbk.kz", "Test Email Subject", "This is test text");
+        emailService.sendMail("magzumov@nicnbk.kz", "Test Email Subject", "This is test text");
         return "Simple mail send is success";
     }
 

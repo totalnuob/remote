@@ -10,7 +10,6 @@ import kz.nicnbk.service.dto.authentication.UserRoles;
 import kz.nicnbk.service.dto.common.EmployeeApproveDto;
 import kz.nicnbk.service.dto.corpmeetings.ICMeetingTopicDto;
 import kz.nicnbk.service.dto.employee.EmployeeDto;
-import kz.nicnbk.service.dto.employee.RoleDto;
 import kz.nicnbk.service.dto.files.FilesDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,9 +29,9 @@ import java.net.URLEncoder;
  */
 @RestController
 @RequestMapping("/files")
-public class GenereicFileServiceREST {
+public class GenericFileServiceREST {
 
-    private static final Logger logger = LoggerFactory.getLogger(GenereicFileServiceREST.class);
+    private static final Logger logger = LoggerFactory.getLogger(GenericFileServiceREST.class);
 
     @Autowired
     private FileService fileService;
@@ -72,16 +71,46 @@ public class GenereicFileServiceREST {
         if(inputStream == null){
             // TODO: handle error
         }
-        sendFileDownloadResponse(response, fileService.getFileInfo(fileId), inputStream);
+        sendFileDownloadResponse(response, fileService.getFileInfo(fileId), inputStream, false);
     }
 
-    public void sendFileDownloadResponse(HttpServletResponse response, FilesDto fileDto, InputStream inputStream){
+    @RequestMapping(value="/open/{fileType}/{id}", method= RequestMethod.GET)
+    @ResponseBody
+    public void openFile(@PathVariable(value="id") Long fileId,
+                             @PathVariable(value = "fileType") String fileType,
+                             HttpServletResponse response) {
+
+        // TODO: control file download by user role
+        // TODO: Check rights
+
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
+
+        if(!checkFileDownloadPermission(fileId, username)){
+            response.setStatus(401);
+            try {
+                response.sendError(401, "Permission denied");
+                return;
+            } catch (IOException e) {
+                // TODO: handle error
+            }
+        }
+
+        InputStream inputStream = fileService.getFileInputStream(fileId, fileType);
+        if(inputStream == null){
+            // TODO: handle error
+        }
+        sendFileDownloadResponse(response, fileService.getFileInfo(fileId), inputStream, true);
+    }
+
+    public void sendFileDownloadResponse(HttpServletResponse response, FilesDto fileDto, InputStream inputStream, boolean inline){
         response.setContentType(fileDto.getMimeType());
         String fileName = null;
         try {
             fileName = URLEncoder.encode(fileDto.getFileName(), "UTF-8");
             fileName = URLDecoder.decode(fileName, "ISO8859_1");
-            response.setHeader("Content-disposition", "attachment; filename=\""+ fileName + "\"");
+            response.setHeader("Content-disposition",
+                    (inline ? "inline": "attachment") +  ";filename=\""+ fileName + "\"");
             org.apache.commons.io.IOUtils.copy(inputStream, response.getOutputStream());
             response.flushBuffer();
         } catch (UnsupportedEncodingException e) {
@@ -106,6 +135,12 @@ public class GenereicFileServiceREST {
             if(filesDto.getType().equalsIgnoreCase(FileTypeLookup.IC_PROTOCOL.getCode())){
                 // IC PROTOCOL
                 return checkICProtocol(username);
+            }else if(filesDto.getType().equalsIgnoreCase(FileTypeLookup.IC_AGENDA.getCode())){
+                // IC AGENDA
+                return checkICAgenda(username);
+            }else if(filesDto.getType().equalsIgnoreCase(FileTypeLookup.IC_BULLETIN.getCode())){
+                // IC AGENDA
+                return checkICBulletin(username);
             }else if(filesDto.getType().equalsIgnoreCase(FileTypeLookup.IC_EXPLANATORY_NOTE.getCode())){
                 return checkICMeetingTopicExplanatoryNoteReadAccess(fileId, username);
             }else if(filesDto.getType().equalsIgnoreCase(FileTypeLookup.IC_MATERIALS.getCode())){
@@ -129,13 +164,46 @@ public class GenereicFileServiceREST {
             }else {
                 // Other files types?
                 // TODO
-                return true;
+                //return true;
             }
         }
         return false;
     }
 
     private boolean checkICProtocol(String username){
+        EmployeeDto employeeDto = this.employeeService.findByUsername(username);
+        if(employeeDto.getRoles() != null && !employeeDto.getRoles().isEmpty()){
+            // Check rights
+            for(BaseDictionaryDto role: employeeDto.getRoles()){
+                if(role.getCode().equalsIgnoreCase(UserRoles.ADMIN.getCode()) ||
+                        role.getCode().equalsIgnoreCase(UserRoles.IC_MEMBER.getCode()) ||
+                        role.getCode().equalsIgnoreCase(UserRoles.IC_ADMIN.getCode()) ||
+                        role.getCode().equalsIgnoreCase(UserRoles.IC_EDIT.getCode()) ||
+                        role.getCode().equalsIgnoreCase(UserRoles.IC_VIEW.getCode())){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    private boolean checkICAgenda(String username){
+        EmployeeDto employeeDto = this.employeeService.findByUsername(username);
+        if(employeeDto.getRoles() != null && !employeeDto.getRoles().isEmpty()){
+            // Check rights
+            for(BaseDictionaryDto role: employeeDto.getRoles()){
+                if(role.getCode().equalsIgnoreCase(UserRoles.ADMIN.getCode()) ||
+                        role.getCode().equalsIgnoreCase(UserRoles.IC_MEMBER.getCode()) ||
+                        role.getCode().equalsIgnoreCase(UserRoles.IC_ADMIN.getCode()) ||
+                        role.getCode().equalsIgnoreCase(UserRoles.IC_EDIT.getCode()) ||
+                        role.getCode().equalsIgnoreCase(UserRoles.IC_VIEW.getCode())){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean checkICBulletin(String username){
         EmployeeDto employeeDto = this.employeeService.findByUsername(username);
         if(employeeDto.getRoles() != null && !employeeDto.getRoles().isEmpty()){
             // Check rights

@@ -28,7 +28,7 @@ public class EmailServiceImpl implements EmailService {
 
     //This is the "from" address that will be used to send emails from UNIC
     //Should be something like "unic@nicnbk.kz"
-    private static final String FROM_ADDRESS = "tleugabylov@nicnbk.kz";
+    private static final String FROM_ADDRESS = "unic@nicnbk.kz";
 
     @Autowired
     private JavaMailSender emailSender;

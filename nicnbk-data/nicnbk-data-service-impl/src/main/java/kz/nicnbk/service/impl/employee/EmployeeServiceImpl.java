@@ -328,6 +328,8 @@ public class EmployeeServiceImpl implements EmployeeService{
                 entity.setPatronymicRu(employeeFullDto.getPatronymicRu());
                 entity.setLastNameRuPossessive(employeeFullDto.getLastNameRuPossessive());
 
+                entity.setEmail(employeeFullDto.getEmail());
+
             }
             Position position = null;
             if(employeeFullDto.getPosition() != null && StringUtils.isNotEmpty(employeeFullDto.getPosition().getCode())){

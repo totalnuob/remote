@@ -16,10 +16,10 @@ public class ICMeetingTopic extends CreateUpdateBaseEntity{
 
     private ICMeeting icMeeting;
     private String name;
-    private String nameUpd;
+    //private String nameUpd;
     private String description;
     private String decision;
-    private String decisionUpd;
+    //private String decisionUpd;
 //    @Deprecated
 //    private ICMeetingTopicType type;
 
@@ -34,7 +34,7 @@ public class ICMeetingTopic extends CreateUpdateBaseEntity{
     private Boolean deleted;
     private List<Tag> tags;
     private Files explanatoryNote;
-    private Files explanatoryNoteUpd;
+    //private Files explanatoryNoteUpd;
     private Employee speaker;
     private Employee executor;
 
@@ -173,33 +173,33 @@ public class ICMeetingTopic extends CreateUpdateBaseEntity{
         this.closed = closed;
     }
 
-    @Column(name="name_upd", columnDefinition="TEXT")
-    public String getNameUpd() {
-        return nameUpd;
-    }
+//    @Column(name="name_upd", columnDefinition="TEXT")
+//    public String getNameUpd() {
+//        return nameUpd;
+//    }
+//
+//    public void setNameUpd(String nameUpd) {
+//        this.nameUpd = nameUpd;
+//    }
 
-    public void setNameUpd(String nameUpd) {
-        this.nameUpd = nameUpd;
-    }
+//    @Column(name="decision_upd", columnDefinition="TEXT")
+//    public String getDecisionUpd() {
+//        return decisionUpd;
+//    }
+//
+//    public void setDecisionUpd(String decisionUpd) {
+//        this.decisionUpd = decisionUpd;
+//    }
 
-    @Column(name="decision_upd", columnDefinition="TEXT")
-    public String getDecisionUpd() {
-        return decisionUpd;
-    }
-
-    public void setDecisionUpd(String decisionUpd) {
-        this.decisionUpd = decisionUpd;
-    }
-
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "exp_note_upd_id")
-    public Files getExplanatoryNoteUpd() {
-        return explanatoryNoteUpd;
-    }
-
-    public void setExplanatoryNoteUpd(Files explanatoryNoteUpd) {
-        this.explanatoryNoteUpd = explanatoryNoteUpd;
-    }
+//    @OneToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "exp_note_upd_id")
+//    public Files getExplanatoryNoteUpd() {
+//        return explanatoryNoteUpd;
+//    }
+//
+//    public void setExplanatoryNoteUpd(Files explanatoryNoteUpd) {
+//        this.explanatoryNoteUpd = explanatoryNoteUpd;
+//    }
 
     @Column(name="published_upd")
     public Boolean getPublishedUpd() {

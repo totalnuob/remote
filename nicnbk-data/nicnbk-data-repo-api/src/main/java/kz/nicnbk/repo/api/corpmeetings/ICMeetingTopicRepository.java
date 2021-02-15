@@ -24,10 +24,10 @@ public interface ICMeetingTopicRepository extends PagingAndSortingRepository<ICM
             "LEFT JOIN approve.employee emp LEFT JOIN approve.employee.position pos LEFT JOIN approve.employee.position.department dep where " +
             " (e.icMeeting.id is null OR (e.icMeeting.date >= :dateFrom AND e.icMeeting.date <= :dateTo)) " +
             " AND (:searchText='' OR (LOWER(e.name) LIKE CONCAT('%', :searchText, '%')) " +
-            " OR (LOWER(e.nameUpd) LIKE CONCAT('%', :searchText,'%')) " +
+            //" OR (LOWER(e.nameUpd) LIKE CONCAT('%', :searchText,'%')) " +
             " OR (LOWER(e.description) LIKE CONCAT('%', :searchText,'%')) " +
             " OR (LOWER(e.decision) LIKE CONCAT('%', :searchText,'%')) " +
-            " OR (LOWER(e.decisionUpd) LIKE CONCAT('%', :searchText,'%')) " +
+            //" OR (LOWER(e.decisionUpd) LIKE CONCAT('%', :searchText,'%')) " +
             " OR (LOWER(tags.name) LIKE CONCAT('%', :searchText,'%'))" +
             ") " +
             " AND (:icNumber='' OR  e.icMeeting.number=:icNumber)" +

@@ -167,35 +167,35 @@ public class CorpMeetingsServiceREST extends CommonServiceREST{
 //        }
     }
 
-    @PreAuthorize(IC_MEETING_TOPIC_EDITOR)
-    @RequestMapping(value = "/ICMeetingTopic/saveUpdate", method = RequestMethod.POST,
-            consumes = { MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE })
-    public ResponseEntity<?> saveICMeetingTopicUpdate(
-            @RequestPart("data") String data,
-            @RequestPart(name="file", required=false) MultipartFile[] files, @RequestPart(name="exp_note", required=false) MultipartFile explanatoryNotes
-    ) {
-
-        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
-        String username = this.tokenService.decode(token).getUsername();
-
-        // Deserialize string to object
-        SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
-        ObjectMapper objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        objectMapper.setDateFormat(df);
-        try {
-            ICMeetingTopicUpdateDto updateDto = objectMapper.readValue(data, ICMeetingTopicUpdateDto.class);
-            List<FilesDto> filesDtoSet = files != null ? buildFilesListDtoFromMultipart(files, FileTypeLookup.IC_MATERIALS.getCode()) : null;
-            FilesDto explanatoryNote = explanatoryNotes != null ? buildFilesDtoFromMultipart(explanatoryNotes, FileTypeLookup.IC_EXPLANATORY_NOTE.getCode()) : null;
-            EntitySaveResponseDto saveResponseDto = this.corpMeetingService.saveICMeetingTopicUpdate(updateDto, explanatoryNote, filesDtoSet, username);
-            return buildEntitySaveResponse(saveResponseDto);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return buildEntitySaveResponseEntity(false);
-//        if(!this.corpMeetingService.checkUserRolesForICMeetingTopicByTypeAndUsername(dto.getType(), username, true)){
-//            return buildUnauthorizedResponse();
+//    @PreAuthorize(IC_MEETING_TOPIC_EDITOR)
+//    @RequestMapping(value = "/ICMeetingTopic/saveUpdate", method = RequestMethod.POST,
+//            consumes = { MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE })
+//    public ResponseEntity<?> saveICMeetingTopicUpdate(
+//            @RequestPart("data") String data,
+//            @RequestPart(name="file", required=false) MultipartFile[] files, @RequestPart(name="exp_note", required=false) MultipartFile explanatoryNotes
+//    ) {
+//
+//        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+//        String username = this.tokenService.decode(token).getUsername();
+//
+//        // Deserialize string to object
+//        SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
+//        ObjectMapper objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+//        objectMapper.setDateFormat(df);
+//        try {
+//            ICMeetingTopicUpdateDto updateDto = objectMapper.readValue(data, ICMeetingTopicUpdateDto.class);
+//            List<FilesDto> filesDtoSet = files != null ? buildFilesListDtoFromMultipart(files, FileTypeLookup.IC_MATERIALS.getCode()) : null;
+//            FilesDto explanatoryNote = explanatoryNotes != null ? buildFilesDtoFromMultipart(explanatoryNotes, FileTypeLookup.IC_EXPLANATORY_NOTE.getCode()) : null;
+//            EntitySaveResponseDto saveResponseDto = this.corpMeetingService.saveICMeetingTopicUpdate(updateDto, explanatoryNote, filesDtoSet, username);
+//            return buildEntitySaveResponse(saveResponseDto);
+//        } catch (IOException e) {
+//            e.printStackTrace();
 //        }
-    }
+//        return buildEntitySaveResponseEntity(false);
+////        if(!this.corpMeetingService.checkUserRolesForICMeetingTopicByTypeAndUsername(dto.getType(), username, true)){
+////            return buildUnauthorizedResponse();
+////        }
+//    }
 
     @PreAuthorize(IC_MEETING_TOPIC_APPROVAL)
     @RequestMapping(value = "/ICMeetingTopic/approve/{id}", method = RequestMethod.POST)
@@ -289,16 +289,16 @@ public class CorpMeetingsServiceREST extends CommonServiceREST{
         return buildDeleteResponseEntity(deleted);
     }
 
-    @PreAuthorize(IC_MEETING_TOPIC_EDITOR)
-    @ResponseBody
-    @RequestMapping(value="/explanatoryNoteUpd/delete/{topicId}", method=RequestMethod.DELETE)
-    public ResponseEntity<?> safeDeleteExplanatoryNoteUpdFile(@PathVariable(value="topicId") Long topicId){
-        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
-        String username = this.tokenService.decode(token).getUsername();
-
-        boolean deleted = this.corpMeetingService.deleteICMeetingTopicExplanatoryNoteUpd(topicId, username);
-        return buildDeleteResponseEntity(deleted);
-    }
+//    @PreAuthorize(IC_MEETING_TOPIC_EDITOR)
+//    @ResponseBody
+//    @RequestMapping(value="/explanatoryNoteUpd/delete/{topicId}", method=RequestMethod.DELETE)
+//    public ResponseEntity<?> safeDeleteExplanatoryNoteUpdFile(@PathVariable(value="topicId") Long topicId){
+//        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+//        String username = this.tokenService.decode(token).getUsername();
+//
+//        boolean deleted = this.corpMeetingService.deleteICMeetingTopicExplanatoryNoteUpd(topicId, username);
+//        return buildDeleteResponseEntity(deleted);
+//    }
 
 
     /* IC MEETING *****************************************************************************************************/
@@ -377,7 +377,7 @@ public class CorpMeetingsServiceREST extends CommonServiceREST{
         String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
         String username = this.tokenService.decode(token).getUsername();
 
-        ICMeetingDto icMeetingDto = corpMeetingService.getICMeeting(id, username);
+        ICMeetingDto icMeetingDto = corpMeetingService.getICMeeting(id);
         return buildNonNullResponse(icMeetingDto);
     }
 

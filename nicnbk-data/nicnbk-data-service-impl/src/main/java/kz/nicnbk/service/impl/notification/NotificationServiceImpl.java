@@ -3,9 +3,11 @@ package kz.nicnbk.service.impl.notification;
 import kz.nicnbk.repo.api.notification.NotificationRepository;
 import kz.nicnbk.repo.model.employee.Employee;
 import kz.nicnbk.repo.model.notification.Notification;
+import kz.nicnbk.service.api.email.EmailService;
+import kz.nicnbk.service.api.employee.EmployeeService;
 import kz.nicnbk.service.api.notification.NotificationService;
 import kz.nicnbk.service.converter.notification.NotificationEntityConverter;
-import kz.nicnbk.service.dto.common.EmployeeApproveDto;
+import kz.nicnbk.service.dto.employee.EmployeeDto;
 import kz.nicnbk.service.dto.notification.NotificationDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,12 +28,18 @@ public class NotificationServiceImpl implements NotificationService {
     @Autowired
     private NotificationEntityConverter notificationEntityConverter;
 
+    @Autowired
+    private EmailService emailService;
+
+    @Autowired
+    private EmployeeService employeeService;
+
     @Override
     public boolean save(NotificationDto notificationDto) {
         try{
             if(notificationDto != null && notificationDto.getEmployee().getId() != null){
                 Notification notification = new Notification();
-                notification.setName(notificationDto.getName());
+                notification.setName(notificationDto.getInAppName());
                 notification.setEmployee(new Employee(notificationDto.getEmployee().getId()));
                 this.notificationRepository.save(notification);
                 return true;
@@ -41,6 +49,27 @@ public class NotificationServiceImpl implements NotificationService {
         }
         return false;
     }
+
+    @Override
+    public boolean createInAppAndEmailNotification(NotificationDto notificationDto){
+        try {
+            boolean saved = save(notificationDto);
+            if(saved) {
+                if(notificationDto != null && notificationDto.getEmployee() != null && notificationDto.getEmployee().getId() != null){
+                    EmployeeDto employeeDto = this.employeeService.getEmployeeById(notificationDto.getEmployee().getId());
+                    if (employeeDto.getEmail() != null) {
+                        String subject = EMAIL_HEADER;
+                        this.emailService.sendMail(employeeDto.getEmail(), subject, notificationDto.getEmailName());
+                    }
+                    return true;
+                }
+            }
+        }catch (Exception ex){
+            logger.error("Notification failed with exception", ex);
+        }
+        return false;
+    }
+
 
     @Override
     public List<NotificationDto> getUserNotificationsAll(Long employeeId) {
