@@ -363,7 +363,7 @@ export class CorpMeetingICEditComponent extends CommonFormViewComponent implemen
     }
 
     exportAgenda(){
-        var fileName = "Повестка ИК " + this.icMeeting.date;
+        var fileName = "Повестка ИК №" + this.icMeeting.number + " от " + this.icMeeting.date;
         //fileName = fileName.replace(".", ",");
         this.busy = this.corpMeetingService.makeFileRequest(DATA_APP_URL + `corpMeetings/ICMeeting/exportAgenda/${this.icMeeting.id}`,
             fileName, 'POST')
