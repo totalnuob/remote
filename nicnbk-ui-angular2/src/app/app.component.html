@@ -508,7 +508,7 @@
                             </div>
                             <br/>
                             <div class="alert alert-danger" *ngFor="let notification of getNotifications()">
-                                <span>{{notification.name}}</span>
+                                <span>{{notification.inAppName}}</span>
                                 <button class="btn btn-xs pull-right" (click)="closeNotification(notification)">close &nbsp; X</button>
                             </div>
                         </div>
