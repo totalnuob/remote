@@ -7,7 +7,7 @@ export class ICMeetingTopic{
     id: number;
     icMeeting: ICMeeting;
     name: string;
-    nameUpd: string;
+    //nameUpd: string;
     description: string;
     explanatoryNote: any;
     explanatoryNoteUpd: any;
@@ -15,7 +15,7 @@ export class ICMeetingTopic{
     executor: Employee;
 
     decision: string;
-    decisionUpd: string;
+    //decisionUpd: string;
     approveList: [];
 
     materials: FileEntity[];
