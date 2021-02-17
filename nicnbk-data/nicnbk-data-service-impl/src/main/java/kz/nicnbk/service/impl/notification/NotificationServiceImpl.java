@@ -94,6 +94,7 @@ public class NotificationServiceImpl implements NotificationService {
             if(entities != null){
                 for(Notification entity: entities){
                     NotificationDto dto = this.notificationEntityConverter.disassemble(entity);
+                    dto.setInAppName(entity.getName());
                     notifications.add(dto);
                 }
             }
