@@ -5,16 +5,22 @@ package kz.nicnbk.repo.model.lookup.reporting;
  */
 public enum NICChartAccountsTypeLookup {
 
-    NOMATCH("NOMATCH");
+    NOMATCH("NOMATCH", "NO MATCH (EXCLUDE)");
 
 
     private String code;
+    private String name;
 
-    NICChartAccountsTypeLookup(String code) {
+    NICChartAccountsTypeLookup(String code, String name) {
         this.code = code;
+        this.name = name;
     }
 
     public String getCode() {
         return code;
+    }
+
+    public String getName(){
+        return name;
     }
 }

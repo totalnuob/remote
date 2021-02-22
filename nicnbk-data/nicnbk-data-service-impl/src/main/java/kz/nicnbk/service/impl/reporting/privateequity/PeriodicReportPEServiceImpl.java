@@ -202,7 +202,7 @@ public class PeriodicReportPEServiceImpl implements PeriodicReportPEService {
                     }
                 }
 
-                setNICChartOfAccounts(records);
+                records = setNICChartOfAccounts(records);
             }
             return records;
         }catch(Exception ex){
@@ -223,7 +223,7 @@ public class PeriodicReportPEServiceImpl implements PeriodicReportPEService {
                         || accountDto.getNicReportingChartOfAccounts().getNbChartOfAccounts().getCode().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_7330_010));
     }
 
-    private void setNICChartOfAccounts(List<TarragonGeneratedGeneralLedgerFormDto> records){
+    private List<TarragonGeneratedGeneralLedgerFormDto> setNICChartOfAccounts(List<TarragonGeneratedGeneralLedgerFormDto> records){
         if(records != null) {
             for(GeneratedGeneralLedgerFormDto record: records){
                 if(record.getNicAccountName() == null) {
@@ -293,37 +293,22 @@ public class PeriodicReportPEServiceImpl implements PeriodicReportPEService {
                             logger.error("Error setting Tarragon NIC Chart of accounts for '" + record.getChartAccountsLongDescription() + "' " +
                                     " : more than 2 mappings found.");
                         }
-//                        for(TarragonNICChartOfAccounts entity: nicChartOfAccounts){
-//                            if(record.getChartAccountsLongDescription().equalsIgnoreCase("Current tax (expense) benefit")){
-//                                if(record.getGLAccountBalance() != null && record.getGLAccountBalance() < 0){
-//                                    if(entity.getNegativeOnly() != null && entity.getNegativeOnly().booleanValue()){
-//                                        record.setNicAccountName(entity.getNicReportingChartOfAccounts().getNameRu());
-//                                        if (entity.getNicReportingChartOfAccounts().getNbChartOfAccounts() != null) {
-//                                            record.setNbAccountNumber(entity.getNicReportingChartOfAccounts().getNbChartOfAccounts().getCode());
-//                                        }
-//                                    }
-//                                }else if(record.getGLAccountBalance() != null && record.getGLAccountBalance() >= 0){
-//                                    if(entity.getPositiveOnly() != null && entity.getPositiveOnly().booleanValue()){
-//                                        record.setNicAccountName(entity.getNicReportingChartOfAccounts().getNameRu());
-//                                        if (entity.getNicReportingChartOfAccounts().getNbChartOfAccounts() != null) {
-//                                            record.setNbAccountNumber(entity.getNicReportingChartOfAccounts().getNbChartOfAccounts().getCode());
-//                                        }
-//                                    }
-//                                }
-//
-//                            }else {
-//                                record.setNicAccountName(entity.getNicReportingChartOfAccounts().getNameRu());
-//                                if (entity.getNicReportingChartOfAccounts().getNbChartOfAccounts() != null) {
-//                                    record.setNbAccountNumber(entity.getNicReportingChartOfAccounts().getNbChartOfAccounts().getCode());
-//                                }
-//                            }
-//                        }
                     }else{
                         // no match found
                     }
                 }
             }
         }
+        List<TarragonGeneratedGeneralLedgerFormDto> updatedRecords = new ArrayList<>();
+        for(TarragonGeneratedGeneralLedgerFormDto record: records){
+            if(record.getNbAccountNumber() != null && record.getNbAccountNumber().equalsIgnoreCase(NBChartAccountsTypeLookup.NOMATCH.getCode()) &&
+                    record.getNicAccountName() != null && record.getNicAccountName().equalsIgnoreCase(NICChartAccountsTypeLookup.NOMATCH.getName())){
+                // no match, exclude
+                continue;
+            }
+            updatedRecords.add(record);
+        }
+        return updatedRecords;
     }
 
     @Override
@@ -485,7 +470,7 @@ public class PeriodicReportPEServiceImpl implements PeriodicReportPEService {
                 }
             }
 
-            setNICChartOfAccounts(updatedRecords);
+            updatedRecords = setNICChartOfAccounts(updatedRecords);
             Collections.sort(updatedRecords);
 
 
