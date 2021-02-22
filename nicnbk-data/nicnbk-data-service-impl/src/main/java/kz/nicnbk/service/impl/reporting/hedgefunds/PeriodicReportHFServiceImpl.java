@@ -5,6 +5,7 @@ import kz.nicnbk.common.service.util.NumberUtils;
 import kz.nicnbk.common.service.util.StringUtils;
 import kz.nicnbk.repo.api.reporting.hedgefunds.SingularityNICChartOfAccountsRepository;
 import kz.nicnbk.repo.model.lookup.reporting.ChartAccountsTypeLookup;
+import kz.nicnbk.repo.model.lookup.reporting.NICChartAccountsTypeLookup;
 import kz.nicnbk.repo.model.reporting.hedgefunds.SingularityNICChartOfAccounts;
 import kz.nicnbk.service.api.reporting.hedgefunds.HFGeneralLedgerBalanceService;
 import kz.nicnbk.service.api.reporting.hedgefunds.HFNOALService;
@@ -141,6 +142,10 @@ public class PeriodicReportHFServiceImpl implements PeriodicReportHFService {
                 }else {
                     NICReportingChartOfAccountsDto accountDto = getNICChartOfAccountsFromSingularityAccount(singularityAccountNumber, record.getGLAccountBalance());
                     if (accountDto != null) {
+                        if(accountDto.getCode() != null && accountDto.getCode().equalsIgnoreCase(NICChartAccountsTypeLookup.NOMATCH.getCode())){
+                            // no match, exclude
+                            continue;
+                        }
                         record.setNbAccountNumber(accountDto.getNBChartOfAccounts().getCode());
 //                        if(hasOtherEntityName(accountDto)){
 //                            String fundName = StringUtils.isNotEmpty(glRecordDto.getShortName()) ? " " + glRecordDto.getShortName() : "";
