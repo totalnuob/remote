@@ -109,4 +109,12 @@ public class ConsolidatedKZTForm8RecordDto implements BaseDto {
     public void setEndPeriodBalance(Double endPeriodBalance) {
         this.endPeriodBalance = endPeriodBalance;
     }
+
+    public boolean isEmpty(){
+        return (this.debtStartPeriod == null || this.debtStartPeriod.doubleValue() == 0.0) &&
+                (this.debtEndPeriod == null || this.debtEndPeriod.doubleValue() == 0.0) &&
+                (this.debtDifference == null || this.debtDifference.doubleValue() == 0.0) &&
+                (this.startPeriodBalance == null || this.startPeriodBalance.doubleValue() == 0.0) &&
+                (this.endPeriodBalance == null || this.endPeriodBalance.doubleValue() == 0.0);
+    }
 }
