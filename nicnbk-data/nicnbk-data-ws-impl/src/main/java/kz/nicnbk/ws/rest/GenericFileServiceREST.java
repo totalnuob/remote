@@ -164,7 +164,7 @@ public class GenericFileServiceREST {
             }else {
                 // Other files types?
                 // TODO
-                //return true;
+                return true;
             }
         }
         return false;
