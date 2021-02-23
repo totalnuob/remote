@@ -4280,7 +4280,12 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
             }
 
             // Set total sums
+            List<ConsolidatedKZTForm8RecordDto> nonEmptyRecords = new ArrayList<>();
             for(ConsolidatedKZTForm8RecordDto record: records){
+                if(record.isEmpty() && !StringUtils.isEmpty(record.getAccountNumber())){
+                    // skip empty records
+                    continue;
+                }
                 if(record.getAccountNumber() == null && (record.getLineNumber() == 1 || record.getLineNumber() == 6 || record.getLineNumber() == 13)){
 //                    record.setDebtStartPeriod(totalRecord.getDebtStartPeriod());
                     record.setDebtEndPeriod(totalRecord.getDebtEndPeriod());
@@ -4288,9 +4293,10 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
 //                    record.setStartPeriodBalance(totalRecord.getStartPeriodBalance());
                     record.setEndPeriodBalance(totalRecord.getEndPeriodBalance());
                 }
+                nonEmptyRecords.add(record);
             }
 
-            responseDto.setRecords(records);
+            responseDto.setRecords(nonEmptyRecords);
             return responseDto;
         }
     }
