@@ -4389,6 +4389,12 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                     balanceUSDResponseDto.getRecords() : new ArrayList<>();
             Double total1623EndPeriod = 0.0;
             Double total2923EndPeriod = 0.0;
+
+            Double turnover1623PositiveSum = 0.0;
+            Double turnover1623NegativeSum = 0.0;
+            Double turnover2923PositiveSum = 0.0;
+            Double turnover2923NegativeSum = 0.0;
+
             if(USDFormRecords != null && !USDFormRecords.isEmpty() && (indexLineToAdd3 > 0 || indexLineToAdd8 > 0)){
                 for(ConsolidatedBalanceFormRecordDto recordUSD: USDFormRecords){
                     if(recordUSD.getAccountNumber() != null && (recordUSD.getAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_1623_010) ||
@@ -4398,7 +4404,8 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                             for(ConsolidatedKZTForm10RecordDto record: records){
                                 if(record.getAccountNumber() != null && record.getAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_1623_010) &&
                                         record.getName().equalsIgnoreCase(recordUSD.getName())){
-                                    double endPeriodAssetsValue = MathUtils.multiply(recordUSD.getCurrentAccountBalance() != null ? recordUSD.getCurrentAccountBalance() : 0.0, endCurrencyRatesDto.getValue());
+                                    double endPeriodAssetsValue = MathUtils.multiply(recordUSD.getCurrentAccountBalance() != null ?
+                                            recordUSD.getCurrentAccountBalance() : 0.0, endCurrencyRatesDto.getValue());
                                     record.setEndPeriodAssets(MathUtils.add(endPeriodAssetsValue, record.getEndPeriodAssets()));
 
                                     double endPeriodAssets = record.getEndPeriodAssets() != null ? record.getEndPeriodAssets() : 0.0;
@@ -4406,6 +4413,10 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                                     double turnoverValue = MathUtils.subtract(endPeriodAssets, startPeriodAssets);
                                     record.setTurnoverPurchased(turnoverValue > 0 ? turnoverValue: null);
                                     record.setTurnoverOther( turnoverValue < 0 ? turnoverValue: null);
+
+                                    turnover1623PositiveSum = MathUtils.add(turnover1623PositiveSum, turnoverValue > 0 ? turnoverValue: 0.0);
+                                    turnover1623NegativeSum = MathUtils.add(turnover1623NegativeSum, turnoverValue < 0 ? turnoverValue: 0.0);
+
                                     recordExists = true;
                                     break;
                                 }
@@ -4424,30 +4435,34 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                                 newRecord.setTurnoverPurchased(turnoverValue > 0 ? turnoverValue: null);
                                 newRecord.setTurnoverOther( turnoverValue < 0 ? turnoverValue: null);
 
+                                turnover1623PositiveSum = MathUtils.add(turnover1623PositiveSum, turnoverValue > 0 ? turnoverValue: 0.0);
+                                turnover1623NegativeSum = MathUtils.add(turnover1623NegativeSum, turnoverValue < 0 ? turnoverValue: 0.0);
+
                                 records.add(indexLineToAdd3, newRecord);
 
                                 indexLineToAdd3++;
                                 indexLineToAdd8++;
                             }
 
-                            total1623EndPeriod = MathUtils.add(total1623EndPeriod, MathUtils.multiply(recordUSD.getCurrentAccountBalance() != null ? recordUSD.getCurrentAccountBalance() : 0, endCurrencyRatesDto.getValue()));
+                            total1623EndPeriod = MathUtils.add(total1623EndPeriod,
+                                    MathUtils.multiply(recordUSD.getCurrentAccountBalance() != null ? recordUSD.getCurrentAccountBalance() : 0, endCurrencyRatesDto.getValue()));
                         }else if(recordUSD.getAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_2923_010)) {
-                            String name = null;
-                            if(recordUSD.getName().equalsIgnoreCase(nameNICKMFMain) || recordUSD.getName().equalsIgnoreCase(nameNICKMFOther)){
-                                name = nameNICKMFMain;
-                            }else if(recordUSD.getName().equalsIgnoreCase(nameSingularityMain) || recordUSD.getName().equalsIgnoreCase(nameSingularityOther)){
-                                name = nameSingularityMain;
-                            }else{
-
-                                logger.error("Report KZT 10: account number '2923.010' expected name mismatch: " + recordUSD.getName());
-                                responseDto.setErrorMessageEn("USD Balance Report error: account number '2923.010' expected name mismatch  '" + recordUSD.getName() + "'");
-                                return responseDto;
-                            }
+//                            String name = null;
+//                            if(recordUSD.getName().equalsIgnoreCase(nameNICKMFMain) || recordUSD.getName().equalsIgnoreCase(nameNICKMFOther)){
+//                                name = nameNICKMFMain;
+//                            }else if(recordUSD.getName().equalsIgnoreCase(nameSingularityMain) || recordUSD.getName().equalsIgnoreCase(nameSingularityOther)){
+//                                name = nameSingularityMain;
+//                            }else{
+//
+//                                logger.error("Report KZT 10: account number '2923.010' expected name mismatch: " + recordUSD.getName());
+//                                responseDto.setErrorMessageEn("USD Balance Report error: account number '2923.010' expected name mismatch  '" + recordUSD.getName() + "'");
+//                                return responseDto;
+//                            }
 
                             boolean recordExists = false;
                             for(ConsolidatedKZTForm10RecordDto record: records){
-                                if(record.getAccountNumber() != null && record.getAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_2923_010) &&
-                                        record.getName().equalsIgnoreCase(name)){
+                                if(record.getAccountNumber() != null && record.getAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_2923_010) /*&&
+                                        record.getName().equalsIgnoreCase(name)*/ && record.getName().equalsIgnoreCase(recordUSD.getName())){
                                     double endPeriodAssetsUSDValue = MathUtils.multiply(recordUSD.getCurrentAccountBalance() != null ? recordUSD.getCurrentAccountBalance() : 0.0, endCurrencyRatesDto.getValue());
                                     record.setEndPeriodAssets(MathUtils.add(endPeriodAssetsUSDValue, record.getEndPeriodAssets()));
 
@@ -4456,6 +4471,9 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                                     double turnoverValue = MathUtils.subtract(endPeriodAssets, startPeriodAssets);
                                     record.setTurnoverPurchased(turnoverValue > 0 ? turnoverValue: null);
                                     record.setTurnoverOther( turnoverValue < 0 ? turnoverValue: null);
+
+                                    turnover2923PositiveSum = MathUtils.add(turnover2923PositiveSum, turnoverValue > 0 ? turnoverValue: 0.0);
+                                    turnover2923NegativeSum = MathUtils.add(turnover2923NegativeSum, turnoverValue < 0 ? turnoverValue: 0.0);
                                     recordExists = true;
                                     break;
                                 }
@@ -4474,12 +4492,15 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                                 double turnoverValue = MathUtils.subtract(endPeriodAssets, startPeriodAssets);
                                 newRecord.setTurnoverPurchased(turnoverValue > 0 ? turnoverValue: null);
                                 newRecord.setTurnoverOther( turnoverValue < 0 ? turnoverValue: null);
+                                turnover2923PositiveSum = MathUtils.add(turnover2923PositiveSum, turnoverValue > 0 ? turnoverValue: 0.0);
+                                turnover2923NegativeSum = MathUtils.add(turnover2923NegativeSum, turnoverValue < 0 ? turnoverValue: 0.0);
 
                                 records.add(indexLineToAdd8, newRecord);
 
                                 indexLineToAdd3++;
                                 indexLineToAdd8++;
                             }
+
                             total2923EndPeriod = MathUtils.add(total2923EndPeriod, MathUtils.multiply(recordUSD.getCurrentAccountBalance() != null ? recordUSD.getCurrentAccountBalance() : 0, endCurrencyRatesDto.getValue()));
                         }
                     }
@@ -4489,25 +4510,28 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
             // Set total sums
             for(ConsolidatedKZTForm10RecordDto record: records){
                 if(record.getAccountNumber() == null && (record.getLineNumber() == 1 || record.getLineNumber() == 3)){
-                    //record.setStartPeriodAssets(total1623StartPeriod);
                     record.setEndPeriodAssets(total1623EndPeriod);
+                    record.setTurnoverPurchased(turnover1623PositiveSum);
+                    record.setTurnoverOther(turnover1623NegativeSum);
                 }else if(record.getAccountNumber() == null && (record.getLineNumber() == 5 || record.getLineNumber() == 8)){
-                    //record.setStartPeriodAssets(total2923StartPeriod.doubleValue());
                     record.setEndPeriodAssets(total2923EndPeriod);
+                    record.setTurnoverPurchased(turnover2923PositiveSum);
+                    record.setTurnoverOther(turnover2923NegativeSum);
                 }else if(record.getAccountNumber() == null && (record.getLineNumber() == 11)){
-                    //record.setStartPeriodAssets(total1623StartPeriod + total2923StartPeriod.doubleValue());
                     record.setEndPeriodAssets(total1623EndPeriod + total2923EndPeriod);
-                }
+                    record.setTurnoverPurchased(MathUtils.add(turnover1623PositiveSum, turnover2923PositiveSum));
+                    record.setTurnoverOther((MathUtils.add(turnover1623NegativeSum,turnover2923NegativeSum)));
+                }else {
 
-                double endPeriodAssets = record.getEndPeriodAssets() != null ? record.getEndPeriodAssets() : 0.0;
-                double startPeriodAssets = record.getStartPeriodAssets() != null ? record.getStartPeriodAssets() : 0.0;
-                double turnoverValue = MathUtils.subtract(endPeriodAssets, startPeriodAssets);
-                record.setTurnoverPurchased(turnoverValue > 0 ? turnoverValue: null);
-                record.setTurnoverOther( turnoverValue < 0 ? turnoverValue: null);
+                    double endPeriodAssets = record.getEndPeriodAssets() != null ? record.getEndPeriodAssets() : 0.0;
+                    double startPeriodAssets = record.getStartPeriodAssets() != null ? record.getStartPeriodAssets() : 0.0;
+                    double turnoverValue = MathUtils.subtract(endPeriodAssets, startPeriodAssets);
+                    record.setTurnoverPurchased(turnoverValue > 0 ? turnoverValue : null);
+                    record.setTurnoverOther(turnoverValue < 0 ? turnoverValue : null);
+                }
 
                 record.setStartPeriodBalance(record.getStartPeriodAssets());
                 record.setEndPeriodBalance(record.getEndPeriodAssets());
-
             }
 
             responseDto.setRecords(records);
