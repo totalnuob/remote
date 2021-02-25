@@ -263,7 +263,10 @@ export class GeneratedReportsNBReportingComponent extends CommonNBReportingCompo
     }
 
     exportAll(){
-        this.busy = this.periodicReportService.makeFileRequest(DATA_APP_URL + `periodicReport/exportAll/${this.reportId}/`, 'reports_kzt')
+        var reportPeriod = (this.periodicReport.reportDate != null ?
+                '_' + this.getReportDateShortFormatted(this.periodicReport.reportDate).toLowerCase().replace(/\s/g, ''): "");
+        var fileName = 'reports_kzt' + reportPeriod;
+        this.busy = this.periodicReportService.makeFileRequest(DATA_APP_URL + `periodicReport/exportAll/${this.reportId}/`, fileName)
             .subscribe(
                 response  => {
                     //console.log("ok");
