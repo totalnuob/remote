@@ -2292,6 +2292,11 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
         List<ReserveCalculationDto> reserveCalculations = null;
         try {
             reserveCalculations = this.reserveCalculationService.getReserveCalculationsByExpenseTypeBeforeDate(ReserveCalculationsExpenseTypeLookup.ADD.getCode(), currentReport.getReportDate());
+            List<ReserveCalculationDto> reserveCalculationsNICKMFExp =
+                    this.reserveCalculationService.getReserveCalculationsByExpenseTypeBeforeDate(ReserveCalculationsExpenseTypeLookup.NICK_MF_EXPENSES.getCode(), currentReport.getReportDate());
+            if(reserveCalculationsNICKMFExp != null){
+                reserveCalculations.addAll(reserveCalculationsNICKMFExp);
+            }
         }catch (IllegalStateException ex){
             responseDto.setErrorMessageEn("Reserve Calculation failed. " + ex.getMessage());
             return responseDto;
@@ -2551,6 +2556,11 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
         List<ReserveCalculationDto> reserveCalculations = null;
         try{
             reserveCalculations = this.reserveCalculationService.getReserveCalculationsByExpenseTypeBeforeDate(ReserveCalculationsExpenseTypeLookup.ADD.getCode(), reportDate);
+            List<ReserveCalculationDto> reserveCalculationsNICKMFExp =
+                    this.reserveCalculationService.getReserveCalculationsByExpenseTypeBeforeDate(ReserveCalculationsExpenseTypeLookup.NICK_MF_EXPENSES.getCode(), reportDate);
+            if(reserveCalculationsNICKMFExp != null){
+                reserveCalculations.addAll(reserveCalculationsNICKMFExp);
+            }
         }catch (IllegalStateException ex){
             throw ex;
         }

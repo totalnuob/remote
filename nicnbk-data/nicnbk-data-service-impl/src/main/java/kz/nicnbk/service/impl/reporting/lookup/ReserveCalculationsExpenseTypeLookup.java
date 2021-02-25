@@ -7,7 +7,8 @@ public enum ReserveCalculationsExpenseTypeLookup {
 
     ADD("ADD"),
     RETURN("RETURN"),
-    ADMINISTRATION_FEES("ADM_FEE");
+    ADMINISTRATION_FEES("ADM_FEE"),
+    NICK_MF_EXPENSES("NMF_EXP");
 
     private String code;
 
