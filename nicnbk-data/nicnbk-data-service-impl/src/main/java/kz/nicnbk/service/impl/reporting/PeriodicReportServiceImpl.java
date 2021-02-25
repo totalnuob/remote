@@ -3101,6 +3101,8 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
             Double reservesSum = null;
             try {
                 reservesSum = this.reserveCalculationService.getReserveCalculationSumKZTForMonth(ReserveCalculationsExpenseTypeLookup.ADD.getCode(), report.getReportDate());
+                Double reservesSumNICKMFExp = this.reserveCalculationService.getReserveCalculationSumKZTForMonth(ReserveCalculationsExpenseTypeLookup.NICK_MF_EXPENSES.getCode(), report.getReportDate());
+                reservesSum = MathUtils.add(reservesSum, reservesSumNICKMFExp);
             }catch (IllegalStateException ex){
                 responseDto.setErrorMessageEn("Error generating KZT Form3 report. " + ex.getMessage());
                 return responseDto;
