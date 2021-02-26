@@ -190,7 +190,11 @@ public final class PeriodicReportConstants {
     public static final String RU_KZT_6_REPORT_LINE_NUMBER_2_NAME = "Изменения в учетной политике и ошибки";
     public static final String RU_KZT_6_REPORT_LINE_NUMBER_2_7_CODE = "KZT6_2_7";
     public static final String RU_KZT_6_REPORT_LINE_NUMBER_2_8_CODE = "KZT6_2_8";
-    public static final String RU_KZT_3_REPORT_LINE_NUMBER_5_1_CODE = "KZT3_5_1";
+
+    //public static final String RU_KZT_3_REPORT_LINE_NUMBER_5_1_CODE = "KZT3_5_1";
+    public static final String RU_KZT_3_REPORT_LINE_NUMBER_6_CURRENT_CODE = "KZT3_5_1"; // renamed, used to be line 5.1
+
+    public static final String RU_KZT_3_REPORT_LINE_NUMBER_6_PREVIOUS_CODE = "KZT3_6_P";
     /* ****************************************************************************************************************/
 
 
