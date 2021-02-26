@@ -365,10 +365,26 @@ public class PeriodicReportPEServiceImpl implements PeriodicReportPEService {
             // From capital calls
             List<ReserveCalculationDto> reserveCalculationRecords =
                     this.reserveCalculationService.getReserveCalculationsForMonth(ReserveCalculationsExpenseTypeLookup.ADD.getCode(), report.getReportDate(), true);
+
+            // Distributions
+            List<ReserveCalculationDto> reserveCalculationRecordsDistributions =
+                    this.reserveCalculationService.getReserveCalculationsForMonth(ReserveCalculationsExpenseTypeLookup.RETURN.getCode(), report.getReportDate(), true);
+            if(reserveCalculationRecordsDistributions != null){
+                for(ReserveCalculationDto reserveCalculationDto: reserveCalculationRecordsDistributions){
+                    if(reserveCalculationDto.getSource() != null && reserveCalculationDto.getSource().getCode().startsWith("TARR") &&
+                            reserveCalculationDto.getRecipient() != null && reserveCalculationDto.getRecipient().getCode().startsWith("NICK")){
+                        // Distribution from Tarragon to NICK MF
+                        reserveCalculationRecords.add(reserveCalculationDto);
+                    }
+                }
+            }
             if(reserveCalculationRecords != null){
                 for(ReserveCalculationDto reserveCalculationDto: reserveCalculationRecords){
                     if(reserveCalculationDto.getRecipient() == null || !reserveCalculationDto.getRecipient().getCode().startsWith("TARR")){
-                        continue;
+                        if(reserveCalculationDto.getSource() == null || !reserveCalculationDto.getSource().getCode().startsWith("TARR") ||
+                                reserveCalculationDto.getRecipient() == null || !reserveCalculationDto.getRecipient().getCode().startsWith("NICK")){
+                            continue;
+                        }
                     }
                     TarragonGeneratedGeneralLedgerFormDto recordDto = new TarragonGeneratedGeneralLedgerFormDto();
                     String acronym = reserveCalculationDto.getRecipient().getCode().equalsIgnoreCase(ReserveCalculationsEntityTypeLookup.TARRAGON_A.getCode()) ? PETrancheTypeLookup.TARRAGON_A.getNameEn() :
@@ -376,16 +392,22 @@ public class PeriodicReportPEServiceImpl implements PeriodicReportPEService {
                                     reserveCalculationDto.getRecipient().getCode().equalsIgnoreCase(ReserveCalculationsEntityTypeLookup.TARRAGON_A2.getCode()) ? PETrancheTypeLookup.TARRAGON_A2.getNameEn():
                                             reserveCalculationDto.getRecipient().getCode().equalsIgnoreCase(ReserveCalculationsEntityTypeLookup.TARRAGON_B2.getCode()) ? PETrancheTypeLookup.TARRAGON_B2.getNameEn():
                                                     "TARRAGON";
-                    if(acronym.equalsIgnoreCase("TARRAGON")) {
-                        logger.error("Error generating Tarragon GL Form: capital call recipient is specified as 'Tarragon', must be either 'Tarragon A' or 'Tarragon B'");
-                        responseDto.setErrorMessageEn("Error generating Tarragon GL Form: capital call recipient is specified as 'Tarragon', must be either 'Tarragon A' or 'Tarragon B'");
-                        return responseDto;
-                    }
+//                    if(acronym.equalsIgnoreCase("TARRAGON")) {
+//                        logger.error("Error generating Tarragon GL Form: capital call recipient is specified as 'Tarragon', must be either 'Tarragon A' or 'Tarragon B'");
+//                        responseDto.setErrorMessageEn("Error generating Tarragon GL Form: capital call recipient is specified as 'Tarragon', must be either 'Tarragon A' or 'Tarragon B'");
+//                        return responseDto;
+//                    }
                     recordDto.setAcronym(acronym);
                     recordDto.setBalanceDate(report.getReportDate());
 
                     Double amount = reserveCalculationDto.getAmountToSPV() != null ?
                             reserveCalculationDto.getAmountToSPV() : reserveCalculationDto.getAmount();
+
+                    if(reserveCalculationDto.getExpenseType() != null && reserveCalculationDto.getExpenseType().getCode().equalsIgnoreCase(ReserveCalculationsExpenseTypeLookup.RETURN.getCode())){
+                        // Subtract Distributions
+                        amount = MathUtils.subtract(0.0, amount);
+                    }
+
                     recordDto.setGLAccountBalance(amount);
                     recordDto.setAdded(false);
                     recordDto.setEditable(false);

@@ -387,10 +387,26 @@ public class PeriodicReportREServiceImpl implements PeriodicReportREService {
 
             List<ReserveCalculationDto> reserveCalculationRecords =
                     this.reserveCalculationService.getReserveCalculationsForMonth(ReserveCalculationsExpenseTypeLookup.ADD.getCode(), report.getReportDate(), true);
+
+            // Distributions
+            List<ReserveCalculationDto> reserveCalculationRecordsDistributions =
+                    this.reserveCalculationService.getReserveCalculationsForMonth(ReserveCalculationsExpenseTypeLookup.RETURN.getCode(), report.getReportDate(), true);
+            if(reserveCalculationRecordsDistributions != null){
+                for(ReserveCalculationDto reserveCalculationDto: reserveCalculationRecordsDistributions){
+                    if(reserveCalculationDto.getSource() != null && reserveCalculationDto.getSource().getCode().startsWith("TERR") &&
+                            reserveCalculationDto.getRecipient() != null && reserveCalculationDto.getRecipient().getCode().startsWith("NICK")){
+                        // Distribution from Terra to NICK MF
+                        reserveCalculationRecords.add(reserveCalculationDto);
+                    }
+                }
+            }
             if(reserveCalculationRecords != null){
                 for(ReserveCalculationDto reserveCalculationDto: reserveCalculationRecords){
                     if(reserveCalculationDto.getRecipient() == null || !reserveCalculationDto.getRecipient().getCode().startsWith("TERR")){
-                        continue;
+                        if(reserveCalculationDto.getSource() == null || !reserveCalculationDto.getSource().getCode().startsWith("TERR") ||
+                                reserveCalculationDto.getRecipient() == null || !reserveCalculationDto.getRecipient().getCode().startsWith("NICK")){
+                            continue;
+                        }
                     }
                     TerraGeneratedGeneralLedgerFormDto recordDto = new TerraGeneratedGeneralLedgerFormDto();
                     recordDto.setId(reserveCalculationDto.getId());
@@ -406,6 +422,10 @@ public class PeriodicReportREServiceImpl implements PeriodicReportREService {
 
                     Double amount = reserveCalculationDto.getAmountToSPV() != null ?
                             reserveCalculationDto.getAmountToSPV() : reserveCalculationDto.getAmount();
+                    if(reserveCalculationDto.getExpenseType() != null && reserveCalculationDto.getExpenseType().getCode().equalsIgnoreCase(ReserveCalculationsExpenseTypeLookup.RETURN.getCode())){
+                        // Subtract Distributions
+                        amount = MathUtils.subtract(0.0, amount);
+                    }
                     recordDto.setGLAccountBalance(amount);
                     recordDto.setAdded(false);
                     recordDto.setEditable(false);
