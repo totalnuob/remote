@@ -95,6 +95,11 @@ export class CorpMeetingICEditComponent extends CommonFormViewComponent implemen
                         this.absenceTypes.push(element);
                     });
                     data2.forEach(element => {
+
+
+                        // TODO: ???
+
+
                         this.attendeesList.push({"employee" : element, present: true});
                     });
                     data3.forEach(element => {
@@ -150,7 +155,24 @@ export class CorpMeetingICEditComponent extends CommonFormViewComponent implemen
                                 this.attendeesList[j].present = false;
                             }
                         }
+
+                        // TODO: add IC members missing from this.attendeesList, but present in this.icMeeting.attendees
+                        for(var i = 0; i < this.icMeeting.attendees.length; i++){
+                            var missing = true;
+                            for(var j = 0; j < this.attendeesList.length; j++){
+                                if(this.icMeeting.attendees[i].employee.id == this.attendeesList[j].employee.id){
+                                    missing = false;
+                                    console.log(j);
+                                    break;
+                                }
+                            }
+                            if(missing){
+                                // add
+                                this.attendeesList.push(this.icMeeting.attendees[i]);
+                            }
+                        }
                     }
+
                     // preselect invitees
                     this.inviteesSelect.active = [];
                     if(this.icMeeting.invitees) {

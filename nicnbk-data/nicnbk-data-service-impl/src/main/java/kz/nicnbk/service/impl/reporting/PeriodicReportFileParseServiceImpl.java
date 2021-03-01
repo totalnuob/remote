@@ -558,7 +558,7 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
                         if(StringUtils.isEmpty(value)){
                             continue;
                         }
-                        record.setInvestment(value);
+                        record.setInvestment(value.trim());
                     }
                     final String trancheHeader = PeriodicReportConstants.PARSE_SOI_REPORT_HEADER_TRANCHE;
                     if(headers.get(trancheHeader) != null){
