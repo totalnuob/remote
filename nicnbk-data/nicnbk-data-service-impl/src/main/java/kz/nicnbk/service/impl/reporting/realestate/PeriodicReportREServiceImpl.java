@@ -384,83 +384,85 @@ public class PeriodicReportREServiceImpl implements PeriodicReportREService {
             records.addAll(processTerraGeneralLedger(generalLedgerDataHolderDto));
 
             // From capital calls
+            if(!DateUtils.isDecember(report.getReportDate())) {
+                // December report has December data
+                List<ReserveCalculationDto> reserveCalculationRecords =
+                        this.reserveCalculationService.getReserveCalculationsForMonth(ReserveCalculationsExpenseTypeLookup.ADD.getCode(), report.getReportDate(), true);
 
-            List<ReserveCalculationDto> reserveCalculationRecords =
-                    this.reserveCalculationService.getReserveCalculationsForMonth(ReserveCalculationsExpenseTypeLookup.ADD.getCode(), report.getReportDate(), true);
-
-            // Distributions
-            List<ReserveCalculationDto> reserveCalculationRecordsDistributions =
-                    this.reserveCalculationService.getReserveCalculationsForMonth(ReserveCalculationsExpenseTypeLookup.RETURN.getCode(), report.getReportDate(), true);
-            if(reserveCalculationRecordsDistributions != null){
-                for(ReserveCalculationDto reserveCalculationDto: reserveCalculationRecordsDistributions){
-                    if(reserveCalculationDto.getSource() != null && reserveCalculationDto.getSource().getCode().startsWith("TERR") &&
-                            reserveCalculationDto.getRecipient() != null && reserveCalculationDto.getRecipient().getCode().startsWith("NICK")){
-                        // Distribution from Terra to NICK MF
-                        reserveCalculationRecords.add(reserveCalculationDto);
-                    }
-                }
-            }
-            if(reserveCalculationRecords != null){
-                for(ReserveCalculationDto reserveCalculationDto: reserveCalculationRecords){
-                    if(reserveCalculationDto.getRecipient() == null || !reserveCalculationDto.getRecipient().getCode().startsWith("TERR")){
-                        if(reserveCalculationDto.getSource() == null || !reserveCalculationDto.getSource().getCode().startsWith("TERR") ||
-                                reserveCalculationDto.getRecipient() == null || !reserveCalculationDto.getRecipient().getCode().startsWith("NICK")){
-                            continue;
+                // Distributions
+                List<ReserveCalculationDto> reserveCalculationRecordsDistributions =
+                        this.reserveCalculationService.getReserveCalculationsForMonth(ReserveCalculationsExpenseTypeLookup.RETURN.getCode(), report.getReportDate(), true);
+                if (reserveCalculationRecordsDistributions != null) {
+                    for (ReserveCalculationDto reserveCalculationDto : reserveCalculationRecordsDistributions) {
+                        if (reserveCalculationDto.getSource() != null && reserveCalculationDto.getSource().getCode().startsWith("TERR") &&
+                                reserveCalculationDto.getRecipient() != null && reserveCalculationDto.getRecipient().getCode().startsWith("NICK")) {
+                            // Distribution from Terra to NICK MF
+                            reserveCalculationRecords.add(reserveCalculationDto);
                         }
                     }
-                    TerraGeneratedGeneralLedgerFormDto recordDto = new TerraGeneratedGeneralLedgerFormDto();
-                    recordDto.setId(reserveCalculationDto.getId());
-                    String acronym = reserveCalculationDto.getRecipient().getCode().equalsIgnoreCase(ReserveCalculationsEntityTypeLookup.TERRA_A.getCode()) ? "Terra A" :
-                            reserveCalculationDto.getRecipient().getCode().equalsIgnoreCase(ReserveCalculationsEntityTypeLookup.TERRA_B.getCode()) ? "Terra B" : "Terra";
+                }
+                if (reserveCalculationRecords != null) {
+                    for (ReserveCalculationDto reserveCalculationDto : reserveCalculationRecords) {
+                        if (reserveCalculationDto.getRecipient() == null || !reserveCalculationDto.getRecipient().getCode().startsWith("TERR")) {
+                            if (reserveCalculationDto.getSource() == null || !reserveCalculationDto.getSource().getCode().startsWith("TERR") ||
+                                    reserveCalculationDto.getRecipient() == null || !reserveCalculationDto.getRecipient().getCode().startsWith("NICK")) {
+                                continue;
+                            }
+                        }
+                        TerraGeneratedGeneralLedgerFormDto recordDto = new TerraGeneratedGeneralLedgerFormDto();
+                        recordDto.setId(reserveCalculationDto.getId());
+                        String acronym = reserveCalculationDto.getRecipient().getCode().equalsIgnoreCase(ReserveCalculationsEntityTypeLookup.TERRA_A.getCode()) ? "Terra A" :
+                                reserveCalculationDto.getRecipient().getCode().equalsIgnoreCase(ReserveCalculationsEntityTypeLookup.TERRA_B.getCode()) ? "Terra B" : "Terra";
 //                    if(acronym.equalsIgnoreCase("TERRA")) {
 //                        logger.error("Error generating Terra GL Form: capital call recipient is specified as 'Terra', must be either 'Terra A' or 'Terra B'");
 //                        responseDto.setErrorMessageEn("Error generating Terra GL Form: capital call recipient is specified as 'Terra', must be either 'Terra A' or 'Terra B'");
 //                        return responseDto;
 //                    }
-                    recordDto.setAcronym(acronym);
-                    recordDto.setBalanceDate(report.getReportDate());
+                        recordDto.setAcronym(acronym);
+                        recordDto.setBalanceDate(report.getReportDate());
 
-                    Double amount = reserveCalculationDto.getAmountToSPV() != null ?
-                            reserveCalculationDto.getAmountToSPV() : reserveCalculationDto.getAmount();
-                    if(reserveCalculationDto.getExpenseType() != null && reserveCalculationDto.getExpenseType().getCode().equalsIgnoreCase(ReserveCalculationsExpenseTypeLookup.RETURN.getCode())){
-                        // Subtract Distributions
-                        amount = MathUtils.subtract(0.0, amount);
+                        Double amount = reserveCalculationDto.getAmountToSPV() != null ?
+                                reserveCalculationDto.getAmountToSPV() : reserveCalculationDto.getAmount();
+                        if (reserveCalculationDto.getExpenseType() != null && reserveCalculationDto.getExpenseType().getCode().equalsIgnoreCase(ReserveCalculationsExpenseTypeLookup.RETURN.getCode())) {
+                            // Subtract Distributions
+                            amount = MathUtils.subtract(0.0, amount);
+                        }
+                        recordDto.setGLAccountBalance(amount);
+                        recordDto.setAdded(false);
+                        recordDto.setEditable(false);
+
+                        recordDto.setFinancialStatementCategory(GeneralLedgerFinancialStatementCategoryLookup.ASSETS.getCode());
+                        recordDto.setChartAccountsLongDescription(TarragonNICChartAccountsLookup.CC_CASH_ADJ.getNameEn());
+                        recordDto.setNbAccountNumber(NICChartAccountsLookup.CURRENT_ACCOUNT_CASH.getCodeNBRK());
+                        recordDto.setNicAccountName(NICChartAccountsLookup.CURRENT_ACCOUNT_CASH.getNameRu());
+
+
+                        recordDto.setExcludeFromTerraCalculation(reserveCalculationDto.getExcludeFromTerraCalculation() != null
+                                && reserveCalculationDto.getExcludeFromTerraCalculation().booleanValue());
+
+                        recordDto.setType(TerraRecordTypeLookup.CAPITAL_CALL.getCode());
+                        records.add(recordDto);
+
+                        TerraGeneratedGeneralLedgerFormDto recordDtoOpposite = new TerraGeneratedGeneralLedgerFormDto();
+                        recordDtoOpposite.setAcronym(acronym);
+                        recordDtoOpposite.setBalanceDate(report.getReportDate());
+                        recordDtoOpposite.setGLAccountBalance(MathUtils.subtract(0.0, amount));
+                        recordDtoOpposite.setAdded(false);
+                        recordDtoOpposite.setEditable(false);
+
+                        recordDtoOpposite.setFinancialStatementCategory(GeneralLedgerFinancialStatementCategoryLookup.EQUITY.getCode());
+                        recordDtoOpposite.setChartAccountsLongDescription(TarragonNICChartAccountsLookup.CC_CAPITAL_ADJ.getNameEn());
+                        recordDtoOpposite.setNbAccountNumber(NICChartAccountsLookup.SHAREHOLDER_EQUITY_NBRK.getCodeNBRK());
+                        recordDtoOpposite.setNicAccountName(NICChartAccountsLookup.SHAREHOLDER_EQUITY_NBRK.getNameRu());
+
+                        recordDtoOpposite.setExcludeFromTerraCalculation(reserveCalculationDto.getExcludeOppositeFromTerraCalculation() != null
+                                && reserveCalculationDto.getExcludeOppositeFromTerraCalculation().booleanValue());
+                        recordDtoOpposite.setId(reserveCalculationDto.getId());
+                        recordDtoOpposite.setType(TerraRecordTypeLookup.CAPITAL_CALL.getCode());
+                        records.add(recordDtoOpposite);
                     }
-                    recordDto.setGLAccountBalance(amount);
-                    recordDto.setAdded(false);
-                    recordDto.setEditable(false);
 
-                    recordDto.setFinancialStatementCategory(GeneralLedgerFinancialStatementCategoryLookup.ASSETS.getCode());
-                    recordDto.setChartAccountsLongDescription(TarragonNICChartAccountsLookup.CC_CASH_ADJ.getNameEn());
-                    recordDto.setNbAccountNumber(NICChartAccountsLookup.CURRENT_ACCOUNT_CASH.getCodeNBRK());
-                    recordDto.setNicAccountName(NICChartAccountsLookup.CURRENT_ACCOUNT_CASH.getNameRu());
-
-
-                    recordDto.setExcludeFromTerraCalculation(reserveCalculationDto.getExcludeFromTerraCalculation() != null
-                            && reserveCalculationDto.getExcludeFromTerraCalculation().booleanValue());
-
-                    recordDto.setType(TerraRecordTypeLookup.CAPITAL_CALL.getCode());
-                    records.add(recordDto);
-
-                    TerraGeneratedGeneralLedgerFormDto recordDtoOpposite = new TerraGeneratedGeneralLedgerFormDto();
-                    recordDtoOpposite.setAcronym(acronym);
-                    recordDtoOpposite.setBalanceDate(report.getReportDate());
-                    recordDtoOpposite.setGLAccountBalance(MathUtils.subtract(0.0, amount));
-                    recordDtoOpposite.setAdded(false);
-                    recordDtoOpposite.setEditable(false);
-
-                    recordDtoOpposite.setFinancialStatementCategory(GeneralLedgerFinancialStatementCategoryLookup.EQUITY.getCode());
-                    recordDtoOpposite.setChartAccountsLongDescription(TarragonNICChartAccountsLookup.CC_CAPITAL_ADJ.getNameEn());
-                    recordDtoOpposite.setNbAccountNumber(NICChartAccountsLookup.SHAREHOLDER_EQUITY_NBRK.getCodeNBRK());
-                    recordDtoOpposite.setNicAccountName(NICChartAccountsLookup.SHAREHOLDER_EQUITY_NBRK.getNameRu());
-
-                    recordDtoOpposite.setExcludeFromTerraCalculation(reserveCalculationDto.getExcludeOppositeFromTerraCalculation() != null
-                            && reserveCalculationDto.getExcludeOppositeFromTerraCalculation().booleanValue());
-                    recordDtoOpposite.setId(reserveCalculationDto.getId());
-                    recordDtoOpposite.setType(TerraRecordTypeLookup.CAPITAL_CALL.getCode());
-                    records.add(recordDtoOpposite);
                 }
-
             }
 
 
