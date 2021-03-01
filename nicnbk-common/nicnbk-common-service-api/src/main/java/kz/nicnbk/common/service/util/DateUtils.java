@@ -367,6 +367,10 @@ public class DateUtils {
         return date != null && getMonth(date) == 0;
     }
 
+    public static boolean isDecember(Date date){
+        return date != null && getMonth(date) == 11;
+    }
+
     public static Date moveDateByMonths(Date referenceDate, int months){
         Calendar c = Calendar.getInstance();
         c.setTime(referenceDate);

@@ -363,84 +363,87 @@ public class PeriodicReportPEServiceImpl implements PeriodicReportPEService {
             }
 
             // From capital calls
-            List<ReserveCalculationDto> reserveCalculationRecords =
-                    this.reserveCalculationService.getReserveCalculationsForMonth(ReserveCalculationsExpenseTypeLookup.ADD.getCode(), report.getReportDate(), true);
+            if(!DateUtils.isDecember(report.getReportDate())) {
+                // December report has December data
+                List<ReserveCalculationDto> reserveCalculationRecords =
+                        this.reserveCalculationService.getReserveCalculationsForMonth(ReserveCalculationsExpenseTypeLookup.ADD.getCode(), report.getReportDate(), true);
 
-            // Distributions
-            List<ReserveCalculationDto> reserveCalculationRecordsDistributions =
-                    this.reserveCalculationService.getReserveCalculationsForMonth(ReserveCalculationsExpenseTypeLookup.RETURN.getCode(), report.getReportDate(), true);
-            if(reserveCalculationRecordsDistributions != null){
-                for(ReserveCalculationDto reserveCalculationDto: reserveCalculationRecordsDistributions){
-                    if(reserveCalculationDto.getSource() != null && reserveCalculationDto.getSource().getCode().startsWith("TARR") &&
-                            reserveCalculationDto.getRecipient() != null && reserveCalculationDto.getRecipient().getCode().startsWith("NICK")){
-                        // Distribution from Tarragon to NICK MF
-                        reserveCalculationRecords.add(reserveCalculationDto);
-                    }
-                }
-            }
-            if(reserveCalculationRecords != null){
-                for(ReserveCalculationDto reserveCalculationDto: reserveCalculationRecords){
-                    if(reserveCalculationDto.getRecipient() == null || !reserveCalculationDto.getRecipient().getCode().startsWith("TARR")){
-                        if(reserveCalculationDto.getSource() == null || !reserveCalculationDto.getSource().getCode().startsWith("TARR") ||
-                                reserveCalculationDto.getRecipient() == null || !reserveCalculationDto.getRecipient().getCode().startsWith("NICK")){
-                            continue;
+                // Distributions
+                List<ReserveCalculationDto> reserveCalculationRecordsDistributions =
+                        this.reserveCalculationService.getReserveCalculationsForMonth(ReserveCalculationsExpenseTypeLookup.RETURN.getCode(), report.getReportDate(), true);
+                if (reserveCalculationRecordsDistributions != null) {
+                    for (ReserveCalculationDto reserveCalculationDto : reserveCalculationRecordsDistributions) {
+                        if (reserveCalculationDto.getSource() != null && reserveCalculationDto.getSource().getCode().startsWith("TARR") &&
+                                reserveCalculationDto.getRecipient() != null && reserveCalculationDto.getRecipient().getCode().startsWith("NICK")) {
+                            // Distribution from Tarragon to NICK MF
+                            reserveCalculationRecords.add(reserveCalculationDto);
                         }
                     }
-                    TarragonGeneratedGeneralLedgerFormDto recordDto = new TarragonGeneratedGeneralLedgerFormDto();
-                    String acronym = reserveCalculationDto.getRecipient().getCode().equalsIgnoreCase(ReserveCalculationsEntityTypeLookup.TARRAGON_A.getCode()) ? PETrancheTypeLookup.TARRAGON_A.getNameEn() :
-                            reserveCalculationDto.getRecipient().getCode().equalsIgnoreCase(ReserveCalculationsEntityTypeLookup.TARRAGON_B.getCode()) ? PETrancheTypeLookup.TARRAGON_B.getNameEn() :
-                                    reserveCalculationDto.getRecipient().getCode().equalsIgnoreCase(ReserveCalculationsEntityTypeLookup.TARRAGON_A2.getCode()) ? PETrancheTypeLookup.TARRAGON_A2.getNameEn():
-                                            reserveCalculationDto.getRecipient().getCode().equalsIgnoreCase(ReserveCalculationsEntityTypeLookup.TARRAGON_B2.getCode()) ? PETrancheTypeLookup.TARRAGON_B2.getNameEn():
-                                                    "TARRAGON";
+                }
+                if (reserveCalculationRecords != null) {
+                    for (ReserveCalculationDto reserveCalculationDto : reserveCalculationRecords) {
+                        if (reserveCalculationDto.getRecipient() == null || !reserveCalculationDto.getRecipient().getCode().startsWith("TARR")) {
+                            if (reserveCalculationDto.getSource() == null || !reserveCalculationDto.getSource().getCode().startsWith("TARR") ||
+                                    reserveCalculationDto.getRecipient() == null || !reserveCalculationDto.getRecipient().getCode().startsWith("NICK")) {
+                                continue;
+                            }
+                        }
+                        TarragonGeneratedGeneralLedgerFormDto recordDto = new TarragonGeneratedGeneralLedgerFormDto();
+                        String acronym = reserveCalculationDto.getRecipient().getCode().equalsIgnoreCase(ReserveCalculationsEntityTypeLookup.TARRAGON_A.getCode()) ? PETrancheTypeLookup.TARRAGON_A.getNameEn() :
+                                reserveCalculationDto.getRecipient().getCode().equalsIgnoreCase(ReserveCalculationsEntityTypeLookup.TARRAGON_B.getCode()) ? PETrancheTypeLookup.TARRAGON_B.getNameEn() :
+                                        reserveCalculationDto.getRecipient().getCode().equalsIgnoreCase(ReserveCalculationsEntityTypeLookup.TARRAGON_A2.getCode()) ? PETrancheTypeLookup.TARRAGON_A2.getNameEn() :
+                                                reserveCalculationDto.getRecipient().getCode().equalsIgnoreCase(ReserveCalculationsEntityTypeLookup.TARRAGON_B2.getCode()) ? PETrancheTypeLookup.TARRAGON_B2.getNameEn() :
+                                                        "TARRAGON";
 //                    if(acronym.equalsIgnoreCase("TARRAGON")) {
 //                        logger.error("Error generating Tarragon GL Form: capital call recipient is specified as 'Tarragon', must be either 'Tarragon A' or 'Tarragon B'");
 //                        responseDto.setErrorMessageEn("Error generating Tarragon GL Form: capital call recipient is specified as 'Tarragon', must be either 'Tarragon A' or 'Tarragon B'");
 //                        return responseDto;
 //                    }
-                    recordDto.setAcronym(acronym);
-                    recordDto.setBalanceDate(report.getReportDate());
+                        recordDto.setAcronym(acronym);
+                        recordDto.setBalanceDate(report.getReportDate());
 
-                    Double amount = reserveCalculationDto.getAmountToSPV() != null ?
-                            reserveCalculationDto.getAmountToSPV() : reserveCalculationDto.getAmount();
+                        Double amount = reserveCalculationDto.getAmountToSPV() != null ?
+                                reserveCalculationDto.getAmountToSPV() : reserveCalculationDto.getAmount();
 
-                    if(reserveCalculationDto.getExpenseType() != null && reserveCalculationDto.getExpenseType().getCode().equalsIgnoreCase(ReserveCalculationsExpenseTypeLookup.RETURN.getCode())){
-                        // Subtract Distributions
-                        amount = MathUtils.subtract(0.0, amount);
+                        if (reserveCalculationDto.getExpenseType() != null && reserveCalculationDto.getExpenseType().getCode().equalsIgnoreCase(ReserveCalculationsExpenseTypeLookup.RETURN.getCode())) {
+                            // Subtract Distributions
+                            amount = MathUtils.subtract(0.0, amount);
+                        }
+
+                        recordDto.setGLAccountBalance(amount);
+                        recordDto.setAdded(false);
+                        recordDto.setEditable(false);
+
+                        recordDto.setFinancialStatementCategory(GeneralLedgerFinancialStatementCategoryLookup.ASSETS.getCode());
+                        recordDto.setChartAccountsLongDescription(TarragonNICChartAccountsLookup.CC_CASH_ADJ.getNameEn());
+                        recordDto.setNbAccountNumber(NICChartAccountsLookup.CURRENT_ACCOUNT_CASH.getCodeNBRK());
+                        recordDto.setNicAccountName(NICChartAccountsLookup.CURRENT_ACCOUNT_CASH.getNameRu());
+
+                        recordDto.setId(reserveCalculationDto.getId());
+                        recordDto.setType(TarragonExcludeRecordTypeLookup.CAPITAL_CALL.getCode());
+                        recordDto.setExcludeFromTarragonCalculation(reserveCalculationDto.getExcludeFromTarragonCalculation());
+
+                        updatedRecords.add(recordDto);
+
+                        TarragonGeneratedGeneralLedgerFormDto recordDtoOpposite = new TarragonGeneratedGeneralLedgerFormDto();
+                        recordDtoOpposite.setAcronym(acronym);
+                        recordDtoOpposite.setBalanceDate(report.getReportDate());
+                        recordDtoOpposite.setGLAccountBalance(MathUtils.subtract(0.0, amount));
+                        recordDtoOpposite.setAdded(false);
+                        recordDtoOpposite.setEditable(false);
+
+                        recordDtoOpposite.setFinancialStatementCategory(GeneralLedgerFinancialStatementCategoryLookup.EQUITY.getCode());
+                        recordDtoOpposite.setChartAccountsLongDescription(TarragonNICChartAccountsLookup.CC_CAPITAL_ADJ.getNameEn());
+                        recordDtoOpposite.setNbAccountNumber(NICChartAccountsLookup.SHAREHOLDER_EQUITY_NBRK.getCodeNBRK());
+                        recordDtoOpposite.setNicAccountName(NICChartAccountsLookup.SHAREHOLDER_EQUITY_NBRK.getNameRu());
+
+                        recordDtoOpposite.setId(reserveCalculationDto.getId());
+                        recordDtoOpposite.setType(TarragonExcludeRecordTypeLookup.CAPITAL_CALL.getCode());
+                        recordDtoOpposite.setExcludeFromTarragonCalculation(reserveCalculationDto.getExcludeOppositeFromTarragonCalculation());
+                        updatedRecords.add(recordDtoOpposite);
                     }
 
-                    recordDto.setGLAccountBalance(amount);
-                    recordDto.setAdded(false);
-                    recordDto.setEditable(false);
-
-                    recordDto.setFinancialStatementCategory(GeneralLedgerFinancialStatementCategoryLookup.ASSETS.getCode());
-                    recordDto.setChartAccountsLongDescription(TarragonNICChartAccountsLookup.CC_CASH_ADJ.getNameEn());
-                    recordDto.setNbAccountNumber(NICChartAccountsLookup.CURRENT_ACCOUNT_CASH.getCodeNBRK());
-                    recordDto.setNicAccountName(NICChartAccountsLookup.CURRENT_ACCOUNT_CASH.getNameRu());
-
-                    recordDto.setId(reserveCalculationDto.getId());
-                    recordDto.setType(TarragonExcludeRecordTypeLookup.CAPITAL_CALL.getCode());
-                    recordDto.setExcludeFromTarragonCalculation(reserveCalculationDto.getExcludeFromTarragonCalculation());
-
-                    updatedRecords.add(recordDto);
-
-                    TarragonGeneratedGeneralLedgerFormDto recordDtoOpposite = new TarragonGeneratedGeneralLedgerFormDto();
-                    recordDtoOpposite.setAcronym(acronym);
-                    recordDtoOpposite.setBalanceDate(report.getReportDate());
-                    recordDtoOpposite.setGLAccountBalance(MathUtils.subtract(0.0, amount));
-                    recordDtoOpposite.setAdded(false);
-                    recordDtoOpposite.setEditable(false);
-
-                    recordDtoOpposite.setFinancialStatementCategory(GeneralLedgerFinancialStatementCategoryLookup.EQUITY.getCode());
-                    recordDtoOpposite.setChartAccountsLongDescription(TarragonNICChartAccountsLookup.CC_CAPITAL_ADJ.getNameEn());
-                    recordDtoOpposite.setNbAccountNumber(NICChartAccountsLookup.SHAREHOLDER_EQUITY_NBRK.getCodeNBRK());
-                    recordDtoOpposite.setNicAccountName(NICChartAccountsLookup.SHAREHOLDER_EQUITY_NBRK.getNameRu());
-
-                    recordDtoOpposite.setId(reserveCalculationDto.getId());
-                    recordDtoOpposite.setType(TarragonExcludeRecordTypeLookup.CAPITAL_CALL.getCode());
-                    recordDtoOpposite.setExcludeFromTarragonCalculation(reserveCalculationDto.getExcludeOppositeFromTarragonCalculation());
-                    updatedRecords.add(recordDtoOpposite);
                 }
-
             }
 
 
