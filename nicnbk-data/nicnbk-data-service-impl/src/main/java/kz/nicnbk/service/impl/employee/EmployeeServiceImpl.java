@@ -107,7 +107,7 @@ public class EmployeeServiceImpl implements EmployeeService{
     @Override
     public List<EmployeeDto> findICMembers(){
         try {
-            List<EmployeeDto> dtoList = findEmployeesByRoleCode(UserRoles.IC_MEMBER.getCode());
+            List<EmployeeDto> dtoList = findEmployeesByRoleCode(UserRoles.IC_MEMBER.getCode(), true);
             return dtoList;
         }catch (Exception ex){
             logger.error("Failed to load full employee list", ex);
@@ -118,7 +118,7 @@ public class EmployeeServiceImpl implements EmployeeService{
     @Override
     public List<EmployeeDto> findUsersWithRole(String role){
         try {
-            List<EmployeeDto> dtoList = findEmployeesByRoleCode(role);
+            List<EmployeeDto> dtoList = findEmployeesByRoleCode(role, null);
             return dtoList;
         }catch (Exception ex){
             logger.error("Failed to load full employee list", ex);
@@ -167,21 +167,27 @@ public class EmployeeServiceImpl implements EmployeeService{
     }
 
 
-    private List<EmployeeDto> findEmployeesByRoleCode(String code){
-        List<EmployeeDto> icList = new ArrayList<>();
+    private List<EmployeeDto> findEmployeesByRoleCode(String code, Boolean active){
+        List<EmployeeDto> employeeList = new ArrayList<>();
         List<EmployeeDto> allEmployees = findAll();
         if(allEmployees != null){
             for(EmployeeDto employeeDto: allEmployees){
+                if(active != null){
+                    if(employeeDto.getActive() == null || active.booleanValue() != employeeDto.getActive().booleanValue()){
+                        //skip employee
+                        continue;
+                    }
+                }
                 if(employeeDto.getRoles() != null){
                     for(BaseDictionaryDto role: employeeDto.getRoles()){
                         if(role.getCode() != null && role.getCode().equalsIgnoreCase(code)){
-                            icList.add(employeeDto);
+                            employeeList.add(employeeDto);
                         }
                     }
                 }
             }
         }
-        return icList;
+        return employeeList;
     }
 
     @Override
