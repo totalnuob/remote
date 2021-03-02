@@ -3039,7 +3039,9 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
                         }
                     }else if(ExcelUtils.getStringValueFromCell(row.getCell(1)) != null){
                         String dateText = row.getCell(1).getStringCellValue();
-                        if(DateUtils.getDate(dateText) == null){
+                        Date dateValue = DateUtils.getDate(dateText);
+                        dateValue = dateValue == null ? DateUtils.getDate_MMddyyyy(dateText): null;
+                        if(dateValue == null){
                             logger.error("Error parsing 'Singularity NOAL' file: error parsing date - '" + dateText + "'. Expected format 'dd.MM.yyyy'.");
                             throw new ExcelFileParseException("Error parsing 'Singularity NOAL' file: error parsing date - '" + dateText + "'. Expected format 'dd.MM.yyyy'.");
                         }else{
@@ -3078,7 +3080,9 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
                             //throw new ExcelFileParseException("Error parsing 'Singularity NOAL' file: error parsing effective date");
                         }else if(ExcelUtils.isNotEmptyCell(row.getCell(9)) && row.getCell(9).getCellType() == Cell.CELL_TYPE_STRING){
                             String dateText = row.getCell(9).getStringCellValue();
-                            if(DateUtils.getDate(dateText) == null){
+                            Date dateValue = DateUtils.getDate(dateText);
+                            dateValue = dateValue == null ? DateUtils.getDate_MMddyyyy(dateText): null;
+                            if(dateValue == null){
                                 //logger.error("Error parsing 'Singularity NOAL' file: error parsing effective date - " + dateText);
                                 //throw new ExcelFileParseException("Error parsing 'Singularity NOAL' file: error parsing effective date - " + dateText);
                             }else{
