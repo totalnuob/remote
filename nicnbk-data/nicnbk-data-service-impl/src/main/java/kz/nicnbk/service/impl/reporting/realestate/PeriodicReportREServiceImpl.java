@@ -383,6 +383,21 @@ public class PeriodicReportREServiceImpl implements PeriodicReportREService {
             TerraGeneralLedgerDataHolderDto generalLedgerDataHolderDto = getTerraGeneralLedgerData(reportId);
             records.addAll(processTerraGeneralLedger(generalLedgerDataHolderDto));
 
+            // Check January
+            if(DateUtils.isJanuary(report.getReportDate())){
+                List<TerraGeneratedGeneralLedgerFormDto> newRecords = new ArrayList<>();
+                for(TerraGeneratedGeneralLedgerFormDto record: records){
+                    if(record.getFinancialStatementCategory() != null &&
+                            (record.getFinancialStatementCategory().equalsIgnoreCase(GeneralLedgerFinancialStatementCategoryLookup.INCOME.getCode()) ||
+                                    record.getFinancialStatementCategory().equalsIgnoreCase(GeneralLedgerFinancialStatementCategoryLookup.EXPENSE.getCode()))){
+                        // skip Income & Expenses for January
+                        continue;
+                    }
+                    newRecords.add(record);
+                }
+                records = newRecords;
+            }
+
             // From capital calls
             if(!DateUtils.isDecember(report.getReportDate())) {
                 // December report has December data

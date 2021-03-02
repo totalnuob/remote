@@ -340,6 +340,21 @@ public class PeriodicReportPEServiceImpl implements PeriodicReportPEService {
             List<StatementChangesDto> changes = this.statementChangesService.getStatementChanges(reportId);
             records.addAll(processStatementChanges(changes));
 
+            // Check January
+            if(DateUtils.isJanuary(report.getReportDate())){
+                List<TarragonGeneratedGeneralLedgerFormDto> newRecords = new ArrayList<>();
+                for(TarragonGeneratedGeneralLedgerFormDto record: records){
+                    if(record.getFinancialStatementCategory() != null &&
+                            (record.getFinancialStatementCategory().equalsIgnoreCase(GeneralLedgerFinancialStatementCategoryLookup.INCOME.getCode()) ||
+                                    record.getFinancialStatementCategory().equalsIgnoreCase(GeneralLedgerFinancialStatementCategoryLookup.EXPENSE.getCode()))){
+                        // skip Income & Expenses for January
+                        continue;
+                    }
+                    newRecords.add(record);
+                }
+                records = newRecords;
+            }
+
             // update account balance
             List<TarragonGeneratedGeneralLedgerFormDto> updatedRecords = new ArrayList<>();
             for (TarragonGeneratedGeneralLedgerFormDto record : records) {
@@ -712,8 +727,9 @@ public class PeriodicReportPEServiceImpl implements PeriodicReportPEService {
                 if(isAssets(balanceRecord)){
                     record.setFinancialStatementCategory(GeneralLedgerFinancialStatementCategoryLookup.ASSETS.getCode());
                 }else if(isLiabilities(balanceRecord)){
-                    record.setFinancialStatementCategory("L");
+                    record.setFinancialStatementCategory(GeneralLedgerFinancialStatementCategoryLookup.LIABILITY.getCode());
                 }else{
+
                     // ?
                 }
 
