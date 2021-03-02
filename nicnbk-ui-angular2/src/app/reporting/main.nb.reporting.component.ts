@@ -30,13 +30,16 @@ export class MainNBReportingComponent extends CommonNBReportingComponent impleme
     }
     private reportMonth;
     private reportYear;
+    private reportYearList = [];
 
     private report;
     private reportList: PeriodicReport[];
 
     busy, busyCreate: Subscription;
 
+
     ngOnInit():void {
+        this.getYearList();
         this.busy = this.periodicReportService.loadAll()
             .subscribe(
                 response  => {
@@ -51,6 +54,13 @@ export class MainNBReportingComponent extends CommonNBReportingComponent impleme
     canEdit(){
         // TODO: check rights
         return true;
+    }
+
+    getYearList(){
+        var currentYear = new Date().getFullYear();
+        for(var y = 2016; y <= currentYear; y++){
+            this.reportYearList.push(y);
+        }
     }
 
     createNewReport(){
