@@ -444,7 +444,8 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
                 resetApprovals = true;
             }
 
-            if(entity.getIcMeeting().getUnlockedForFinalize() != null && entity.getIcMeeting().getUnlockedForFinalize().booleanValue()){
+            if(entity.getIcMeeting() != null && entity.getIcMeeting().getUnlockedForFinalize() != null &&
+                    entity.getIcMeeting().getUnlockedForFinalize().booleanValue()){
                 // Unlocked for finalize
                 entity.setPublishedUpd(true);
             }
