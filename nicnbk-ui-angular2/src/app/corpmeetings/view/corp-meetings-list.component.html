@@ -202,6 +202,14 @@
                                            [style.border-bottom-color]="activeTab === 'IC_TOPICS' ? '#D9A158' : 'white'"
                                            (click)="searchICMeetingTopics(0)">IC TOPICS</a>
             </li>
+            <li *ngIf="canViewICAssignments()" class="date-tabs__item"><a data-toggle="tab"
+                                                                     href="#IC_ASSIGNMENTS"
+                                                                     role="tab" aria-controls="IC_ASSIGNMENTS"
+                                                                     aria-selected="false"
+                                                                     class="date-tabs__link"
+                                                                     [style.border-bottom-color]="activeTab === 'IC_ASSIGNMENTS' ? '#D9A158' : 'white'"
+                                                                     (click)="searchICAssignments(0)">IC ASSIGNMENTS</a>
+            </li>
         </ul>
         <div class="tab-content">
             <div id="UPCOMING" role="tabpanel" aria-labelledby="UPCOMING" [ngClass]="activeTab === 'UPCOMING' ? 'tab-pane active' : 'tab-pane' ">
@@ -352,6 +360,111 @@
                                 <a (click)="searchICMeetingTopics(i)">{{i}}</a>
                             </li>
                             <li><a *ngIf="icTopicSearchResult.showPageTo < icTopicSearchResult.totalPages" (click)="searchICMeetingTopics(icTopicSearchResult.showPageTo + 1)">&raquo;</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div id="IC_ASSIGNMENTS" role="tabpanel" aria-labelledby="IC_ASSIGNMENTS" [ngClass]="activeTab === 'IC_ASSIGNMENTS' ? 'tab-pane active' : 'tab-pane' ">
+<!--                <div class="row withpadding">-->
+<!--                    <a *ngIf="canCreateNewTopic()" [routerLink]="['/corpMeetings/edit/',0 ]" class="btn btn-primary pull-right">NEW</a>-->
+<!--                </div>-->
+                <br/>
+
+                <div class="jumbotron">
+                    <form (ngSubmit)="searchICAssignments(0)">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="col-md-5">
+                                    <label for="searchText">Search Text</label>
+                                    <div class="form-group">
+                                        <input type="text" name="searchText" id="searchAssignmentText" class="form-control"
+                                               placeholder="Search...." [(ngModel)]="assignmentsSearchParams.searchText"/>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="fromDateDTPickeer">IC Date From</label>
+                                    <div class='input-group date col-md-2' id='fromDateAssignmentsPicker' style="width: 100%">
+                                        <input type='text' class="form-control" id="fromDateAssignments" name="fromDate" style="font-size: small" [(ngModel)]="assignmentsSearchParams.dateFrom"/>
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="untilDateDTPickeer">IC Date To</label>
+                                    <div class='input-group date col-md-2' id='untilDateAssignmentsPicker' style="width: 100%">
+                                        <input type='text' class="form-control" id="toDateAssignments" name="toDate"style="font-size: small" [(ngModel)]="assignmentsSearchParams.dateTo"/>
+                                        <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="icSearchNumber">IC №</label>
+                                    <div class="form-group">
+                                        <input type="text" name="icSearchNumber" id="icAssignmentsSearchNumber" class="form-control"
+                                               placeholder="IC № ..." [(ngModel)]="assignmentsSearchParams.icNumber"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            &nbsp;
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <button type="button" class="btn-xs btn-default pull-left" (click)="clearAssignmentsSearchForm()">
+                                    <!--<i class="glyphicon glyphicon-trash"></i>-->Reset
+                                </button>
+                                <button type="submit"class="btn btn-success pull-right">Search</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div>
+                    <label>Total found:  <span>{{assignmentsSearchResult?.totalElements > 0 ? assignmentsSearchResult?.totalElements : 0}}</span></label>
+                </div>
+                <div class="row withpadding" style="position: relative; min-height: 80px;">
+                    <div class="row pull-right">
+                        <ul class="pagination" *ngIf="assignmentsSearchResult?.showPageFrom > 0">
+                            <li><a *ngIf="assignmentsSearchResult?.showPageFrom > 1" (click)="searchICAssignments(assignmentsSearchResult.showPageFrom - 1)">&laquo;</a></li>
+                            <li *ngFor="let i of range(assignmentsSearchResult.showPageFrom, assignmentsSearchResult.showPageTo)" [class.active]="i == assignmentsSearchResult.currentPage">
+                                <a (click)="searchICAssignments(i)">{{i}}</a>
+                            </li>
+                            <li><a *ngIf="assignmentsSearchResult.showPageTo < assignmentsSearchResult.totalPages" (click)="searchICAssignments(assignmentsSearchResult.showPageTo + 1)">&raquo;</a></li>
+                        </ul>
+                    </div>
+                    <table [ngBusy]="busy"  class = "table table-hover">
+                        <thead>
+                        <tr>
+                            <th width="5%">IC NUMBER</th>
+                            <th width="5%">IC DATE</th>
+                            <th width="30%">NAME</th>
+                            <th width="30%">ASSIGNMENT</th>
+                            <th width="10%">DEPT</th>
+                            <th width="5%">DUE DATE</th>
+                            <th width="15%">STATUS</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr *ngFor="let assignment of assignments"  style="cursor: pointer" (click)="navigateAssignment(assignment.id)">
+                            <td width="5%" >number</td>
+                            <td width="5%">date</td>
+                            <td width="30%">name</td>
+                            <td width="30%">assignemnt</td>
+                            <td width="10%">dept</td>
+                            <td width="5%">DUE DATE</td>
+                            <td width="15%">STATUS</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <div class="row pull-right">
+                        <ul class="pagination" *ngIf="assignmentsSearchResult?.showPageFrom > 0">
+                            <li><a *ngIf="assignmentsSearchResult?.showPageFrom > 1" (click)="searchICAssignments(assignmentsSearchResult.showPageFrom - 1)">&laquo;</a></li>
+                            <li *ngFor="let i of range(assignmentsSearchResult.showPageFrom, assignmentsSearchResult.showPageTo)" [class.active]="i == assignmentsSearchResult.currentPage">
+                                <a (click)="searchICAssignments(i)">{{i}}</a>
+                            </li>
+                            <li><a *ngIf="assignmentsSearchResult.showPageTo < assignmentsSearchResult.totalPages" (click)="searchICAssignments(assignmentsSearchResult.showPageTo + 1)">&raquo;</a></li>
                         </ul>
                     </div>
                 </div>

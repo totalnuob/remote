@@ -27,6 +27,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -719,6 +720,21 @@ public class CorpMeetingsServiceREST extends CommonServiceREST{
 
         List<CorpMeetingUpcomingEventDto> events = corpMeetingService.getUpcomingEvents(username);
         return buildNonNullResponse(events);
+    }
+
+    @PreAuthorize(IC_MEETING_TOPIC_VIEWER)
+    @RequestMapping(value = "/assignmentsAll", method = RequestMethod.POST)
+    public ResponseEntity<?> searchDepartmentAssignments(@RequestBody ICAssignmentSearchParamsDto searchParams) {
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
+
+        List<ICMeetingTopicAssignmentDto> assignments = this.corpMeetingService.searchDepartmentAssignments(searchParams, username);
+//        EmployeeDto employeeDto = this.employeeService.findByUsername(username);
+//        List<ICMeetingTopicAssignmentDto> assignments = new ArrayList<>();
+//        if(employeeDto != null && employeeDto.getPosition() != null && employeeDto.getPosition().getDepartment() != null){
+//            assignments = this.corpMeetingService.getDepartmentAssignments(employeeDto.getPosition().getDepartment().getId());
+//        }
+        return buildNonNullResponse(assignments);
     }
 
 //    @PreAuthorize(IC_MEETING_EDITOR)

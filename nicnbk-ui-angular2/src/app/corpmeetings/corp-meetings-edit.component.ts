@@ -76,6 +76,11 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
 
     availableTags = [];
 
+    @ViewChild('inviteesSelect')
+    private departmentListSelect;
+
+    public departmentList = [];
+
     constructor(
         private employeeService: EmployeeService,
         private lookupService: LookupService,
@@ -97,10 +102,11 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
             //this.employeeService.findByDepartmentAndActive(departmentId),
             this.employeeService.findByDepartmentAndActiveWithExecutives(departmentId),
             //this.employeeService.findActiveAll(),
-            this.lookupService.getAvailableTagsByType("IC")
+            this.lookupService.getAvailableTagsByType("IC"),
+            this.employeeService.getAllDepartments()
             )
             .subscribe(
-                ([data1, data2, data3, data4]) => {
+                ([data1, data2, data3, data4,data5]) => {
                     this.icList = [];
                     data1.forEach(element => {
                         this.icList.push(element);
@@ -125,6 +131,10 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
                     data4.forEach(element => {
                         this.availableTags.push(element.name);
                     });
+                    data5.forEach(element => {
+                        this.departmentList.push({id: element.id, text: element.code});
+                    });
+
                     this.sub = this.route
                         .params
                         .subscribe(params => {
@@ -162,7 +172,6 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
                         });
                 });
     }
-
 
     getICMeetingTopic(id, successMessage, errorMessage){
         this.uploadExplanatoryNoteFile = [];
@@ -376,7 +385,7 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
                 this.postAction(null, 'Name required');
                 return false;
             }
-            if(this.icMeetingTopic.decision == null || this.icMeetingTopic.decision.trim() === ''){
+            if(this.icMeetingTopic.decisions == null || this.icMeetingTopic.decisions.length == 0){
                 this.postAction(null, 'Decision required');
                 return false;
             }
@@ -437,6 +446,8 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
             this.icMeetingTopic.id = null;
         }
         this.icMeetingTopic.toPublish = toPublish;
+
+        console.log(this.icMeetingTopic);
         this.busy = this.corpMeetingService.saveICMeetingTopicWithFiles(this.icMeetingTopic, this.getUploadFileMaterialsAsFiles(),
                 this.uploadExplanatoryNoteFile)
             .subscribe(
@@ -936,6 +947,34 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
     autoAddedApproveListMember(item){
         return (this.icMeetingTopic.id == null || this.icMeetingTopic.id == 0) && this.icAdminEmployee != null &&
                 item.employee != null && item.employee.id == this.icAdminEmployee.id;
+    }
+
+    addDecision(){
+        if(this.icMeetingTopic.decisions == null){
+            this.icMeetingTopic.decisions = [];
+        }
+        this.icMeetingTopic.decisions.push({});
+    }
+
+    removeDecision(i){
+        if(this.icMeetingTopic.decisions != null && this.icMeetingTopic.decisions.length > i && i >= 0){
+            this.icMeetingTopic.decisions.splice(i, 1);
+        }
+    }
+
+    public selectedDecisionDepartment(value:any):void {
+        //console.log('Selected value is: ', value);
+    }
+
+    public removedDecisionDepartment(value:any):void {
+        //console.log('Removed value is: ', value);
+    }
+
+    public refreshDecisionDepartments(value:any, decision):void {
+        //console.log(value);
+        //console.log(decision);
+        decision.departments = decision.departments == null ? []: decision.departments;
+        decision.departments = value;
     }
 
 }

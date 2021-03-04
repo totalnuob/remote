@@ -140,9 +140,55 @@
                         <div class="row top-buffer">
                             <div class="col-md-12">
                                 <div class="row withpadding">
-                                    <span>Decision</span>
-                                    <textarea fz-elastic spellcheck="false"  type="text" placeholder="..." class="form-control"
-                                          id="decision" name="decision" [(ngModel)]="icMeetingTopic.decision"></textarea>
+                                    <span>Decision</span>&nbsp;<button class="btn btn-default btn-xs" (click)="addDecision()">Add</button>
+
+                                    <div *ngIf="icMeetingTopic.decision != null">
+                                        <textarea fz-elastic spellcheck="false"  type="text" placeholder="..." class="form-control" readonly
+                                                  id="decision" name="decision" [(ngModel)]="icMeetingTopic.decision"></textarea>
+                                        <br/>
+                                    </div>
+
+                                    <div *ngFor="let decision of icMeetingTopic.decisions; let i = index" [attr.data-index]="i"
+                                         class="row form-group form-horizontal">
+                                        <div class="row">
+                                            <p class="col-md-1" style="text-align: right"> {{i + 1}}.</p>
+                                            <div class="col-md-7" align="left">
+                                                <textarea  fz-elastic spellcheck="false" [(ngModel)]="decision.name" [ngModelOptions]="{standalone: true}"
+                                                      type="text" placeholder="Please type decision..." class="form-control pull-left"></textarea>
+                                                </div>
+                                            <div class="col-md-3">
+                                                <select class="form-control" [(ngModel)]="decision.type" [ngModelOptions]="{standalone: true}">
+                                                    <option value="GENERAL">general</option>
+                                                    <option value="ASSIGN">assignment</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-1">
+                                                <button class="btn btn-danger btn-xs" (click)="removeDecision(i)">
+                                                    <i class="glyphicon glyphicon-trash"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-1">
+                                                &nbsp;
+                                            </div>
+                                            <div class="col-md-7">
+                                                &nbsp;
+                                            </div>
+                                            <div class="col-md-3" *ngIf="decision.type === 'ASSIGN' && departmentList?.length > 0">
+                                                <ng-select #inviteesSelect [initData]="decision.departments"
+                                                           [multiple]="true"
+                                                           [items]="departmentList"
+                                                           (data)="refreshDecisionDepartments($event, decision)"
+                                                           (selected)="selectedDecisionDepartment($event)"
+                                                           (removed)="removedDecisionDepartment($event)"
+                                                           placeholder="No dept selected"></ng-select>
+                                            </div>
+                                            <div class="col-md-1">
+                                                &nbsp;
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="row">
                                     &nbsp;

@@ -9,6 +9,7 @@ import kz.nicnbk.repo.model.employee.Department;
 public class DepartmentDto extends BaseDictionaryDto {
 
     private String nameUsedWithPositionRu;
+    private String shortNameRu;
 
     public DepartmentDto(){}
 
@@ -26,5 +27,13 @@ public class DepartmentDto extends BaseDictionaryDto {
 
     public void setNameUsedWithPositionRu(String nameUsedWithPositionRu) {
         this.nameUsedWithPositionRu = nameUsedWithPositionRu;
+    }
+
+    public String getShortNameRu() {
+        return shortNameRu;
+    }
+
+    public void setShortNameRu(String shortNameRu) {
+        this.shortNameRu = shortNameRu;
     }
 }

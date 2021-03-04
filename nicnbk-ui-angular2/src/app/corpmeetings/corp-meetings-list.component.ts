@@ -19,6 +19,10 @@ import {UpcomingEvent} from "./model/upcoming.event";
 import {ICMeeting} from "./model/ic-meeting";
 import {SaveResponse} from "../common/save-response";
 import {ICMeetingSearchParams} from "./model/ic-meeting-search-params";
+
+import {ICAssignmentSearchParams} from "./model/ic-assignment-search-params";
+import {ICAssignmentSearchResults} from "./model/ic-assignment-search-results";
+
 import {ICMeetingTopicSearchParams} from "./model/ic-meeting-topic-search-params";
 import {ICMeetingTopicSearchResults} from "./model/ic-meeting-topic-search-results";
 import {DATA_APP_URL} from "../common/common.service.constants";
@@ -60,6 +64,10 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
     icMeetings = [];
     icMeetingsSearchParams = new ICMeetingSearchParams();
     icMeetingsSearchResult: ICMeetingSearchResults
+
+    assignmentsSearchParams = new ICAssignmentSearchParams();
+    assignmentsSearchResult = new ICAssignmentSearchResults();
+    assignments = [];
 
     icMeeting = new ICMeeting();
     uploadProtocolFile: any;
@@ -136,6 +144,12 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
 
                                 page = this.icTopicSearchParams.page > 0 ? this.icTopicSearchParams.page : 0;
                                 this.searchICMeetingTopics(page)
+                            }else if(this.activeTab === 'IC_ASSIGNMENTS'){
+                                $('#fromDateAssignments').val(this.icTopicSearchParams.dateFrom);
+                                $('#toDateAssignments').val(this.icTopicSearchParams.dateTo);
+
+                                page = this.icTopicSearchParams.page > 0 ? this.icTopicSearchParams.page : 0;
+                                this.searchICAssignments(page)
                             }else{
                                 this.searchICMeetingUpcomingEvents();
                             }
@@ -151,6 +165,14 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
             format: 'DD-MM-YYYY'
         });
         $('#untilDateDTPickeer').datetimepicker({
+            //defaultDate: new Date(),
+            format: 'DD-MM-YYYY'
+        });
+        $('#fromDateAssignmentsPicker').datetimepicker({
+            //defaultDate: new Date(),
+            format: 'DD-MM-YYYY'
+        });
+        $('#untilDateAssignmentsPicker').datetimepicker({
             //defaultDate: new Date(),
             format: 'DD-MM-YYYY'
         });
@@ -289,6 +311,38 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
         return classes;
     }
 
+    searchICAssignments(page){
+        this.activeTab = "IC_ASSIGNMENTS";
+
+        this.successMessage = null;
+        this.errorMessage = null;
+
+        this.assignmentsSearchParams.pageSize = 20;
+        this.assignmentsSearchParams.page = page;
+
+        if(this.assignmentsSearchParams.type === 'NONE'){
+            this.assignmentsSearchParams.type = null;
+        }
+        this.assignmentsSearchParams.dateFrom = $('#fromDateAssignments').val();
+        this.assignmentsSearchParams.dateTo = $('#toDateAssignments').val();
+
+        //console.log(this.icTopicSearchParams);
+        this.busy = this.corpMeetingService.searchICAssignments(this.assignmentsSearchParams)
+            .subscribe(
+                (searchResult: ICAssignmentSearchResults)  => {
+                    this.assignments = searchResult.assignments;
+                    this.assignmentsSearchResult = searchResult;
+                },
+                (error: ErrorResponse) => {
+                    this.errorMessage = "Error searching IC assignments";
+                    if(error && !error.isEmpty()){
+                        this.processErrorMessage(error);
+                    }
+                    this.postAction(null,  this.errorMessage);
+                }
+            );
+    }
+
     searchICMeetingTopics(page){
 
         this.activeTab = "IC_TOPICS";
@@ -328,8 +382,20 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
         this.router.navigate(['/corpMeetings/edit/', topicId, { params }]);
     }
 
+    canViewICAssignments(){
+        return this.canViewICTopics();
+    }
+
+    navigateAssignment(){
+        alert("TODO!");
+    }
+
     clearSearchForm(){
         this.icTopicSearchParams = new ICMeetingTopicSearchParams();
+    }
+
+    clearAssignmentsSearchForm(){
+        this.assignmentsSearchParams = {};
     }
 
     clearSearchFormIC(){
@@ -534,7 +600,7 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
                 return 'label label-default';
             }
             if(topic.status === 'CLOSED'){
-                return 'label label-danger';
+                return 'label label-primary';
             }
             if(topic.status === 'LOCKED FOR IC'){
                 return 'label label-primary';

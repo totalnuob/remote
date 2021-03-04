@@ -162,7 +162,6 @@ export class CorpMeetingICEditComponent extends CommonFormViewComponent implemen
                             for(var j = 0; j < this.attendeesList.length; j++){
                                 if(this.icMeeting.attendees[i].employee.id == this.attendeesList[j].employee.id){
                                     missing = false;
-                                    console.log(j);
                                     break;
                                 }
                             }

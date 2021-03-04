@@ -42,6 +42,8 @@ export class CorpMeetingService extends CommonService {
     private IC_MEETINGS_SEARCH_URL = this.CORP_MEETINGS_BASE_URL + "ICMeeting/search/";
     private IC_MEETING_TOPICS_SEARCH_URL = this.CORP_MEETINGS_BASE_URL + "ICMeetingTopic/search/";
 
+    private IC_ASSIGNMENTS_ALL_SEARCH_URL = this.CORP_MEETINGS_BASE_URL + "assignmentsAll/";
+
     private IC_MEETING_SAVE_URL = this.CORP_MEETINGS_BASE_URL + "ICMeeting/save/";
     private IC_MEETING_PROTOCOL_ATTACHMENT_UPLOAD_URL = this.CORP_MEETINGS_BASE_URL + "ICMeeting/protocol/upload/";
     private IC_MEETING_PROTOCOL_ATTACHMENT_DELETE_URL = this.CORP_MEETINGS_BASE_URL + "ICMeeting/protocol/delete/";
@@ -119,6 +121,15 @@ export class CorpMeetingService extends CommonService {
 
         //console.log(body);
         return this.http.post(this.IC_MEETING_TOPICS_SEARCH_URL, body, this.getOptionsWithCredentials())
+            .map(this.extractDataList)
+            .catch(this.handleErrorResponse);
+    }
+
+    searchICAssignments(searchParam):  Observable<any[]> {
+        let body = JSON.stringify(searchParam);
+
+        //console.log(body);
+        return this.http.post(this.IC_ASSIGNMENTS_ALL_SEARCH_URL, body, this.getOptionsWithCredentials())
             .map(this.extractDataList)
             .catch(this.handleErrorResponse);
     }

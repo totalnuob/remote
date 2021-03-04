@@ -125,4 +125,7 @@ public interface CorpMeetingService extends BaseService {
     boolean deleteICMeetingBulletin(Long icMeetingId, String username);
 
     List<CorpMeetingUpcomingEventDto> getUpcomingEvents(String username);
+
+    List<ICMeetingTopicAssignmentDto> getDepartmentAssignments(int id);
+    List<ICMeetingTopicAssignmentDto> searchDepartmentAssignments(ICAssignmentSearchParamsDto params, String username);
 }
