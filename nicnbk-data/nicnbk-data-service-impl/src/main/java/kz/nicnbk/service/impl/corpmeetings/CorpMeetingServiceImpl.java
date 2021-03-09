@@ -977,6 +977,10 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
                         if(approval.getEmployee().getId().longValue() == editor.getId().longValue()){
                             // from approve list
                             return true;
+                        }else if(approval.getEmployee().getPosition() != null && approval.getEmployee().getPosition().getDepartment() != null &&
+                                approval.getEmployee().getPosition().getDepartment().getId().longValue() == editorDeptId){
+                            // dept from approve list
+                            return true;
                         }
                     }
                 }
