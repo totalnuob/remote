@@ -126,6 +126,9 @@ public interface CorpMeetingService extends BaseService {
 
     List<CorpMeetingUpcomingEventDto> getUpcomingEvents(String username);
 
-    List<ICMeetingTopicAssignmentDto> getDepartmentAssignments(int id);
-    List<ICMeetingTopicAssignmentDto> searchDepartmentAssignments(ICAssignmentSearchParamsDto params, String username);
+    //List<ICMeetingTopicAssignmentDto> getDepartmentAssignments(int id);
+    ICMeetingTopicAssignmentPagedSearchResult searchDepartmentAssignments(ICAssignmentSearchParamsDto params, String username);
+
+    ICMeetingTopicAssignmentDto getICAssignment(Long id);
+
 }

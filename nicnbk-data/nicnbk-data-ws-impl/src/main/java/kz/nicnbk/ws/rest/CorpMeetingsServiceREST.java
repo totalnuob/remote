@@ -70,6 +70,9 @@ public class CorpMeetingsServiceREST extends CommonServiceREST{
             " OR hasRole('ROLE_IC_TOPIC_EDITOR') OR hasRole('ROLE_IC_TOPIC_VIEWER') OR hasRole('ROLE_IC_TOPIC_VIEWER_ALL') " +
             " OR hasRole('ROLE_IC_TOPIC_RESTR') OR hasRole('ROLE_ADMIN') OR hasRole('ROLE_IC_ADMIN')";
 
+    private static final String IC_MEETING_ASSIGNMENT_VIEWER = IC_MEETING_OR_TOPIC_VIEWER;
+
+
 //    @Deprecated
 //    @PreAuthorize("hasRole('ROLE_CORPMEETINGS_VIEWER') OR hasRole('ROLE_CORPMEETINGS_EDITOR') OR hasRole('ROLE_ADMIN')")
 //    @RequestMapping(value = "/search", method = RequestMethod.POST)
@@ -723,18 +726,26 @@ public class CorpMeetingsServiceREST extends CommonServiceREST{
     }
 
     @PreAuthorize(IC_MEETING_TOPIC_VIEWER)
-    @RequestMapping(value = "/assignmentsAll", method = RequestMethod.POST)
+    @RequestMapping(value = "/assignment/search", method = RequestMethod.POST)
     public ResponseEntity<?> searchDepartmentAssignments(@RequestBody ICAssignmentSearchParamsDto searchParams) {
         String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
         String username = this.tokenService.decode(token).getUsername();
 
-        List<ICMeetingTopicAssignmentDto> assignments = this.corpMeetingService.searchDepartmentAssignments(searchParams, username);
-//        EmployeeDto employeeDto = this.employeeService.findByUsername(username);
-//        List<ICMeetingTopicAssignmentDto> assignments = new ArrayList<>();
-//        if(employeeDto != null && employeeDto.getPosition() != null && employeeDto.getPosition().getDepartment() != null){
-//            assignments = this.corpMeetingService.getDepartmentAssignments(employeeDto.getPosition().getDepartment().getId());
-//        }
-        return buildNonNullResponse(assignments);
+        ICMeetingTopicAssignmentPagedSearchResult searchResult = this.corpMeetingService.searchDepartmentAssignments(searchParams, username);
+
+        return buildNonNullResponse(searchResult);
+    }
+
+    @PreAuthorize(IC_MEETING_ASSIGNMENT_VIEWER)
+    @RequestMapping(value = "/assignment/get/{id}", method = RequestMethod.GET)
+    public ResponseEntity getICAssignment(@PathVariable long id) {
+
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
+
+        ICMeetingTopicAssignmentDto dto = corpMeetingService.getICAssignment(id);
+
+        return buildNonNullResponse(dto);
     }
 
 //    @PreAuthorize(IC_MEETING_EDITOR)

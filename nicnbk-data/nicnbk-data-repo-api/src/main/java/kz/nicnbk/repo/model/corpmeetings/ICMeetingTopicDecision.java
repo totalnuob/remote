@@ -1,10 +1,12 @@
 package kz.nicnbk.repo.model.corpmeetings;
 
 import kz.nicnbk.repo.model.base.BaseEntity;
+import kz.nicnbk.repo.model.employee.Department;
 import kz.nicnbk.repo.model.employee.Employee;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by magzumov
@@ -17,6 +19,8 @@ public class ICMeetingTopicDecision extends BaseEntity {
     private String name;
     private ICMeetingTopicDecisionType type;
     private int order;
+
+    private List<Department> departments;
 
     public ICMeetingTopicDecision(){}
 
@@ -61,5 +65,21 @@ public class ICMeetingTopicDecision extends BaseEntity {
 
     public void setOrder(int order) {
         this.order = order;
+    }
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name="ic_meeting_topic_decision_depts",
+            joinColumns=
+            @JoinColumn(name="decision_id", referencedColumnName="ID"),
+            inverseJoinColumns=
+            @JoinColumn(name="department_id", referencedColumnName="ID")
+    )
+    public List<Department> getDepartments() {
+        return departments;
+    }
+
+    public void setDepartments(List<Department> departments) {
+        this.departments = departments;
     }
 }

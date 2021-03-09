@@ -175,8 +175,9 @@
                                             <div class="col-md-7">
                                                 &nbsp;
                                             </div>
+
                                             <div class="col-md-3" *ngIf="decision.type === 'ASSIGN' && departmentList?.length > 0">
-                                                <ng-select #inviteesSelect [initData]="decision.departments"
+                                                <ng-select [active]="decision.departments"
                                                            [multiple]="true"
                                                            [items]="departmentList"
                                                            (data)="refreshDecisionDepartments($event, decision)"

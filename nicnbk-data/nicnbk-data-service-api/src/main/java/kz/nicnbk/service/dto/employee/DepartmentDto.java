@@ -19,6 +19,7 @@ public class DepartmentDto extends BaseDictionaryDto {
         setNameRu(entity.getNameRu());
         setNameEn(entity.getNameEn());
         setNameUsedWithPositionRu(entity.getNameUsedWithPositionRu());
+        setShortNameRu(entity.getShortNameRu());
     }
 
     public String getNameUsedWithPositionRu() {

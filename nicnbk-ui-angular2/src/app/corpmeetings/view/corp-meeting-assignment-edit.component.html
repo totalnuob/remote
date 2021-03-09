@@ -1,0 +1,122 @@
+<style>
+    .ng2-dropdown-menu {
+    z-index: 1051 !important;
+}
+
+</style>
+<div class="container">
+    <div class="row withpadding" style="position: relative; min-height: 80px;">
+        <div [ngBusy]="busy">
+            <div class="row top-buffer" >
+                <div class="col-md-12">
+                    <ol class="breadcrumb">
+                        <li>
+                            <span *ngIf="breadcrumbParams != null"><a [routerLink]="['/corpMeetings', {params: this.breadcrumbParams, activeTab: 'IC_ASSIGNMENTS'}]">IC Assignments</a></span>
+                            <span *ngIf="breadcrumbParams == null"><a [routerLink]="['/corpMeetings', {params: {}, activeTab: 'IC_ASSIGNMENTS'}]">IC Assignments</a></span>
+                        </li>
+                        <li class="active">IC Assignment</li>
+                    </ol>
+                </div>
+            </div>
+            <div class="row top-buffer" >
+                <div class="alert alert-danger" *ngIf="errorMessage != null"><span>{{errorMessage}}</span>
+                </div>
+                <div class="alert alert-info" *ngIf="successMessage != null"><span>{{successMessage}}</span>
+                </div>
+            </div>
+            <div>
+                <form #corpMeetingForm="ngForm" class="well span">
+<!--                    <div class="row" *ngIf="icMeetingTopic.status != null">-->
+<!--                        <label [ngClass]="getClassByStatus()">{{icMeetingTopic.status}}-->
+<!--                            <span *ngIf="icMeetingTopic.closed" class="glyphicon glyphicon-lock"></span>-->
+<!--                        </label>-->
+<!--                    </div>-->
+                    <fieldset [disabled]="!canEdit()">
+                        <div class="row top-buffer">
+                            <div class="col-md-1">&nbsp;</div>
+                            <div class="col-md-2 form-group form-horizontal">
+                                    <p id="icName">
+                                        IC:
+                                        <strong>№ {{assignment?.icMeetingTopic?.icMeeting?.number}}
+                                        ({{assignment?.icMeetingTopic?.icMeeting?.date}})
+                                        </strong>
+                                    </p>
+<!--                                    <select class="form-control" id="icList" name="icList" [(ngModel)]="icMeetingTopic.icMeeting.id" (ngModelChange)="icListChanged()">-->
+<!--                                        <option [value]="0">-&#45;&#45;</option>-->
+<!--                                        <option *ngFor = "let ic of icList" [value]="ic?.id">№{{ic?.number}} ( {{ic?.date}} )</option>-->
+<!--                                    </select>-->
+                            </div>
+                            <div class="col-md-9 form-group form-horizontal">
+                                <label class="control-label col-md-2" for="topicName">Topic Name:</label>
+                                <div class="col-md-10">
+                                    <textarea fz-elastic type="text" id="topicName" class="form-control" disabled
+                                              name="topicName" >{{assignment?.icMeetingTopic?.name}}</textarea>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="row top-buffer">
+                            <div class="col-md-12">
+                                <div class="row top-buffer">
+                                    <div class="form-group form-horizontal">
+                                        <label class="control-label col-md-2" for="status">Due date:</label>
+                                        <div class="col-md-10">
+                                            <textarea fz-elastic type="text" id="dueDate" class="form-control"
+                                                      placeholder="Enter due date ..."
+                                                      maxlength="500" name="dueDate" [(ngModel)]="assignment.dueDate"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row top-buffer">
+                            <div class="col-md-12">
+                                <div class="row top-buffer">
+                                    <div class="form-group form-horizontal">
+                                        <label class="control-label col-md-2" for="status">Status:</label>
+                                        <div class="col-md-10">
+                                            <textarea fz-elastic type="text" id="status" class="form-control"
+                                                      placeholder="Enter status ..."
+                                                      maxlength="500" name="status" [(ngModel)]="assignment.status"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row top-buffer">
+                            <div class="col-md-12">
+                                <div class="row top-buffer">
+                                    <div class="form-group form-horizontal">
+                                        <label class="control-label col-md-2" for="status">Departments:</label>
+                                        <div class="col-md-5">
+                                            <textarea fz-elastic type="text" id="departments" class="form-control" disabled
+                                                      maxlength="500" name="departments">{{listDepartments()}}</textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <br/>
+                        <div class="row top-buffer">
+                            <div class="col-md-12">
+                                <button *ngIf="canDelete() && assignment != null && assignment.id != null" type="button" class="btn btn-danger pull-left" (click)="deleteAssignment()">Delete</button>
+
+                                <button *ngIf="canEdit()" type="submit" class="btn btn-success pull-right" (click)="save()" >Save</button>
+                            </div>
+                        </div>
+                        <div class="row top-buffer">
+                            <div class="col-md-12">
+                            </div>
+                        </div>
+                    </fieldset>
+                    <br/>
+                </form>
+            </div>
+        </div>
+    </div>
+    <br>
+    <br>
+    <br>
+</div>
+

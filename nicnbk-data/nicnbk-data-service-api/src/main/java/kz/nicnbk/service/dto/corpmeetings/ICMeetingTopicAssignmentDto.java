@@ -1,15 +1,19 @@
 package kz.nicnbk.service.dto.corpmeetings;
 
-import kz.nicnbk.common.service.model.BaseDto;
+import kz.nicnbk.common.service.model.BaseEntityDto;
+import kz.nicnbk.service.dto.employee.DepartmentDto;
+
+import java.util.List;
 
 
-public class ICMeetingTopicAssignmentDto implements BaseDto {
+public class ICMeetingTopicAssignmentDto extends BaseEntityDto {
 
     private ICMeetingTopicDto icMeetingTopic;
     private String name;
     private String dueDate;
     private String status;
     private boolean closed;
+    private List<DepartmentDto> departments;
 
     public ICMeetingTopicDto getIcMeetingTopic() {
         return icMeetingTopic;
@@ -49,6 +53,25 @@ public class ICMeetingTopicAssignmentDto implements BaseDto {
 
     public void setClosed(boolean closed) {
         this.closed = closed;
+    }
+
+    public List<DepartmentDto> getDepartments() {
+        return departments;
+    }
+
+    public void setDepartments(List<DepartmentDto> departments) {
+        this.departments = departments;
+    }
+
+    public String getDepartmentsText(){
+        if(this.departments != null){
+            String departmentsText = "";
+            for(DepartmentDto departmentDto: this.departments){
+                departmentsText += (departmentsText.length() > 0 ? ",": "") + departmentDto.getShortNameRu();
+            }
+            return departmentsText;
+        }
+        return "";
     }
 }
 

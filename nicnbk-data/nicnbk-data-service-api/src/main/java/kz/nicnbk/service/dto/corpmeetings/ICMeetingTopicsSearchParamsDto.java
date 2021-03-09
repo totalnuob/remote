@@ -9,9 +9,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-/**
- * Created by zhambyl on 04-Aug-16.
- */
 public class ICMeetingTopicsSearchParamsDto implements BaseDto {
 
     @DateTimeFormat(pattern="dd-MM-yyyy")
@@ -68,7 +65,7 @@ public class ICMeetingTopicsSearchParamsDto implements BaseDto {
     }
 
     public Date getDateToNonEmpty() {
-        return dateTo != null ? dateTo : DateUtils.getDate("31.12.2030");
+        return dateTo != null ? dateTo : DateUtils.moveDateByDays(new Date(), 1, false);
     }
 
     public void setDateTo(Date dateTo) {

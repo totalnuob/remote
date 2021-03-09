@@ -434,27 +434,25 @@
                             <li><a *ngIf="assignmentsSearchResult.showPageTo < assignmentsSearchResult.totalPages" (click)="searchICAssignments(assignmentsSearchResult.showPageTo + 1)">&raquo;</a></li>
                         </ul>
                     </div>
-                    <table [ngBusy]="busy"  class = "table table-hover">
+                    <table [ngBusy]="busy"  class = "table table-hover" style="font-size: small">
                         <thead>
                         <tr>
-                            <th width="5%">IC NUMBER</th>
-                            <th width="5%">IC DATE</th>
-                            <th width="30%">NAME</th>
-                            <th width="30%">ASSIGNMENT</th>
+                            <th width="10%">IC</th>
+<!--                            <th width="30%">NAME</th>-->
+                            <th width="40%">ASSIGNMENT</th>
                             <th width="10%">DEPT</th>
-                            <th width="5%">DUE DATE</th>
-                            <th width="15%">STATUS</th>
+                            <th width="15%">DUE DATE</th>
+                            <th width="25%">STATUS</th>
                         </tr>
                         </thead>
                         <tbody>
-                        <tr *ngFor="let assignment of assignments"  style="cursor: pointer" (click)="navigateAssignment(assignment.id)">
-                            <td width="5%" >number</td>
-                            <td width="5%">date</td>
-                            <td width="30%">name</td>
-                            <td width="30%">assignemnt</td>
-                            <td width="10%">dept</td>
-                            <td width="5%">DUE DATE</td>
-                            <td width="15%">STATUS</td>
+                        <tr *ngFor="let assignment of assignments"  style="cursor: pointer" (click)="navigateAssignment(assignment?.id)">
+                            <td width="10%" >{{assignment?.icMeetingTopic?.icMeeting?.number}} ({{assignment?.icMeetingTopic?.icMeeting?.date}})</td>
+<!--                            <td width="30%">{{assignment?.icMeetingTopic?.name}}</td>-->
+                            <td width="40%">{{assignment?.name}}</td>
+                            <td width="10%">{{assignment?.departmentsText}}</td>
+                            <td width="15%">{{assignment?.dueDate}}</td>
+                            <td width="25%">{{assignment?.status | slice:0:55 }}{{assignment?.status?.length > 55 ? '...': ''}}</td>
                         </tr>
                         </tbody>
                     </table>

@@ -7,6 +7,7 @@ import {CommonService} from "../common/common.service";
 import {FileUploadService} from "../upload/file.upload.service";
 import {CorpMeeting} from "./model/corp-meeting";
 import {ICMeetingTopic} from "./model/ic-meeting-topic";
+import {ICMeetingAssignment} from "./model/ic-meeting-assignment";
 import {ICMeeting} from "./model/ic-meeting";
 import {ModuleAccessCheckerService} from "../authentication/module.access.checker.service";
 
@@ -42,7 +43,6 @@ export class CorpMeetingService extends CommonService {
     private IC_MEETINGS_SEARCH_URL = this.CORP_MEETINGS_BASE_URL + "ICMeeting/search/";
     private IC_MEETING_TOPICS_SEARCH_URL = this.CORP_MEETINGS_BASE_URL + "ICMeetingTopic/search/";
 
-    private IC_ASSIGNMENTS_ALL_SEARCH_URL = this.CORP_MEETINGS_BASE_URL + "assignmentsAll/";
 
     private IC_MEETING_SAVE_URL = this.CORP_MEETINGS_BASE_URL + "ICMeeting/save/";
     private IC_MEETING_PROTOCOL_ATTACHMENT_UPLOAD_URL = this.CORP_MEETINGS_BASE_URL + "ICMeeting/protocol/upload/";
@@ -51,6 +51,11 @@ export class CorpMeetingService extends CommonService {
     private IC_MEETING_TOPIC_GET_URL = this.CORP_MEETINGS_BASE_URL + "ICMeetingTopic/get/";
     private IC_MEETING_TOPIC_SAVE_URL = this.CORP_MEETINGS_BASE_URL + "ICMeetingTopic/save/";
     private IC_MEETING_TOPIC_SAVE_UPDATE_URL = this.CORP_MEETINGS_BASE_URL + "ICMeetingTopic/saveUpdate/";
+
+    private IC_MEETING_ASSIGNMENT_ALL_SEARCH_URL = this.CORP_MEETINGS_BASE_URL + "assignment/search/";
+    private IC_MEETING_ASSIGNMENT_GET_URL = this.CORP_MEETINGS_BASE_URL + "assignment/get/";
+    private IC_MEETING_ASSIGNMENT_SAVE_URL = this.CORP_MEETINGS_BASE_URL + "assignment/save/";
+
 
     private IC_MEETING_TOPIC_DELETE_URL = this.CORP_MEETINGS_BASE_URL + "ICMeetingTopic/delete/";
     private IC_MEETING_TOPIC_APPROVE_URL = this.CORP_MEETINGS_BASE_URL + "ICMeetingTopic/approve/";
@@ -129,7 +134,7 @@ export class CorpMeetingService extends CommonService {
         let body = JSON.stringify(searchParam);
 
         //console.log(body);
-        return this.http.post(this.IC_ASSIGNMENTS_ALL_SEARCH_URL, body, this.getOptionsWithCredentials())
+        return this.http.post(this.IC_MEETING_ASSIGNMENT_ALL_SEARCH_URL, body, this.getOptionsWithCredentials())
             .map(this.extractDataList)
             .catch(this.handleErrorResponse);
     }
@@ -198,6 +203,12 @@ export class CorpMeetingService extends CommonService {
 
     getICMeetingTopic(id): Observable<ICMeetingTopic> {
         return this.http.get(this.IC_MEETING_TOPIC_GET_URL + id, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+    getICAssignment(id): Observable<ICMeetingAssignment> {
+        return this.http.get(this.IC_MEETING_ASSIGNMENT_GET_URL + id, this.getOptionsWithCredentials())
             .map(this.extractData)
             .catch(this.handleErrorResponse);
     }

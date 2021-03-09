@@ -76,9 +76,6 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
 
     availableTags = [];
 
-    @ViewChild('inviteesSelect')
-    private departmentListSelect;
-
     public departmentList = [];
 
     constructor(
@@ -132,7 +129,7 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
                         this.availableTags.push(element.name);
                     });
                     data5.forEach(element => {
-                        this.departmentList.push({id: element.id, text: element.code});
+                        this.departmentList.push({id: element.id, text: element.shortNameRu});
                     });
 
                     this.sub = this.route
@@ -183,7 +180,7 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
                 .subscribe(
                     (topic: ICMeetingTopic)=> {
                         this.icMeetingTopic = topic;
-                        //console.log(this.icMeetingTopic);
+                        console.log(this.icMeetingTopic);
                         if(!this.icMeetingTopic.icMeeting){
                             this.icMeetingTopic.icMeeting = new ICMeeting();
                         }
@@ -205,6 +202,17 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
                                      }
                                 );
                          }
+                         // preselect decision depts
+                         if(this.icMeetingTopic.decisions != null){
+                            for(var i = 0; i < this.icMeetingTopic.decisions.length; i++){
+                                if(this.icMeetingTopic.decisions[i].departments != null){
+                                    for(var j = 0; j < this.icMeetingTopic.decisions[i].departments.length; j++){
+                                        this.icMeetingTopic.decisions[i].departments[j].text = this.icMeetingTopic.decisions[i].departments[j].shortNameRu;
+                                    }
+                                }
+                            }
+                         }
+
 
                         // Update block
                         /*if(this.icMeetingTopic != null && this.icMeetingTopic.status === 'TO BE FINALIZED'){
@@ -388,6 +396,22 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
             if(this.icMeetingTopic.decisions == null || this.icMeetingTopic.decisions.length == 0){
                 this.postAction(null, 'Decision required');
                 return false;
+            }else{
+                for(var i = 0; i < this.icMeetingTopic.decisions.length; i++){
+                    if(this.icMeetingTopic.decisions[i].name == null || this.icMeetingTopic.decisions[i].name.trim() == ''){
+                        this.postAction(null, 'Decision name required (decision #' + (i+1));
+                        return false;
+                    }else if(this.icMeetingTopic.decisions[i].type == null){
+                         this.postAction(null, 'Decision type required (decision #' + (i+1));
+                         return false;
+                     }else if(this.icMeetingTopic.decisions[i].type != null && this.icMeetingTopic.decisions[i].type === 'ASSIGN'){
+                        // Assignment
+                        if(this.icMeetingTopic.decisions[i].departments == null || this.icMeetingTopic.decisions[i].departments.length == 0){
+                            this.postAction(null, 'Decision responsible department required (decision #' + (i+1));
+                            return false;
+                        }
+                    }
+                }
             }
             if(this.icMeetingTopic.icMeeting != null && this.icMeetingTopic.icMeeting.id > 0){
                 //if((this.icMeetingTopic.explanatoryNote == null || this.icMeetingTopic.explanatoryNote.id == null ||
@@ -755,11 +779,11 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
         if(this.icMeetingTopic.icMeeting != null && this.icMeetingTopic.icMeeting.lockedByDeadline){
             if(this.icMeetingTopic.status === 'TO BE FINALIZED' || this.icMeetingTopic.status === 'FINALIZED'){
                 // check deadline
-                if(this.icMeetingTopic.icMeeting.updateLockedByDeadline){
+                /*if(this.icMeetingTopic.icMeeting.updateLockedByDeadline){
                     return false;
                 }else{
                      // OK
-                }
+                }*/
             }else{
                 return false;
             }

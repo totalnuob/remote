@@ -145,10 +145,10 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
                                 page = this.icTopicSearchParams.page > 0 ? this.icTopicSearchParams.page : 0;
                                 this.searchICMeetingTopics(page)
                             }else if(this.activeTab === 'IC_ASSIGNMENTS'){
-                                $('#fromDateAssignments').val(this.icTopicSearchParams.dateFrom);
-                                $('#toDateAssignments').val(this.icTopicSearchParams.dateTo);
+                                $('#fromDateAssignments').val(this.assignmentsSearchParams.dateFrom);
+                                $('#toDateAssignments').val(this.assignmentsSearchParams.dateTo);
 
-                                page = this.icTopicSearchParams.page > 0 ? this.icTopicSearchParams.page : 0;
+                                page = this.assignmentsSearchParams.page > 0 ? this.assignmentsSearchParams.page : 0;
                                 this.searchICAssignments(page)
                             }else{
                                 this.searchICMeetingUpcomingEvents();
@@ -320,9 +320,6 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
         this.assignmentsSearchParams.pageSize = 20;
         this.assignmentsSearchParams.page = page;
 
-        if(this.assignmentsSearchParams.type === 'NONE'){
-            this.assignmentsSearchParams.type = null;
-        }
         this.assignmentsSearchParams.dateFrom = $('#fromDateAssignments').val();
         this.assignmentsSearchParams.dateTo = $('#toDateAssignments').val();
 
@@ -386,8 +383,11 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
         return this.canViewICTopics();
     }
 
-    navigateAssignment(){
-        alert("TODO!");
+    navigateAssignment(assignmentId){
+        this.assignmentsSearchParams.path = '/corpMeetings';
+        let params = JSON.stringify(this.assignmentsSearchParams);
+        console.log(assignmentId);
+        this.router.navigate(['/corpMeetings/assignment/edit/', assignmentId, { params }]);
     }
 
     clearSearchForm(){
@@ -405,7 +405,6 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
 
         $('#fromDateIC').val(null);
         $('#toDateIC').val(null);
-
     }
 
     searchIC(page){
