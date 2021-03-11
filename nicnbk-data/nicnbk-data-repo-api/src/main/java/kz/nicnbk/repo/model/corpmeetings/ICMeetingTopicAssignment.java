@@ -16,7 +16,8 @@ public class ICMeetingTopicAssignment extends BaseEntity {
 
     private ICMeetingTopic icMeetingTopic;
     private String name;
-    private String dueDate;
+    //private String dueDate;
+    private Date dateDue;
     private String status;
     private boolean closed;
 
@@ -42,12 +43,21 @@ public class ICMeetingTopicAssignment extends BaseEntity {
         this.name = name;
     }
 
-    public String getDueDate() {
-        return dueDate;
+//    public String getDueDate() {
+//        return dueDate;
+//    }
+//
+//    public void setDueDate(String dueDate) {
+//        this.dueDate = dueDate;
+//    }
+
+
+    public Date getDateDue() {
+        return dateDue;
     }
 
-    public void setDueDate(String dueDate) {
-        this.dueDate = dueDate;
+    public void setDateDue(Date dateDue) {
+        this.dateDue = dateDue;
     }
 
     public String getStatus() {

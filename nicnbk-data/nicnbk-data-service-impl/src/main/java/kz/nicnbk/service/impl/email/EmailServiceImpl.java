@@ -123,7 +123,7 @@ public class EmailServiceImpl implements EmailService {
     }
 
     private List<String> getEmployeeEmails(int id) {
-        List<EmployeeDto> employees = this.employeeService.findByDepartmentAndActive(id);
+        List<EmployeeDto> employees = this.employeeService.findByDepartmentAndActive(id, true);
         List<String> employeeEmails = new ArrayList<>();
 
         for (EmployeeDto employeeDto : employees) {

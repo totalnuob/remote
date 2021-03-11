@@ -144,6 +144,9 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
     @Autowired
     private ICMeetingTopicAssignmentRepository icMeetingTopicAssignmentRepository;
 
+    @Autowired
+    private ICMeetingTopicShareRepository topicShareRepository;
+
     //@Autowired
     //private ICMeetingTopicAssignmentDepartmentRepository icMeetingTopicAssignmentDepartmentRepository;
 
@@ -689,25 +692,24 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
                 for(EmployeeDto icMember: icMembers){
                     NotificationDto notificationDto = new NotificationDto();
                     notificationDto.setEmailName("IC Module: All topics for IC #" + icMeetingDto.getNumber() + " (" + DateUtils.getDateFormatted(icMeetingDto.getDate()) + ") " +
-                            " have been finalized. Please vote. https://unic.nicnbk.kz/#/corpMeetings/ic/edit/" + meetingId.longValue());
+                            " have been finalized. Please vote and sign bulletin. https://unic.nicnbk.kz/#/corpMeetings/ic/edit/" + meetingId.longValue());
                     notificationDto.setInAppName("IC Module: All topics for IC #" + icMeetingDto.getNumber() + " (" + DateUtils.getDateFormatted(icMeetingDto.getDate()) + ") " +
-                            " have been finalized. Please vote.");
+                            " have been finalized. Please vote and sign bulletin.");
                     notificationDto.setEmployee(icMember);
                     this.notificationService.createInAppAndEmailNotification(notificationDto);
                 }
-                List<EmployeeDto> icAdmins = this.employeeService.findUsersWithRole(UserRoles.IC_ADMIN.getCode());
+                List<EmployeeDto> icAdmins = this.employeeService.findUsersWithRole(UserRoles.IC_ADMIN.getCode(), true);
                 if(icAdmins != null){
                     for(EmployeeDto icAdmin: icAdmins){
-                        if(icAdmin.getActive() != null && icAdmin.getActive().booleanValue()) {
-                            NotificationDto notificationDto = new NotificationDto();
-                            notificationDto.setEmailName("IC Module: All topics for IC #" + icMeetingDto.getNumber() +
-                                    " (" + DateUtils.getDateFormatted(icMeetingDto.getDate()) + ") " +
-                                    " have been finalized. https://unic.nicnbk.kz/#/corpMeetings/ic/edit/" + meetingId.longValue());
-                            notificationDto.setInAppName("IC Module: All topics for IC #" + icMeetingDto.getNumber() +
-                                    " (" + DateUtils.getDateFormatted(icMeetingDto.getDate()) + ") have been finalized.");
-                            notificationDto.setEmployee(icAdmin);
-                            this.notificationService.createInAppAndEmailNotification(notificationDto);
-                        }
+                        NotificationDto notificationDto = new NotificationDto();
+                        notificationDto.setEmailName("IC Module: All topics for IC #" + icMeetingDto.getNumber() +
+                                " (" + DateUtils.getDateFormatted(icMeetingDto.getDate()) + ") " +
+                                " have been finalized. https://unic.nicnbk.kz/#/corpMeetings/ic/edit/" + meetingId.longValue());
+                        notificationDto.setInAppName("IC Module: All topics for IC #" + icMeetingDto.getNumber() +
+                                " (" + DateUtils.getDateFormatted(icMeetingDto.getDate()) + ") have been finalized.");
+                        notificationDto.setEmployee(icAdmin);
+                        this.notificationService.createInAppAndEmailNotification(notificationDto);
+
                     }
                 }
             }
@@ -961,34 +963,24 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
                         }
                     }
                     decisionList.add(decisionDto);
-//                    List<ICMeetingTopicDecisionDepartment> decisionDepartments =
-//                            this.decisionDepartmentRepository.findByDecisionId(aDecision.getId());
-//                    if(decisionDepartments != null && !decisionDepartments.isEmpty()){
-//                        if(decisionDto.getDepartments() == null){
-//                            decisionDto.setDepartments(new ArrayList<>());
-//                        }
-//                        for(ICMeetingTopicDecisionDepartment decisionDepartment: decisionDepartments){
-//                            DepartmentDto departmentDto = new DepartmentDto();
-//                            departmentDto.setId(decisionDepartment.getDepartment().getId());
-//                            departmentDto.setShortNameRu(decisionDepartment.getDepartment().getShortNameRu());
-//                            decisionDto.getDepartments().add(departmentDto);
-//                        }
-//                    }
                 }
                 dto.setDecisions(decisionList);
                 Collections.sort(dto.getDecisions());
-            }
 
-            // set tags
-//            List<ICMeetingTopicTags> topicTags = this.topicTagsRepository.findByIcMeetingTopicId(id);
-//            if(topicTags != null && !topicTags.isEmpty()){
-//                if(dto.getTags() == null){
-//                    dto.setTags(new ArrayList<>());
-//                }
-//                for(ICMeetingTopicTags topicTag: topicTags){
-//                    dto.getTags().add(topicTag.getTag().getName());
-//                }
-//            }
+                // set shared with departments
+                List<ICMeetingTopicShare> topicShares = this.topicShareRepository.findByIcMeetingTopicId(id);
+                if(topicShares != null && !topicShares.isEmpty()){
+                    EmployeeDto employeeDto = this.employeeService.findByUsername(username);
+                    if(employeeDto != null && employeeDto.getPosition() != null && employeeDto.getPosition().getDepartment() != null) {
+                        for (ICMeetingTopicShare topicShare : topicShares) {
+                            if(topicShare.getDepartment().getId().longValue() == employeeDto.getPosition().getDepartment().getId().longValue()) {
+                                dto.setSharedWithDepartment(true);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
 
             return dto;
         }catch(Exception ex){
@@ -1114,6 +1106,18 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
                     for(ICMeetingTopicApproval approval: entity.getApproveList()){
                         if(approval.getEmployee().getId().longValue() == editor.getId().longValue()){
                             // from approve list
+                            return true;
+                        }else if(approval.getEmployee().getPosition() != null && approval.getEmployee().getPosition().getDepartment() != null &&
+                                approval.getEmployee().getPosition().getDepartment().getId().longValue() == editorDeptId){
+                            // dept from approve list
+                            return true;
+                        }
+                    }
+                }
+                //check shares
+                if(entity.getSharedDepartments() != null){
+                    for(ICMeetingTopicShare share: entity.getSharedDepartments()){
+                        if(share.getDepartment().getId().longValue() == editorDeptId){
                             return true;
                         }
                     }
@@ -2616,7 +2620,9 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
         }
 
         try {
-            ICMeetingsPagedSearchResult icMeetingsResult = searchICMeetings(null);
+            ICMeetingsSearchParamsDto searchParams = new ICMeetingsSearchParamsDto();
+            searchParams.setPageSize(Integer.MAX_VALUE);
+            ICMeetingsPagedSearchResult icMeetingsResult = searchICMeetings(searchParams);
             List<ICMeetingDto> icMeetings = icMeetingsResult != null ? icMeetingsResult.getIcMeetings() : new ArrayList<>();
             XSSFWorkbook workbook = new XSSFWorkbook(excelFileToRead);
             XSSFSheet sheet = workbook.getSheetAt(0);
@@ -2651,7 +2657,7 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
                                     speakers += (i > 1 ? "\n" : "") + i + "." + topic.getDepartment().getNameRu();
                                 }
                             }
-                            decisions += (i > 1 ? "\n" : "") + i + "." + topic.getDecisionsNames();
+                            decisions += (i > 1 ? "\n" : "") + i + "." + topic.getDecisionsText();
                             i++;
                         }
                         newRow.getCell(2).setCellValue(topics);
@@ -2686,6 +2692,104 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
             return filesDto;
         } catch (IOException e) {
             logger.error("IO Exception when exporting IC Meeting Protocol Registry", e);
+            //e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    @Override
+    public FilesDto getICAssignmentRegistryFileStream(String username){
+        FilesDto filesDto = new FilesDto();
+
+        final String exportFileTemplatePath = "export_template/corp_meetings/IC_ASSIGNMENT_REGISTRY_TEMPLATE.xlsx";
+        Resource resource = new ClassPathResource(exportFileTemplatePath);
+        InputStream excelFileToRead = null;
+        try {
+            excelFileToRead = resource.getInputStream();
+        } catch (IOException e) {
+            logger.error("IC Meeting: Export file template not found: '" + exportFileTemplatePath + "'");
+            e.printStackTrace();
+            return null;
+        }
+
+        try {
+            ICAssignmentSearchParamsDto searchParamsDto = new ICAssignmentSearchParamsDto();
+            searchParamsDto.setPage(0);
+            searchParamsDto.setPageSize(Integer.MAX_VALUE);
+            searchParamsDto.setHideClosed(true);
+            ICAssignmentPagedSearchResult searchResult = searchICAssignments(searchParamsDto, username);
+            List<ICMeetingTopicAssignmentDto> assignments = searchResult != null ? searchResult.getAssignments() : new ArrayList<>();
+            XSSFWorkbook workbook = new XSSFWorkbook(excelFileToRead);
+            XSSFSheet sheet = workbook.getSheetAt(0);
+
+            final int templateRowIndex = 4;
+            final int columnNum = 9;
+            int added = 0;
+            if(assignments != null && !assignments.isEmpty()){
+                if(assignments.size() > 1) {
+                    sheet.shiftRows(templateRowIndex + 1, sheet.getLastRowNum(), assignments.size() - 1);
+                }
+                for(ICMeetingTopicAssignmentDto assignmentDto: assignments) {
+                    Row newRow = sheet.createRow(templateRowIndex + 1 + added);
+                    added++;
+
+                    for(int i = 0; i < columnNum; i++){
+                        newRow.createCell(i);
+                    }
+
+                    newRow.getCell(1).setCellValue(added);
+                    Date icDate = assignmentDto.getIcMeetingTopic() != null && assignmentDto.getIcMeetingTopic().getIcMeeting() != null ?
+                            assignmentDto.getIcMeetingTopic().getIcMeeting().getDate(): null;
+                    String icDateText = DateUtils.getDateFormatted(icDate) != null ? DateUtils.getDateFormatted(icDate): "";
+                    newRow.getCell(2).setCellValue(icDateText);
+                    String icNumber = assignmentDto.getIcMeetingTopic() != null && assignmentDto.getIcMeetingTopic().getIcMeeting() != null ?
+                            assignmentDto.getIcMeetingTopic().getIcMeeting().getNumber(): "";
+                    newRow.getCell(3).setCellValue(icNumber);
+                    String topicName = assignmentDto.getIcMeetingTopic() != null ? assignmentDto.getIcMeetingTopic().getName(): "";
+                    newRow.getCell(4).setCellValue(topicName);
+
+                    newRow.getCell(5).setCellValue(assignmentDto.getName());
+                    String departments = "";
+                    if(assignmentDto.getDepartments() != null){
+                        for(DepartmentDto departmentDto: assignmentDto.getDepartments()){
+                            if(departmentDto.getShortNameRu() != null){
+                                departments += (departments.length() > 0 ? ", " : "") + departmentDto.getShortNameRu();
+                            }
+                        }
+                    }
+                    newRow.getCell(6).setCellValue(departments);
+                    //newRow.getCell(7).setCellValue(assignmentDto.getDueDate() != null ? assignmentDto.getDueDate(): "");
+                    String dueDateText = assignmentDto.getDateDue() != null &&
+                            DateUtils.getDateFormatted(assignmentDto.getDateDue()) != null ? DateUtils.getDateFormatted(assignmentDto.getDateDue()): "";
+                    newRow.getCell(7).setCellValue(dueDateText);
+                    newRow.getCell(8).setCellValue(assignmentDto.getStatus() != null ? assignmentDto.getStatus(): "");
+
+                    // set styles
+                    for(int i = 0; i < columnNum; i++){
+                        if(newRow.getCell(i) != null && sheet.getRow(templateRowIndex) != null &&
+                                sheet.getRow(templateRowIndex).getCell(i) != null){
+                            newRow.getCell(i).setCellStyle(sheet.getRow(templateRowIndex).getCell(i).getCellStyle());
+                        }
+                    }
+                }
+                sheet.shiftRows(templateRowIndex + 1, sheet.getLastRowNum(), -1);
+            }
+
+            File tmpDir = new File(this.rootDirectory + "/tmp/corp_meetings");
+
+            // write to new
+            String filePath = tmpDir + "/IC_ASSIGN_REGISTRY_" + MathUtils.getRandomNumber(0, 10000) + ".xlsx";
+            try (FileOutputStream outputStream = new FileOutputStream(filePath)) {
+                workbook.write(outputStream);
+            }
+
+            InputStream inputStream = new FileInputStream(filePath);
+            filesDto.setInputStream(inputStream);
+            filesDto.setFileName(filePath);
+            return filesDto;
+        } catch (IOException e) {
+            logger.error("IO Exception when exporting IC Assignment Registry", e);
             //e.printStackTrace();
         }
 
@@ -2898,8 +3002,8 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
                         for (XWPFRun r : runs) {
                             String text = r.getText(0);
                             if (text != null && text.contains("DECISION")) {
-                                if(icMeetingTopic.getDecisionsNames() != null) {
-                                    text = text.replace("DECISION",icMeetingTopic.getDecisionsNames());
+                                if(icMeetingTopic.getDecisionsText() != null) {
+                                    text = text.replace("DECISION",icMeetingTopic.getDecisionsText());
                                 }else{
                                     text = text.replace("DECISION", "");
                                 }
@@ -3108,7 +3212,7 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
             List<String> values = new ArrayList<>();
             if(topics != null){
                 topics.forEach((topic ->{
-                    values.add(topic.getDecisionsNames());
+                    values.add(topic.getDecisionsText());
                 }));
             }
             insertNumberedList(document, index, values);
@@ -3278,7 +3382,7 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
                 //index++;
 
                 XWPFRun runDecision = decisionParagraph.createRun();
-                String decision = topics.get(i).getDecisionsNames() != null ? topics.get(i).getDecisionsNames() : "";
+                String decision = topics.get(i).getDecisionsText() != null ? topics.get(i).getDecisionsText() : "";
                 runDecision.setFontFamily(FONT_ARIAL);
                 runDecision.setFontSize(FONT_SIZE);
                 //run.setBold(true);
@@ -3368,7 +3472,7 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
             // Insert decisions
             List<String> values = new ArrayList<>();
             topics.forEach(topic->{
-                values.add(topic.getDecisionsNames());
+                values.add(topic.getDecisionsText());
             });
             insertNumberedList(document, decisionsIndex, values);
             index += values.size();
@@ -4269,7 +4373,7 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
 
                 Date deadlineDate = DateUtils.moveDateByDays(icMeetingDto.getDate(), -CorpMeetingService.IC_MEETING_DEADLINE_DAYS,true);
                 CorpMeetingUpcomingEventDto eventDeadline = new CorpMeetingUpcomingEventDto("Deadline for IC # " + icMeetingDto.getNumber(), "");
-                eventDeadline.setDescription("Deadline for submission - IC # " + icMeetingDto.getNumber() + " on " + DateUtils.getDateFormatted(deadlineDate));
+                eventDeadline.setDescription("Deadline for submission - IC # " + icMeetingDto.getNumber() + "(" + DateUtils.getDateFormatted(icMeetingDto.getDate()) + ")");
                 eventDeadline.setDate(deadlineDate);
                 eventDeadline.setAlertType("WARNING");// TODO: refactor
                 events.add(eventDeadline);
@@ -4306,38 +4410,46 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
 //    }
 
     @Override
-    public ICMeetingTopicAssignmentPagedSearchResult searchDepartmentAssignments(ICAssignmentSearchParamsDto searchParams, String username){
-        EmployeeDto employeeDto = this.employeeService.findByUsername(username);
-        List<ICMeetingTopicAssignmentDto> assignments = new ArrayList<>();
-
-        if(employeeDto != null && employeeDto.getPosition() != null && employeeDto.getPosition().getDepartment() != null){
-            // search
-            int page = searchParams.getPage() > 0 ? searchParams.getPage() - 1 : 0;
-
-            Page<ICMeetingTopicAssignment> entitiesPage =
-                    this.icMeetingTopicAssignmentRepository.searchAssignments(employeeDto.getPosition().getDepartment().getId(),
-                            searchParams.getDateFromNonEmpty(), searchParams.getDateToNonEmpty(),
-                            searchParams.getSearchText(), searchParams.getIcNumber(),
-                            new PageRequest(page, searchParams.getPageSize(), new Sort(Sort.Direction.DESC, "id")));
-            ICMeetingTopicAssignmentPagedSearchResult result = new ICMeetingTopicAssignmentPagedSearchResult();
-            if (entitiesPage != null) {
-                result.setTotalElements(entitiesPage.getTotalElements());
-                if (entitiesPage.getTotalElements() > 0) {
-                    result.setShowPageFrom(PaginationUtils.getShowPageFrom(DEFAULT_PAGES_PER_VIEW, page));
-                    result.setShowPageTo(PaginationUtils.getShowPageTo(DEFAULT_PAGES_PER_VIEW,
-                            page, result.getShowPageFrom(), entitiesPage.getTotalPages()));
+    public ICAssignmentPagedSearchResult searchICAssignments(ICAssignmentSearchParamsDto searchParams, String username){
+        Integer departmentId = -1;
+        if(username != null) {
+            EmployeeDto employeeDto = this.employeeService.findByUsername(username);
+            departmentId = employeeDto.getPosition() != null && employeeDto.getPosition().getDepartment() != null &&
+                    employeeDto.getPosition().getDepartment().getId() != null ?
+                    employeeDto.getPosition().getDepartment().getId() : departmentId;
+            if(employeeDto.getRoles() != null && !employeeDto.getRoles().isEmpty()){
+                for(BaseDictionaryDto roleDto: employeeDto.getRoles()){
+                    if(roleDto.getCode().equalsIgnoreCase(UserRoles.IC_ADMIN.getCode())){
+                        departmentId = 0;
+                    }
                 }
-                result.setTotalPages(entitiesPage.getTotalPages());
-                result.setCurrentPage(page + 1);
-                if (searchParams != null) {
-                    result.setSearchParams(searchParams.getSearchParamsAsString());
-                }
-                result.setAssignments(assignmentEntityConverter.disassembleList(entitiesPage.getContent()));
             }
-            return result;
         }
 
-        return null;
+        // search
+        int page = searchParams.getPage() > 0 ? searchParams.getPage() - 1 : 0;
+
+        Page<ICMeetingTopicAssignment> entitiesPage =
+                this.icMeetingTopicAssignmentRepository.searchAssignments(departmentId,
+                        searchParams.getDateFromNonEmpty(), searchParams.getDateToNonEmpty(),
+                        searchParams.getSearchText(), searchParams.getIcNumber(), searchParams.isHideClosed(),
+                        new PageRequest(page, searchParams.getPageSize(), new Sort(Sort.Direction.DESC, "id")));
+        ICAssignmentPagedSearchResult result = new ICAssignmentPagedSearchResult();
+        if (entitiesPage != null) {
+            result.setTotalElements(entitiesPage.getTotalElements());
+            if (entitiesPage.getTotalElements() > 0) {
+                result.setShowPageFrom(PaginationUtils.getShowPageFrom(DEFAULT_PAGES_PER_VIEW, page));
+                result.setShowPageTo(PaginationUtils.getShowPageTo(DEFAULT_PAGES_PER_VIEW,
+                        page, result.getShowPageFrom(), entitiesPage.getTotalPages()));
+            }
+            result.setTotalPages(entitiesPage.getTotalPages());
+            result.setCurrentPage(page + 1);
+            if (searchParams != null) {
+                result.setSearchParams(searchParams.getSearchParamsAsString());
+            }
+            result.setAssignments(assignmentEntityConverter.disassembleList(entitiesPage.getContent()));
+        }
+        return result;
     }
 
     @Override
@@ -4350,6 +4462,53 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
             }
         }
         return null;
+    }
+
+    @Transactional
+    @Override
+    public EntitySaveResponseDto saveICAssignment(ICMeetingTopicAssignmentDto dto, String username) {
+        EntitySaveResponseDto saveResponseDto = new EntitySaveResponseDto();
+        try {
+            if (dto != null) {
+                // Check rights
+                boolean checked = false;
+                if(username != null){
+                    EmployeeDto employeeDto = this.employeeService.findByUsername(username);
+                    if(employeeDto != null && employeeDto.getPosition() != null && employeeDto.getPosition().getDepartment() != null &&
+                            employeeDto.getPosition().getDepartment().getId() != null){
+                        if(dto.getId() != null){
+                            ICMeetingTopicAssignmentDto assignmentDto = getICAssignment(dto.getId());
+                            if(assignmentDto.getDepartments() != null && !assignmentDto.getDepartments().isEmpty()){
+                                for(DepartmentDto departmentDto: assignmentDto.getDepartments()){
+                                    if(departmentDto.getId() != null &&
+                                            employeeDto.getPosition().getDepartment().getId().longValue() == departmentDto.getId().longValue()){
+                                        checked = true;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                if(!checked){
+                    String errorMessage = "Failed to save IC Meeting Assignment: employee rights could not be validated";
+                    logger.error(errorMessage);
+                    saveResponseDto.setErrorMessageEn(errorMessage);
+                }else {
+                    ICMeetingTopicAssignment entity = this.assignmentEntityConverter.assemble(dto);
+                    this.icMeetingTopicAssignmentRepository.save(entity);
+                    saveResponseDto.setEntityId(entity.getId());
+                    saveResponseDto.setStatus(ResponseStatusType.SUCCESS);
+                }
+            }
+        }catch (Exception ex){
+            String errorMessage = "Failed to save IC Meeting Assignment with exception" +
+                    (dto != null ? " (" + dto.getName() + ")": "" ) +
+                    (dto != null && dto.getIcMeetingTopic() != null ? " (" + dto.getIcMeetingTopic().getName() + ")" : "" );
+            logger.error(errorMessage, ex);
+            saveResponseDto.setErrorMessageEn(errorMessage);
+        }
+        return  saveResponseDto;
     }
 
     private ICMeetingTopicDto getLimitedICMeetingTopic(Long id){
@@ -4365,5 +4524,64 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
             return topicDto;
         }
         return null;
+    }
+
+    @Override
+    public List<ICMeetingTopicAssignmentDto> getICAssignmentsDueWithinWeek(){
+        List<ICMeetingTopicAssignmentDto> assignmentDtos = new ArrayList<>();
+        Date date = DateUtils.moveDateByDays(new Date(),7, false);
+        List<ICMeetingTopicAssignment> entities = this.icMeetingTopicAssignmentRepository.searchOpenAssignmentsDueThisDay(date);
+        if(entities != null && !entities.isEmpty()){ // TODO: refactor using converter
+            return this.assignmentEntityConverter.disassembleList(entities);
+//            for(ICMeetingTopicAssignment entity: entities){
+//                ICMeetingTopicAssignmentDto dto = new ICMeetingTopicAssignmentDto();
+//                dto.setId(entity.getId());
+//                dto.setName(entity.getName());
+//                if(entity.getDepartments() != null && !entity.getDepartments().isEmpty()){
+//                    dto.setDepartments(new ArrayList<>());
+//                    for(Department department: entity.getDepartments()){
+//                        DepartmentDto departmentDto = new DepartmentDto(department);
+//                        dto.getDepartments().add(departmentDto);
+//                        assignmentDtos.add(dto);
+//                    }
+//                }
+//            }
+        }
+        return assignmentDtos;
+    }
+
+
+    @Override
+    public boolean shareICMeetingTopic(Long id, String username){
+        try {
+            EmployeeDto employeeDto = this.employeeService.findByUsername(username);
+            if (employeeDto.getPosition() != null && employeeDto.getPosition().getDepartment() != null) {
+                ICMeetingTopicShare topicShare = this.topicShareRepository.findByIcMeetingTopicIdAndDepartmentId(id, employeeDto.getPosition().getDepartment().getId());
+                if (topicShare == null) {
+                    ICMeetingTopicShare entity = new ICMeetingTopicShare();
+                    entity.setIcMeetingTopic(new ICMeetingTopic(id));
+                    entity.setDepartment(new Department(employeeDto.getPosition().getDepartment().getId()));
+                    this.topicShareRepository.save(entity);
+                    return true;
+                }
+            }
+        }catch (Exception ex){
+            logger.error("Error sharing IC Meeting topic with id=" + (id != null ? id.longValue(): null), ex);
+        }
+        return false;
+    }
+
+    @Override
+    public boolean stopShareICMeetingTopic(Long id, String username){
+        try {
+            EmployeeDto employeeDto = this.employeeService.findByUsername(username);
+            if (employeeDto.getPosition() != null && employeeDto.getPosition().getDepartment() != null) {
+                this.topicShareRepository.deleteByICMeetingTopicId(id, employeeDto.getPosition().getDepartment().getId());
+                return true;
+            }
+        }catch (Exception ex){
+            logger.error("Error stopping share IC Meeting topic with id=" + (id != null ? id.longValue(): null), ex);
+        }
+        return false;
     }
 }

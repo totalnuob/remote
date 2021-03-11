@@ -20,6 +20,9 @@ public class EmployeeEntityConverter extends BaseDozerEntityConverter<Employee, 
     public EmployeeDto disassemble(Employee entity) {
         EmployeeDto dto = super.disassemble(entity);
         dto.setActive(entity.getActive());
+        if(dto.getPosition() != null){
+            dto.getPosition().setHead(entity.getPosition().isHead());
+        }
         return dto;
     }
 

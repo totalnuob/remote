@@ -27,7 +27,8 @@ public interface ICMeetingTopicAssignmentRepository extends PagingAndSortingRepo
 
     @Query("SELECT DISTINCT e FROM ic_meeting_topic_assignment e LEFT JOIN e.icMeetingTopic topic LEFT JOIN topic.icMeeting ic " +
             " LEFT JOIN e.departments dept WHERE " +
-            " (:departmentId IS NULL OR :departmentId=dept.id) AND " +
+            " (:hideClosed=false OR e.closed=false) AND " +
+            " (:departmentId=0 OR :departmentId=dept.id) AND " +
             " (ic.id IS NULL OR (topic.icMeeting.date >= :dateFrom AND topic.icMeeting.date <= :dateTo)) AND " +
             " (:icNumber IS NULL OR :icNumber='' OR  LOWER(topic.icMeeting.number)=LOWER(:icNumber)) AND " +
             " (:searchText IS NULL OR :searchText='' OR LOWER(e.name) LIKE LOWER(CONCAT('%', :searchText, '%')) OR " +
@@ -40,5 +41,10 @@ public interface ICMeetingTopicAssignmentRepository extends PagingAndSortingRepo
                                                      @Param("dateTo") @Temporal(TemporalType.DATE) Date dateTo,
                                                      @Param("searchText") String searchText,
                                                      @Param("icNumber")String icNumber,
+                                                     @Param("hideClosed")boolean hideClosed,
                                                      Pageable pageable);
+
+    @Query("SELECT e FROM ic_meeting_topic_assignment e JOIN FETCH e.departments " +
+            " WHERE (e.closed IS NULL OR e.closed=false) AND e.dateDue = :date")
+    List<ICMeetingTopicAssignment> searchOpenAssignmentsDueThisDay( @Param("date") @Temporal(TemporalType.DATE) Date date);
 }

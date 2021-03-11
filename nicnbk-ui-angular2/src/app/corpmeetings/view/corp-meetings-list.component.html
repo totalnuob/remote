@@ -1,4 +1,4 @@
-<style>
+f<style>
 	h1.title {
 		font-family: 'Roboto', sans-serif;
 		font-weight: 900;
@@ -409,6 +409,12 @@
                             </div>
                         </div>
                         <div class="row">
+                            <div class="col-md-12">
+                                <input id="hideClosed" name="hideClosed" class="form-check-input" checked="true" type="checkbox" [(ngModel)]="assignmentsSearchParams.hideClosed">
+                                <label class="form-check-label" for="hideClosed">Hide closed</label>
+                            </div>
+                        </div>
+                        <div class="row">
                             &nbsp;
                         </div>
                         <div class="row">
@@ -423,6 +429,9 @@
                 </div>
                 <div>
                     <label>Total found:  <span>{{assignmentsSearchResult?.totalElements > 0 ? assignmentsSearchResult?.totalElements : 0}}</span></label>
+                </div>
+                <div class="row">
+                    <button class="btn btn-success btn-xs pull-right" (click)="exportAssignmentRegistry()">XLSX registry</button>
                 </div>
                 <div class="row withpadding" style="position: relative; min-height: 80px;">
                     <div class="row pull-right">
@@ -451,7 +460,7 @@
 <!--                            <td width="30%">{{assignment?.icMeetingTopic?.name}}</td>-->
                             <td width="40%">{{assignment?.name}}</td>
                             <td width="10%">{{assignment?.departmentsText}}</td>
-                            <td width="15%">{{assignment?.dueDate}}</td>
+                            <td width="15%">{{assignment?.dateDue}}</td>
                             <td width="25%">{{assignment?.status | slice:0:55 }}{{assignment?.status?.length > 55 ? '...': ''}}</td>
                         </tr>
                         </tbody>

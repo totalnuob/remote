@@ -39,8 +39,9 @@ export class CorpMeetingAssignmentEditComponent extends CommonFormViewComponent 
     busy: Subscription;
     public sub: any;
 
-    assignment: ICMeetingAssignment;
+    userDepartmentId = 0;
 
+    assignment: ICMeetingAssignment;
 
     private breadcrumbParams: string;
     private searchParams = new ICMeetingTopicSearchParams();
@@ -58,7 +59,7 @@ export class CorpMeetingAssignmentEditComponent extends CommonFormViewComponent 
     ){
         super(router);
         var userPosition = JSON.parse(localStorage.getItem("authenticatedUserPosition"));
-        var departmentId = userPosition != null && userPosition.department != null ? userPosition.department.id : 0;
+        this.userDepartmentId = userPosition != null && userPosition.department != null ? userPosition.department.id : 0;
 
         this.assignment = new ICMeetingAssignment();
         this.sub = this.route
@@ -76,13 +77,20 @@ export class CorpMeetingAssignmentEditComponent extends CommonFormViewComponent 
             });
     }
 
+    ngOnInit():any {
+        $('#dateDue').datetimepicker({
+            //defaultDate: new Date(),
+            format: 'DD-MM-YYYY'
+        });
+    }
+
     getICAssignment(id, successMessage, errorMessage){
 
         this.busy = this.corpMeetingService.getICAssignment(id)
                 .subscribe(
                     (assignment: any)=> {
                         this.assignment = assignment;
-                        console.log(this.assignment);
+                        //console.log(this.assignment);
 
                         this.postAction(successMessage, errorMessage);
                     },
@@ -96,11 +104,15 @@ export class CorpMeetingAssignmentEditComponent extends CommonFormViewComponent 
                 );
     }
 
-    ngOnInit():any {
-    }
-
     public canEdit(){
-        return this.assignment != null && (this.assignment.closed == null || !this.assignment.closed);
+        if(this.assignment != null && this.assignment.departments != null && this.assignment.departments.length > 0){
+            for(var i = 0; i < this.assignment.departments.length; i ++){
+                if(this.assignment.departments[i].id == this.userDepartmentId){
+                    return true
+                }
+            }
+        }
+        return false;
     }
 
     public canDelete(){
@@ -109,8 +121,12 @@ export class CorpMeetingAssignmentEditComponent extends CommonFormViewComponent 
 
     checkRequiredFields(){
         if(this.assignment){
-            if(this.assignment.dueDate == null || this.assignment.dueDate.trim() === ''){
-                this.postAction(null, 'Due Date required');
+            //if(this.assignment.dateDue == null || this.assignment.dateDue.trim() === ''){
+            //    this.postAction(null, 'Due Date required');
+            //    return false;
+            //}
+            if(this.assignment.status == null || this.assignment.status.trim() === ''){
+                this.postAction(null, 'Status required');
                 return false;
             }
             return true;
@@ -118,16 +134,19 @@ export class CorpMeetingAssignmentEditComponent extends CommonFormViewComponent 
         return false;
     }
 
+
     save(){
+        this.assignment.dateDue = $('#dateDueValue').val();
         if(!this.checkRequiredFields()){
             return false;
         }
 
+        //console.log(this.assignment);
         this.busy = this.corpMeetingService.saveICAssignment(this.assignment)
             .subscribe(
                 (saveResponse: SaveResponse) => {
                     if(saveResponse.status === 'SUCCESS' ){
-                        //this.icMeetingTopic.id = saveResponse.entityId;
+                        this.assignment.id = saveResponse.entityId;
                         this.getICAssignment(saveResponse.entityId,"Successfully saved IC Assignment.", null);
                     }else{
                         this.successMessage = null;
@@ -138,9 +157,12 @@ export class CorpMeetingAssignmentEditComponent extends CommonFormViewComponent 
                     }
                 },
                 (error) => {
-                    var errorResponse = JSON.parse(error);
-                    if(errorResponse && errorResponse.message && errorResponse.message.nameEn){
-                        this.postAction(null, errorResponse.message.nameEn);
+                    if(error && error.message){
+                        if(error.message.nameEn){
+                            this.postAction(null, error.message.nameEn);
+                        }else{
+                            this.postAction(null, error.message);
+                        }
                     }else{
                         this.postAction(null, "Failed to save IC Assignment.");
                     }

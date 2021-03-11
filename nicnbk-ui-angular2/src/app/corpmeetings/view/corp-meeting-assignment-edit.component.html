@@ -25,12 +25,7 @@
                 </div>
             </div>
             <div>
-                <form #corpMeetingForm="ngForm" class="well span">
-<!--                    <div class="row" *ngIf="icMeetingTopic.status != null">-->
-<!--                        <label [ngClass]="getClassByStatus()">{{icMeetingTopic.status}}-->
-<!--                            <span *ngIf="icMeetingTopic.closed" class="glyphicon glyphicon-lock"></span>-->
-<!--                        </label>-->
-<!--                    </div>-->
+                <form class="well span">
                     <fieldset [disabled]="!canEdit()">
                         <div class="row top-buffer">
                             <div class="col-md-1">&nbsp;</div>
@@ -41,10 +36,6 @@
                                         ({{assignment?.icMeetingTopic?.icMeeting?.date}})
                                         </strong>
                                     </p>
-<!--                                    <select class="form-control" id="icList" name="icList" [(ngModel)]="icMeetingTopic.icMeeting.id" (ngModelChange)="icListChanged()">-->
-<!--                                        <option [value]="0">-&#45;&#45;</option>-->
-<!--                                        <option *ngFor = "let ic of icList" [value]="ic?.id">№{{ic?.number}} ( {{ic?.date}} )</option>-->
-<!--                                    </select>-->
                             </div>
                             <div class="col-md-9 form-group form-horizontal">
                                 <label class="control-label col-md-2" for="topicName">Topic Name:</label>
@@ -59,11 +50,31 @@
                             <div class="col-md-12">
                                 <div class="row top-buffer">
                                     <div class="form-group form-horizontal">
-                                        <label class="control-label col-md-2" for="status">Due date:</label>
+                                        <label class="control-label col-md-2" for="status">Name:</label>
                                         <div class="col-md-10">
-                                            <textarea fz-elastic type="text" id="dueDate" class="form-control"
-                                                      placeholder="Enter due date ..."
-                                                      maxlength="500" name="dueDate" [(ngModel)]="assignment.dueDate"></textarea>
+                                            <textarea fz-elastic type="text" id="assignmentName" class="form-control" disabled
+                                                      name="assignmentName" [(ngModel)]="assignment.name"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row top-buffer">
+                            <div class="col-md-12">
+                                <div class="row top-buffer">
+                                    <div class="form-group form-horizontal">
+                                        <label class="control-label col-md-2" for="status">Due date:</label>
+                                        <div class="col-md-2">
+<!--                                            <textarea fz-elastic type="text" id="dueDate" class="form-control"-->
+<!--                                                      placeholder="Enter due date ..."-->
+<!--                                                     name="dueDate" [(ngModel)]="assignment.dueDate"></textarea>-->
+                                            <label class="control-label" for="dateDue">Due Date </label>
+                                            <div class='input-group date' id='dateDue' style="width: 100%">
+                                                <input type="text" class="form-control" id="dateDueValue" name="dateDue" [(ngModel)]="assignment.dateDue"/>
+                                                <a class="input-group-addon">
+                                                    <span class="glyphicon glyphicon-calendar"></span>
+                                                </a>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -77,9 +88,20 @@
                                         <div class="col-md-10">
                                             <textarea fz-elastic type="text" id="status" class="form-control"
                                                       placeholder="Enter status ..."
-                                                      maxlength="500" name="status" [(ngModel)]="assignment.status"></textarea>
+                                                     name="status" [(ngModel)]="assignment.status"></textarea>
                                         </div>
                                     </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row top-buffer">
+                            <div class="col-md-12">
+                                <div class="col-md-2">&nbsp;</div>
+                                <div class="col-md-10">
+                                    <label class="checkbox-inline control-label col-md-2" for="closedCheckbox">
+                                        <input  type="checkbox" id="closedCheckbox" name="closedCheckbox" [(ngModel)]="assignment.closed"/>
+                                        <span>Closed</span>
+                                    </label>
                                 </div>
                             </div>
                         </div>

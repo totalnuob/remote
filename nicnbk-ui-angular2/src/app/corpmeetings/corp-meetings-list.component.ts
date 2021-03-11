@@ -129,26 +129,38 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
                     this.sub = this.route
                         .params
                         .subscribe(params => {
-                            //console.log(params);
+                            console.log(params);
                             var page = 0;
                             this.activeTab = params['activeTab'];
-                            if (params['icMeetingParams'] != null) {
-                                // TODO: !!!!
-                                this.icMeetingsSearchParams = JSON.parse(params['icMeetingParams']);
-                            }
+
                             if(this.activeTab === 'IC_LIST'){
+                                if (params['params'] != null) {
+                                    this.icMeetingsSearchParams = JSON.parse(params['params']);
+                                }
+                                $('#fromDateIC').val(this.icMeetingsSearchParams.dateFrom);
+                                $('#toDateIC').val(this.icMeetingsSearchParams.dateTo);
+                                page = this.icMeetingsSearchParams.page > 0 ? this.icMeetingsSearchParams.page : 0;
+
                                 this.searchIC(page);
                             }else if(this.activeTab === 'IC_TOPICS'){
+                                console.log(params['params']);
+                                if (params['params'] != null) {
+                                    this.icTopicSearchParams = JSON.parse(params['params']);
+                                    console.log(this.icTopicSearchParams);
+                                }
                                 $('#fromDate').val(this.icTopicSearchParams.dateFrom);
                                 $('#toDate').val(this.icTopicSearchParams.dateTo);
-
                                 page = this.icTopicSearchParams.page > 0 ? this.icTopicSearchParams.page : 0;
+
                                 this.searchICMeetingTopics(page)
                             }else if(this.activeTab === 'IC_ASSIGNMENTS'){
+                                if (params['params'] != null) {
+                                    this.assignmentsSearchParams = JSON.parse(params['params']);
+                                }
                                 $('#fromDateAssignments').val(this.assignmentsSearchParams.dateFrom);
                                 $('#toDateAssignments').val(this.assignmentsSearchParams.dateTo);
-
                                 page = this.assignmentsSearchParams.page > 0 ? this.assignmentsSearchParams.page : 0;
+
                                 this.searchICAssignments(page)
                             }else{
                                 this.searchICMeetingUpcomingEvents();
@@ -156,6 +168,8 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
                         });
                 });
     }
+
+
 
     ngOnInit():any {
         // TODO: exclude jQuery
@@ -190,6 +204,8 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
             //defaultDate: new Date(),
             format: 'DD-MM-YYYY'
         });
+
+        this.assignmentsSearchParams.hideClosed = true;
     }
 
     searchICMeetingUpcomingEvents(){ // e.g. 09-2020
@@ -395,7 +411,8 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
     }
 
     clearAssignmentsSearchForm(){
-        this.assignmentsSearchParams = {};
+        this.assignmentsSearchParams = new ICAssignmentSearchParams();
+        this.assignmentsSearchParams.hideClosed = true;
     }
 
     clearSearchFormIC(){
@@ -654,7 +671,7 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
      getICClassByStatus(ic){
         //console.log(ic);
         if(ic.status === 'CLOSED'){
-            return 'label label-danger';
+            return 'label label-primary';
         }else{
             // Check if sent to IC
             if(ic.status === 'LOCKED FOR IC'){
@@ -689,7 +706,7 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
 
 
     exportRegistry(){
-        var fileName = "Журнал регистрации рещений протолколов Инвесткома";
+        var fileName = "Журнал регистрации решений протолколов Инвесткома";
         //fileName = fileName.replace(".", ",");
         this.busy = this.corpMeetingService.makeFileRequest(DATA_APP_URL + `corpMeetings/ICMeeting/exportProtocolRegistry`,
             fileName, 'POST')
@@ -700,6 +717,21 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
                 error => {
                     //console.log("fails")
                     this.postAction(null, "Error exporting protocol registry");
+                }
+            );
+    }
+
+    exportAssignmentRegistry(){
+        var fileName = "Информация по исполнению пручений ИК 2021";
+        this.busy = this.corpMeetingService.makeFileRequest(DATA_APP_URL + `corpMeetings/assignment/exportRegistry`,
+            fileName, 'POST')
+            .subscribe(
+                response  => {
+                    console.log("export assignment registry response ok");
+                },
+                error => {
+                    //console.log("fails")
+                    this.postAction(null, "Error exporting assignment registry");
                 }
             );
     }

@@ -19,7 +19,9 @@ export class EmployeeService extends CommonService{
     private EMPLOYEE_FIND_USERS_BY_ROLE_URL = this.EMPLOYEE_BASE_URL + "findUsersWithRole/";
     private EMPLOYEE_FIND_USERS_BY_DEPARTMENT_URL = this.EMPLOYEE_BASE_URL + "findByDepartmentAndActive/";
     private EMPLOYEE_FIND_EXECUTIVES_URL = this.EMPLOYEE_BASE_URL + "findExecutivesAndActive/";
-    private EMPLOYEE_FIND_USERS_BY_DEPARTMENT_WITH_EXECUTIVES_URL = this.EMPLOYEE_BASE_URL + "findByDepartmentAndActiveWithExecutives/";
+    private EMPLOYEE_FIND_USERS_BY_DEPARTMENT_ACTIVE_WITH_EXECUTIVES_URL = this.EMPLOYEE_BASE_URL + "findByDepartmentAndActiveWithExecutives/";
+    private EMPLOYEE_FIND_USERS_BY_DEPARTMENT_WITH_EXECUTIVES_URL = this.EMPLOYEE_BASE_URL + "findByDepartmentWithExecutives/";
+
     private EMPLOYEE_SEARCH_URL = this.EMPLOYEE_BASE_URL + "search/";
     private EMPLOYEE_GET_URL = this.EMPLOYEE_BASE_URL + "get/";
     private EMPLOYEE_SAVE_URL = this.EMPLOYEE_BASE_URL + "save/";
@@ -72,6 +74,12 @@ export class EmployeeService extends CommonService{
     }
 
     findByDepartmentAndActiveWithExecutives(departmentId): Observable<any[]> {
+        return this.http.get(this.EMPLOYEE_FIND_USERS_BY_DEPARTMENT_ACTIVE_WITH_EXECUTIVES_URL + departmentId, this.getOptionsWithCredentials())
+            .map(this.extractDataList)
+            .catch(this.handleErrorResponse);
+    }
+
+    findByDepartmentWithExecutives(departmentId): Observable<any[]> {
         return this.http.get(this.EMPLOYEE_FIND_USERS_BY_DEPARTMENT_WITH_EXECUTIVES_URL + departmentId, this.getOptionsWithCredentials())
             .map(this.extractDataList)
             .catch(this.handleErrorResponse);

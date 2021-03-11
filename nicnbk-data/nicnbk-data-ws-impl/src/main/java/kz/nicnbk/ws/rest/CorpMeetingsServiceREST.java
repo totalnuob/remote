@@ -22,14 +22,11 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
-import javax.swing.text.html.parser.Entity;
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Created by zhambyl on 04-Aug-16.
@@ -71,6 +68,9 @@ public class CorpMeetingsServiceREST extends CommonServiceREST{
             " OR hasRole('ROLE_IC_TOPIC_RESTR') OR hasRole('ROLE_ADMIN') OR hasRole('ROLE_IC_ADMIN')";
 
     private static final String IC_MEETING_ASSIGNMENT_VIEWER = IC_MEETING_OR_TOPIC_VIEWER;
+    private static final String IC_MEETING_ASSIGNMENT_EDITOR = IC_MEETING_TOPIC_EDITOR;
+
+    public static final String IC_MEETING_TOPIC_SHARE = "hasRole('ROLE_IC_TOPIC_EDITOR') AND hasRole('ROLE_IC_MEMBER')";
 
 
 //    @Deprecated
@@ -82,8 +82,7 @@ public class CorpMeetingsServiceREST extends CommonServiceREST{
 //    }
 
 
-//    @Deprecated
-//    @PreAuthorize("hasRole('ROLE_CORPMEETINGS_VIEWER') OR hasRole('ROLE_CORPMEETINGS_EDITOR') OR hasRole('ROLE_ADMIN')")
+//    @Deprecated//    @PreAuthorize("hasRole('ROLE_CORPMEETINGS_VIEWER') OR hasRole('ROLE_CORPMEETINGS_EDITOR') OR hasRole('ROLE_ADMIN')")
 //    @RequestMapping(value = "/get/{id}", method = RequestMethod.GET)
 //    public ResponseEntity get(@PathVariable long id) {
 //        CorpMeetingDto corpMeetingDto = corpMeetingService.get(id);
@@ -209,6 +208,26 @@ public class CorpMeetingsServiceREST extends CommonServiceREST{
 
         EntitySaveResponseDto responseDto = corpMeetingService.approveICMeetingTopic(id, username);
         return buildEntitySaveResponse(responseDto);
+    }
+
+    @PreAuthorize(IC_MEETING_TOPIC_SHARE)
+    @RequestMapping(value = "/ICMeetingTopic/shareWithDepartment/{id}", method = RequestMethod.POST)
+    public ResponseEntity<?> shareICMeetingTopicWithDepartment(@PathVariable long id){
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
+
+        boolean shared = corpMeetingService.shareICMeetingTopic(id, username);
+        return buildEntitySaveResponseEntity(shared);
+    }
+
+    @PreAuthorize(IC_MEETING_TOPIC_SHARE)
+    @RequestMapping(value = "/ICMeetingTopic/stopShareWithDepartment/{id}", method = RequestMethod.POST)
+    public ResponseEntity<?> stopShareICMeetingTopicWithDepartment(@PathVariable long id){
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
+
+        boolean shared = corpMeetingService.stopShareICMeetingTopic(id, username);
+        return buildEntitySaveResponseEntity(shared);
     }
 
     @PreAuthorize(IC_MEETING_TOPIC_APPROVAL)
@@ -428,7 +447,7 @@ public class CorpMeetingsServiceREST extends CommonServiceREST{
     @PreAuthorize(IC_MEETING_VIEWER)
     @RequestMapping(value="/ICMeeting/exportProtocolRegistry", method= RequestMethod.GET)
     @ResponseBody
-    public void exportICMeetingAgenda(HttpServletResponse response) {
+    public void exportICMeetingProtocolRegistry(HttpServletResponse response) {
 
         // TODO: control file download by user role
         // TODO: Check rights
@@ -689,8 +708,8 @@ public class CorpMeetingsServiceREST extends CommonServiceREST{
         String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
         String username = this.tokenService.decode(token).getUsername();
 
-        boolean deleted = this.corpMeetingService.saveICMeetingVotes(votes, username);
-        return buildDeleteResponseEntity(deleted);
+        boolean saved = this.corpMeetingService.saveICMeetingVotes(votes, username);
+        return buildEntitySaveResponseEntity(saved);
     }
 
     @PreAuthorize(IC_MEETING_ADMIN)
@@ -731,7 +750,7 @@ public class CorpMeetingsServiceREST extends CommonServiceREST{
         String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
         String username = this.tokenService.decode(token).getUsername();
 
-        ICMeetingTopicAssignmentPagedSearchResult searchResult = this.corpMeetingService.searchDepartmentAssignments(searchParams, username);
+        ICAssignmentPagedSearchResult searchResult = this.corpMeetingService.searchICAssignments(searchParams, username);
 
         return buildNonNullResponse(searchResult);
     }
@@ -746,6 +765,67 @@ public class CorpMeetingsServiceREST extends CommonServiceREST{
         ICMeetingTopicAssignmentDto dto = corpMeetingService.getICAssignment(id);
 
         return buildNonNullResponse(dto);
+    }
+
+    @PreAuthorize(IC_MEETING_ASSIGNMENT_EDITOR)
+    @RequestMapping(value = "/assignment/save", method = RequestMethod.POST)
+    public ResponseEntity<?> saveICAssignment(@RequestBody ICMeetingTopicAssignmentDto assignmentDto) {
+
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
+
+        EntitySaveResponseDto saveResponseDto = this.corpMeetingService.saveICAssignment(assignmentDto,username);
+        return buildEntitySaveResponse(saveResponseDto);
+    }
+
+    @PreAuthorize(IC_MEETING_VIEWER)
+    @RequestMapping(value="/assignment/exportRegistry", method= RequestMethod.GET)
+    @ResponseBody
+    public void exportICAssignmentRegistry(HttpServletResponse response) {
+
+        // TODO: control file download by user role
+        // TODO: Check rights
+
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
+
+        FilesDto filesDto = null;
+        try{
+            filesDto = this.corpMeetingService.getICAssignmentRegistryFileStream(username);
+        }catch (IllegalStateException ex){
+            filesDto = null;
+        }
+
+        if(filesDto == null || filesDto.getInputStream() == null){
+            try {
+                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                return;
+            } catch (IOException e) {
+                return;
+            }
+        }
+
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        try {
+            //fileName = URLEncoder.encode(fileName, "UTF-8");
+            //fileName = URLDecoder.decode(fileName, "ISO8859_1");
+            //response.setHeader("Content-disposition", "attachment; filename=\""+ fileName + "\"");
+            response.setHeader("Content-disposition", "attachment;");
+            org.apache.commons.io.IOUtils.copy(filesDto.getInputStream(), response.getOutputStream());
+            response.flushBuffer();
+        } catch (UnsupportedEncodingException e) {
+            logger.error("(IC Meeting) File export (protocol registry) request failed: unsupported encoding", e);
+        } catch (IOException e) {
+            logger.error("(IC Meeting) File export (protocol registry) request failed: io exception", e);
+        } catch (Exception e){
+            logger.error("(IC Meeting) File export (protocol registry) request failed", e);
+        }
+        try {
+            filesDto.getInputStream().close();
+            new File(filesDto.getFileName()).delete();
+        } catch (IOException e) {
+            logger.error("(IC Meeting) File export (protocol registry): failed to close input stream", e);
+        }
     }
 
 //    @PreAuthorize(IC_MEETING_EDITOR)

@@ -60,6 +60,9 @@ export class CorpMeetingService extends CommonService {
     private IC_MEETING_TOPIC_DELETE_URL = this.CORP_MEETINGS_BASE_URL + "ICMeetingTopic/delete/";
     private IC_MEETING_TOPIC_APPROVE_URL = this.CORP_MEETINGS_BASE_URL + "ICMeetingTopic/approve/";
     private IC_MEETING_TOPIC_CANCEL_APPROVE_URL = this.CORP_MEETINGS_BASE_URL + "ICMeetingTopic/cancelApprove/";
+    private IC_MEETING_TOPIC_SHARE_URL = this.CORP_MEETINGS_BASE_URL + "ICMeetingTopic/shareWithDepartment/";
+    private IC_MEETING_TOPIC_STOP_SHARE_URL = this.CORP_MEETINGS_BASE_URL + "ICMeetingTopic/stopShareWithDepartment/";
+
 
     private IC_MEETINGS_DELETE_URL = this.CORP_MEETINGS_BASE_URL + "ICMeeting/delete/";
     private IC_MEETING_CLOSE_URL = this.CORP_MEETINGS_BASE_URL + "ICMeeting/close/";
@@ -213,6 +216,13 @@ export class CorpMeetingService extends CommonService {
             .catch(this.handleErrorResponse);
     }
 
+    saveICAssignment(entity): Observable<any>{
+        let data = JSON.stringify(entity);
+        return this.http.post(this.IC_MEETING_ASSIGNMENT_SAVE_URL, data, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
     approveICMeetingTopic(topicId): Observable<any> {
         return this.http.post(this.IC_MEETING_TOPIC_APPROVE_URL + topicId, {}, this.getOptionsWithCredentials())
             .map(this.extractData)
@@ -318,6 +328,18 @@ export class CorpMeetingService extends CommonService {
                 .map(this.extractData)
                 .catch(this.handleErrorResponse);
     }
+
+    shareICMeetingTopic(id): Observable<any>{
+        return this.http.post(this.IC_MEETING_TOPIC_SHARE_URL + id, null, this.getOptionsWithCredentials())
+                .map(this.extractData)
+                .catch(this.handleErrorResponse);
+    }
+    stopShareICMeetingTopic(id): Observable<any>{
+        return this.http.post(this.IC_MEETING_TOPIC_STOP_SHARE_URL + id, null, this.getOptionsWithCredentials())
+                .map(this.extractData)
+                .catch(this.handleErrorResponse);
+    }
+
     reopenICMeeting(id): Observable<any>{
         return this.http.post(this.IC_MEETING_REOPEN_URL + id, null, this.getOptionsWithCredentials())
                 .map(this.extractData)

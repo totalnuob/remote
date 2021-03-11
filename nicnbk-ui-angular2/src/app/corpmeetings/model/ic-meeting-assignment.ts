@@ -3,7 +3,7 @@ import {ICMeetingTopic} from "ic-meeting-topic";
 export class ICMeetingAssignment{
     id: number;
     name: string;
-    dueDate: string;
+    dateDue: string;
     status: string;
 
     icMeetingTopic: ICMeetingTopic;

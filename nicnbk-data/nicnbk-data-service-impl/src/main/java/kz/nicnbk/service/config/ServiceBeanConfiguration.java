@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import java.util.ArrayList;
@@ -17,6 +18,7 @@ import java.util.List;
 
 @Configuration
 @EnableAutoConfiguration
+@EnableScheduling
 @ComponentScan(basePackages = {"kz.nicnbk.service"})
 @Import(value = kz.nicnbk.repo.config.RepoBeanConfiguration.class)
 @EnableTransactionManagement

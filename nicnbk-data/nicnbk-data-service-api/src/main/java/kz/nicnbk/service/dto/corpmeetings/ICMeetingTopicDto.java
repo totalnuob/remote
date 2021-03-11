@@ -34,7 +34,7 @@ public class ICMeetingTopicDto extends CreateUpdateBaseEntityDto<ICMeetingTopic>
     //private String nameUpd;
     private String description;
 
-    //private String decision;
+    private String decision;
    // private String decisionUpd;
     private List<ICMeetingTopicDecisionDto> decisions;
     private Set<EmployeeApproveDto> approveList;
@@ -62,6 +62,7 @@ public class ICMeetingTopicDto extends CreateUpdateBaseEntityDto<ICMeetingTopic>
     private List<ICMeetingTopicsVoteDto> votes;
 
     private Integer icOrder;
+    private boolean sharedWithDepartment;
 
     @Deprecated
     private String type;
@@ -162,23 +163,25 @@ public class ICMeetingTopicDto extends CreateUpdateBaseEntityDto<ICMeetingTopic>
         this.tags = tags;
     }
 
-    public String getDecisionsNames(){
+    public String getDecisionsText(){
         String decision = "";
         if(this.decisions != null){
             for(int i = 0; i < this.decisions.size(); i++){
                 decision += (i + 1) + ")" + this.decisions.get(i).getName() + " ";
             }
+        }else if(this.decision != null){
+            return this.decision;
         }
         return decision;
     }
 
-//    public String getDecision() {
-//        return decision;
-//    }
-//
-//    public void setDecision(String decision) {
-//        this.decision = decision;
-//    }
+    public String getDecision() {
+        return decision;
+    }
+
+    public void setDecision(String decision) {
+        this.decision = decision;
+    }
 
     public String getType() {
         return type;
@@ -344,6 +347,14 @@ public class ICMeetingTopicDto extends CreateUpdateBaseEntityDto<ICMeetingTopic>
 
     public void setDecisions(List<ICMeetingTopicDecisionDto> decisions) {
         this.decisions = decisions;
+    }
+
+    public boolean isSharedWithDepartment() {
+        return sharedWithDepartment;
+    }
+
+    public void setSharedWithDepartment(boolean sharedWithDepartment) {
+        this.sharedWithDepartment = sharedWithDepartment;
     }
 
     @Override

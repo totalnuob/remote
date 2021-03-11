@@ -5,7 +5,7 @@ export class ICAssignmentSearchParams extends PageableSearchParams{
     dateTo: string;
     searchText: string;
     icNumber: string;
-    type: string;
+    hideClosed: boolean;
 
     activeTab: string;
     path: string;

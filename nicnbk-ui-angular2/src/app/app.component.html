@@ -467,10 +467,12 @@
                                     <li><a [routerLink]="['/reporting/NBReporting/lookupValues']" class="navigation__sublink" (click)="activeMenu = 'REPORTING'">Lookup Values</a></li>
                                 </ul>
                             </li>
+
                             <li class="navigation__item dropdown" *ngIf="checkAvailable('CORP_MEETINGS')">
                                 <a [routerLink]="['/corpMeetings']" class="navigation__link"
                                    [style.border-bottom-color]="activeMenu === 'CORP_MEETINGS' ? '#D9A158' : 'white'" (click)="activeMenu = 'CORP_MEETINGS'">Corp Meetings</a>
                                 <ul  class="dropdown-menu">
+                                    <li><a [routerLink]="['/corpMeetings']" class="navigation__sublink" (click)="activeMenu = 'CORP_MEETINGS'">Invest Committee</a></li>
                                    <li><a [routerLink]="['/corpMeetings/lookupValues']" class="navigation__sublink" (click)="activeMenu = 'CORP_MEETINGS'">Lookup Values</a></li>
                                 </ul>
                             </li>

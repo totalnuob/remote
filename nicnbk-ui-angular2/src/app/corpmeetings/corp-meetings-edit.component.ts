@@ -96,8 +96,7 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
             // Load lookups
             this.corpMeetingService.getAllICMeetings(),
             this.corpMeetingService.getAvailableApproveList(),
-            //this.employeeService.findByDepartmentAndActive(departmentId),
-            this.employeeService.findByDepartmentAndActiveWithExecutives(departmentId),
+            this.employeeService.findByDepartmentWithExecutives(departmentId),
             //this.employeeService.findActiveAll(),
             this.lookupService.getAvailableTagsByType("IC"),
             this.employeeService.getAllDepartments()
@@ -122,9 +121,10 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
 
                     });
                     data3.forEach(element => {
-                        this.departmentEmployeeList.push({id: element.id, text: element.firstName + " " + element.lastName,
-                                                    firstName: element.firstName, lastName: element.lastName});
+                        this.departmentEmployeeList.push({"id": element.id, "text": element.firstName + " " + element.lastName,
+                                                    "firstName": element.firstName, "lastName": element.lastName, "active": element.active});
                     });
+
                     data4.forEach(element => {
                         this.availableTags.push(element.name);
                     });
@@ -164,8 +164,18 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
                                                         "fullName":  this.icAdminEmployee.firstName + " " + this.icAdminEmployee.lastName},
                                                         "approved": false});
                                 }
+
+                                // remove inactive users
+                                if(this.departmentEmployeeList != null && this.departmentEmployeeList.length > 0){
+                                    var newEmployeeListWithoutInActive = [];
+                                    for(var i = 0; i < this.departmentEmployeeList.length; i++){
+                                        if(this.departmentEmployeeList[i].active){
+                                            newEmployeeListWithoutInActive.push(this.departmentEmployeeList[i]);
+                                        }
+                                    }
+                                    this.departmentEmployeeList = newEmployeeListWithoutInActive;
+                                }
                             }
-                            //console.log(this.icMeetingTopic);
                         });
                 });
     }
@@ -173,14 +183,12 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
     getICMeetingTopic(id, successMessage, errorMessage){
         this.uploadExplanatoryNoteFile = [];
         this.uploadMaterialsFiles = [];
-        //this.uploadExplanatoryNoteFileUpd = [];
-        //this.uploadMaterialsFilesUpd = [];
 
         this.busy = this.corpMeetingService.getICMeetingTopic(id)
                 .subscribe(
                     (topic: ICMeetingTopic)=> {
                         this.icMeetingTopic = topic;
-                        console.log(this.icMeetingTopic);
+                        //console.log(this.icMeetingTopic);
                         if(!this.icMeetingTopic.icMeeting){
                             this.icMeetingTopic.icMeeting = new ICMeeting();
                         }
@@ -191,11 +199,39 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
                             this.icMeetingTopic.executor = new Employee();
                         }
                         if(this.icMeetingTopic.department != null && this.icMeetingTopic.department.id > 0){
-                            this.employeeService.findByDepartmentAndActiveWithExecutives(this.icMeetingTopic.department.id)
+                            this.employeeService.findByDepartmentWithExecutives(this.icMeetingTopic.department.id)
                                .subscribe(
                                     employeeList => {
-                                        //console.log(employeeList);
                                         this.departmentEmployeeList = employeeList;
+                                        if(this.icMeetingTopic != null && this.icMeetingTopic.status != null && this.icMeetingTopic.status === 'CLOSED'){
+                                             // 1.inactive users should be in the list for historical data
+                                         }else{
+                                             // remove inactive users
+                                             if(this.departmentEmployeeList != null && this.departmentEmployeeList.length > 0){
+                                                 var newEmployeeListWithoutInActive = [];
+                                                 for(var i = 0; i < this.departmentEmployeeList.length; i++){
+                                                     if(this.departmentEmployeeList[i].active){
+                                                         newEmployeeListWithoutInActive.push(this.departmentEmployeeList[i]);
+                                                     }
+                                                 }
+                                                 this.departmentEmployeeList = newEmployeeListWithoutInActive;
+                                             }
+                                         }
+                                         // add employees that are set as speaker or executor even if they switched departments
+                                          if(this.icMeetingTopic.speaker != null && this.icMeetingTopic.speaker.position != null && this.icMeetingTopic.speaker.position.department != null){
+                                              if(this.icMeetingTopic != null && this.icMeetingTopic.department != null &&
+                                                          this.icMeetingTopic.speaker.position.department.id != this.icMeetingTopic.department.id){
+                                                  this.departmentEmployeeList = this.departmentEmployeeList == null ? []: this.departmentEmployeeList;
+                                                  this.departmentEmployeeList.push(this.icMeetingTopic.speaker);
+                                              }
+                                          }
+                                          if(this.icMeetingTopic.executor != null && this.icMeetingTopic.executor.position != null && this.icMeetingTopic.executor.position.department != null){
+                                              if(this.icMeetingTopic != null && this.icMeetingTopic.department != null &&
+                                                          this.icMeetingTopic.executor.position.department.id != this.icMeetingTopic.department.id){
+                                                  this.departmentEmployeeList = this.departmentEmployeeList == null ? []: this.departmentEmployeeList;
+                                                  this.departmentEmployeeList.push(this.icMeetingTopic.executor);
+                                              }
+                                          }
                                      },
                                      error => {
                                         console.log("Error loading department employees");
@@ -212,17 +248,6 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
                                 }
                             }
                          }
-
-
-                        // Update block
-                        /*if(this.icMeetingTopic != null && this.icMeetingTopic.status === 'TO BE FINALIZED'){
-                            if(this.icMeetingTopic.nameUpd == null || this.icMeetingTopic.nameUpd.trim() === ''){
-                                this.icMeetingTopic.nameUpd = this.icMeetingTopic.name;
-                            }
-                            if(this.icMeetingTopic.decisionUpd == null || this.icMeetingTopic.decisionUpd.trim() === ''){
-                                this.icMeetingTopic.decisionUpd = this.icMeetingTopic.decision;
-                            }
-                        }*/
 
                         this.postAction(successMessage, errorMessage);
                     },
@@ -471,7 +496,7 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
         }
         this.icMeetingTopic.toPublish = toPublish;
 
-        console.log(this.icMeetingTopic);
+        //console.log(this.icMeetingTopic);
         this.busy = this.corpMeetingService.saveICMeetingTopicWithFiles(this.icMeetingTopic, this.getUploadFileMaterialsAsFiles(),
                 this.uploadExplanatoryNoteFile)
             .subscribe(
@@ -1001,4 +1026,49 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
         decision.departments = value;
     }
 
+    canEditShare(){
+        return this.moduleAccessChecker.checkAccessICMember();
+    }
+
+    shareWithDepartment(){
+        if(confirm("Are you sure want to share with your department?")){
+            this.busy = this.corpMeetingService.shareICMeetingTopic(this.icMeetingTopic.id)
+                .subscribe(
+                    response => {
+                        this.icMeetingTopic.sharedWithDepartment = true;
+                        this.postAction("Successfully shared topic.", null);
+                    },
+                    (error: ErrorResponse) => {
+                        if(error && !error.isEmpty()){
+                            this.processErrorMessage(error);
+                            this.postAction(null, this.errorMessage);
+                        }else{
+                            this.postAction(null, "Error sharing topic.");
+                        }
+
+                    }
+                );
+        }
+    }
+
+    stopShareWithDepartment(){
+        if(confirm("Are you sure want to stop share with your department?")){
+            this.busy = this.corpMeetingService.stopShareICMeetingTopic(this.icMeetingTopic.id)
+                .subscribe(
+                    response => {
+                        this.icMeetingTopic.sharedWithDepartment = false;
+                        this.postAction("Successfully stopped sharing topic.", null);
+                    },
+                    (error: ErrorResponse) => {
+                        if(error && !error.isEmpty()){
+                            this.processErrorMessage(error);
+                            this.postAction(null, this.errorMessage);
+                        }else{
+                            this.postAction(null, "Error stopping share topic.");
+                        }
+
+                    }
+                );
+        }
+    }
 }

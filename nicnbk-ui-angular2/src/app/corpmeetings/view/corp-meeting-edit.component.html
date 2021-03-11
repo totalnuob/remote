@@ -12,7 +12,7 @@
                     <ol class="breadcrumb">
                         <li>
                             <span *ngIf="breadcrumbParams != null && !fromICMeeting"><a [routerLink]="['/corpMeetings', {params: this.breadcrumbParams, activeTab: 'IC_TOPICS'}]">IC Topics</a></span>
-                            <span *ngIf="breadcrumbParams == null && !fromICMeeting"><a [routerLink]="['/corpMeetings', {params: {}, activeTab: 'IC_TOPICS'}]">IC Topics</a></span>
+                            <span *ngIf="breadcrumbParams == null && !fromICMeeting"><a [routerLink]="['/corpMeetings', {activeTab: 'IC_TOPICS'}]">IC Topics</a></span>
                             <span *ngIf="fromICMeeting"><a [routerLink]="[backPath]">IC</a></span>
                         </li>
                         <li class="active">IC Topic</li>
@@ -31,6 +31,24 @@
                         <label [ngClass]="getClassByStatus()">{{icMeetingTopic.status}}
                             <span *ngIf="icMeetingTopic.closed" class="glyphicon glyphicon-lock"></span>
                         </label>
+                    </div>
+                    <div class="row pull-right" *ngIf="icMeetingTopic.sharedWithDepartment">
+                        <small><i>* shared with your department</i></small>
+                    </div>
+                    <br/>
+                    <div class="row" *ngIf="icMeetingTopic != null && icMeetingTopic.status != 'CLOSED' && canEditShare()">
+                        <div *ngIf="!icMeetingTopic.sharedWithDepartment">
+                            <a class="label label-success pull-right" (click)="shareWithDepartment()">
+                                <span class="glyphicon glyphicon-eye-open">&nbsp;</span>share with department
+                            </a>
+                        </div>
+                        <div *ngIf="icMeetingTopic.sharedWithDepartment">
+                            <a class="label label-primary pull-right" (click)="stopShareWithDepartment()">
+                                <span class="glyphicon glyphicon-eye-close"></span>&nbsp;stop sharing
+                            </a>
+                        </div>
+<!--                        <button *ngIf="!icMeetingTopic.sharedWithDepartment" class="btn btn-sm btn-success pull-right" (click)="shareWithDepartment()">share</button>-->
+<!--                        <button *ngIf="icMeetingTopic.sharedWithDepartment" class="btn btn-sm btn-primary pull-right" (click)="stopShareWithDepartment()">(X) stop sharing</button>-->
                     </div>
                     <fieldset [disabled]="!canEdit()">
                         <div class="row top-buffer">

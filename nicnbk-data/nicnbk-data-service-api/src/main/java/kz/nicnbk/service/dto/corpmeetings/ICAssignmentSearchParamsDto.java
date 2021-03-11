@@ -21,6 +21,7 @@ public class ICAssignmentSearchParamsDto implements BaseDto {
     private String searchText;
     private String icNumber;
     //private String type;
+    private boolean hideClosed;
 
     /* Pagination */
     private int page;
@@ -139,5 +140,12 @@ public class ICAssignmentSearchParamsDto implements BaseDto {
         return params.toString();
     }
 
+    public boolean isHideClosed() {
+        return hideClosed;
+    }
+
+    public void setHideClosed(boolean hideClosed) {
+        this.hideClosed = hideClosed;
+    }
 }
 

@@ -116,9 +116,9 @@ public class EmployeeServiceImpl implements EmployeeService{
     }
 
     @Override
-    public List<EmployeeDto> findUsersWithRole(String role){
+    public List<EmployeeDto> findUsersWithRole(String role,Boolean active){
         try {
-            List<EmployeeDto> dtoList = findEmployeesByRoleCode(role, null);
+            List<EmployeeDto> dtoList = findEmployeesByRoleCode(role, active);
             return dtoList;
         }catch (Exception ex){
             logger.error("Failed to load full employee list", ex);
@@ -127,10 +127,10 @@ public class EmployeeServiceImpl implements EmployeeService{
     }
 
     @Override
-    public List<EmployeeDto> findByDepartmentAndActive(int departmentId){
+    public List<EmployeeDto> findByDepartmentAndActive(int departmentId, Boolean active){
         try {
             List<EmployeeDto> dtoList = new ArrayList<>();
-            List<Employee> entities = this.employeeRepository.findByPositionDepartmentIdAndActive(departmentId, true);
+            List<Employee> entities = this.employeeRepository.findByPositionDepartmentIdAndActive(departmentId, active);
             for(Employee employee: entities) {
                 EmployeeDto employeeDto = this.employeeEntityConverter.disassemble(employee);
                 dtoList.add(employeeDto);
@@ -161,7 +161,15 @@ public class EmployeeServiceImpl implements EmployeeService{
 
     @Override
     public List<EmployeeDto> findByDepartmentAndActiveWithExecutives(int departmentId){
-        List<EmployeeDto> employees = findByDepartmentAndActive(departmentId);
+        List<EmployeeDto> employees = findByDepartmentAndActive(departmentId, true);
+        employees.addAll(findExecutivesAndActive());
+        return employees;
+    }
+
+    @Override
+    public List<EmployeeDto> findByDepartmentWithExecutives(int departmentId){
+        List<EmployeeDto> employees = findByDepartmentAndActive(departmentId, null);
+        employees = employees != null ? employees : new ArrayList<>();
         employees.addAll(findExecutivesAndActive());
         return employees;
     }

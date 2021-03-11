@@ -40,6 +40,8 @@ public class ICMeetingTopic extends CreateUpdateBaseEntity{
 
     private Integer icOrder;
 
+    private List<ICMeetingTopicShare> sharedDepartments;
+
     public ICMeetingTopic(){}
 
     public ICMeetingTopic(Long id){
@@ -217,5 +219,22 @@ public class ICMeetingTopic extends CreateUpdateBaseEntity{
 
     public void setIcOrder(Integer icOrder) {
         this.icOrder = icOrder;
+    }
+
+//    @ManyToMany(fetch = FetchType.LAZY)
+//    @JoinTable(
+//            name="ic_meeting_topic_shared_depts",
+//            joinColumns=
+//            @JoinColumn(name="topic_id", referencedColumnName="ID"),
+//            inverseJoinColumns=
+//            @JoinColumn(name="department_id", referencedColumnName="ID")
+//    )
+    @OneToMany(mappedBy="icMeetingTopic")
+    public List<ICMeetingTopicShare> getSharedDepartments() {
+        return sharedDepartments;
+    }
+
+    public void setSharedDepartments(List<ICMeetingTopicShare> sharedDepartments) {
+        this.sharedDepartments = sharedDepartments;
     }
 }

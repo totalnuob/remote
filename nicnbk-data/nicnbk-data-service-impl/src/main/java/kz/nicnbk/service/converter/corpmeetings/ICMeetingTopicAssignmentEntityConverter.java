@@ -1,10 +1,12 @@
 package kz.nicnbk.service.converter.corpmeetings;
 
 import kz.nicnbk.repo.model.corpmeetings.ICMeetingTopicAssignment;
+import kz.nicnbk.repo.model.employee.Department;
 import kz.nicnbk.service.api.tag.TagService;
 import kz.nicnbk.service.converter.dozer.BaseDozerEntityConverter;
 import kz.nicnbk.service.datamanager.LookupService;
 import kz.nicnbk.service.dto.corpmeetings.ICMeetingTopicAssignmentDto;
+import kz.nicnbk.service.dto.employee.DepartmentDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -13,12 +15,8 @@ import java.util.List;
 
 @Component
 public class ICMeetingTopicAssignmentEntityConverter extends BaseDozerEntityConverter<ICMeetingTopicAssignment, ICMeetingTopicAssignmentDto> {
-
     @Autowired
-    private LookupService lookupService;
-
-    @Autowired
-    private TagService tagService;
+    private ICMeetingTopicEntityConverter topicEntityConverter;
 
     @Override
     public ICMeetingTopicAssignment assemble(ICMeetingTopicAssignmentDto dto) {
