@@ -19,6 +19,10 @@ import {UpcomingEvent} from "./model/upcoming.event";
 import {ICMeeting} from "./model/ic-meeting";
 import {SaveResponse} from "../common/save-response";
 import {ICMeetingSearchParams} from "./model/ic-meeting-search-params";
+
+import {ICAssignmentSearchParams} from "./model/ic-assignment-search-params";
+import {ICAssignmentSearchResults} from "./model/ic-assignment-search-results";
+
 import {ICMeetingTopicSearchParams} from "./model/ic-meeting-topic-search-params";
 import {ICMeetingTopicSearchResults} from "./model/ic-meeting-topic-search-results";
 import {DATA_APP_URL} from "../common/common.service.constants";
@@ -60,6 +64,10 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
     icMeetings = [];
     icMeetingsSearchParams = new ICMeetingSearchParams();
     icMeetingsSearchResult: ICMeetingSearchResults
+
+    assignmentsSearchParams = new ICAssignmentSearchParams();
+    assignmentsSearchResult = new ICAssignmentSearchResults();
+    assignments = [];
 
     icMeeting = new ICMeeting();
     uploadProtocolFile: any;
@@ -121,27 +129,47 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
                     this.sub = this.route
                         .params
                         .subscribe(params => {
-                            //console.log(params);
+                            console.log(params);
                             var page = 0;
                             this.activeTab = params['activeTab'];
-                            if (params['icMeetingParams'] != null) {
-                                // TODO: !!!!
-                                this.icMeetingsSearchParams = JSON.parse(params['icMeetingParams']);
-                            }
+
                             if(this.activeTab === 'IC_LIST'){
+                                if (params['params'] != null) {
+                                    this.icMeetingsSearchParams = JSON.parse(params['params']);
+                                }
+                                $('#fromDateIC').val(this.icMeetingsSearchParams.dateFrom);
+                                $('#toDateIC').val(this.icMeetingsSearchParams.dateTo);
+                                page = this.icMeetingsSearchParams.page > 0 ? this.icMeetingsSearchParams.page : 0;
+
                                 this.searchIC(page);
                             }else if(this.activeTab === 'IC_TOPICS'){
+                                console.log(params['params']);
+                                if (params['params'] != null) {
+                                    this.icTopicSearchParams = JSON.parse(params['params']);
+                                    console.log(this.icTopicSearchParams);
+                                }
                                 $('#fromDate').val(this.icTopicSearchParams.dateFrom);
                                 $('#toDate').val(this.icTopicSearchParams.dateTo);
-
                                 page = this.icTopicSearchParams.page > 0 ? this.icTopicSearchParams.page : 0;
+
                                 this.searchICMeetingTopics(page)
+                            }else if(this.activeTab === 'IC_ASSIGNMENTS'){
+                                if (params['params'] != null) {
+                                    this.assignmentsSearchParams = JSON.parse(params['params']);
+                                }
+                                $('#fromDateAssignments').val(this.assignmentsSearchParams.dateFrom);
+                                $('#toDateAssignments').val(this.assignmentsSearchParams.dateTo);
+                                page = this.assignmentsSearchParams.page > 0 ? this.assignmentsSearchParams.page : 0;
+
+                                this.searchICAssignments(page)
                             }else{
                                 this.searchICMeetingUpcomingEvents();
                             }
                         });
                 });
     }
+
+
 
     ngOnInit():any {
         // TODO: exclude jQuery
@@ -151,6 +179,14 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
             format: 'DD-MM-YYYY'
         });
         $('#untilDateDTPickeer').datetimepicker({
+            //defaultDate: new Date(),
+            format: 'DD-MM-YYYY'
+        });
+        $('#fromDateAssignmentsPicker').datetimepicker({
+            //defaultDate: new Date(),
+            format: 'DD-MM-YYYY'
+        });
+        $('#untilDateAssignmentsPicker').datetimepicker({
             //defaultDate: new Date(),
             format: 'DD-MM-YYYY'
         });
@@ -168,6 +204,8 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
             //defaultDate: new Date(),
             format: 'DD-MM-YYYY'
         });
+
+        this.assignmentsSearchParams.hideClosed = true;
     }
 
     searchICMeetingUpcomingEvents(){ // e.g. 09-2020
@@ -289,6 +327,35 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
         return classes;
     }
 
+    searchICAssignments(page){
+        this.activeTab = "IC_ASSIGNMENTS";
+
+        this.successMessage = null;
+        this.errorMessage = null;
+
+        this.assignmentsSearchParams.pageSize = 20;
+        this.assignmentsSearchParams.page = page;
+
+        this.assignmentsSearchParams.dateFrom = $('#fromDateAssignments').val();
+        this.assignmentsSearchParams.dateTo = $('#toDateAssignments').val();
+
+        //console.log(this.icTopicSearchParams);
+        this.busy = this.corpMeetingService.searchICAssignments(this.assignmentsSearchParams)
+            .subscribe(
+                (searchResult: ICAssignmentSearchResults)  => {
+                    this.assignments = searchResult.assignments;
+                    this.assignmentsSearchResult = searchResult;
+                },
+                (error: ErrorResponse) => {
+                    this.errorMessage = "Error searching IC assignments";
+                    if(error && !error.isEmpty()){
+                        this.processErrorMessage(error);
+                    }
+                    this.postAction(null,  this.errorMessage);
+                }
+            );
+    }
+
     searchICMeetingTopics(page){
 
         this.activeTab = "IC_TOPICS";
@@ -328,8 +395,24 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
         this.router.navigate(['/corpMeetings/edit/', topicId, { params }]);
     }
 
+    canViewICAssignments(){
+        return this.canViewICTopics();
+    }
+
+    navigateAssignment(assignmentId){
+        this.assignmentsSearchParams.path = '/corpMeetings';
+        let params = JSON.stringify(this.assignmentsSearchParams);
+        console.log(assignmentId);
+        this.router.navigate(['/corpMeetings/assignment/edit/', assignmentId, { params }]);
+    }
+
     clearSearchForm(){
         this.icTopicSearchParams = new ICMeetingTopicSearchParams();
+    }
+
+    clearAssignmentsSearchForm(){
+        this.assignmentsSearchParams = new ICAssignmentSearchParams();
+        this.assignmentsSearchParams.hideClosed = true;
     }
 
     clearSearchFormIC(){
@@ -339,7 +422,6 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
 
         $('#fromDateIC').val(null);
         $('#toDateIC').val(null);
-
     }
 
     searchIC(page){
@@ -534,7 +616,7 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
                 return 'label label-default';
             }
             if(topic.status === 'CLOSED'){
-                return 'label label-danger';
+                return 'label label-primary';
             }
             if(topic.status === 'LOCKED FOR IC'){
                 return 'label label-primary';
@@ -589,7 +671,7 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
      getICClassByStatus(ic){
         //console.log(ic);
         if(ic.status === 'CLOSED'){
-            return 'label label-danger';
+            return 'label label-primary';
         }else{
             // Check if sent to IC
             if(ic.status === 'LOCKED FOR IC'){
@@ -624,7 +706,7 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
 
 
     exportRegistry(){
-        var fileName = "Журнал регистрации рещений протолколов Инвесткома";
+        var fileName = "Журнал регистрации решений протолколов Инвесткома";
         //fileName = fileName.replace(".", ",");
         this.busy = this.corpMeetingService.makeFileRequest(DATA_APP_URL + `corpMeetings/ICMeeting/exportProtocolRegistry`,
             fileName, 'POST')
@@ -635,6 +717,21 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
                 error => {
                     //console.log("fails")
                     this.postAction(null, "Error exporting protocol registry");
+                }
+            );
+    }
+
+    exportAssignmentRegistry(){
+        var fileName = "Информация по исполнению пручений ИК 2021";
+        this.busy = this.corpMeetingService.makeFileRequest(DATA_APP_URL + `corpMeetings/assignment/exportRegistry`,
+            fileName, 'POST')
+            .subscribe(
+                response  => {
+                    console.log("export assignment registry response ok");
+                },
+                error => {
+                    //console.log("fails")
+                    this.postAction(null, "Error exporting assignment registry");
                 }
             );
     }

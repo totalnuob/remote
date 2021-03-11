@@ -184,16 +184,16 @@ public class ICMeetingDto extends CreateUpdateBaseEntityDto<ICMeeting> implement
     }
 
     public static boolean isICMeetingUpdateLockedByDeadline(Date icDate, String icTime){
-        if(icDate != null){
-            String time = icTime != null ? icTime : "9:00";
-            Date icDateWithTime = DateUtils.getDateWithTime(icDate, time);
-            if(icDateWithTime != null){
-                if(DateUtils.moveDateByDays(icDateWithTime, 1, true).before(new Date())){
-                    return true;
-                }
-            }
-
-        }
+//        if(icDate != null){
+//            String time = icTime != null ? icTime : "9:00";
+//            Date icDateWithTime = DateUtils.getDateWithTime(icDate, time);
+//            if(icDateWithTime != null){
+//                if(DateUtils.moveDateByDays(icDateWithTime, 1, true).before(new Date())){
+//                    return true;
+//                }
+//            }
+//
+//        }
         return false;
     }
 

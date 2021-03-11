@@ -179,6 +179,9 @@ public class LookupServiceImpl implements LookupService {
     private ICMeetingVoteTypeRepository icMeetingVoteTypeRepository;
 
     @Autowired
+    private ICMeetingTopicDecisionTypeRepository icMeetingTopicDecisionTypeRepository;
+
+    @Autowired
     private TerraNICChartOfAccountsRepository terraNICChartOfAccountsRepository;
 
     @Autowired
@@ -356,6 +359,8 @@ public class LookupServiceImpl implements LookupService {
                 return (T) this.icMeetingPlaceTypeRepository.findByCode(code);
             }else if(clazz.equals(ICMeetingVoteType.class)){
                 return (T) this.icMeetingVoteTypeRepository.findByCode(code);
+            }else if(clazz.equals(ICMeetingTopicDecisionType.class)){
+                return (T) this.icMeetingTopicDecisionTypeRepository.findByCode(code);
             }else{
                 logger.error("Failed to load lookups for clazz=" + clazz + ", code=" + code);
             }

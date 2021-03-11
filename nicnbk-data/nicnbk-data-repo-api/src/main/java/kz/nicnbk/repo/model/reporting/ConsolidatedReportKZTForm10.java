@@ -19,6 +19,7 @@ public class ConsolidatedReportKZTForm10 extends CreateUpdateBaseEntity{
     private Integer lineNumber;
 
     private Double startPeriodAssets;
+    private Double turnoverPurchased; // positive values
     private Double turnoverOther;
     private Double endPeriodAssets;
 
@@ -106,5 +107,14 @@ public class ConsolidatedReportKZTForm10 extends CreateUpdateBaseEntity{
 
     public void setEndPeriodAssets(Double endPeriodAssets) {
         this.endPeriodAssets = endPeriodAssets;
+    }
+
+    @Column(name="turnover_purchased")
+    public Double getTurnoverPurchased() {
+        return turnoverPurchased;
+    }
+
+    public void setTurnoverPurchased(Double turnoverPurchased) {
+        this.turnoverPurchased = turnoverPurchased;
     }
 }

@@ -73,7 +73,12 @@ public class ICMeetingTopicEntityConverter extends BaseDozerEntityConverter<ICMe
         if (entity == null) {
             return null;
         }
-        ICMeetingTopicDto dto = super.disassemble(entity); //mapper.map(entity, TripMemoDto.class);
+        ICMeetingTopicDto dto = super.disassemble(entity);
+
+        if(entity.getIcMeeting() != null &&
+                (entity.getIcMeeting().getId() == null || entity.getIcMeeting().getId().longValue() == 0)){
+            dto.setIcMeeting(null);
+        }
 
         // creator
         if(entity.getCreator() != null){

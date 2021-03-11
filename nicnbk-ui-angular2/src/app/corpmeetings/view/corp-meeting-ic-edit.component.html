@@ -92,8 +92,8 @@
                             </div>
                             <div class="col-md-8">
                                 <label class="control-label col-md-2">Invitees:</label>
-                                <div class="col-md-6" *ngIf="inviteesList?.length > 0">
-                                    <ng-select #inviteesSelect [initData]="icMeeting.invitees"
+                                <div class="col-md-6" *ngIf="icMeeting != null && inviteesList?.length > 0">
+                                    <ng-select #inviteesSelect [active]="icMeeting.invitees"
                                                [multiple]="true"
                                                [items]="inviteesList"
                                                (data)="refreshInvitees($event)"

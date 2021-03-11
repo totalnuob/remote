@@ -116,6 +116,7 @@ public interface CorpMeetingService extends BaseService {
     FilesDto getICMeetingBulletinFileStream(Long icMeetingId, String username);
 
     FilesDto getICMeetingProtocolRegistryFileStream(String username);
+    FilesDto getICAssignmentRegistryFileStream(String username);
 
     FilesDto getICMeetingTopicApproveListFileStream(Long icMeetingId, String username);
 
@@ -125,4 +126,16 @@ public interface CorpMeetingService extends BaseService {
     boolean deleteICMeetingBulletin(Long icMeetingId, String username);
 
     List<CorpMeetingUpcomingEventDto> getUpcomingEvents(String username);
+
+    //List<ICMeetingTopicAssignmentDto> getDepartmentAssignments(int id);
+    ICAssignmentPagedSearchResult searchICAssignments(ICAssignmentSearchParamsDto params, String username);
+
+    ICMeetingTopicAssignmentDto getICAssignment(Long id);
+    EntitySaveResponseDto saveICAssignment(ICMeetingTopicAssignmentDto dto, String username);
+
+    List<ICMeetingTopicAssignmentDto> getICAssignmentsDueWithinWeek();
+
+    boolean shareICMeetingTopic(Long id, String username);
+    boolean stopShareICMeetingTopic(Long id, String username);
+
 }

@@ -8,6 +8,7 @@ import kz.nicnbk.common.service.model.BaseDictionaryDto;
 public class PositionDto extends BaseDictionaryDto {
 
     private DepartmentDto department;
+    private Boolean head;
 
     public PositionDto(){}
 
@@ -26,5 +27,13 @@ public class PositionDto extends BaseDictionaryDto {
 
     public void setDepartment(DepartmentDto department) {
         this.department = department;
+    }
+
+    public Boolean isHead() {
+        return head;
+    }
+
+    public void setHead(Boolean head) {
+        this.head = head;
     }
 }

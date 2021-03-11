@@ -21,7 +21,8 @@ import java.util.Set;
 public interface ICMeetingTopicRepository extends PagingAndSortingRepository<ICMeetingTopic, Long> {
 
     @Query("SELECT DISTINCT e from ICMeetingTopic e LEFT JOIN e.tags tags LEFT JOIN e.icMeeting ic LEFT JOIN e.approveList approve " +
-            "LEFT JOIN approve.employee emp LEFT JOIN approve.employee.position pos LEFT JOIN approve.employee.position.department dep where " +
+            "LEFT JOIN approve.employee emp LEFT JOIN approve.employee.position pos LEFT JOIN approve.employee.position.department dep" +
+            " LEFT JOIN e.sharedDepartments shares WHERE " +
             " (e.icMeeting.id is null OR (e.icMeeting.date >= :dateFrom AND e.icMeeting.date <= :dateTo)) " +
             " AND (:searchText='' OR (LOWER(e.name) LIKE CONCAT('%', :searchText, '%')) " +
             //" OR (LOWER(e.nameUpd) LIKE CONCAT('%', :searchText,'%')) " +
@@ -32,6 +33,7 @@ public interface ICMeetingTopicRepository extends PagingAndSortingRepository<ICM
             ") " +
             " AND (:icNumber='' OR  e.icMeeting.number=:icNumber)" +
             " AND (:departmentId IS NULL OR e.department.id=:departmentId OR (:isICMember=true AND e.published=true) OR " +
+            "(shares.icMeetingTopic.id=e.id AND shares.department.id=:departmentId) OR " +
             " (e.published=true AND e.id=approve.icMeetingTopic.id AND approve.employee.position.department.id=:departmentId))" +
             " AND (e.deleted is null OR e.deleted=false)")
     Page<ICMeetingTopic> searchNonDeleted(@Param("departmentId") Integer departmentId,
@@ -42,9 +44,11 @@ public interface ICMeetingTopicRepository extends PagingAndSortingRepository<ICM
 
 
     @Query("SELECT DISTINCT e FROM ICMeetingTopic e LEFT JOIN e.approveList b " +
-            " LEFT JOIN b.employee emp LEFT JOIN b.employee.position pos LEFT JOIN b.employee.position.department dep WHERE " +
+            " LEFT JOIN b.employee emp LEFT JOIN b.employee.position pos LEFT JOIN b.employee.position.department dep " +
+            " LEFT JOIN e.sharedDepartments shares WHERE " +
             " (:departmentId IS NULL OR e.department.id=:departmentId OR (:viewICTopicAll=true AND e.published=true) OR " +
-            " (e.published=true AND e.id=b.icMeetingTopic.id AND b.employee.position.department.id=:departmentId)) " +
+            " (e.published=true AND e.id=b.icMeetingTopic.id AND b.employee.position.department.id=:departmentId) OR " +
+            " (shares.icMeetingTopic.id=e.id AND shares.department.id=:departmentId)) " +
             " AND (e.deleted is null OR e.deleted=false) ")
     Page<ICMeetingTopic> searchAllByDepartmentAndUserNonDeleted(@Param("departmentId") Integer departmentId,
                                                                 @Param("viewICTopicAll") Boolean viewICTopicAll,
