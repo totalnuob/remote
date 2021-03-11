@@ -92,8 +92,8 @@
                             </div>
                             <div class="col-md-8">
                                 <label class="control-label col-md-2">Invitees:</label>
-                                <div class="col-md-6" *ngIf="inviteesList?.length > 0">
-                                    <ng-select #inviteesSelect [initData]="icMeeting.invitees"
+                                <div class="col-md-6" *ngIf="icMeeting != null && inviteesList?.length > 0">
+                                    <ng-select #inviteesSelect [active]="icMeeting.invitees"
                                                [multiple]="true"
                                                [items]="inviteesList"
                                                (data)="refreshInvitees($event)"
@@ -231,8 +231,8 @@
                             <tr>
                                 <td>1.</td>
                                 <td>Agenda</td>
-                                <td (click)="exportAgenda()">
-                                    <img *ngIf="icMeeting.id > 0 && icMeeting.agenda == null" src="../../../../public/img/ms_word.png" height="25" width="25" />
+                                <td>
+                                    <img *ngIf="icMeeting.id > 0 && icMeeting.agenda == null" src="../../../../public/img/ms_word.png" height="25" width="25" (click)="exportAgenda()"/>
                                 </td>
                                 <td>
                                     <div *ngIf="icMeeting.agenda == null && canEdit()" align="center">
@@ -264,8 +264,8 @@
                             <tr>
                                 <td>2.</td>
                                 <td>Protocol</td>
-                                <td (click)="exportProtocol()">
-                                    <img *ngIf="icMeeting.id > 0 && icMeeting.protocol == null" src="../../../../public/img/ms_word.png" height="25" width="25" />
+                                <td>
+                                    <img *ngIf="icMeeting.id > 0 && icMeeting.protocol == null" src="../../../../public/img/ms_word.png" height="25" width="25" (click)="exportProtocol()"/>
                                 </td>
                                 <td>
                                     <div *ngIf="icMeeting.protocol == null && canEdit()" align="center">
@@ -297,8 +297,8 @@
                             <tr>
                                 <td>3.</td>
                                 <td>Bulletin</td>
-                                <td (click)="exportBulletin()">
-                                    <img *ngIf="icMeeting.id > 0 && icMeeting.bulletin == null" src="../../../../public/img/ms_word.png" height="25" width="25"/>
+                                <td>
+                                    <img *ngIf="icMeeting.id > 0 && icMeeting.bulletin == null" src="../../../../public/img/ms_word.png" height="25" width="25" (click)="exportBulletin()"/>
                                 </td>
                                 <td>
                                     <div *ngIf="icMeeting.bulletin == null && canEdit()" align="center">

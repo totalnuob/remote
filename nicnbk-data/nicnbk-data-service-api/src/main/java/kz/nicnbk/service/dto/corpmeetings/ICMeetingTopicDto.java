@@ -33,8 +33,10 @@ public class ICMeetingTopicDto extends CreateUpdateBaseEntityDto<ICMeetingTopic>
     private String name;
     //private String nameUpd;
     private String description;
+
     private String decision;
    // private String decisionUpd;
+    private List<ICMeetingTopicDecisionDto> decisions;
     private Set<EmployeeApproveDto> approveList;
 
     private Boolean published;
@@ -60,6 +62,7 @@ public class ICMeetingTopicDto extends CreateUpdateBaseEntityDto<ICMeetingTopic>
     private List<ICMeetingTopicsVoteDto> votes;
 
     private Integer icOrder;
+    private boolean sharedWithDepartment;
 
     @Deprecated
     private String type;
@@ -80,6 +83,13 @@ public class ICMeetingTopicDto extends CreateUpdateBaseEntityDto<ICMeetingTopic>
                         return LOCKED_FOR_IC;
                     }else {
                         if (this.publishedUpd != null && this.publishedUpd.booleanValue()) {
+                            if(this.approveList != null){
+                                for (EmployeeApproveDto approveDto : this.approveList) {
+                                    if (!approveDto.isApproved()) {
+                                        return UNDER_REVIEW;
+                                    }
+                                }
+                            }
                             return FINALIZED;
                         } else {
                             return TO_BE_FINALIZED;
@@ -151,6 +161,18 @@ public class ICMeetingTopicDto extends CreateUpdateBaseEntityDto<ICMeetingTopic>
 
     public void setTags(List<String> tags) {
         this.tags = tags;
+    }
+
+    public String getDecisionsText(){
+        String decision = "";
+        if(this.decisions != null){
+            for(int i = 0; i < this.decisions.size(); i++){
+                decision += (i + 1) + ")" + this.decisions.get(i).getName() + " ";
+            }
+        }else if(this.decision != null){
+            return this.decision;
+        }
+        return decision;
     }
 
     public String getDecision() {
@@ -317,6 +339,22 @@ public class ICMeetingTopicDto extends CreateUpdateBaseEntityDto<ICMeetingTopic>
 
     public void setIcOrder(Integer icOrder) {
         this.icOrder = icOrder;
+    }
+
+    public List<ICMeetingTopicDecisionDto> getDecisions() {
+        return decisions;
+    }
+
+    public void setDecisions(List<ICMeetingTopicDecisionDto> decisions) {
+        this.decisions = decisions;
+    }
+
+    public boolean isSharedWithDepartment() {
+        return sharedWithDepartment;
+    }
+
+    public void setSharedWithDepartment(boolean sharedWithDepartment) {
+        this.sharedWithDepartment = sharedWithDepartment;
     }
 
     @Override

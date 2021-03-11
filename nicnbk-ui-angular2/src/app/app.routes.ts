@@ -85,6 +85,7 @@ import {ConsolidatedKZTForm6NBReportingComponent} from "./reporting/consolidated
 import {MonitoringHedgeFunds2PrintComponent} from "./monitoring/monitoring-hedge-funds-2-print.component";
 import {CorpMeetingsListComponent} from "./corpmeetings/corp-meetings-list.component";
 import {CorpMeetingEditComponent} from "./corpmeetings/corp-meetings-edit.component";
+import {CorpMeetingAssignmentEditComponent} from "./corpmeetings/corp-meetings-assignment-edit.component";
 import {CorpMeetingICEditComponent} from "./corpmeetings/corp-meetings-ic-edit.component";
 import {LookupValuesCorpMeetingsComponent} from "./corpmeetings/lookup-values-corp-meetings.component";
 import {TerraGeneralLedgerBalanceNBReportingComponent} from "./reporting/terra.general.ledger.balance.nb.reporting.component";
@@ -671,6 +672,11 @@ const routes: Routes  = [
     {
         path: 'corpMeetings/ic/edit/:id',
         component: CorpMeetingICEditComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'corpMeetings/assignment/edit/:id',
+        component: CorpMeetingAssignmentEditComponent,
         canActivate: [AuthGuard]
     },
     {

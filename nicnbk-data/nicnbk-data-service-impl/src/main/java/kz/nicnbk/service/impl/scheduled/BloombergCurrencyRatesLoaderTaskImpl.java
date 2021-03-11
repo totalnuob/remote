@@ -37,7 +37,7 @@ public class BloombergCurrencyRatesLoaderTaskImpl {
     @Autowired
     private BenchmarkService benchmarkService;
 
-    @Scheduled(cron = "0 0 7 ? * MON-FRI") //Every weekday, at 7:00 am
+    //@Scheduled(cron = "0 0 7 ? * MON-FRI") //Every weekday, at 7:00 am
     public void loadCurrencyRates() {
         String url = "http://10.10.165.123:8080/bloomberg/currencyRates";
         String authStr = "unic:qwerty123";
@@ -77,7 +77,7 @@ public class BloombergCurrencyRatesLoaderTaskImpl {
         }
     }
 
-    @Scheduled(cron = "0 0 7 ? * MON-FRI") //Every weekday, at 7:00 am
+    //@Scheduled(cron = "0 0 7 ? * MON-FRI") //Every weekday, at 7:00 am
     public void loadBenchmarks() {
         String url = "http://10.10.165.123:8080/bloomberg/benchmark";
         String authStr = "unic:qwerty123";

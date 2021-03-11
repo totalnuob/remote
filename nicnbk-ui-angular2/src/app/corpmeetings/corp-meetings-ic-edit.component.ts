@@ -129,8 +129,6 @@ export class CorpMeetingICEditComponent extends CommonFormViewComponent implemen
                 });
     }
 
-
-
     getICMeeting(id, successMessage, errorMessage){
         this.busy = this.corpMeetingService.getICMeeting(id)
             .subscribe(
@@ -162,7 +160,6 @@ export class CorpMeetingICEditComponent extends CommonFormViewComponent implemen
                             for(var j = 0; j < this.attendeesList.length; j++){
                                 if(this.icMeeting.attendees[i].employee.id == this.attendeesList[j].employee.id){
                                     missing = false;
-                                    console.log(j);
                                     break;
                                 }
                             }
@@ -174,17 +171,24 @@ export class CorpMeetingICEditComponent extends CommonFormViewComponent implemen
                     }
 
                     // preselect invitees
-                    this.inviteesSelect.active = [];
+                    if(this.icMeeting.invitees != null){
+                        for(var i = 0; i < this.icMeeting.invitees.length; i++){
+                           this.icMeeting.invitees[i].text = this.icMeeting.invitees[i].firstName + " " + this.icMeeting.invitees[i].lastName;
+                        }
+                    }
+
+                    /*this.inviteesSelect.active = [];
                     if(this.icMeeting.invitees) {
                         this.icMeeting.invitees.forEach(element => {
                             for (var i = 0; i < this.inviteesList.length; i++) {
                                 var option = this.inviteesList[i];
                                 if (element.id === option.id) {
-                                    this.inviteesSelect.active.push(option);
+                                    //this.inviteesSelect.active.push(option);
                                 }
                             }
                         });
-                    }
+                    }*/
+
                     // topic votes
                     if(this.icMeeting.topics != null){
                         for(var i = 0; i < this.icMeeting.topics.length; i++){

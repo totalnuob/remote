@@ -19,13 +19,14 @@ public interface EmployeeService extends BaseService {
 
     List<EmployeeDto> findICMembers();
 
-    List<EmployeeDto> findUsersWithRole(String role);
+    List<EmployeeDto> findUsersWithRole(String role, Boolean active);
 
-    List<EmployeeDto> findByDepartmentAndActive(int id);
+    List<EmployeeDto> findByDepartmentAndActive(int id, Boolean active);
 
     List<EmployeeDto> findExecutivesAndActive();
 
     List<EmployeeDto> findByDepartmentAndActiveWithExecutives(int id);
+    List<EmployeeDto> findByDepartmentWithExecutives(int id);
 
     List<EmployeeDto> findEmployeesByRoleCodes(String[] codes);
 

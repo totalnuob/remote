@@ -12,6 +12,7 @@ import javax.persistence.*;
 public class Position extends BaseTypeEntityImpl {
 
     private Department department;
+    private Boolean head;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "department_id")
@@ -23,4 +24,12 @@ public class Position extends BaseTypeEntityImpl {
         this.department = department;
     }
 
+    @Column(name = "is_head")
+    public Boolean isHead() {
+        return head;
+    }
+
+    public void setHead(Boolean head) {
+        this.head = head;
+    }
 }

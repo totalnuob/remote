@@ -15,6 +15,7 @@ import javax.persistence.Table;
 public class Department extends BaseTypeEntityImpl{
 
     private String nameUsedWithPositionRu;
+    private String shortNameRu;
 
     public Department(){}
 
@@ -29,5 +30,14 @@ public class Department extends BaseTypeEntityImpl{
 
     public void setNameUsedWithPositionRu(String nameUsedWithPositionRu) {
         this.nameUsedWithPositionRu = nameUsedWithPositionRu;
+    }
+
+    @Column(name="short_name_ru")
+    public String getShortNameRu() {
+        return shortNameRu;
+    }
+
+    public void setShortNameRu(String shortNameRu) {
+        this.shortNameRu = shortNameRu;
     }
 }

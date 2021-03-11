@@ -15,6 +15,7 @@ export class ICMeetingTopic{
     executor: Employee;
 
     decision: string;
+    decisions: any[];
     //decisionUpd: string;
     approveList: [];
 

@@ -49,6 +49,16 @@ public class StringUtils {
         }
     }
 
+    public static boolean isEqualNoSpacesIgnoreCase(String a, String b){
+        if(a == null && b == null){
+            return true;
+        }
+        if((a == null && b != null) || (a != null && b == null)){
+            return false;
+        }
+        return a.trim().replaceAll("\\s+","").equalsIgnoreCase(b.trim().replaceAll("\\s+",""));
+    }
+
     /**
      * Returns a list of strings from the string array.
      * E.g. ["a", "b", "c"] into java.util.List object containing three strings in the original order.
