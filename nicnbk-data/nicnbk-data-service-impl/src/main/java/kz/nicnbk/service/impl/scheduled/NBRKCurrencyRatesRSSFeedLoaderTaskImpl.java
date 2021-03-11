@@ -32,7 +32,7 @@ public class NBRKCurrencyRatesRSSFeedLoaderTaskImpl {
     @Autowired
     private CurrencyRatesService currencyRatesService;
 
-    @Scheduled(cron="0 00 7 * * *") // Every day at 7 am
+    //@Scheduled(cron="0 00 7 * * *") // Every day at 7 am
     public void loadUSDCurrencyRates() {
         try {
             URL feedUrl = new URL("http://www.nationalbank.kz/rss/rates_all.xml");

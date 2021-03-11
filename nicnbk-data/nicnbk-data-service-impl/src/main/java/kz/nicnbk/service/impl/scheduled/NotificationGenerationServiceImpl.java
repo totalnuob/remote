@@ -80,7 +80,7 @@ public class NotificationGenerationServiceImpl {
         }
     }
 
-    @Scheduled(cron="0 10 16 * * MON-FRI") // Every day at 8 am
+    @Scheduled(cron="0 00 8 * * MON-FRI") // Every day at 8 am
     @Transactional
     public void createICAssignmentsDeadlineNotifications() {
         try {
