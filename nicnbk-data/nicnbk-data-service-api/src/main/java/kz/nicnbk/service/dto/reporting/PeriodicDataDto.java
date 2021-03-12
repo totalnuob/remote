@@ -2,6 +2,7 @@ package kz.nicnbk.service.dto.reporting;
 
 import kz.nicnbk.common.service.model.BaseDictionaryDto;
 import kz.nicnbk.common.service.model.BaseEntityDto;
+import kz.nicnbk.common.service.util.MathUtils;
 
 import java.util.Date;
 
@@ -11,6 +12,7 @@ import java.util.Date;
 public class PeriodicDataDto extends BaseEntityDto {
     private Date date;
     private Double value;
+    private Double correction;
     private BaseDictionaryDto type;
     private Boolean revaluated;
     private boolean editable;
@@ -74,5 +76,17 @@ public class PeriodicDataDto extends BaseEntityDto {
 
     public void setRevaluated(Boolean revaluated) {
         this.revaluated = revaluated;
+    }
+
+    public Double getCorrection() {
+        return correction;
+    }
+
+    public void setCorrection(Double correction) {
+        this.correction = correction;
+    }
+
+    public Double getTotal(){
+        return MathUtils.add(this.value, this.correction);
     }
 }

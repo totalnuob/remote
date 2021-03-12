@@ -2011,7 +2011,9 @@ public class LookupServiceImpl implements LookupService {
                 //dto.setPositiveOnly();
                 //dto.setEditable(checkEditableMatchingSingularityAccountNumber(entity.getSingularityAccountNumber()));
                 dto.setEditable(true);
-                dto.setDeletable(checkDeletableMatchingSingularityAccountNumber(dto.getAccountNumber()));
+
+                //dto.setDeletable(checkDeletableMatchingSingularityAccountNumber(dto.getAccountNumber()));
+                dto.setDeletable(false);
 
                 if(entity.getChartAccountsType() != null) {
                     dto.setChartAccountsType(new BaseDictionaryDto(entity.getChartAccountsType().getCode(),
@@ -2044,7 +2046,8 @@ public class LookupServiceImpl implements LookupService {
                             entity.getChartAccountsType().getNameEn(), entity.getChartAccountsType().getNameRu(), entity.getChartAccountsType().getNameKz()));
                 }
                 dto.setEditable(true);
-                dto.setDeletable(checkDeletableMatchingTarragonChartAccountsLongDescription(dto.getNameEn()));
+                //dto.setDeletable(checkDeletableMatchingTarragonChartAccountsLongDescription(dto.getNameEn()));
+                dto.setDeletable(false);
                 dtoList.add(dto);
             }
         }
@@ -2070,7 +2073,8 @@ public class LookupServiceImpl implements LookupService {
                             entity.getChartAccountsType().getNameEn(), entity.getChartAccountsType().getNameRu(), entity.getChartAccountsType().getNameKz()));
                 }
                 dto.setEditable(true);
-                dto.setDeletable(checkDeletableMatchingTerraChartAccountsLongDescription(dto.getNameEn()));
+                //dto.setDeletable(checkDeletableMatchingTerraChartAccountsLongDescription(dto.getNameEn()));
+                dto.setDeletable(false);
 
                 dtoList.add(dto);
             }

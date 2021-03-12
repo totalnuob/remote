@@ -1031,7 +1031,7 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
                                 if(StringUtils.isNotEmpty(classification) && classification.charAt(classification.length() - 1) == ':'){
                                     classification = classification.substring(0, classification.length() - 1);
                                 }
-                                classifications[i] = classification;
+                                classifications[i] = classification != null ? classification.trim() : null;
                                 break;
                             }
                         }
@@ -2137,21 +2137,21 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
                     }
 
                     // check tranche A
-                    if(periodicDataDtoTrancheA.getValue() != null && record.getValues() != null && record.getValues()[0] != null &&
-                            periodicDataDtoTrancheA.getValue().doubleValue() != record.getValues()[0].doubleValue()){
+                    if(periodicDataDtoTrancheA.getTotal() != null && record.getValues() != null && record.getValues()[0] != null &&
+                            periodicDataDtoTrancheA.getTotal().doubleValue() != record.getValues()[0].doubleValue()){
                         logger.error("Error checking beginning of period tranche A for '" + record.getName() +
-                                "': expected " + periodicDataDtoTrancheA.getValue().doubleValue() + ", found " + record.getValues()[0].doubleValue());
+                                "': expected " + periodicDataDtoTrancheA.getTotal().doubleValue() + ", found " + record.getValues()[0].doubleValue());
                         throw new ExcelFileParseException("Error checking beginning of period tranche A for '" + record.getName() +
-                                "': expected " + periodicDataDtoTrancheA.getValue().doubleValue() + ", found " + record.getValues()[0].doubleValue());
+                                "': expected " + periodicDataDtoTrancheA.getTotal().doubleValue() + ", found " + record.getValues()[0].doubleValue());
 
                     }
                     // check tranche B
-                    if(periodicDataDtoTrancheB.getValue() != null && record.getValues() != null && record.getValues()[1] != null &&
-                            periodicDataDtoTrancheB.getValue().doubleValue() != record.getValues()[1].doubleValue()){
+                    if(periodicDataDtoTrancheB.getTotal() != null && record.getValues() != null && record.getValues()[1] != null &&
+                            periodicDataDtoTrancheB.getTotal().doubleValue() != record.getValues()[1].doubleValue()){
                         logger.error("Error checking beginning of period tranche B for '" + record.getName() +
-                                "': expected " + periodicDataDtoTrancheB.getValue().doubleValue() + ", found " + record.getValues()[1].doubleValue());
+                                "': expected " + periodicDataDtoTrancheB.getTotal().doubleValue() + ", found " + record.getValues()[1].doubleValue());
                         throw new ExcelFileParseException("Error checking beginning of period tranche B for '" + record.getName() +
-                                "': expected " + periodicDataDtoTrancheB.getValue().doubleValue() + ", found " + record.getValues()[1].doubleValue());
+                                "': expected " + periodicDataDtoTrancheB.getTotal().doubleValue() + ", found " + record.getValues()[1].doubleValue());
 
                     }
 
@@ -2309,9 +2309,9 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
             }else if(ExcelUtils.getStringValueFromCell(cell) != null ||
                     (ExcelUtils.getStringValueFromCell(cell) == null && previousRowHeader != null && !isEmptyValuesRow)){
                 // values
-                String name = cell.getStringCellValue();
+                String name = cell.getStringCellValue() != null ? cell.getStringCellValue().trim() : null;
                 if(ExcelUtils.getStringValueFromCell(cell) == null && previousRowHeader != null){
-                    name = previousRowHeader;
+                    name = previousRowHeader.trim();
                 }
                 Double[] values = new Double[5];
 
@@ -2522,7 +2522,8 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
                 SingularityGeneralLedgerBalanceRecordDto record = new SingularityGeneralLedgerBalanceRecordDto();
                 /* Acronym */
                 if(ExcelUtils.getStringValueFromCell(row.getCell(0)) != null){
-                    record.setAcronym(row.getCell(0).getStringCellValue());
+                    String value = row.getCell(0).getStringCellValue() != null ? row.getCell(0).getStringCellValue().trim(): null;
+                    record.setAcronym(value);
                 }else{
 //                    logger.error("Error parsing 'Singularity General Ledger Balance' file: could not set 'acronym' (cell #1)");
 //                    throw new ExcelFileParseException("Error parsing 'Singularity General Ledger Balance' file: could not set 'acronym' (cell #1)");
@@ -2543,7 +2544,8 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
 
                 /* Financial statement category */
                 if(ExcelUtils.getStringValueFromCell(row.getCell(2)) != null){
-                    record.setFinancialStatementCategory(row.getCell(2).getStringCellValue());
+                    String value = row.getCell(2).getStringCellValue() != null ? row.getCell(2).getStringCellValue().trim(): null;
+                    record.setFinancialStatementCategory(value);
                 }else{
 //                    logger.error("Error parsing 'Singularity General Ledger Balance' file: 'financial statement category' is missing or invalid");
 //                    throw new ExcelFileParseException("Error parsing 'Singularity General Ledger Balance' file: 'financial statement category' is missing or invalid");
@@ -2551,7 +2553,8 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
 
                 /* GL Account  */
                 if(ExcelUtils.getStringValueFromCell(row.getCell(3)) != null){
-                    record.setGLAccount(row.getCell(3).getStringCellValue());
+                    String value = row.getCell(3).getStringCellValue() != null ? row.getCell(3).getStringCellValue().trim(): null;
+                    record.setGLAccount(value);
                 }else{
 //                    logger.error("Error parsing 'Singularity General Ledger Balance' file: 'GL Account' is missing or invalid");
 //                    throw new ExcelFileParseException("Error parsing 'Singularity General Ledger Balance' file: 'GL Account' is missing or invalid");
@@ -2559,7 +2562,8 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
 
                 /* Financial statement category description */
                 if(ExcelUtils.getStringValueFromCell(row.getCell(4)) != null){
-                    record.setFinancialStatementCategoryDescription(row.getCell(4).getStringCellValue());
+                    String value = row.getCell(4).getStringCellValue() != null ? row.getCell(4).getStringCellValue().trim(): null;
+                    record.setFinancialStatementCategoryDescription(value);
                 }else{
 //                    logger.error("Error parsing 'Singularity General Ledger Balance' file: 'financial statement category description' is missing or invalid");
 //                    throw new ExcelFileParseException("Error parsing 'Singularity General Ledger Balance' file: 'financial statement category description' is missing or invalid");
@@ -2567,7 +2571,8 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
 
                 /* Chart of Accounts Description */
                 if(ExcelUtils.getStringValueFromCell(row.getCell(5)) != null){
-                    record.setChartAccountsDescription(row.getCell(5).getStringCellValue());
+                    String value = row.getCell(5).getStringCellValue() != null ? row.getCell(5).getStringCellValue().trim(): null;
+                    record.setChartAccountsDescription(value);
                 }else{
 //                    logger.error("Error parsing 'Singularity General Ledger Balance' file: 'Chart of accounts description' is missing or invalid");
 //                    throw new ExcelFileParseException("Error parsing 'Singularity General Ledger Balance' file: 'Chart of accounts description' is missing or invalid");
@@ -2575,7 +2580,8 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
 
                 /* Chart of Accounts Long Description */
                 if(ExcelUtils.getStringValueFromCell(row.getCell(6)) != null){
-                    record.setChartAccountsLongDescription(row.getCell(6).getStringCellValue());
+                    String value = row.getCell(6).getStringCellValue() != null ? row.getCell(6).getStringCellValue().trim(): null;
+                    record.setChartAccountsLongDescription(value);
                 }else{
 //                    logger.error("Error parsing 'Singularity General Ledger Balance' file: 'Chart of accounts long description' is missing or invalid");
 //                    throw new ExcelFileParseException("Error parsing 'Singularity General Ledger Balance' file: 'Chart of accounts long description' is missing or invalid");
@@ -2583,13 +2589,18 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
 
                 /* Short name */
                 if(ExcelUtils.getStringValueFromCell(row.getCell(7)) != null){
-                    record.setShortName(row.getCell(7).getStringCellValue());
+                    String value = row.getCell(7).getStringCellValue() != null ? row.getCell(7).getStringCellValue().trim(): null;
+                    record.setShortName(value);
                 }
 
                 /* GL Account Balance */
                 if(ExcelUtils.isNotEmptyCell(row.getCell(12)) && (row.getCell(12).getCellType() == Cell.CELL_TYPE_NUMERIC ||
                         row.getCell(12).getCellType() == Cell.CELL_TYPE_FORMULA)){
                     record.setGLAccountBalance(row.getCell(12).getNumericCellValue());
+                    if(record.getGLAccountBalance() == null && ExcelUtils.getTextValueFromAnyCell(row.getCell(12)) != null){
+                        Double value = MathUtils.getDouble(ExcelUtils.getTextValueFromAnyCell(row.getCell(12)));
+                        record.setGLAccountBalance(value);
+                    }
                 }else{
 //                    logger.error("Error parsing 'Singularity General Ledger Balance' file: 'GL Account Balance' is missing or invalid");
 //                    throw new ExcelFileParseException("Error parsing 'Singularity General Ledger Balance' file: 'GL Account Balance' is missing or invalid");
@@ -3054,7 +3065,8 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
 
                     /* Transaction */
                     if(ExcelUtils.getStringValueFromCell(row.getCell(4)) != null){
-                        record.setTransaction(row.getCell(4).getStringCellValue());
+                        String value = row.getCell(4).getStringCellValue() != null ? row.getCell(4).getStringCellValue().trim() : null;
+                        record.setTransaction(value);
                     }else{
                         if(!ExcelUtils.isEmptyCell(row.getCell(11)) &&
                                 row.getCell(11).getCellType() == Cell.CELL_TYPE_NUMERIC && row.getCell(11).getNumericCellValue() != 0){
@@ -3066,7 +3078,8 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
 
                     /* Investor Account/Portfolio fund  */
                     if(ExcelUtils.getStringValueFromCell(row.getCell(7)) != null){
-                        record.setName(row.getCell(7).getStringCellValue());
+                        String value = row.getCell(7).getStringCellValue() != null ? row.getCell(7).getStringCellValue().trim(): null;
+                        record.setName(value);
                     }else{
 //                        logger.error("Error parsing 'Singularity NOAL' file: 'Investor Account/Portfolio fund' is missing or invalid");
 //                        throw new ExcelFileParseException("Error parsing 'Singularity NOAL' file: 'Investor Account/Portfolio fund' is missing or invalid");
@@ -3439,7 +3452,8 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
 
                 /* Acronym */
                 if(ExcelUtils.getStringValueFromCell(row.getCell(0)) != null){
-                    record.setAcronym(row.getCell(0).getStringCellValue());
+                    String value = row.getCell(0).getStringCellValue() != null ? row.getCell(0).getStringCellValue().trim() : null;
+                    record.setAcronym(value);
                 }else{
                     logger.error("Error parsing 'Terra General Ledger Balance' file: could not set 'acronym' (cell #1)");
                     throw new ExcelFileParseException("Error parsing 'Terra General Ledger Balance' file: could not set 'acronym' (cell #1)");
@@ -3461,7 +3475,8 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
 
                 /* Financial statement category */
                 if(ExcelUtils.getStringValueFromCell(row.getCell(2)) != null){
-                    record.setFinancialStatementCategory(row.getCell(2).getStringCellValue());
+                    String value = row.getCell(2).getStringCellValue() != null ? row.getCell(2).getStringCellValue().trim() : null;
+                    record.setFinancialStatementCategory(value);
                 }else{
                     logger.error("Error parsing 'Terra General Ledger Balance' file: 'financial statement category' is missing or invalid");
                     throw new ExcelFileParseException("Error parsing 'Terra General Ledger Balance' file: 'financial statement category' is missing or invalid");
@@ -3469,7 +3484,8 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
 
                 /* GL Sub-class */
                 if(ExcelUtils.getStringValueFromCell(row.getCell(3)) != null){
-                    record.setGlSubclass(row.getCell(3).getStringCellValue());
+                    String value = row.getCell(3).getStringCellValue() != null ? row.getCell(3).getStringCellValue().trim() : null;
+                    record.setGlSubclass(value);
                 }else{
                     logger.error("Error parsing 'Terra General Ledger Balance' file: 'GL sub-class' is missing or invalid");
                     throw new ExcelFileParseException("Error parsing 'Terra General Ledger Balance' file: 'GL sub-class' is missing or invalid");
@@ -3477,13 +3493,18 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
 
                 /* Portfolio fund */
                 if(ExcelUtils.getStringValueFromCell(row.getCell(4)) != null){
-                    record.setPortfolioFund(row.getCell(4).getStringCellValue());
+                    String value = row.getCell(4).getStringCellValue() != null ? row.getCell(4).getStringCellValue().trim() : null;
+                    record.setPortfolioFund(value);
                 }
 
                 /* Carlyle-MRE Terra GP, L.P. */
                 if(ExcelUtils.isNotEmptyCell(row.getCell(5)) && (row.getCell(5).getCellType() == Cell.CELL_TYPE_NUMERIC) ||
                         row.getCell(5).getCellType() == Cell.CELL_TYPE_FORMULA){
                     record.setAccountBalanceGP(row.getCell(5).getNumericCellValue());
+                    if(record.getAccountBalanceGP() == null && ExcelUtils.getTextValueFromAnyCell(row.getCell(5)) != null){
+                        Double value = MathUtils.getDouble(ExcelUtils.getTextValueFromAnyCell(row.getCell(5)));
+                        record.setAccountBalanceGP(value);
+                    }
                 }else{
                     String errorMessage = "Error parsing 'Terra General Ledger Balance' file: 'Carlyle MRE Terra GP, L.P.' value is missing or invalid for record  '" +
                             ExcelUtils.getTextValueFromAnyCell(row.getCell(2)) + " - " + ExcelUtils.getTextValueFromAnyCell(row.getCell(3)) + " - " +
@@ -3496,6 +3517,10 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
                 if(ExcelUtils.isNotEmptyCell(row.getCell(6)) && (row.getCell(6).getCellType() == Cell.CELL_TYPE_NUMERIC ||
                         row.getCell(6).getCellType() == Cell.CELL_TYPE_FORMULA)){
                     record.setAccountBalanceNICKMF(row.getCell(6).getNumericCellValue());
+                    if(record.getAccountBalanceNICKMF() == null && ExcelUtils.getTextValueFromAnyCell(row.getCell(6)) != null){
+                        Double value = MathUtils.getDouble(ExcelUtils.getTextValueFromAnyCell(row.getCell(6)));
+                        record.setAccountBalanceNICKMF(value);
+                    }
                 }else{
                     String errorMessage = "Error parsing 'Terra General Ledger Balance' file: 'NICK MF' value is missing or invalid for record  '" +
                             ExcelUtils.getTextValueFromAnyCell(row.getCell(2)) + " - " + ExcelUtils.getTextValueFromAnyCell(row.getCell(3)) + " - " +
@@ -3508,6 +3533,10 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
                 if(ExcelUtils.isNotEmptyCell(row.getCell(7)) && (row.getCell(7).getCellType() == Cell.CELL_TYPE_NUMERIC ||
                         row.getCell(7).getCellType() == Cell.CELL_TYPE_FORMULA)){
                     record.setAccountBalanceGrandTotal(row.getCell(7).getNumericCellValue());
+                    if(record.getAccountBalanceGrandTotal() == null && ExcelUtils.getTextValueFromAnyCell(row.getCell(7)) != null){
+                        Double value = MathUtils.getDouble(ExcelUtils.getTextValueFromAnyCell(row.getCell(7)));
+                        record.setAccountBalanceGrandTotal(value);
+                    }
                 }else{
                     String errorMessage = "Error parsing 'Terra General Ledger Balance' file: 'Grand Total' value is missing or invalid for record  '" +
                             ExcelUtils.getTextValueFromAnyCell(row.getCell(2)) + " - " + ExcelUtils.getTextValueFromAnyCell(row.getCell(3)) + " - " +
@@ -4406,7 +4435,6 @@ public class PeriodicReportFileParseServiceImpl implements PeriodicReportFilePar
                 }
             }
         }
-
     }
 
     private void normalizeTextFieldsSOIReport(List<ScheduleInvestmentsDto> records){

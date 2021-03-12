@@ -37,7 +37,7 @@ public class NotificationGenerationServiceImpl {
     @Autowired
     private EmployeeService employeeService;
 
-    @Scheduled(cron="0 00 7 * * *") // Every day at 8 am
+    @Scheduled(cron="0 30 7 * * *") // Every day at 8 am
     public void createICMeetingDeadlineNotifications() {
         try {
             List<ICMeetingDto> icMeetings = this.corpMeetingService.getICMeetingsWithDeadline(new Date());

@@ -18,7 +18,7 @@ public interface ReportingPEScheduleInvestmentRepository extends PagingAndSortin
     @Query("SELECT e from ReportingPEScheduleInvestment e where e.report.id=?1 and e.tranche=?2")
     List<ReportingPEScheduleInvestment> getEntitiesByReportIdAndTranche(Long reportId, int tranche, Pageable pageable);
 
-    List<ReportingPEScheduleInvestment> getEntitiesByReportId(Long reportId);
+    List<ReportingPEScheduleInvestment> getEntitiesByReportIdOrderByIdAsc(Long reportId);
 
     List<ReportingPEScheduleInvestment> findByReportId(Long reportId, Sort sort);
 

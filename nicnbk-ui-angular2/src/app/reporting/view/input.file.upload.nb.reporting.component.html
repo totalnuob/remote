@@ -6,11 +6,25 @@
                     <span><a [routerLink]="['/reporting/NBReporting']">Reports Main</a></span>
                 </li>
                 <!--<li *ngIf="report != null" class="active">{{getReportDateShortFormatted(report.reportDate)}}</li>-->
-                <li *ngIf="report != null" class="active">Input</li>
+                <li *ngIf="report != null" class="active">1.Files</li>
+                <li>
+                    <span><a [routerLink]="['/reporting/NBReporting/NICKMFInput/', reportId]">2.NICK MF</a></span>
+                </li>
+                <li>
+                    <span><a [routerLink]="['/reporting/NBReporting/TarragonGeneratedForm/', reportId]">3.TarragonGL</a></span>
+                </li>
+                <li>
+                    <span><a [routerLink]="['/reporting/NBReporting/TerraGeneratedForm/', reportId]">4.TerraGL</a></span>
+                </li>
+                <li>
+                    <span><a [routerLink]="['/reporting/NBReporting/previousYearInput/', reportId]">5.PrevYear</a></span>
+                </li>
+                <li *ngIf="report != null">
+                    <span><a [routerLink]="['/reporting/NBReporting/GeneratedReports/', reportId, 'REPORTS']">Generate Reports</a></span>
+                </li>
             </ol>
         </div>
     </div>
-
     <div class="row top-buffer" >
         <div class="col-md-12">
             <div class="alert alert-danger" *ngIf="errorMessage != null"><span style="white-space: pre-wrap">{{errorMessage}}</span>
@@ -695,14 +709,21 @@
             </div>
         </div>
     </div>
+    <br/>
     <div class="row">
-        <div class="col-md-12">
+        <div class="col-md-6">
+            <div class="col-md-1 pull-left">
+                <button class="btn btn-sm btn-primary" [routerLink]="['/reporting/NBReporting/']"><<
+                </button>
+            </div>
+        </div>
+        <div class="col-md-6">
             <div class="col-md-1 pull-right">
-                <button class="btn btn-primary" [routerLink]="['/reporting/NBReporting/NICKMFInput/', reportId]" *ngIf="showNextButton()">NEXT</button>
+                <button class="btn btn-sm btn-primary" [routerLink]="['/reporting/NBReporting/NICKMFInput/', reportId]" *ngIf="showNextButton()">>>
+                </button>
             </div>
         </div>
     </div>
-
     <div class="modal fade" id="fundRenameModal" role="dialog">
         <div class="modal-dialog" style="overflow-y: scroll; max-height:85%;  margin-top: 50px; margin-bottom:50px; width:65%;">
             <div class="modal-content">

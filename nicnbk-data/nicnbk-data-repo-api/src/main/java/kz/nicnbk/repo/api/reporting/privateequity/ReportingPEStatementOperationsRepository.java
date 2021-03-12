@@ -17,7 +17,7 @@ public interface ReportingPEStatementOperationsRepository extends PagingAndSorti
     @Query("SELECT e from ReportingPEStatementOperations e where e.report.id=?1 and e.tranche=?2")
     List<ReportingPEStatementOperations> getEntitiesByReportIdAndTranche(Long reportId, int tranche, Pageable pageable);
 
-    List<ReportingPEStatementOperations> getEntitiesByReportId(Long reportId);
+    List<ReportingPEStatementOperations> getEntitiesByReportIdOrderByIdAsc(Long reportId);
 
     @Modifying
     @Transactional

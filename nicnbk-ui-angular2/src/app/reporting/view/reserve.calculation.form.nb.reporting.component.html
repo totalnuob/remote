@@ -224,10 +224,12 @@
                 <td>{{record.recipient != null ? record.recipient.nameRu : ''}}</td>
                 <td>{{record.date}}</td>
                 <td>{{record.valueDate}}</td>
-                <td>{{record.amount != null && record.amount != 0 ? (record.amount | number:'1.2-2') : ''}}{{record.amountToSPV != null && record.amountToSPV != 0 ? (' (' + (record.amountToSPV | number:'1.2-2') + ')') : ''}}</td>
-                <!--<td>{{record.amountToSPV | number:'1.2-2'}}</td>-->
-                <td>{{record.currencyRate  != null ? (record.currencyRate | number:'1.2-2') : '-----'}}</td>
-                <td>{{record.amountKZT | number:'1.2-2'}}</td>
+<!--                <td>{{record.amount != null && record.amount != 0 ? (record.amount | number:'1.2-2') : ''}}{{record.amountToSPV != null && record.amountToSPV != 0 ? (' (' + (record.amountToSPV | number:'1.2-2') + ')') : ''}}</td>-->
+                <td>{{record.amount}} {{record.amountToSPV != null ? '(' + record.amountToSPV + ')' : ''}}</td>
+<!--                <td>{{record.currencyRate  != null ? (record.currencyRate | number:'1.2-2') : '-&#45;&#45;&#45;&#45;'}}</td>-->
+                <td>{{record.currencyRate}}</td>
+<!--                <td>{{record.amountKZT | number:'1.2-2'}}</td>-->
+                <td>{{record.amountKZT}}</td>
                 <td>
                     <button *ngIf="showExportOrderButton(record)" class="btn btn-xs btn-primary" style="margin-left: 10px;" type="button" (click)="exportOrder(record)">
                         Letter
@@ -408,13 +410,15 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="col-md-2">Курс</div>
-                                <div class="col-md-10">{{editedRecord.currencyRate  != null ? (editedRecord.currencyRate | number:'1.2-2') : ''}}</div>
+<!--                                <div class="col-md-10">{{editedRecord.currencyRate  != null ? (editedRecord.currencyRate | number:'1.2-2') : ''}}</div>-->
+                                <div class="col-md-10">{{editedRecord.currencyRate}}</div>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="col-md-2">Сумма KZT</div>
-                                <div class="col-md-10">{{editedRecord.amountKZT  != null ? (editedRecord.amountKZT | number:'1.2-2') : ''}}</div>
+<!--                                <div class="col-md-10">{{editedRecord.amountKZT  != null ? (editedRecord.amountKZT | number:'1.2-2') : ''}}</div>-->
+                                <div class="col-md-10">{{editedRecord.amountKZT}}</div>
                             </div>
                         </div>
                         <div class="row">
@@ -433,7 +437,7 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="col-md-2">
-                                    <label *ngIf="editedRecord.canDelete" class="btn btn-primary" for="attachmentFile">
+                                    <label *ngIf="editedRecord.canDelete" class="btn btn-sm btn-primary" for="attachmentFile">
                                         <input type="file" id="attachmentFile" (change)="onFileChange($event)" name="file" multiple style="display:none;" />
                                         Add
                                     </label>
@@ -444,14 +448,33 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div *ngFor="let attachment of editedRecord?.files">
-                                <file-attachment-downloader fileId="{{attachment.id}}"
-                                                            fileName="{{attachment.fileName}}"
-                                                            fileType="CC_ATTACH">
-                                </file-attachment-downloader>
-                                <a (click)="deleteAttachment(editedRecord.id, attachment.id)" *ngIf="editedRecord?.canDelete">
-                                    <i class="glyphicon glyphicon-trash"></i>
-                                </a>
+                            <div class="row" *ngFor="let attachment of editedRecord?.files">
+                                <div class="col-md-12">
+                                    <div class="col-md-1">&nbsp;</div>
+                                    <div class="col-md-5">
+                                        <div>
+                                            <file-attachment-downloader fileId="{{attachment?.id}}"
+                                                                        fileName="{{(attachment?.fileName |  slice:0:55) +
+                                                                                    (attachment?.fileName?.length > 55 ? '...' : '')}}"
+                                                                        fileType="CC_ATTACH" mimeType="{{attachment?.mimeType}}"
+                                                                        showIcon="false">
+                                            </file-attachment-downloader>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-1">
+                                        <button class="btn btn-xs"  (click)="deleteAttachment(editedRecord.id, attachment.id)" *ngIf="editedRecord?.canDelete">
+                                            <i class="glyphicon glyphicon-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+<!--                                <file-attachment-downloader fileId="{{attachment.id}}"-->
+<!--                                                            fileName="{{attachment.fileName}}"-->
+<!--                                                            fileType="CC_ATTACH">-->
+<!--                                </file-attachment-downloader>-->
+<!--                                <a (click)="deleteAttachment(editedRecord.id, attachment.id)" *ngIf="editedRecord?.canDelete">-->
+<!--                                    <i class="glyphicon glyphicon-trash"></i>-->
+<!--                                </a>-->
                             </div>
                         </div>
                         <br/>
@@ -461,10 +484,10 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="col-md-6">
-                                    <button type="button" class="btn btn-primary pull-left" data-dismiss="modal" (click)="closeEditRecordModal()">CLOSE</button>
+                                    <button type="button" class="btn btn-sm btn-primary pull-left" data-dismiss="modal" (click)="closeEditRecordModal()">CLOSE</button>
                                 </div>
                                 <div class="col-md-6">
-                                    <button *ngIf="editedRecord.canDelete" type="submit" class="btn btn-success pull-right">SAVE</button>
+                                    <button *ngIf="editedRecord.canDelete" type="submit" class="btn btn-sm btn-success pull-right">SAVE</button>
                                 </div>
                             </div>
                         </div>

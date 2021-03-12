@@ -158,7 +158,7 @@ public class PEStatementOperationsServiceImpl implements PEStatementOperationsSe
 
     @Override
     public TarragonStatementBalanceOperationsHolderDto getStatementOperations(Long reportId){
-        List<ReportingPEStatementOperations> entities = this.peStatementOperationsRepository.getEntitiesByReportId(reportId);
+        List<ReportingPEStatementOperations> entities = this.peStatementOperationsRepository.getEntitiesByReportIdOrderByIdAsc(reportId);
         TarragonStatementBalanceOperationsHolderDto holderDto = new TarragonStatementBalanceOperationsHolderDto();
         List<TarragonStatementBalanceOperationsTrancheDto> recordsByTranche = disassembleByTranche(entities);
         holderDto.setOperationsRecords(recordsByTranche);
@@ -181,7 +181,7 @@ public class PEStatementOperationsServiceImpl implements PEStatementOperationsSe
 //        dtoListTrancheA.addAll(dtoListTrancheB);
 
 
-        List<ReportingPEStatementOperations> entities = this.peStatementOperationsRepository.getEntitiesByReportId(reportId);
+        List<ReportingPEStatementOperations> entities = this.peStatementOperationsRepository.getEntitiesByReportIdOrderByIdAsc(reportId);
         List<StatementBalanceOperationsDto> dtoList= disassembleStatementOperationsList(entities);
 
         return dtoList;

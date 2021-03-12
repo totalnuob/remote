@@ -1,0 +1,5 @@
+
+### download .cer file from web site, e.g. using browser
+### run cmd on the machine
+
+keytool -importcert -alias nbrk_site -file nationalbank_kz.cer -keystore keystore.jks

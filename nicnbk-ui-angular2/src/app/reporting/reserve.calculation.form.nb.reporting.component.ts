@@ -128,6 +128,11 @@ export class ReserveCalculationFormNBReportingComponent extends CommonNBReportin
             .subscribe(
                 searchResult  => {
                     this.records = searchResult.records;
+                    if(this.records != null){
+                        for(var i = 0; i < this.records.length; i++){
+                            this.onNumberChange(this.records[i]);
+                        }
+                    }
                     this.searchResult = searchResult;
 
                     this.checkRecords();
@@ -190,9 +195,7 @@ export class ReserveCalculationFormNBReportingComponent extends CommonNBReportin
                 format: 'DD-MM-YYYY'
             });
         }, 500);
-
     }
-
 
     //removeRecord(addedRecord){
     //    var confirmed = window.confirm("Are you sure want to delete record?");
@@ -210,7 +213,6 @@ export class ReserveCalculationFormNBReportingComponent extends CommonNBReportin
                 //defaultDate: new Date(),
                 format: 'DD-MM-YYYY'
             });
-
 
             $('#dateDivId2').datetimepicker({
                 //defaultDate: new Date(),
@@ -259,70 +261,6 @@ export class ReserveCalculationFormNBReportingComponent extends CommonNBReportin
         }
     }
 
-    //saveAddedRecords(){
-    //
-    //    if($('#dateInputId2').val() === '') {
-    //        if (!confirm("Value 'Дата валютирования' is empty. Value 'Дата' will be used for export. Ok?")) {
-    //            return;
-    //        }
-    //    }
-    //
-    //    if(this.addedRecords != null){
-    //        for(var i = 0; i < this.addedRecords.length; i++){
-    //            this.addedRecords[i].date = $('#dateInputId').val();
-    //            this.addedRecords[i].valueDate = $('#dateInputId2').val();
-    //
-    //            if(this.addedRecords[i].date == null || this.addedRecords[i].date === ''){
-    //                this.postAction(null, "Missing value 'Дата'");
-    //                return;
-    //            }
-    //
-    //            if(this.addedRecords[i].amount) {
-    //                this.addedRecords[i].amount = Number(this.addedRecords[i].amount.toString().replace(/,/g, ''));
-    //            }
-    //            if(this.addedRecords[i].amountToSPV) {
-    //                this.addedRecords[i].amountToSPV = Number(this.addedRecords[i].amountToSPV.toString().replace(/,/g, ''));
-    //            }
-    //        }
-    //    }
-    //
-    //    this.periodicReportService.saveReserveCalculationFormData(this.addedRecords)
-    //        .subscribe(
-    //            response  => {
-    //                this.errorMessage = null;
-    //                this.addedRecords = [];
-    //
-    //                this.busy = this.periodicReportService.getReserveCalculationFormData()
-    //                    .subscribe(
-    //                        response  => {
-    //                            if(response){
-    //                                this.records = response;
-    //                                this.postAction("Records successfully saved", null);
-    //                                this.checkRecords();
-    //                            }
-    //                        },
-    //                        (error: ErrorResponse) => {
-    //                            this.successMessage = null;
-    //                            this.errorMessage = "Error loading records";
-    //                            if(error && !error.isEmpty()){
-    //                                this.processErrorMessage(error);
-    //                            }
-    //                            this.postAction(null, this.errorMessage);
-    //                        }
-    //                    );
-    //            },
-    //            (error: ErrorResponse) => {
-    //                this.successMessage = null;
-    //                this.errorMessage = "Error saving new records";
-    //                if(error && !error.isEmpty()){
-    //                    this.processErrorMessage(error);
-    //                }else {
-    //                    this.postAction(null, this.errorMessage);
-    //                }
-    //            }
-    //        )
-    //}
-
     saveAddedRecord(){
 
         if($('#dateInputId2').val() === '') {
@@ -346,6 +284,12 @@ export class ReserveCalculationFormNBReportingComponent extends CommonNBReportin
             if(this.editedRecord.amountToSPV) {
                 this.editedRecord.amountToSPV = Number(this.editedRecord.amountToSPV.toString().replace(/,/g, ''));
             }
+            if(this.editedRecord.currencyRate) {
+                this.editedRecord.currencyRate = Number(this.editedRecord.currencyRate.toString().replace(/,/g, ''));
+            }
+            if(this.editedRecord.amountKZT) {
+                this.editedRecord.amountKZT = Number(this.editedRecord.amountKZT.toString().replace(/,/g, ''));
+            }
         }
 
         this.periodicReportService.saveReserveCalculationRecord(this.editedRecord)
@@ -355,9 +299,9 @@ export class ReserveCalculationFormNBReportingComponent extends CommonNBReportin
                     this.editedRecord.id = response.entityId;
                     this.editErrorMessage = null;
                     this.editSuccessMessage = "Record successfully saved";
+                    this.onNumberChange(this.editedRecord);
 
                     if(this.uploadFiles != null && this.uploadFiles.length > 0) {
-
                         // TODO: refactor
                         this.periodicReportService.postReserveCalculationFiles(response.entityId, this.uploadFiles).subscribe(
                             res => {
@@ -525,6 +469,24 @@ export class ReserveCalculationFormNBReportingComponent extends CommonNBReportin
                 record.amountToSPV = record.amountToSPV.toString().replace(/,/g , '');
                 if(record.amountToSPV != '-'){
                     record.amountToSPV = parseFloat(record.amountToSPV).toLocaleString('en', {maximumFractionDigits: 2});
+                }
+
+            }
+        }
+        if(record.currencyRate != null && record.currencyRate != 'undefined' && record.currencyRate.toString().length > 0) {
+            if(record.currencyRate.toString()[record.currencyRate.toString().length - 1] != '.' || record.currencyRate.toString().split('.').length > 2){
+                record.currencyRate = record.currencyRate.toString().replace(/,/g , '');
+                if(record.currencyRate != '-'){
+                    record.currencyRate = parseFloat(record.currencyRate).toLocaleString('en', {maximumFractionDigits: 2});
+                }
+
+            }
+        }
+        if(record.amountKZT != null && record.amountKZT != 'undefined' && record.amountKZT.toString().length > 0) {
+            if(record.amountKZT.toString()[record.amountKZT.toString().length - 1] != '.' || record.amountKZT.toString().split('.').length > 2){
+                record.amountKZT = record.amountKZT.toString().replace(/,/g , '');
+                if(record.amountKZT != '-'){
+                    record.amountKZT = parseFloat(record.amountKZT).toLocaleString('en', {maximumFractionDigits: 2});
                 }
 
             }
