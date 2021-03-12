@@ -12,16 +12,30 @@
                 <!--</li>-->
                 <!--<li><span *ngIf="reportId != null"><a [routerLink]="['/reporting/NBReporting/NICKMFInput/', reportId]">NICK MF Input</a></span></li>-->
                 <!--<li><span *ngIf="reportId != null"><a [routerLink]="['/reporting/NBReporting/TarragonGeneratedForm/', reportId]">Tarragon - Generated Form</a></span></li>-->
+<!--                <li *ngIf="periodicReport != null && periodicReport.status != 'SUBMITTED'">-->
+<!--                    <span *ngIf="reportId != null">-->
+<!--                        <a [routerLink]="['/reporting/NBReporting/inputFileUpload/', reportId]">Input</a>-->
+<!--                    </span>-->
+<!--                </li>-->
                 <li *ngIf="periodicReport != null && periodicReport.status != 'SUBMITTED'">
-                    <span *ngIf="reportId != null">
-                        <a [routerLink]="['/reporting/NBReporting/inputFileUpload/', reportId]">Input</a>
-                    </span>
+                    <span><a [routerLink]="['/reporting/NBReporting/inputFileUpload/', reportId]">1.Files</a></span>
+                </li>
+                <li *ngIf="periodicReport != null && periodicReport.status != 'SUBMITTED'">
+                    <span><a [routerLink]="['/reporting/NBReporting/NICKMFInput/', reportId]">2.NICK MF</a></span>
+                </li>
+                <li *ngIf="periodicReport != null && periodicReport.status != 'SUBMITTED'">
+                    <span><a [routerLink]="['/reporting/NBReporting/TarragonGeneratedForm/', reportId]">3.TarragonGL</a></span>
+                </li>
+                <li *ngIf="periodicReport != null && periodicReport.status != 'SUBMITTED'">
+                    <span><a [routerLink]="['/reporting/NBReporting/TerraGeneratedForm/', reportId]">4.TerraGL</a></span>
+                </li>
+                <li *ngIf="periodicReport != null && periodicReport.status != 'SUBMITTED'">
+                    <span><a [routerLink]="['/reporting/NBReporting/previousYearInput/', reportId]">5.PrevYear</a></span>
                 </li>
                 <li class="active">Generate report</li>
             </ol>
         </div>
     </div>
-
     <div class="row top-buffer" *ngIf="errorMessage != null || successMessage != null">
         <div class="col-md-12">
             <div class="alert alert-danger" *ngIf="errorMessage != null"><span>{{errorMessage}}</span>
@@ -31,9 +45,7 @@
         </div>
     </div>
     <br/>
-
     <h3>{{periodicReport.reportDate != null ? getReportDateShortFormatted(periodicReport.reportDate): ''}}</h3>
-
     <ul class="nav nav-tabs">
         <li [ngClass]="getReportsTabClass()">
         <!--<li class="active">-->

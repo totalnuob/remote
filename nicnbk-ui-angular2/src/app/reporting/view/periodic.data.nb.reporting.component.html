@@ -39,7 +39,9 @@
                 <tr>
                     <th>TYPE</th>
                     <th>DATE</th>
-                    <th>VALUE</th>
+                    <th>INITIAL VALUE</th>
+                    <th>CORRECTION</th>
+                    <th>TOTAL</th>
                     <th>&nbsp;</th>
                 </tr>
                 </thead>
@@ -48,6 +50,8 @@
                     <td>{{item.type.nameEn != null && item.type.nameEn.trim() != '' ? item.type.nameEn : item.type.nameRu != null && item.type.nameRu.trim() != '' ? item.type.nameRu : item.type.code}}</td>
                     <td>{{item.date}}</td>
                     <td>{{item.value}}</td>
+                    <td>{{item.correction}}</td>
+                    <td>{{item.total}}</td>
                     <td>
                         <button *ngIf = "item.editable" type="button" class="btn-xs btn-success" style="display: inline-block"
                                 data-toggle="modal" data-target="#editModal" (click)="edit(item)">
@@ -70,7 +74,7 @@
                     <div class="modal-header">
                         <h3 class="modal-title"  style="word-wrap: break-word">Enter new value</h3>
                     </div>
-                    <div class="modal-body">
+                    <div class="modal-body" [ngBusy]="busyModal">
 
                         <div class="row top-buffer" >
                             <div class="col-md-12">
@@ -80,18 +84,17 @@
                                 </div>
                             </div>
                         </div>
-
                         <div class="row">
                             <div class="col-md-12">
-                                <div class="col-md-6" *ngIf="selectedEditRecord.type != null">
+                                <div class="col-md-4" *ngIf="selectedEditRecord.type != null">
                                     <select class="form-control" [(ngModel)]="selectedEditRecord.type.code" required>
                                         <option *ngFor="let item of periodicDataTypes" [value]="item.code">
                                             {{item.nameEn != null && item.nameEn.trim() != '' ? item.nameEn : item.nameRu != null && item.nameRu.trim() != '' ? item.nameRu : item.code}}
                                         </option>
                                     </select>
                                 </div>
-                                <div class="col-md-3">
-                                    <div class='input-group date col-md-3' id='valueDateDTPickeer' style="width: 100%">
+                                <div class="col-md-2">
+                                    <div class='input-group date col-md-2' id='valueDateDTPickeer' style="width: 100%">
                                         <input type='text' class="form-control" required id="valueDate" [(ngModel)]="selectedEditRecord.date"/>
                                         <span class="input-group-addon">
                                             <span class="glyphicon glyphicon-calendar"></span>
@@ -99,7 +102,16 @@
                                     </div>
                                 </div>
                                 <div class="col-md-2">
-                                    <input type="number" class="form-control" required maxlength="10" placeholder="Enter value..." [(ngModel)]="selectedEditRecord.value"/>
+                                    <input type="text" class="form-control" required placeholder="Enter initial value..." [(ngModel)]="selectedEditRecord.value"
+                                           (keyup)="onNumberChange(selectedEditRecord)"/>
+                                </div>
+                                <div class="col-md-2">
+                                    <input type="text" class="form-control" required placeholder="Enter correction..." [(ngModel)]="selectedEditRecord.correction"
+                                           (keyup)="onNumberChange(selectedEditRecord)"/>
+                                </div>
+                                <div class="col-md-2">
+                                    Total:
+                                    <span>{{selectedEditRecord.total}}</span>
                                 </div>
                             </div>
                         </div>

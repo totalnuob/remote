@@ -401,7 +401,7 @@ public class PEScheduleInvestmentImpl implements PEScheduleInvestmentService {
 //            }
 //        }
 
-        List<ReportingPEScheduleInvestment> entities = this.peScheduleInvestmentRepository.getEntitiesByReportId(reportId);
+        List<ReportingPEScheduleInvestment> entities = this.peScheduleInvestmentRepository.getEntitiesByReportIdOrderByIdAsc(reportId);
         for(ReportingPEScheduleInvestment entity: entities){
             records.add(disassembleDto(entity));
         }

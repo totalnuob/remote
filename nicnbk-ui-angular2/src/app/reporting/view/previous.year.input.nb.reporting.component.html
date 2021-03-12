@@ -11,11 +11,25 @@
                         <!--Parsed input files</a></span>-->
                 <!--</li>-->
                 <!--<li class="active">NICK MF Input</li>-->
-                <li class="active">Input</li>
+                <li>
+                <span><a [routerLink]="['/reporting/NBReporting/inputFileUpload/', reportId]">1.Files</a></span>
+            </li>
+                <li>
+                    <span><a [routerLink]="['/reporting/NBReporting/NICKMFInput/', reportId]">2.NICK MF</a></span>
+                </li>
+                <li>
+                    <span><a [routerLink]="['/reporting/NBReporting/TarragonGeneratedForm/', reportId]">3.TarragonGL</a></span>
+                </li>
+                <li>
+                    <span><a [routerLink]="['/reporting/NBReporting/TerraGeneratedForm/', reportId]">4.TerraGL</a></span>
+                </li>
+                <li class="active">5.PrevYear</li>
+                <li>
+                    <span><a [routerLink]="['/reporting/NBReporting/GeneratedReports/', reportId, 'REPORTS']">Generate Reports</a></span>
+                </li>
             </ol>
         </div>
     </div>
-
     <div class="row top-buffer" *ngIf="errorMessage != null || successMessage != null">
         <div class="col-md-12">
             <div class="alert alert-danger" *ngIf="errorMessage != null"><span>{{errorMessage}}</span>
@@ -91,12 +105,14 @@
         <div class="row">
             <div class="col-md-6">
                 <div class="col-md-1 pull-left">
-                    <button class="btn btn-primary" [routerLink]="['/reporting/NBReporting/TerraGeneratedForm/', reportId]">PREVIOUS</button>
+                    <button class="btn btn-sm btn-primary" [routerLink]="['/reporting/NBReporting/TerraGeneratedForm/', reportId]"><<</button>
                 </div>
             </div>
             <div class="col-md-6">
                 <div class="col-md-1 pull-right">
-                    <button class="btn btn-primary" [routerLink]="['/reporting/NBReporting/GeneratedReports/', reportId, 'REPORTS']" [disabled]="!showNextButton()">NEXT</button>
+                    <button class="btn btn-sm btn-primary" [routerLink]="['/reporting/NBReporting/GeneratedReports/', reportId, 'REPORTS']" [disabled]="!showNextButton()">
+                        >>
+                    </button>
                 </div>
             </div>
 

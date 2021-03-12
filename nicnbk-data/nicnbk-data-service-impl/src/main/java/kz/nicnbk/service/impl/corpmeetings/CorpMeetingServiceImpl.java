@@ -3355,6 +3355,7 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
                 XmlCursor cursor = paragraphs.get(index + 1).getCTP().newCursor();
                 XWPFParagraph headerParagraph = document.insertNewParagraph(cursor);
                 headerParagraph.setSpacingAfter(0);
+                headerParagraph.setAlignment(ParagraphAlignment.BOTH);
                 XWPFRun run = headerParagraph.createRun();
                 run.setFontFamily(FONT_ARIAL);
                 run.setFontSize(FONT_SIZE);
@@ -3372,15 +3373,20 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
 
                 //insert decision
                 cursor = paragraphs.get(index + 1).getCTP().newCursor();
-                XWPFParagraph decisionParagraph = document.insertNewParagraph(cursor);
-                XWPFRun runDecisionHeader = decisionParagraph.createRun();
+                XWPFParagraph decisionHeaderParagraph = document.insertNewParagraph(cursor);
+                decisionHeaderParagraph.setSpacingAfter(0);
+                XWPFRun runDecisionHeader = decisionHeaderParagraph.createRun();
                 runDecisionHeader.setFontFamily(FONT_ARIAL);
                 runDecisionHeader.setFontSize(FONT_SIZE);
                 runDecisionHeader.setBold(true);
                 runDecisionHeader.setText(getDecisionHeader(i + 1));
-                runDecisionHeader.addBreak();
-                //index++;
+                //runDecisionHeader.addBreak();
+                index++;
 
+                cursor = paragraphs.get(index + 1).getCTP().newCursor();
+                XWPFParagraph decisionParagraph = document.insertNewParagraph(cursor);
+                decisionParagraph.setSpacingAfter(0);
+                decisionParagraph.setAlignment(ParagraphAlignment.BOTH);
                 XWPFRun runDecision = decisionParagraph.createRun();
                 String decision = topics.get(i).getDecisionsText() != null ? topics.get(i).getDecisionsText() : "";
                 runDecision.setFontFamily(FONT_ARIAL);

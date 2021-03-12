@@ -35,6 +35,7 @@ public class ICMeetingTopicAssignment extends BaseEntity {
         this.icMeetingTopic = icMeetingTopic;
     }
 
+    @Column(name="name", columnDefinition="TEXT")
     public String getName() {
         return name;
     }
@@ -60,6 +61,7 @@ public class ICMeetingTopicAssignment extends BaseEntity {
         this.dateDue = dateDue;
     }
 
+    @Column(name="status", columnDefinition="TEXT")
     public String getStatus() {
         return status;
     }

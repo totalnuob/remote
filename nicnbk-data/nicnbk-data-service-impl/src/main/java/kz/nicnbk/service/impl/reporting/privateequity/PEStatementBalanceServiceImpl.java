@@ -180,7 +180,7 @@ public class PEStatementBalanceServiceImpl implements PEStatementBalanceService 
 
     @Override
     public TarragonStatementBalanceOperationsHolderDto getStatementBalanceDto(Long reportId) {
-        List<ReportingPEStatementBalance> entities = this.peStatementBalanceRepository.getEntitiesByReportId(reportId);
+        List<ReportingPEStatementBalance> entities = this.peStatementBalanceRepository.getEntitiesByReportIdOrderByIdAsc(reportId);
         TarragonStatementBalanceOperationsHolderDto holderDto = new TarragonStatementBalanceOperationsHolderDto();
         List<TarragonStatementBalanceOperationsTrancheDto> recordsByTranche = disassembleByTranche(entities);
         holderDto.setBalanceRecords(recordsByTranche);
@@ -225,7 +225,7 @@ public class PEStatementBalanceServiceImpl implements PEStatementBalanceService 
 //        List<StatementBalanceOperationsDto> dtoListTrancheB = disassembleStatementBalanceList(entitiesTrancheB);
 
 
-        List<ReportingPEStatementBalance> entities = this.peStatementBalanceRepository.getEntitiesByReportId(reportId);
+        List<ReportingPEStatementBalance> entities = this.peStatementBalanceRepository.getEntitiesByReportIdOrderByIdAsc(reportId);
         List<StatementBalanceOperationsDto> dtoList = disassembleStatementBalanceList(entities);
 
         return dtoList;

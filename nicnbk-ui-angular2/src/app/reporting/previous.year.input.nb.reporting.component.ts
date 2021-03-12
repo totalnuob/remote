@@ -197,7 +197,7 @@ export class PreviousYearInputNBReportingComponent extends CommonNBReportingComp
         //var check5440_010 = false;
         //var name5440_010 = 'Резерв по переоценке финансовых инвестиций, имеющихся в наличии для продажи (прошлый год)';
 
-        var check5520_010 = false;
+        //var check5520_010 = false;
         //var name5520_010 = 'Нераспределенная прибыль (непокрытый убыток) прошлых лет';
         if (this.records) {
             for (var i = this.records.length; i--;) {
@@ -206,7 +206,7 @@ export class PreviousYearInputNBReportingComponent extends CommonNBReportingComp
                 if (this.records[i].chartOfAccounts != null && this.records[i].chartOfAccounts.code.startsWith('5440.010')){
                     //check5440_010 = true;
                 }else if (this.records[i].chartOfAccounts != null && this.records[i].chartOfAccounts.code.startsWith('5520.010')){
-                    check5520_010 = true;
+                    //check5520_010 = true;
                 }
             }
         }
@@ -215,12 +215,12 @@ export class PreviousYearInputNBReportingComponent extends CommonNBReportingComp
 //        if(!check5440_010){
 //            //this.errorMessage = "Missing '5440.010' record.";
 //        }else
-        if(!check5520_010){
-            this.errorMessage = "Missing '5520.010' record.";
-        }
+//        if(!check5520_010){
+//            this.errorMessage = "Missing '5520.010' record.";
+//        }
 
         //this.recordsValid = (check5440_010 && check5520_010);
-        this.recordsValid = check5520_010;
+        //this.recordsValid = check5520_010;
 
         if(this.recordsValid){
             this.errorMessage = null;

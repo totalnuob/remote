@@ -5,7 +5,22 @@
                 <li>
                     <span><a [routerLink]="['/reporting/NBReporting']">Reports Main</a></span>
                 </li>
-                <li class="active">Input</li>
+                <li>
+                    <span><a [routerLink]="['/reporting/NBReporting/inputFileUpload/', reportId]">1.Files</a></span>
+                </li>
+                <li class="active">2.NICKMF</li>
+                <li>
+                    <span><a [routerLink]="['/reporting/NBReporting/TarragonGeneratedForm/', reportId]">3.TarragonGL</a></span>
+                </li>
+                <li>
+                    <span><a [routerLink]="['/reporting/NBReporting/TerraGeneratedForm/', reportId]">4.TerraGL</a></span>
+                </li>
+                <li>
+                    <span><a [routerLink]="['/reporting/NBReporting/previousYearInput/', reportId]">5.PrevYear</a></span>
+                </li>
+                <li>
+                    <span><a [routerLink]="['/reporting/NBReporting/GeneratedReports/', reportId, 'REPORTS']">Generate Reports</a></span>
+                </li>
             </ol>
         </div>
     </div>
@@ -25,12 +40,13 @@
     <div class="row">
         <div class="col-md-6">
             <div class="col-md-1 pull-left">
-                <button class="btn btn-primary" [routerLink]="['/reporting/NBReporting/inputFileUpload/', reportId]">PREVIOUS</button>
+                <button class="btn btn-sm btn-primary" [routerLink]="['/reporting/NBReporting/inputFileUpload/', reportId]"> <<</button>
             </div>
         </div>
         <div class="col-md-6">
             <div class="col-md-1 pull-right">
-                <button class="btn btn-primary" [routerLink]="['/reporting/NBReporting/TarragonGeneratedForm/', reportId]" [disabled]="!showNextButton()">NEXT</button>
+                <button class="btn btn-sm btn-primary" [routerLink]="['/reporting/NBReporting/TarragonGeneratedForm/', reportId]" [disabled]="!showNextButton()">
+                    >></button>
             </div>
         </div>
     </div>
@@ -121,12 +137,13 @@
         <div class="row">
             <div class="col-md-6">
                 <div class="col-md-1 pull-left">
-                    <button class="btn btn-primary" [routerLink]="['/reporting/NBReporting/inputFileUpload/', reportId]">PREVIOUS</button>
+                    <button class="btn btn-sm btn-primary" [routerLink]="['/reporting/NBReporting/inputFileUpload/', reportId]"> <<</button>
                 </div>
             </div>
             <div class="col-md-6">
                 <div class="col-md-1 pull-right">
-                    <button class="btn btn-primary" [routerLink]="['/reporting/NBReporting/TarragonGeneratedForm/', reportId]" [disabled]="!showNextButton()">NEXT</button>
+                    <button class="btn btn-sm btn-primary" [routerLink]="['/reporting/NBReporting/TarragonGeneratedForm/', reportId]" [disabled]="!showNextButton()">
+                        >></button>
                 </div>
             </div>
         </div>

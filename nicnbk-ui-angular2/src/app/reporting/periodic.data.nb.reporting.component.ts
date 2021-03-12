@@ -67,6 +67,7 @@ export class PeriodicDataNBReportingComponent extends CommonNBReportingComponent
     }
 
     busy: Subscription;
+    busyModal: Subscription;
 
     ngOnInit():void {
         $('#valueDate').datetimepicker({
@@ -93,6 +94,11 @@ export class PeriodicDataNBReportingComponent extends CommonNBReportingComponent
             .subscribe(
                 searchResult  => {
                     this.searchResults = searchResult;
+                    if(this.searchResults != null && this.searchResults.periodicData != null){
+                        for(var i = 0; i < this.searchResults.periodicData.length; i++){
+                            this.onNumberChange(this.searchResults.periodicData[i]);
+                        }
+                    }
                 },
                 (error: ErrorResponse) => {
                     this.errorMessage = "Error searching Periodic Data";
@@ -112,13 +118,22 @@ export class PeriodicDataNBReportingComponent extends CommonNBReportingComponent
         this.errorMessageSaveRecord = null;
         $('#valueDate').val(null);
         if(record){
-            this.selectedEditRecord = record;
+            //this.selectedEditRecord = record;
+            this.selectedEditRecord = new PeriodicData;
+            this.selectedEditRecord.id = record.id;
+            this.selectedEditRecord.date = record.date;
+            this.selectedEditRecord.type = record.type;
+            this.selectedEditRecord.value = record.value;
+            this.selectedEditRecord.correction = record.correction;
+            this.selectedEditRecord.revaluated = record.revaluated;
+            this.selectedEditRecord.editable = record.editable;
+            this.selectedEditRecord.total = record.total;
+
             $('#valueDate').val(this.selectedEditRecord.date);
         }else{
             this.selectedEditRecord = new PeriodicData;
         }
     }
-
 
     delete(item){
         if(confirm("Are you sure want to delete record?")){
@@ -147,8 +162,9 @@ export class PeriodicDataNBReportingComponent extends CommonNBReportingComponent
         }
     }
 
-
     save(){
+        this.selectedEditRecord.value = Number(this.selectedEditRecord.value.toString().replace(/,/g, ''));
+        this.selectedEditRecord.correction = Number(this.selectedEditRecord.correction.toString().replace(/,/g, ''));
 
         this.selectedEditRecord.date = $('#valueDate').val();
 
@@ -198,7 +214,7 @@ export class PeriodicDataNBReportingComponent extends CommonNBReportingComponent
 
         }
 
-        this.busy = this.periodicReportService.savePeriodicData(this.selectedEditRecord)
+        this.busyModal = this.periodicReportService.savePeriodicData(this.selectedEditRecord)
             .subscribe(
                 (saveResponse: SaveResponse) => {
                     if(saveResponse.status === 'SUCCESS' ){
@@ -236,5 +252,41 @@ export class PeriodicDataNBReportingComponent extends CommonNBReportingComponent
             }
         }
         return false;
+    }
+
+     onNumberChange(record){
+        if(record != null){
+            if(record.value != null && record.value != 'undefined' && record.value.toString().length > 0) {
+                if(record.value.toString()[record.value.toString().length - 1] != '.' || record.value.toString().split('.').length > 2){
+                    record.value = record.value.toString().replace(/,/g , '');
+                    if(record.value != '-'){
+                        record.value = parseFloat(record.value).toLocaleString('en', {maximumFractionDigits: 2});
+                    }
+                }
+            }
+            if(record.correction != null && record.correction != 'undefined' && record.correction.toString().length > 0) {
+                if(record.correction.toString()[record.correction.toString().length - 1] != '.' || record.correction.toString().split('.').length > 2){
+                    record.correction = record.correction.toString().replace(/,/g , '');
+                    if(record.correction != '-'){
+                        if(record.correction.toString().split('.').length == 2 && parseFloat(record.correction.toString().split('.')[1]) == 0.0
+                            && record.correction.toString().split('.')[1].length < 2){
+                            // skip
+                        }else{
+                            record.correction = parseFloat(record.correction).toLocaleString('en', {maximumFractionDigits: 2});
+                        }
+
+                    }
+                }
+            }
+            var value = record.value != null ? Number(record.value.toString().replace(/,/g, '')) : 0;
+            var correction = record.correction != null ? Number(record.correction.toString().replace(/,/g, '')) : 0;
+            var total = value + correction;
+            if(total.toString()[total.toString().length - 1] != '.' || total.toString().split('.').length > 2){
+                record.total = total.toString().replace(/,/g , '');
+                if( record.total != '-'){
+                     record.total = parseFloat( record.total).toLocaleString('en', {maximumFractionDigits: 2});
+                }
+            }
+        }
     }
 }

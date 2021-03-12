@@ -83,10 +83,10 @@ public class ExcelUtils {
         if(cell == null){
             return null;
         }else if(cell.getCellType() == Cell.CELL_TYPE_STRING){
-            return cell.getStringCellValue();
+            return (cell.getStringCellValue() != null ? cell.getStringCellValue().trim(): "");
 
         }else if(cell.getCellType() == Cell.CELL_TYPE_NUMERIC){
-            return cell.getNumericCellValue() + "";
+            return  cell.getNumericCellValue() + "";
         }else if(cell.getCellType() == Cell.CELL_TYPE_BLANK){
             return "";
         }else if(cell.getCellType() == Cell.CELL_TYPE_BOOLEAN){

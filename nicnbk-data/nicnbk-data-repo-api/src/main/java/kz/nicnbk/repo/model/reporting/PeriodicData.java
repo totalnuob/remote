@@ -15,6 +15,7 @@ public class PeriodicData extends BaseEntity {
 
     private Date date;
     private Double value;
+    private Double correction;
     private PeriodicDataType type;
     private Boolean revaluated;
 
@@ -35,6 +36,14 @@ public class PeriodicData extends BaseEntity {
 
     public void setValue(Double value) {
         this.value = value;
+    }
+
+    public Double getCorrection() {
+        return correction;
+    }
+
+    public void setCorrection(Double correction) {
+        this.correction = correction;
     }
 
     @ManyToOne(fetch = FetchType.EAGER)

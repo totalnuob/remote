@@ -40,6 +40,7 @@ public class ICMeetingTopicDecision extends BaseEntity {
         this.icMeetingTopic = icMeetingTopic;
     }
 
+    @Column(name="name", columnDefinition="TEXT")
     public String getName() {
         return name;
     }

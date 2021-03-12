@@ -13,9 +13,9 @@ export class FileUploadService {
 
             for (let i = 0; i < files.length; i++) {
                 formData.append("file", files[i], files[i].name);
-                if(type != null){
-                    formData.append("fileType", type);
-                }
+            }
+            if(type != null){
+                formData.append("fileType", type);
             }
 
             xhr.withCredentials = true;

@@ -70,7 +70,6 @@ export class MatchingLookupValuesNBReportingComponent extends CommonNBReportingC
                     this.nicChartAccountsLookupValues = data1;
                     this.nbChartAccountsLookupValues = data2;
                     this.chartAccountsTypeLookupValues = data3;
-                    console.log(data3);
                 });
 
     }
@@ -125,7 +124,7 @@ export class MatchingLookupValuesNBReportingComponent extends CommonNBReportingC
                 this.busy = this.lookupService.getNBReportingNICSingularityChartAccounts()
                     .subscribe(
                         result  => {
-                            console.log(result);
+                            //console.log(result);
                             this.selectedLookupValues = result;
                         },
                         (error: ErrorResponse) => {
@@ -189,7 +188,7 @@ export class MatchingLookupValuesNBReportingComponent extends CommonNBReportingC
     }
 
     closeEditModal(){
-        console.log("closeEditModal");
+        //console.log("closeEditModal");
         this.selectedEditLookup = null;
     }
     save(){
@@ -230,7 +229,20 @@ export class MatchingLookupValuesNBReportingComponent extends CommonNBReportingC
                 .subscribe(
                     (saveResponse:SaveResponse) => {
                         if (saveResponse.status === 'SUCCESS') {
-                            //console.log(saveResponse);
+                            this.busy = this.lookupService.getNICReportingChartOfAccounts(null)
+                                .subscribe(
+                                    result  => {
+                                        this.nicChartAccountsLookupValues = result;
+                                    },
+                                    (error: ErrorResponse) => {
+                                        this.errorMessage = "Error loading lookup: NIC_CHART_ACCOUNTS";
+                                        if(error && !error.isEmpty()){
+                                            this.processErrorMessage(error);
+                                        }
+                                        this.postAction(null, null);
+                                    }
+                                );
+
                             this.errorMessageSaveLookup = null;
                             this.successMessageSaveLookup = saveResponse.message.nameEn;
 

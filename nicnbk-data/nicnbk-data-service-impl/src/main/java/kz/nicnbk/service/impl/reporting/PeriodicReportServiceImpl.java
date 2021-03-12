@@ -2252,7 +2252,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
         String record5440_010_previousYearName = PeriodicReportConstants.RU_5440_010__LAST_YEAR;
         String record5520_010Name = PeriodicReportConstants.RU_5520_010;
         String record5520_010AccountNumber = PeriodicReportConstants.ACC_NUM_5520_010;
-        Double record5520_010 = 0.0;
+        //Double record5520_010 = 0.0;
         Double record5450_010Corrections = 0.0;
         List<PreviousYearInputDataDto> previousYearInputData = this.prevYearInputService.getPreviousYearInputData(reportId);
         if(previousYearInputData != null){
@@ -2260,15 +2260,40 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                 if(inputData.getChartOfAccounts() != null && inputData.getChartOfAccounts().getCode().startsWith(PeriodicReportConstants.ACC_NUM_5440_010) &&
                         inputData.getChartOfAccounts().getNameRu().equalsIgnoreCase(record5440_010_previousYearName)){
                     record5440_010 = MathUtils.add(record5440_010, inputData.getAccountBalanceKZT());
-                }else if(inputData.getChartOfAccounts() != null && inputData.getChartOfAccounts().getCode().startsWith(record5520_010AccountNumber) &&
-                        inputData.getChartOfAccounts().getNameRu().equalsIgnoreCase(record5520_010Name)){
-                    record5520_010 = MathUtils.add(record5520_010, inputData.getAccountBalanceKZT() != null ? inputData.getAccountBalanceKZT().doubleValue() : 0);
+//                }else if(inputData.getChartOfAccounts() != null && inputData.getChartOfAccounts().getCode().startsWith(record5520_010AccountNumber) &&
+//                        inputData.getChartOfAccounts().getNameRu().equalsIgnoreCase(record5520_010Name)){
+//                    record5520_010 = MathUtils.add(record5520_010, inputData.getAccountBalanceKZT() != null ? inputData.getAccountBalanceKZT().doubleValue() : 0);
                 }else if(inputData.getChartOfAccounts() != null && inputData.getChartOfAccounts().getCode().startsWith(PeriodicReportConstants.ACC_NUM_5450_010_CODE_ADJUSTMENT) &&
                         inputData.getChartOfAccounts().getNameRu().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_5450_010_CODE_ADJUSTMENT_RU)){
                     // 5450.010 adjustment
                     record5450_010Corrections = MathUtils.add(record5450_010Corrections, inputData.getAccountBalanceKZT());
                 }
             }
+        }
+
+        double netProfit5520_010 = 0.0;
+        int currentYear = DateUtils.getYear(currentReport.getReportDate());
+        for(int year = 2015; year < currentYear; year++){
+            PeriodicDataDto netProfitDto = this.periodicDataService.get(DateUtils.getDate("31.12." + year), PeriodicDataTypeLookup.NET_PROFIT.getCode());
+            if(netProfitDto == null){
+                logger.error("Net Profit data not found for date '31.12." + year + "'");
+                responseDto.setErrorMessageEn("Net Profit data not found for date '31.12." + year + "'");
+                return responseDto;
+            }
+            Double avgCurrencyRate = null;
+            try {
+                avgCurrencyRate = this.currencyRatesService.getAverageYearRateForFixedDateAndCurrency(DateUtils.getDate("31.12." + year), CurrencyLookup.USD.getCode());
+                if(avgCurrencyRate == null){
+                    logger.error("No average currency rate found for date '31.12." + year + "'");
+                    responseDto.setErrorMessageEn("No average currency rate found for date '31.12." + year + "'");
+                    return responseDto;
+                }
+            }catch (IllegalStateException ex){
+                throw ex;
+            }
+
+            netProfit5520_010 = MathUtils.add(netProfit5520_010, MathUtils.multiply(10, netProfitDto.getTotal(), avgCurrencyRate));
+
         }
 
         String record5021_010AccountNumber = PeriodicReportConstants.ACC_NUM_5021_010;
@@ -2279,7 +2304,6 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
 
         Double record5022_010 = 18765.0;
 
-        // TODO: Refactor string literal
         Double record5021_010 = 0.0;
         List<ReserveCalculationDto> reserveCalculations = null;
         try {
@@ -2397,7 +2421,8 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                 record.setCurrentAccountBalance(record5440_010);
             }else if(record.getAccountNumber() != null && record.getAccountNumber().equalsIgnoreCase(record5520_010AccountNumber) &&
                     record.getName().equalsIgnoreCase(record5520_010Name)){
-                record.setCurrentAccountBalance(record5520_010);
+                //record.setCurrentAccountBalance(record5520_010);
+                record.setCurrentAccountBalance(netProfit5520_010);
             }else if(record.getAccountNumber() != null && record.getAccountNumber().equalsIgnoreCase(record5021_010AccountNumber) &&
                     record.getName().equalsIgnoreCase(record5021_010Name)){
                 record.setCurrentAccountBalance(record5021_010);
@@ -2599,12 +2624,12 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
             }
 
             if(netProfitDto != null){
-                total = MathUtils.add(total, MathUtils.multiply(10, netProfitDto.getValue(), currencyRatesDto.getValue()));
-                total = MathUtils.subtract(total, MathUtils.multiply(10, netProfitDto.getValue(), avgCurrencyRate));
+                total = MathUtils.add(total, MathUtils.multiply(10, netProfitDto.getTotal(), currencyRatesDto.getValue()));
+                total = MathUtils.subtract(total, MathUtils.multiply(10, netProfitDto.getTotal(), avgCurrencyRate));
             }
             if(reserveRevalutionDto != null){
-                total = MathUtils.add(total, MathUtils.multiply(10, reserveRevalutionDto.getValue(), currencyRatesDto.getValue()));
-                total = MathUtils.subtract(total, MathUtils.multiply(10, reserveRevalutionDto.getValue(), avgCurrencyRate));
+                total = MathUtils.add(total, MathUtils.multiply(10, reserveRevalutionDto.getTotal(), currencyRatesDto.getValue()));
+                total = MathUtils.subtract(total, MathUtils.multiply(10, reserveRevalutionDto.getTotal(), avgCurrencyRate));
             }
 
             if(currentYear == year + 1){

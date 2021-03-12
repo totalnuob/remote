@@ -12,7 +12,22 @@
                 <!--</li>-->
                 <!--<li><span *ngIf="reportId != null"><a [routerLink]="['/reporting/NBReporting/NICKMFInput/', reportId]">NICK MF Input</a></span></li>-->
                 <!--<li class="active">Tarragon - Generated Form</li>-->
-                <li class="active">Input</li>
+                <li>
+                    <span><a [routerLink]="['/reporting/NBReporting/inputFileUpload/', reportId]">1.Files</a></span>
+                </li>
+                <li>
+                    <span><a [routerLink]="['/reporting/NBReporting/NICKMFInput/', reportId]">2.NICK MF</a></span>
+                </li>
+                <li>
+                    <span><a [routerLink]="['/reporting/NBReporting/TarragonGeneratedForm/', reportId]">3.TarragonGL</a></span>
+                </li>
+                <li class="active">4.TerraGL</li>
+                <li>
+                    <span><a [routerLink]="['/reporting/NBReporting/previousYearInput/', reportId]">5.PrevYear</a></span>
+                </li>
+                <li>
+                    <span><a [routerLink]="['/reporting/NBReporting/GeneratedReports/', reportId, 'REPORTS']">Generate Reports</a></span>
+                </li>
             </ol>
         </div>
     </div>
@@ -29,6 +44,20 @@
     <div class="row withpadding">
         <h3 *ngIf="reportId != null">4. Terra - Generated General Ledger Form</h3>
     </div>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="col-md-1 pull-left">
+                <button class="btn btn-sm btn-primary" [routerLink]="['/reporting/NBReporting/TarragonGeneratedForm/', reportId]"><<
+                </button>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="col-md-1 pull-right">
+                <button class="btn btn-sm btn-primary" [routerLink]="['/reporting/NBReporting/previousYearInput/', reportId]" [disabled]="!showNextButton()"> >></button>
+            </div>
+        </div>
+    </div>
+    <br/>
 
     <form (ngSubmit)="saveAddedRecords()" #addedRecordsForm="ngForm" class="well span">
         <div class="row withpadding">
@@ -109,24 +138,9 @@
             </div>
         </div>
     </form>
-
     <br/>
 
-    <div class="row">
-        <div class="col-md-6">
-            <div class="col-md-1 pull-left">
-                <button class="btn btn-primary" [routerLink]="['/reporting/NBReporting/TarragonGeneratedForm/', reportId]">PREVIOUS
-                </button>
-            </div>
-        </div>
-        <div class="col-md-6">
-            <div class="col-md-1 pull-right">
-                <button class="btn btn-primary" [routerLink]="['/reporting/NBReporting/previousYearInput/', reportId]" [disabled]="!showNextButton()">NEXT</button>
-            </div>
-        </div>
-    </div>
 
-    <br/>
     <div class="row withpadding">
         <table [ngBusy]="busy" class="table table-hover table-condensed" style="font-size: small" *ngIf="records != null">
             <!--<tr *ngIf="records != null && records.length > 0" style="font-weight: bold">-->
@@ -252,15 +266,16 @@
     <div class="row">
         <div class="col-md-6">
             <div class="col-md-1 pull-left">
-                <button class="btn btn-primary" [routerLink]="['/reporting/NBReporting/TarragonGeneratedForm/', reportId]">PREVIOUS
+                <button class="btn btn-sm btn-primary" [routerLink]="['/reporting/NBReporting/TarragonGeneratedForm/', reportId]"><<
                 </button>
             </div>
         </div>
         <div class="col-md-6">
             <div class="col-md-1 pull-right">
-                <button class="btn btn-primary" [routerLink]="['/reporting/NBReporting/previousYearInput/', reportId]" [disabled]="!showNextButton()">NEXT</button>
+                <button class="btn btn-sm btn-primary" [routerLink]="['/reporting/NBReporting/previousYearInput/', reportId]" [disabled]="!showNextButton()"> >></button>
             </div>
         </div>
     </div>
     <br/><br/>
+
 </div>
