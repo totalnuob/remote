@@ -291,7 +291,8 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
             if(this.moduleAccessChecker.checkAccessICMeetingAdmin()){
                 return true;
             }
-            if(this.icMeetingTopic.status === 'TO BE FINALIZED' || this.icMeetingTopic.status === 'FINALIZED'){
+            if(this.icMeetingTopic.status === 'TO BE FINALIZED' || this.icMeetingTopic.status === 'FINALIZED' ||
+                    || this.icMeetingTopic.status === 'UNDER REVIEW'){
                 // check deadline
                 if(this.icMeetingTopic.icMeeting.updateLockedByDeadline){
                     return false;
