@@ -292,7 +292,7 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
                 return true;
             }
             if(this.icMeetingTopic.status === 'TO BE FINALIZED' || this.icMeetingTopic.status === 'FINALIZED' ||
-                    || this.icMeetingTopic.status === 'UNDER REVIEW'){
+                    this.icMeetingTopic.status === 'UNDER REVIEW'){
                 // check deadline
                 if(this.icMeetingTopic.icMeeting.updateLockedByDeadline){
                     return false;
