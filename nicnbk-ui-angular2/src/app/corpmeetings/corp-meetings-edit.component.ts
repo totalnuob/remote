@@ -803,7 +803,8 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
             return false;
         }
         if(this.icMeetingTopic.icMeeting != null && this.icMeetingTopic.icMeeting.lockedByDeadline){
-            if(this.icMeetingTopic.status === 'TO BE FINALIZED' || this.icMeetingTopic.status === 'FINALIZED'){
+            if(this.icMeetingTopic.status === 'TO BE FINALIZED' || this.icMeetingTopic.status === 'FINALIZED'
+                || this.icMeetingTopic.status === 'UNDER REVIEW'){
                 // check deadline
                 /*if(this.icMeetingTopic.icMeeting.updateLockedByDeadline){
                     return false;
