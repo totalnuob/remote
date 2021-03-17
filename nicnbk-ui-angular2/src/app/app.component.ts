@@ -99,6 +99,7 @@ export class AppComponent implements OnInit{
     //snow = true;
 
     authenticatedUserNotifications = [];
+    pauseNotifications = false;
 
     private moduleAccessChecker: ModuleAccessCheckerService;
 
@@ -139,17 +140,32 @@ export class AppComponent implements OnInit{
     }
 
     loadUserNotification(){
-        this.busy = this.notificationService.getUserNotifications()
-            .subscribe(
-                (response) => {
-                    //console.log(response);
-                    this.authenticatedUserNotifications = response;
-                },
-                error => {
-                    console.log(response);
-                    console.log('Error loading user notifications');
-                }
-            )
+        if(!this.pauseNotifications){
+            this.busy = this.notificationService.getUserNotifications()
+                .subscribe(
+                    (response) => {
+                        //console.log(response);
+                        this.authenticatedUserNotifications = response;
+                        localStorage.setItem("notificationErrorResponse", 0);
+                    },
+                    error => {
+                        if(error && error.status == 401){
+                            var notificationErrorResponse = localStorage.getItem("notificationErrorResponse");
+                            if(notificationErrorResponse){
+                                var count = Number(notificationErrorResponse);
+                                if(count < 3){
+                                    localStorage.setItem("notificationErrorResponse", (count + 1));
+                                }else{
+                                    this.pauseNotifications = true;
+                                }
+                            }else{
+                                localStorage.setItem("notificationErrorResponse", 1);
+                            }
+                        }
+                        console.log('Error loading user notifications');
+                    }
+                )
+        }
     }
 
     getVersion() {
