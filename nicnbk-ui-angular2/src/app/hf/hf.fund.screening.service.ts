@@ -320,6 +320,9 @@ export class HedgeFundScreeningService extends CommonService{
                         resolve(JSON.parse("{\"message\" : \"OK\"}"));
                         var blob = new Blob([this.response], {type: this.response.type});
                         var file_name = xhr.getResponseHeader("Content-Disposition").match(/filename=(.*?)$/)[1];
+                        if(file_name){
+                            file_name = file_name.trim().replace(/['"]+/g, '');
+                        }
                         fileSaver.saveAs(blob, file_name);
                     }else {
                         console.log("Error - " + xhr.status);

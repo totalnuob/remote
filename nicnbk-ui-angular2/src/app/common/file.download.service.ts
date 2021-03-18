@@ -30,8 +30,8 @@ export class FileDownloadService extends CommonService {
                         resolve(JSON.parse("{\"message\" : \"OK\"}"));
                         var blob = new Blob([this.response], {type: this.response.type});
                         var file_name = xhr.getResponseHeader("Content-Disposition").match(/filename=(.*?)$/)[1];
-                        if(fileName == null || fileName === ''){
-                            fileName = file_name;
+                        if(file_name != null && (fileName == null || fileName === '')){
+                            fileName = file_name.trim().replace(/['"]+/g, '');
                         }
                         fileSaver.saveAs(blob, fileName);
                     }else {
@@ -44,7 +44,5 @@ export class FileDownloadService extends CommonService {
             //xhr.open("GET", url);
             xhr.send();
         }));
-        //.map(this.extractData);
-        //.catch(this.handleErrorResponse);
     }
 }
