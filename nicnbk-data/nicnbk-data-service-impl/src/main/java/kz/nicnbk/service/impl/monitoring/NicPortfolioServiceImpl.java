@@ -228,6 +228,11 @@ public class NicPortfolioServiceImpl implements NicPortfolioService {
                     ExcelUtils.getDoubleValueFromCell(row.getCell(74)),
                     ExcelUtils.getDoubleValueFromCell(row.getCell(75)),
 
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(136)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(140)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(141)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(142)),
+
                     ExcelUtils.getDoubleValueFromCell(row.getCell(158)),
                     ExcelUtils.getDoubleValueFromCell(row.getCell(163)),
                     ExcelUtils.getDoubleValueFromCell(row.getCell(164)),

@@ -35,6 +35,11 @@ public class NicPortfolioDto extends BaseEntityDto<NicPortfolio> {
     private Double equityPortfolioQtd;
     private Double equityPortfolioYtd;
 
+    private Double nickMFConsolidatedNav;
+    private Double nickMFConsolidatedMtd;
+    private Double nickMFConsolidatedQtd;
+    private Double nickMFConsolidatedYtd;
+
     private Double hedgeFundsNav;
     private Double hedgeFundsMtd;
     private Double hedgeFundsQtd;
@@ -93,7 +98,7 @@ public class NicPortfolioDto extends BaseEntityDto<NicPortfolio> {
     public NicPortfolioDto() {
     }
 
-    public NicPortfolioDto(Date date, Double nicTotalAumNav, Double transitionPortfolioNav, Double transitionPortfolioMtd, Double transitionPortfolioQtd, Double transitionPortfolioYtd, Double alternativePortfolioNav, Double alternativePortfolioMtd, Double alternativePortfolioQtd, Double alternativePortfolioYtd, Double fixedPortfolioNav, Double fixedPortfolioMtd, Double fixedPortfolioQtd, Double fixedPortfolioYtd, Double equityPortfolioNav, Double equityPortfolioMtd, Double equityPortfolioQtd, Double equityPortfolioYtd, Double hedgeFundsNav, Double hedgeFundsMtd, Double hedgeFundsQtd, Double hedgeFundsYtd, Double hedgeFundsClassANav, Double hedgeFundsClassAMtd, Double hedgeFundsClassAQtd, Double hedgeFundsClassAYtd, Double hedgeFundsClassBNav, Double hedgeFundsClassBMtd, Double hedgeFundsClassBQtd, Double hedgeFundsClassBYtd, Double privateEquityNav, Double privateEquityMtd, Double privateEquityQtd, Double privateEquityYtd, Double privateEquityTarragonANav, Double privateEquityTarragonAMtd, Double privateEquityTarragonAQtd, Double privateEquityTarragonAYtd, Double privateEquityTarragonA2Nav, Double privateEquityTarragonA2Mtd, Double privateEquityTarragonA2Qtd, Double privateEquityTarragonA2Ytd, Double privateEquityTarragonBNav, Double privateEquityTarragonBMtd, Double privateEquityTarragonBQtd, Double privateEquityTarragonBYtd, Double privateEquityTarragonB2Nav, Double privateEquityTarragonB2Mtd, Double privateEquityTarragonB2Qtd, Double privateEquityTarragonB2Ytd, Double realEstateNav, Double realEstateMtd, Double realEstateQtd, Double realEstateYtd, Double nickMfOtherNav, Double nickMfOtherMtd, Double nickMfOtherQtd, Double nickMfOtherYtd, Double transferNav, Double transferMtd, Double transferQtd, Double transferYtd) {
+    public NicPortfolioDto(Date date, Double nicTotalAumNav, Double transitionPortfolioNav, Double transitionPortfolioMtd, Double transitionPortfolioQtd, Double transitionPortfolioYtd, Double alternativePortfolioNav, Double alternativePortfolioMtd, Double alternativePortfolioQtd, Double alternativePortfolioYtd, Double fixedPortfolioNav, Double fixedPortfolioMtd, Double fixedPortfolioQtd, Double fixedPortfolioYtd, Double equityPortfolioNav, Double equityPortfolioMtd, Double equityPortfolioQtd, Double equityPortfolioYtd, Double nickMFConsolidatedNav, Double nickMFConsolidatedMtd, Double nickMFConsolidatedQtd, Double nickMFConsolidatedYtd, Double hedgeFundsNav, Double hedgeFundsMtd, Double hedgeFundsQtd, Double hedgeFundsYtd, Double hedgeFundsClassANav, Double hedgeFundsClassAMtd, Double hedgeFundsClassAQtd, Double hedgeFundsClassAYtd, Double hedgeFundsClassBNav, Double hedgeFundsClassBMtd, Double hedgeFundsClassBQtd, Double hedgeFundsClassBYtd, Double privateEquityNav, Double privateEquityMtd, Double privateEquityQtd, Double privateEquityYtd, Double privateEquityTarragonANav, Double privateEquityTarragonAMtd, Double privateEquityTarragonAQtd, Double privateEquityTarragonAYtd, Double privateEquityTarragonA2Nav, Double privateEquityTarragonA2Mtd, Double privateEquityTarragonA2Qtd, Double privateEquityTarragonA2Ytd, Double privateEquityTarragonBNav, Double privateEquityTarragonBMtd, Double privateEquityTarragonBQtd, Double privateEquityTarragonBYtd, Double privateEquityTarragonB2Nav, Double privateEquityTarragonB2Mtd, Double privateEquityTarragonB2Qtd, Double privateEquityTarragonB2Ytd, Double realEstateNav, Double realEstateMtd, Double realEstateQtd, Double realEstateYtd, Double nickMfOtherNav, Double nickMfOtherMtd, Double nickMfOtherQtd, Double nickMfOtherYtd, Double transferNav, Double transferMtd, Double transferQtd, Double transferYtd) {
         this.date = date;
         this.nicTotalAumNav = nicTotalAumNav;
         this.transitionPortfolioNav = transitionPortfolioNav;
@@ -112,6 +117,10 @@ public class NicPortfolioDto extends BaseEntityDto<NicPortfolio> {
         this.equityPortfolioMtd = equityPortfolioMtd;
         this.equityPortfolioQtd = equityPortfolioQtd;
         this.equityPortfolioYtd = equityPortfolioYtd;
+        this.nickMFConsolidatedNav = nickMFConsolidatedNav;
+        this.nickMFConsolidatedMtd = nickMFConsolidatedMtd;
+        this.nickMFConsolidatedQtd = nickMFConsolidatedQtd;
+        this.nickMFConsolidatedYtd = nickMFConsolidatedYtd;
         this.hedgeFundsNav = hedgeFundsNav;
         this.hedgeFundsMtd = hedgeFundsMtd;
         this.hedgeFundsQtd = hedgeFundsQtd;
@@ -300,6 +309,38 @@ public class NicPortfolioDto extends BaseEntityDto<NicPortfolio> {
 
     public void setEquityPortfolioYtd(Double equityPortfolioYtd) {
         this.equityPortfolioYtd = equityPortfolioYtd;
+    }
+
+    public Double getNickMFConsolidatedNav() {
+        return nickMFConsolidatedNav;
+    }
+
+    public void setNickMFConsolidatedNav(Double nickMFConsolidatedNav) {
+        this.nickMFConsolidatedNav = nickMFConsolidatedNav;
+    }
+
+    public Double getNickMFConsolidatedMtd() {
+        return nickMFConsolidatedMtd;
+    }
+
+    public void setNickMFConsolidatedMtd(Double nickMFConsolidatedMtd) {
+        this.nickMFConsolidatedMtd = nickMFConsolidatedMtd;
+    }
+
+    public Double getNickMFConsolidatedQtd() {
+        return nickMFConsolidatedQtd;
+    }
+
+    public void setNickMFConsolidatedQtd(Double nickMFConsolidatedQtd) {
+        this.nickMFConsolidatedQtd = nickMFConsolidatedQtd;
+    }
+
+    public Double getNickMFConsolidatedYtd() {
+        return nickMFConsolidatedYtd;
+    }
+
+    public void setNickMFConsolidatedYtd(Double nickMFConsolidatedYtd) {
+        this.nickMFConsolidatedYtd = nickMFConsolidatedYtd;
     }
 
     public Double getHedgeFundsNav() {
