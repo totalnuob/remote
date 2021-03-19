@@ -214,42 +214,71 @@ export class MonitoringPortfolioComponent extends GoogleChartComponent {
             fractionDigits: 0
         });
 
+        var formatter1 = new google.visualization.NumberFormat({
+            pattern:'#.##%',
+            negativeColor: 'red'
+        });
+
         dataNAV.addColumn("string", "");
         dataNAV.addColumn("number", "NAV");
+        dataNAV.addColumn("number", "MTD");
+        dataNAV.addColumn("number", "QTD");
+        dataNAV.addColumn("number", "YTD");
 
         if(tableData != null) {
             if(tableData.nicTotalAumNav != null) {
-                dataNAV.addRows([["NIC total AUM", tableData.nicTotalAumNav]]);
+                dataNAV.addRows([["NIC total AUM", tableData.nicTotalAumNav, null, null, null]]);
                 dataNAV.setProperty(0, 0, 'style', 'font-weight: bold;')
                 dataNAV.setProperty(0, 1, 'style', 'font-weight: bold;')
             }
-            if(tableData.transitionPortfolioNav != null) {
-                dataNAV.addRows([["&nbsp;&nbsp;&nbsp;&nbsp;" + "Transition portfolio", tableData.transitionPortfolioNav]]);
+            if(tableData.transitionPortfolioNav != null || tableData.transitionPortfolioMtd != null || tableData.transitionPortfolioQtd != null || tableData.transitionPortfolioYtd != null) {
+                dataNAV.addRows([["&nbsp;&nbsp;&nbsp;&nbsp;" + "Transition portfolio", tableData.transitionPortfolioNav, tableData.transitionPortfolioMtd, tableData.transitionPortfolioQtd, tableData.transitionPortfolioYtd]]);
             }
-            if(tableData.alternativePortfolioNav != null) {
-                dataNAV.addRows([["&nbsp;&nbsp;&nbsp;&nbsp;" + "Alternative portfolio", tableData.alternativePortfolioNav]]);
+            if(tableData.alternativePortfolioNav != null || tableData.alternativePortfolioMtd != null || tableData.alternativePortfolioQtd != null || tableData.alternativePortfolioYtd != null) {
+                dataNAV.addRows([["&nbsp;&nbsp;&nbsp;&nbsp;" + "Alternative portfolio", tableData.alternativePortfolioNav, tableData.alternativePortfolioMtd, tableData.alternativePortfolioQtd, tableData.alternativePortfolioYtd]]);
             }
-            if(tableData.fixedPortfolioNav != null) {
-                dataNAV.addRows([["&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + "Fixed portfolio", tableData.fixedPortfolioNav]]);
+            if(tableData.fixedPortfolioNav != null || tableData.fixedPortfolioMtd != null || tableData.fixedPortfolioQtd != null || tableData.fixedPortfolioYtd != null) {
+                dataNAV.addRows([["&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + "Fixed portfolio", tableData.fixedPortfolioNav, tableData.fixedPortfolioMtd, tableData.fixedPortfolioQtd, tableData.fixedPortfolioYtd]]);
             }
-            if(tableData.equityPortfolioNav != null) {
-                dataNAV.addRows([["&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + "Equity portfolio", tableData.equityPortfolioNav]]);
+            if(tableData.equityPortfolioNav != null || tableData.equityPortfolioMtd != null || tableData.equityPortfolioQtd != null || tableData.equityPortfolioYtd != null) {
+                dataNAV.addRows([["&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + "Equity portfolio", tableData.equityPortfolioNav, tableData.equityPortfolioMtd, tableData.equityPortfolioQtd, tableData.equityPortfolioYtd]]);
             }
-            if(tableData.hedgeFundsNav != null) {
-                dataNAV.addRows([["&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + "Hedge funds", tableData.hedgeFundsNav]]);
+            if(tableData.nickMFConsolidatedNav != null || tableData.nickMFConsolidatedMtd != null || tableData.nickMFConsolidatedQtd != null || tableData.nickMFConsolidatedYtd != null) {
+                dataNAV.addRows([["&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + "NICK Master Fund Consolidated", tableData.nickMFConsolidatedNav, tableData.nickMFConsolidatedMtd, tableData.nickMFConsolidatedQtd, tableData.nickMFConsolidatedYtd]]);
             }
-            if(tableData.privateEquityNav != null) {
-                dataNAV.addRows([["&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + "Private equity", tableData.privateEquityNav]]);
+            if(tableData.hedgeFundsNav != null || tableData.hedgeFundsMtd != null || tableData.hedgeFundsQtd != null || tableData.hedgeFundsYtd != null) {
+                dataNAV.addRows([["&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + "Singularity Consolidated", tableData.hedgeFundsNav, tableData.hedgeFundsMtd, tableData.hedgeFundsQtd, tableData.hedgeFundsYtd]]);
             }
-            if(tableData.realEstateNav != null) {
-                dataNAV.addRows([["&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + "Real estate", tableData.realEstateNav]]);
+            if(tableData.hedgeFundsClassANav != null || tableData.hedgeFundsClassAMtd != null || tableData.hedgeFundsClassAQtd != null || tableData.hedgeFundsClassAYtd != null) {
+                dataNAV.addRows([["&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + "Singularity A", tableData.hedgeFundsClassANav, tableData.hedgeFundsClassAMtd, tableData.hedgeFundsClassAQtd, tableData.hedgeFundsClassAYtd]]);
             }
-            if(tableData.nickMfOtherNav != null) {
-                dataNAV.addRows([["&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + "NICK Mf other", tableData.nickMfOtherNav]]);
+            if(tableData.hedgeFundsClassBNav != null || tableData.hedgeFundsClassBMtd != null || tableData.hedgeFundsClassBQtd != null || tableData.hedgeFundsClassBYtd != null) {
+                dataNAV.addRows([["&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + "Singularity B", tableData.hedgeFundsClassBNav, tableData.hedgeFundsClassBMtd, tableData.hedgeFundsClassBQtd, tableData.hedgeFundsClassBYtd]]);
             }
-            if(tableData.transferNav != null) {
-                dataNAV.addRows([["&nbsp;&nbsp;&nbsp;&nbsp;" + "Transfer portfolio", tableData.transferNav]]);
+            if(tableData.privateEquityNav != null || tableData.privateEquityMtd != null || tableData.privateEquityQtd != null || tableData.privateEquityYtd != null) {
+                dataNAV.addRows([["&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + "Tarragon", tableData.privateEquityNav, tableData.privateEquityMtd, tableData.privateEquityQtd, tableData.privateEquityYtd]]);
             }
+            if(tableData.privateEquityTarragonANav != null || tableData.privateEquityTarragonAMtd != null || tableData.privateEquityTarragonAQtd != null || tableData.privateEquityTarragonAYtd != null) {
+                dataNAV.addRows([["&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + "Tarragon A", tableData.privateEquityTarragonANav, tableData.privateEquityTarragonAMtd, tableData.privateEquityTarragonAQtd, tableData.privateEquityTarragonAYtd]]);
+            }
+            if(tableData.privateEquityTarragonA2Nav != null || tableData.privateEquityTarragonA2Mtd != null || tableData.privateEquityTarragonA2Qtd != null || tableData.privateEquityTarragonA2Ytd != null) {
+                dataNAV.addRows([["&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + "Tarragon A-2", tableData.privateEquityTarragonA2Nav, tableData.privateEquityTarragonA2Mtd, tableData.privateEquityTarragonA2Qtd, tableData.privateEquityTarragonA2Ytd]]);
+            }
+            if(tableData.privateEquityTarragonBNav != null || tableData.privateEquityTarragonBMtd != null || tableData.privateEquityTarragonBQtd != null || tableData.privateEquityTarragonBYtd != null) {
+                dataNAV.addRows([["&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + "Tarragon B", tableData.privateEquityTarragonBNav, tableData.privateEquityTarragonBMtd, tableData.privateEquityTarragonBQtd, tableData.privateEquityTarragonBYtd]]);
+            }
+            if(tableData.privateEquityTarragonB2Nav != null || tableData.privateEquityTarragonB2Mtd != null || tableData.privateEquityTarragonB2Qtd != null || tableData.privateEquityTarragonB2Ytd != null) {
+                dataNAV.addRows([["&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + "Tarragon B-2", tableData.privateEquityTarragonB2Nav, tableData.privateEquityTarragonB2Mtd, tableData.privateEquityTarragonB2Qtd, tableData.privateEquityTarragonB2Ytd]]);
+            }
+            if(tableData.realEstateNav != null || tableData.realEstateMtd != null || tableData.realEstateQtd != null || tableData.realEstateYtd != null) {
+                dataNAV.addRows([["&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + "Terra", tableData.realEstateNav, tableData.realEstateMtd, tableData.realEstateQtd, tableData.realEstateYtd]]);
+            }
+            if(tableData.nickMfOtherNav != null || tableData.nickMfOtherMtd != null || tableData.nickMfOtherQtd != null || tableData.nickMfOtherYtd != null) {
+                dataNAV.addRows([["&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + "NICK MF cash, other assets and liabilities", tableData.nickMfOtherNav, tableData.nickMfOtherMtd, tableData.nickMfOtherQtd, tableData.nickMfOtherYtd]]);
+            }
+//             if(tableData.transferNav != null) {
+//                 dataNAV.addRows([["&nbsp;&nbsp;&nbsp;&nbsp;" + "Transfer portfolio", tableData.transferNav]]);
+//             }
 
             var dataActualAllocation = google.visualization.arrayToDataTable(
                 [
@@ -257,9 +286,9 @@ export class MonitoringPortfolioComponent extends GoogleChartComponent {
                     ["Transition portfolio", 0],
                     ["Fixed portfolio", tableData.fixedPortfolioNav != null ? tableData.fixedPortfolioNav : 0],
                     ["Equity portfolio", tableData.equityPortfolioNav != null ? tableData.equityPortfolioNav : 0],
-                    ["Hedge funds", tableData.hedgeFundsNav != null ? tableData.hedgeFundsNav : 0],
-                    ["Private equity", tableData.privateEquityNav != null ? tableData.privateEquityNav : 0],
-                    ["Real estate", tableData.realEstateNav != null ? tableData.realEstateNav : 0],
+                    ["Singularity Consolidated", tableData.hedgeFundsNav != null ? tableData.hedgeFundsNav : 0],
+                    ["Tarragon", tableData.privateEquityNav != null ? tableData.privateEquityNav : 0],
+                    ["Terra", tableData.realEstateNav != null ? tableData.realEstateNav : 0],
                     ["Infrastructure", 0],
                     ["NICK MF other", tableData.nickMfOtherNav != null ? tableData.nickMfOtherNav : 0],
                     ["Transfer portfolio", 0],
@@ -268,6 +297,9 @@ export class MonitoringPortfolioComponent extends GoogleChartComponent {
         }
 
         formatter.format(dataNAV,1);
+        formatter1.format(dataNAV, 2);
+        formatter1.format(dataNAV, 3);
+        formatter1.format(dataNAV, 4);
 
         var optionsNAV = {
             showRowNumber: false,
@@ -369,13 +401,13 @@ export class MonitoringPortfolioComponent extends GoogleChartComponent {
                 data.addRows([["Equity portfolio", tableData.equityPortfolioMtd, tableData.equityPortfolioQtd, tableData.equityPortfolioYtd]]);
             }
             if(tableData.hedgeFundsMtd != null || tableData.hedgeFundsQtd != null || tableData.hedgeFundsYtd != null) {
-                data.addRows([["Hedge funds", tableData.hedgeFundsMtd, tableData.hedgeFundsQtd, tableData.hedgeFundsYtd]]);
+                data.addRows([["Singularity Consolidated", tableData.hedgeFundsMtd, tableData.hedgeFundsQtd, tableData.hedgeFundsYtd]]);
             }
             if(tableData.privateEquityMtd != null || tableData.privateEquityQtd != null || tableData.privateEquityYtd != null) {
-                data.addRows([["Private equity", tableData.privateEquityMtd, tableData.privateEquityQtd, tableData.privateEquityYtd]]);
+                data.addRows([["Tarragon", tableData.privateEquityMtd, tableData.privateEquityQtd, tableData.privateEquityYtd]]);
             }
             if(tableData.realEstateMtd != null || tableData.realEstateQtd != null || tableData.realEstateYtd != null) {
-                data.addRows([["Real estate", tableData.realEstateMtd, tableData.realEstateQtd, tableData.realEstateYtd]]);
+                data.addRows([["Terra", tableData.realEstateMtd, tableData.realEstateQtd, tableData.realEstateYtd]]);
             }
             if(tableData.nickMfOtherMtd != null || tableData.nickMfOtherQtd != null || tableData.nickMfOtherYtd != null) {
                 data.addRows([["NICK Mf other", tableData.nickMfOtherMtd, tableData.nickMfOtherQtd, tableData.nickMfOtherYtd]]);
@@ -582,9 +614,9 @@ export class MonitoringPortfolioComponent extends GoogleChartComponent {
             ["Transition portfolio", 0],
             ["Fixed portfolio", 10],
             ["Equity portfolio", 10],
-            ["Hedge funds", 10],
-            ["Private equity", 40],
-            ["Real estate", 20],
+            ["Singularity Consolidated", 10],
+            ["Tarragon", 40],
+            ["Terra", 20],
             ["Infrastructure", 10],
             ["NICK MF other", 0],
             ["Transfer portfolio", 0],
