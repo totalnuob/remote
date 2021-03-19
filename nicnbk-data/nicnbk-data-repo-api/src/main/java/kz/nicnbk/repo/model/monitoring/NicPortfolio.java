@@ -48,10 +48,40 @@ public class NicPortfolio extends BaseEntity {
     private Double hedgeFundsQtd;
     private Double hedgeFundsYtd;
 
+    private Double hedgeFundsClassANav;
+    private Double hedgeFundsClassAMtd;
+    private Double hedgeFundsClassAQtd;
+    private Double hedgeFundsClassAYtd;
+
+    private Double hedgeFundsClassBNav;
+    private Double hedgeFundsClassBMtd;
+    private Double hedgeFundsClassBQtd;
+    private Double hedgeFundsClassBYtd;
+
     private Double privateEquityNav;
     private Double privateEquityMtd;
     private Double privateEquityQtd;
     private Double privateEquityYtd;
+
+    private Double privateEquityTarragonANav;
+    private Double privateEquityTarragonAMtd;
+    private Double privateEquityTarragonAQtd;
+    private Double privateEquityTarragonAYtd;
+
+    private Double privateEquityTarragonA2Nav;
+    private Double privateEquityTarragonA2Mtd;
+    private Double privateEquityTarragonA2Qtd;
+    private Double privateEquityTarragonA2Ytd;
+
+    private Double privateEquityTarragonBNav;
+    private Double privateEquityTarragonBMtd;
+    private Double privateEquityTarragonBQtd;
+    private Double privateEquityTarragonBYtd;
+
+    private Double privateEquityTarragonB2Nav;
+    private Double privateEquityTarragonB2Mtd;
+    private Double privateEquityTarragonB2Qtd;
+    private Double privateEquityTarragonB2Ytd;
 
     private Double realEstateNav;
     private Double realEstateMtd;
@@ -71,7 +101,7 @@ public class NicPortfolio extends BaseEntity {
     public NicPortfolio() {
     }
 
-    public NicPortfolio(Employee updater, Files file, Date date, Double nicTotalAumNav, Double transitionPortfolioNav, Double transitionPortfolioMtd, Double transitionPortfolioQtd, Double transitionPortfolioYtd, Double alternativePortfolioNav, Double alternativePortfolioMtd, Double alternativePortfolioQtd, Double alternativePortfolioYtd, Double fixedPortfolioNav, Double fixedPortfolioMtd, Double fixedPortfolioQtd, Double fixedPortfolioYtd, Double equityPortfolioNav, Double equityPortfolioMtd, Double equityPortfolioQtd, Double equityPortfolioYtd, Double hedgeFundsNav, Double hedgeFundsMtd, Double hedgeFundsQtd, Double hedgeFundsYtd, Double privateEquityNav, Double privateEquityMtd, Double privateEquityQtd, Double privateEquityYtd, Double realEstateNav, Double realEstateMtd, Double realEstateQtd, Double realEstateYtd, Double nickMfOtherNav, Double nickMfOtherMtd, Double nickMfOtherQtd, Double nickMfOtherYtd, Double transferNav, Double transferMtd, Double transferQtd, Double transferYtd) {
+    public NicPortfolio(Employee updater, Files file, Date date, Double nicTotalAumNav, Double transitionPortfolioNav, Double transitionPortfolioMtd, Double transitionPortfolioQtd, Double transitionPortfolioYtd, Double alternativePortfolioNav, Double alternativePortfolioMtd, Double alternativePortfolioQtd, Double alternativePortfolioYtd, Double fixedPortfolioNav, Double fixedPortfolioMtd, Double fixedPortfolioQtd, Double fixedPortfolioYtd, Double equityPortfolioNav, Double equityPortfolioMtd, Double equityPortfolioQtd, Double equityPortfolioYtd, Double hedgeFundsNav, Double hedgeFundsMtd, Double hedgeFundsQtd, Double hedgeFundsYtd, Double hedgeFundsClassANav, Double hedgeFundsClassAMtd, Double hedgeFundsClassAQtd, Double hedgeFundsClassAYtd, Double hedgeFundsClassBNav, Double hedgeFundsClassBMtd, Double hedgeFundsClassBQtd, Double hedgeFundsClassBYtd, Double privateEquityNav, Double privateEquityMtd, Double privateEquityQtd, Double privateEquityYtd, Double privateEquityTarragonANav, Double privateEquityTarragonAMtd, Double privateEquityTarragonAQtd, Double privateEquityTarragonAYtd, Double privateEquityTarragonA2Nav, Double privateEquityTarragonA2Mtd, Double privateEquityTarragonA2Qtd, Double privateEquityTarragonA2Ytd, Double privateEquityTarragonBNav, Double privateEquityTarragonBMtd, Double privateEquityTarragonBQtd, Double privateEquityTarragonBYtd, Double privateEquityTarragonB2Nav, Double privateEquityTarragonB2Mtd, Double privateEquityTarragonB2Qtd, Double privateEquityTarragonB2Ytd, Double realEstateNav, Double realEstateMtd, Double realEstateQtd, Double realEstateYtd, Double nickMfOtherNav, Double nickMfOtherMtd, Double nickMfOtherQtd, Double nickMfOtherYtd, Double transferNav, Double transferMtd, Double transferQtd, Double transferYtd) {
         this.updater = updater;
         this.file = file;
         this.date = date;
@@ -96,10 +126,34 @@ public class NicPortfolio extends BaseEntity {
         this.hedgeFundsMtd = hedgeFundsMtd;
         this.hedgeFundsQtd = hedgeFundsQtd;
         this.hedgeFundsYtd = hedgeFundsYtd;
+        this.hedgeFundsClassANav = hedgeFundsClassANav;
+        this.hedgeFundsClassAMtd = hedgeFundsClassAMtd;
+        this.hedgeFundsClassAQtd = hedgeFundsClassAQtd;
+        this.hedgeFundsClassAYtd = hedgeFundsClassAYtd;
+        this.hedgeFundsClassBNav = hedgeFundsClassBNav;
+        this.hedgeFundsClassBMtd = hedgeFundsClassBMtd;
+        this.hedgeFundsClassBQtd = hedgeFundsClassBQtd;
+        this.hedgeFundsClassBYtd = hedgeFundsClassBYtd;
         this.privateEquityNav = privateEquityNav;
         this.privateEquityMtd = privateEquityMtd;
         this.privateEquityQtd = privateEquityQtd;
         this.privateEquityYtd = privateEquityYtd;
+        this.privateEquityTarragonANav = privateEquityTarragonANav;
+        this.privateEquityTarragonAMtd = privateEquityTarragonAMtd;
+        this.privateEquityTarragonAQtd = privateEquityTarragonAQtd;
+        this.privateEquityTarragonAYtd = privateEquityTarragonAYtd;
+        this.privateEquityTarragonA2Nav = privateEquityTarragonA2Nav;
+        this.privateEquityTarragonA2Mtd = privateEquityTarragonA2Mtd;
+        this.privateEquityTarragonA2Qtd = privateEquityTarragonA2Qtd;
+        this.privateEquityTarragonA2Ytd = privateEquityTarragonA2Ytd;
+        this.privateEquityTarragonBNav = privateEquityTarragonBNav;
+        this.privateEquityTarragonBMtd = privateEquityTarragonBMtd;
+        this.privateEquityTarragonBQtd = privateEquityTarragonBQtd;
+        this.privateEquityTarragonBYtd = privateEquityTarragonBYtd;
+        this.privateEquityTarragonB2Nav = privateEquityTarragonB2Nav;
+        this.privateEquityTarragonB2Mtd = privateEquityTarragonB2Mtd;
+        this.privateEquityTarragonB2Qtd = privateEquityTarragonB2Qtd;
+        this.privateEquityTarragonB2Ytd = privateEquityTarragonB2Ytd;
         this.realEstateNav = realEstateNav;
         this.realEstateMtd = realEstateMtd;
         this.realEstateQtd = realEstateQtd;
@@ -310,6 +364,70 @@ public class NicPortfolio extends BaseEntity {
         this.hedgeFundsYtd = hedgeFundsYtd;
     }
 
+    public Double getHedgeFundsClassANav() {
+        return hedgeFundsClassANav;
+    }
+
+    public void setHedgeFundsClassANav(Double hedgeFundsClassANav) {
+        this.hedgeFundsClassANav = hedgeFundsClassANav;
+    }
+
+    public Double getHedgeFundsClassAMtd() {
+        return hedgeFundsClassAMtd;
+    }
+
+    public void setHedgeFundsClassAMtd(Double hedgeFundsClassAMtd) {
+        this.hedgeFundsClassAMtd = hedgeFundsClassAMtd;
+    }
+
+    public Double getHedgeFundsClassAQtd() {
+        return hedgeFundsClassAQtd;
+    }
+
+    public void setHedgeFundsClassAQtd(Double hedgeFundsClassAQtd) {
+        this.hedgeFundsClassAQtd = hedgeFundsClassAQtd;
+    }
+
+    public Double getHedgeFundsClassAYtd() {
+        return hedgeFundsClassAYtd;
+    }
+
+    public void setHedgeFundsClassAYtd(Double hedgeFundsClassAYtd) {
+        this.hedgeFundsClassAYtd = hedgeFundsClassAYtd;
+    }
+
+    public Double getHedgeFundsClassBNav() {
+        return hedgeFundsClassBNav;
+    }
+
+    public void setHedgeFundsClassBNav(Double hedgeFundsClassBNav) {
+        this.hedgeFundsClassBNav = hedgeFundsClassBNav;
+    }
+
+    public Double getHedgeFundsClassBMtd() {
+        return hedgeFundsClassBMtd;
+    }
+
+    public void setHedgeFundsClassBMtd(Double hedgeFundsClassBMtd) {
+        this.hedgeFundsClassBMtd = hedgeFundsClassBMtd;
+    }
+
+    public Double getHedgeFundsClassBQtd() {
+        return hedgeFundsClassBQtd;
+    }
+
+    public void setHedgeFundsClassBQtd(Double hedgeFundsClassBQtd) {
+        this.hedgeFundsClassBQtd = hedgeFundsClassBQtd;
+    }
+
+    public Double getHedgeFundsClassBYtd() {
+        return hedgeFundsClassBYtd;
+    }
+
+    public void setHedgeFundsClassBYtd(Double hedgeFundsClassBYtd) {
+        this.hedgeFundsClassBYtd = hedgeFundsClassBYtd;
+    }
+
     public Double getPrivateEquityNav() {
         return privateEquityNav;
     }
@@ -340,6 +458,134 @@ public class NicPortfolio extends BaseEntity {
 
     public void setPrivateEquityYtd(Double privateEquityYtd) {
         this.privateEquityYtd = privateEquityYtd;
+    }
+
+    public Double getPrivateEquityTarragonANav() {
+        return privateEquityTarragonANav;
+    }
+
+    public void setPrivateEquityTarragonANav(Double privateEquityTarragonANav) {
+        this.privateEquityTarragonANav = privateEquityTarragonANav;
+    }
+
+    public Double getPrivateEquityTarragonAMtd() {
+        return privateEquityTarragonAMtd;
+    }
+
+    public void setPrivateEquityTarragonAMtd(Double privateEquityTarragonAMtd) {
+        this.privateEquityTarragonAMtd = privateEquityTarragonAMtd;
+    }
+
+    public Double getPrivateEquityTarragonAQtd() {
+        return privateEquityTarragonAQtd;
+    }
+
+    public void setPrivateEquityTarragonAQtd(Double privateEquityTarragonAQtd) {
+        this.privateEquityTarragonAQtd = privateEquityTarragonAQtd;
+    }
+
+    public Double getPrivateEquityTarragonAYtd() {
+        return privateEquityTarragonAYtd;
+    }
+
+    public void setPrivateEquityTarragonAYtd(Double privateEquityTarragonAYtd) {
+        this.privateEquityTarragonAYtd = privateEquityTarragonAYtd;
+    }
+
+    public Double getPrivateEquityTarragonA2Nav() {
+        return privateEquityTarragonA2Nav;
+    }
+
+    public void setPrivateEquityTarragonA2Nav(Double privateEquityTarragonA2Nav) {
+        this.privateEquityTarragonA2Nav = privateEquityTarragonA2Nav;
+    }
+
+    public Double getPrivateEquityTarragonA2Mtd() {
+        return privateEquityTarragonA2Mtd;
+    }
+
+    public void setPrivateEquityTarragonA2Mtd(Double privateEquityTarragonA2Mtd) {
+        this.privateEquityTarragonA2Mtd = privateEquityTarragonA2Mtd;
+    }
+
+    public Double getPrivateEquityTarragonA2Qtd() {
+        return privateEquityTarragonA2Qtd;
+    }
+
+    public void setPrivateEquityTarragonA2Qtd(Double privateEquityTarragonA2Qtd) {
+        this.privateEquityTarragonA2Qtd = privateEquityTarragonA2Qtd;
+    }
+
+    public Double getPrivateEquityTarragonA2Ytd() {
+        return privateEquityTarragonA2Ytd;
+    }
+
+    public void setPrivateEquityTarragonA2Ytd(Double privateEquityTarragonA2Ytd) {
+        this.privateEquityTarragonA2Ytd = privateEquityTarragonA2Ytd;
+    }
+
+    public Double getPrivateEquityTarragonBNav() {
+        return privateEquityTarragonBNav;
+    }
+
+    public void setPrivateEquityTarragonBNav(Double privateEquityTarragonBNav) {
+        this.privateEquityTarragonBNav = privateEquityTarragonBNav;
+    }
+
+    public Double getPrivateEquityTarragonBMtd() {
+        return privateEquityTarragonBMtd;
+    }
+
+    public void setPrivateEquityTarragonBMtd(Double privateEquityTarragonBMtd) {
+        this.privateEquityTarragonBMtd = privateEquityTarragonBMtd;
+    }
+
+    public Double getPrivateEquityTarragonBQtd() {
+        return privateEquityTarragonBQtd;
+    }
+
+    public void setPrivateEquityTarragonBQtd(Double privateEquityTarragonBQtd) {
+        this.privateEquityTarragonBQtd = privateEquityTarragonBQtd;
+    }
+
+    public Double getPrivateEquityTarragonBYtd() {
+        return privateEquityTarragonBYtd;
+    }
+
+    public void setPrivateEquityTarragonBYtd(Double privateEquityTarragonBYtd) {
+        this.privateEquityTarragonBYtd = privateEquityTarragonBYtd;
+    }
+
+    public Double getPrivateEquityTarragonB2Nav() {
+        return privateEquityTarragonB2Nav;
+    }
+
+    public void setPrivateEquityTarragonB2Nav(Double privateEquityTarragonB2Nav) {
+        this.privateEquityTarragonB2Nav = privateEquityTarragonB2Nav;
+    }
+
+    public Double getPrivateEquityTarragonB2Mtd() {
+        return privateEquityTarragonB2Mtd;
+    }
+
+    public void setPrivateEquityTarragonB2Mtd(Double privateEquityTarragonB2Mtd) {
+        this.privateEquityTarragonB2Mtd = privateEquityTarragonB2Mtd;
+    }
+
+    public Double getPrivateEquityTarragonB2Qtd() {
+        return privateEquityTarragonB2Qtd;
+    }
+
+    public void setPrivateEquityTarragonB2Qtd(Double privateEquityTarragonB2Qtd) {
+        this.privateEquityTarragonB2Qtd = privateEquityTarragonB2Qtd;
+    }
+
+    public Double getPrivateEquityTarragonB2Ytd() {
+        return privateEquityTarragonB2Ytd;
+    }
+
+    public void setPrivateEquityTarragonB2Ytd(Double privateEquityTarragonB2Ytd) {
+        this.privateEquityTarragonB2Ytd = privateEquityTarragonB2Ytd;
     }
 
     public Double getRealEstateNav() {
