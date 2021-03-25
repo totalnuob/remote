@@ -84,8 +84,6 @@ public class NicPortfolioServiceImpl implements NicPortfolioService {
         return new NicPortfolioResultDto(null, ResponseStatusType.FAIL, "", "Failed to load NIC Portfolio data!", "");
     }
 
-
-
     @Override
     public NicPortfolioResultDto upload(Set<FilesDto> filesDtoSet, String updater) {
 
@@ -209,61 +207,131 @@ public class NicPortfolioServiceImpl implements NicPortfolioService {
                     new Files(),
                     row.getCell(0).getDateCellValue(),
                     ExcelUtils.getDoubleValueFromCell(row.getCell(3)),
-                    // Transition
-                    ExcelUtils.getDoubleValueFromCell(row.getCell(88)),
+
                     ExcelUtils.getDoubleValueFromCell(row.getCell(92)),
-                    ExcelUtils.getDoubleValueFromCell(row.getCell(93)),
-                    ExcelUtils.getDoubleValueFromCell(row.getCell(94)),
-                    // Alternative
-                    ExcelUtils.getDoubleValueFromCell(row.getCell(23)),
-                    ExcelUtils.getDoubleValueFromCell(row.getCell(26)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(96)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(97)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(98)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(99)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(108)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(109)),
+
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(24)),
                     ExcelUtils.getDoubleValueFromCell(row.getCell(27)),
                     ExcelUtils.getDoubleValueFromCell(row.getCell(28)),
-                    // Fixed
-                    ExcelUtils.getDoubleValueFromCell(row.getCell(44)),
-                    ExcelUtils.getDoubleValueFromCell(row.getCell(48)),
-                    ExcelUtils.getDoubleValueFromCell(row.getCell(49)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(29)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(30)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(39)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(40)),
+
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(46)),
                     ExcelUtils.getDoubleValueFromCell(row.getCell(50)),
-                    // Equity
-                    ExcelUtils.getDoubleValueFromCell(row.getCell(66)),
-                    ExcelUtils.getDoubleValueFromCell(row.getCell(70)),
-                    ExcelUtils.getDoubleValueFromCell(row.getCell(71)),
-                    ExcelUtils.getDoubleValueFromCell(row.getCell(72)),
-                    // Hedge funds - Consolidated
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(51)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(52)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(53)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(62)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(63)),
+
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(69)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(73)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(74)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(75)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(76)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(85)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(86)),
+
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(136)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(140)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(141)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(142)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(143)),
                     ExcelUtils.getDoubleValueFromCell(row.getCell(152)),
-                    ExcelUtils.getDoubleValueFromCell(row.getCell(157)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(153)),
+
                     ExcelUtils.getDoubleValueFromCell(row.getCell(158)),
-                    ExcelUtils.getDoubleValueFromCell(row.getCell(159)),
-                    // Hedge funds - CLASS A
-                    ExcelUtils.getDoubleValueFromCell(row.getCell(174)),
-                    ExcelUtils.getDoubleValueFromCell(row.getCell(179)),
-                    ExcelUtils.getDoubleValueFromCell(row.getCell(180)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(163)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(164)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(165)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(166)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(175)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(176)),
+
                     ExcelUtils.getDoubleValueFromCell(row.getCell(181)),
-                    // Hedge funds - CLASS B
-                    ExcelUtils.getDoubleValueFromCell(row.getCell(196)),
-                    ExcelUtils.getDoubleValueFromCell(row.getCell(201)),
-                    ExcelUtils.getDoubleValueFromCell(row.getCell(202)),
-                    ExcelUtils.getDoubleValueFromCell(row.getCell(203)),
-                    // Private equity
-                    ExcelUtils.getDoubleValueFromCell(row.getCell(218)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(186)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(187)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(188)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(189)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(198)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(199)),
+
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(204)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(209)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(210)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(211)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(212)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(221)),
                     ExcelUtils.getDoubleValueFromCell(row.getCell(222)),
-                    ExcelUtils.getDoubleValueFromCell(row.getCell(223)),
-                    ExcelUtils.getDoubleValueFromCell(row.getCell(224)),
-                    // Real estate
-                    ExcelUtils.getDoubleValueFromCell(row.getCell(240)),
+
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(227)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(231)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(232)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(233)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(234)),
                     ExcelUtils.getDoubleValueFromCell(row.getCell(244)),
                     ExcelUtils.getDoubleValueFromCell(row.getCell(245)),
-                    ExcelUtils.getDoubleValueFromCell(row.getCell(246)),
-                    // NICK MF
-                    ExcelUtils.getDoubleValueFromCell(row.getCell(272)),
-                    ExcelUtils.getDoubleValueFromCell(row.getCell(275)),
-                    ExcelUtils.getDoubleValueFromCell(row.getCell(276)),
+
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(250)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(254)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(255)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(256)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(257)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(267)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(268)),
+
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(273)),
                     ExcelUtils.getDoubleValueFromCell(row.getCell(277)),
-                    // Transfer
-                    ExcelUtils.getDoubleValueFromCell(row.getCell(110)),
-                    ExcelUtils.getDoubleValueFromCell(row.getCell(114)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(278)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(279)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(280)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(290)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(291)),
+
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(296)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(300)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(301)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(302)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(303)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(313)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(314)),
+
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(319)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(323)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(324)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(325)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(326)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(336)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(337)),
+
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(342)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(346)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(347)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(348)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(349)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(358)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(359)),
+
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(375)),
+//                    ExcelUtils.getDoubleValueFromCell(row.getCell(275)),
+//                    ExcelUtils.getDoubleValueFromCell(row.getCell(276)),
+//                    ExcelUtils.getDoubleValueFromCell(row.getCell(277)),
+                    null,
+                    null,
+                    null,
+
                     ExcelUtils.getDoubleValueFromCell(row.getCell(115)),
-                    ExcelUtils.getDoubleValueFromCell(row.getCell(116))
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(119)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(120)),
+                    ExcelUtils.getDoubleValueFromCell(row.getCell(121))
             );
         } catch (Exception ex) {
             logger.error("Failed to update NIC Portfolio data: row parsing error, ", ex);
@@ -304,7 +372,7 @@ public class NicPortfolioServiceImpl implements NicPortfolioService {
                         InputStream inputStream = new FileInputStream(path+name);
                         excelFile.setInputStream(inputStream);
 
-                        setExportZipContent(excelFile.getOutputFileName(), out, excelFile);
+                        setExportZipContent("file_" + String.valueOf(i) + ".xlsx", out, excelFile);
                     }
 
                     out.close();
@@ -319,12 +387,6 @@ public class NicPortfolioServiceImpl implements NicPortfolioService {
             }
         }
         return null;
-    }
-
-    @Override
-    public Date getMostRecentDate() {
-        Date mostRecentDate = this.repository.getMostRecentDate();
-        return mostRecentDate;
     }
 
     private void setExportZipContent(String fileName, ZipOutputStream out, FilesDto filesDto){
