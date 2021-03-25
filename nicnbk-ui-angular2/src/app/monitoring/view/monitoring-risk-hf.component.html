@@ -175,7 +175,8 @@
             <div *ngIf="canEdit()">
                 <form #yourForm="ngForm" (ngSubmit)="onSubmitTopPortfolio()">
                     <label class="btn btn-sm btn-primary">
-                        <input type="file" #fileupload id="fileuploadTopPortfolio" (change)="fileChangeTopPortfolio(fileupload.files)" style="display: none"/>Upload
+                        <input type="file" #fileupload id="fileuploadTopPortfolio" (change)="fileChangeTopPortfolio(fileupload.files)"
+                               data-toggle="tooltip" data-placement="bottom" title="Format: Date, Fund Name, Class, " style="display: none"/>Upload
                     </label>
                     <button type="submit" class="btn btn-sm btn-success" *ngIf="this.myFilesTopPortfolio.length > 0">Submit</button>
                 </form>

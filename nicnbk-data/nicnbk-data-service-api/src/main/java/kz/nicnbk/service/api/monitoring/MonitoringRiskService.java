@@ -25,8 +25,6 @@ public interface MonitoringRiskService {
 
     ByteArrayInputStream exportTopPortfolio(Date date);
 
-    MonitoringRiskHedgeFundAllocationResultDto deleteTopPortfolio(Date date, String updater);
-
     boolean deletePortfolios(Date date, String updater);
 
     ByteArrayInputStream exportStrategy(Date date);

@@ -1243,14 +1243,6 @@ public class MonitoringRiskServiceImpl implements MonitoringRiskService {
     }
     /* ****************************************************************************************************************/
 
-//    private EntitySaveResponseDto saveHFPortfolioVar(MonitoringRiskHedgeFundPortfolioVarDto dto) {
-//        EntitySaveResponseDto saveResponse = new EntitySaveResponseDto();
-//
-//    }
-//
-//    private EntitySaveResponseDto saveStressTest(MonitoringRiskHedgeFundStressTestDto dto) {
-//
-//    }
     @Override
     public ByteArrayInputStream exportTopPortfolio(Date date) {
         String[] columns = {"Date", "Name", "Class", "NAV",
@@ -1365,47 +1357,6 @@ public class MonitoringRiskServiceImpl implements MonitoringRiskService {
     }
 
     @Override
-    public MonitoringRiskHedgeFundAllocationResultDto deleteTopPortfolio(Date selectedDate, String updater) {
-        try {
-            Employee employee = this.employeeRepository.findByUsername(updater);
-
-            if (employee == null) {
-                logger.error("Failed to delete Top Portfolio data: the user is not found in the database!");
-                return new MonitoringRiskHedgeFundAllocationResultDto(null, ResponseStatusType.FAIL, "", "Failed to delete Top Portfolio data: the user is not found in the database!", "");
-            }
-
-            List<Long> portfoliosToDelete = new ArrayList<>();
-            List<Long> filesToDelete = new ArrayList<>();
-            List<AllocationByTopPortfolio> matchingFunds = this.topPortfolioRepository.findAllocationsByDate(selectedDate);
-
-            for (AllocationByTopPortfolio portfolio : matchingFunds) {
-                if (portfolio.getFile() != null && portfolio.getDate().equals(selectedDate)) {
-                    portfoliosToDelete.add(portfolio.getId());
-                    if ( ! filesToDelete.contains(portfolio.getFile().getId())) {
-                        filesToDelete.add(portfolio.getFile().getId());
-                    }
-                }
-            }
-
-
-            for (Long id : portfoliosToDelete) {
-                this.topPortfolioRepository.delete(id);
-            }
-
-            for (Long id : filesToDelete) {
-                this.fileService.delete(id);
-            }
-
-            logger.info("Top Portfolio data has been deleted successfully, updater: " + updater);
-//        List<MonitoringRiskHedgeFundFundAllocationDto> allocationSubStrategyDtos = this.topPortfolioEntityConverter.disassembleList(this.topPortfolioRepository.findAllByOrderByDateAsc());
-            return new MonitoringRiskHedgeFundAllocationResultDto(null, ResponseStatusType.SUCCESS, "", "Top Portfolio data has been deleted successfully!", "");
-        } catch (Exception ex) {
-            logger.error("Failed to delete Top Portfolio data: repository problem, ", ex);
-            return new MonitoringRiskHedgeFundAllocationResultDto(null, ResponseStatusType.FAIL, "", "Failed to delete Top Portfolio data: repository problem!", "");
-        }
-    }
-
-    @Override
     public MonitoringRiskHedgeFundAllocationResultDto uploadTopPortfolio(Set<FilesDto> filesDtoSet, String updater) {
 
         try {
@@ -1476,26 +1427,6 @@ public class MonitoringRiskServiceImpl implements MonitoringRiskService {
                     }
 
                     this.topPortfolioRepository.save(allocationByTopPortfolioList);
-
-                    List<Long> portfoliosToDelete = new ArrayList<>();
-                    List<Long> filesToDelete = new ArrayList<>();
-
-                    for (AllocationByTopPortfolio allocationByTopPortfolio : this.topPortfolioRepository.findAll()) {
-                        if (allocationByTopPortfolio.getFile() != null && allocationByTopPortfolio.getFile().getId().equals(fileId)) {
-                            portfoliosToDelete.add(allocationByTopPortfolio.getId());
-                            if ( ! filesToDelete.contains(allocationByTopPortfolio.getFile().getId())) {
-                                filesToDelete.add(allocationByTopPortfolio.getFile().getId());
-                            }
-                        }
-                    }
-
-                    for (Long id : portfoliosToDelete) {
-                        this.topPortfolioRepository.delete(id);
-                    }
-
-                    for (Long id : filesToDelete) {
-                        this.fileService.delete(id);
-                    }
                 }
             } catch (Exception ex) {
                 logger.error("Failed to update Top Portfolio data: repository problem, ", ex);
@@ -1708,26 +1639,6 @@ public class MonitoringRiskServiceImpl implements MonitoringRiskService {
                     }
 
                     this.subStrategyRepository.save(allocationBySubStrategyList);
-
-                    List<Long> strategiesToDelete = new ArrayList<>();
-                    List<Long> filesToDelete = new ArrayList<>();
-
-                    for (AllocationBySubStrategy allocationBySubStrategy : this.subStrategyRepository.findAll()) {
-                        if (allocationBySubStrategy.getFile() != null && allocationBySubStrategy.getFile().getId().equals(fileId)) {
-                            strategiesToDelete.add(allocationBySubStrategy.getId());
-                            if ( ! filesToDelete.contains(allocationBySubStrategy.getFile().getId())) {
-                                filesToDelete.add(allocationBySubStrategy.getFile().getId());
-                            }
-                        }
-                    }
-
-                    for (Long id : strategiesToDelete) {
-                        this.subStrategyRepository.delete(id);
-                    }
-
-                    for (Long id : filesToDelete) {
-                        this.fileService.delete(id);
-                    }
                 }
             } catch (Exception ex) {
                 logger.error("Failed to update Sub-strategy data: repository problem, ", ex);
