@@ -389,6 +389,12 @@ public class NicPortfolioServiceImpl implements NicPortfolioService {
         return null;
     }
 
+    @Override
+    public Date getMostRecentDate() {
+        Date mostRecentDate = this.repository.getMostRecentDate();
+        return mostRecentDate;
+    }
+
     private void setExportZipContent(String fileName, ZipOutputStream out, FilesDto filesDto){
         try {
             ZipEntry e = new ZipEntry(fileName);
