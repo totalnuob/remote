@@ -184,6 +184,15 @@
                 </div>
             </div>
             <br>
+            <div class="btn-toolbar">
+                <form #yourForm="ngForm" (ngSubmit)="onDeleteTopPortfolio()">
+                    <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                </form>
+                <form #yourForm="ngForm" (ngSubmit)="onExportTopPortfolio()">
+                    <button type="submit" class="btn btn-sm btn-success" style="margin-right: 3px">Export</button>
+                </form>
+            </div>
+            <br>
             <div class="alert alert-danger small" *ngIf="selectedDateMonitoringInfo?.topFundAllocationsError != null">
                 <span>{{selectedDateMonitoringInfo?.topFundAllocationsError}}</span>
             </div>
@@ -234,6 +243,13 @@
                 <span>{{file.name}}</span>
             </div>
         </div>
+        <form #yourForm="ngForm" (ngSubmit)="onDeleteSubStrategy()">
+            <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+        </form>
+        <form #yourForm="ngForm" (ngSubmit)="onExportSubStrategy()">
+            <button type="submit" class="btn btn-sm btn-success" style="margin-right: 3px">Export</button>
+        </form>
+    </div>
         <div class="row">
             <div id="allocation123" style="height: 500px;">
             </div>

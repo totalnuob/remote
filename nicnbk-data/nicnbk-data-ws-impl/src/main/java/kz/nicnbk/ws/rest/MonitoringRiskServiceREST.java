@@ -6,9 +6,11 @@ import kz.nicnbk.service.api.monitoring.MonitoringRiskService;
 import kz.nicnbk.service.dto.common.EntitySaveResponseDto;
 import kz.nicnbk.service.dto.files.FilesDto;
 import kz.nicnbk.service.dto.monitoring.*;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -16,6 +18,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -68,6 +75,37 @@ public class MonitoringRiskServiceREST extends CommonServiceREST {
         }
     }
 
+    @PreAuthorize("hasRole('ROLE_RISKS_EDITOR') OR hasRole('ROLE_RISKS_VIEWER') OR hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/strategy/export", method = RequestMethod.POST)
+    public void exportStrategy(@RequestBody Date selectedDate,
+                                   HttpServletResponse response) {
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
+        try {
+            response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+            response.setHeader("Content-disposition", "attachment;");
+            ByteArrayInputStream stream = this.riskService.exportStrategy(selectedDate);
+            IOUtils.copy(stream, response.getOutputStream());
+            response.flushBuffer();
+        } catch (IOException e) {
+            logger.error("IO Exception");
+        }
+    }
+
+    @PreAuthorize("hasRole('ROLE_RISKS_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/strategy/delete/{selectedDate}", method = RequestMethod.GET)
+    public ResponseEntity deleteStrategy(@PathVariable @DateTimeFormat(pattern="dd-MM-yyyy") Date selectedDate) {
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
+        boolean deleted = this.riskService.deleteStrategy(selectedDate, username);
+        if(deleted){
+            logger.info("Successfully deleted Top Portfolio record: record date " + selectedDate + " [user " + username + "]");
+        }else{
+            logger.error("Failed to delete Top Portfolio record: record date " + selectedDate + " [user " + username + "]");
+        }
+        return buildDeleteResponseEntity(deleted);
+    }
+
     @PreAuthorize("hasRole('ROLE_RISKS_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/topPortfolio/upload", method = RequestMethod.POST)
     public ResponseEntity uploadTopPortfolio(@RequestParam(value = "file", required = false) MultipartFile[] files) {
@@ -83,6 +121,37 @@ public class MonitoringRiskServiceREST extends CommonServiceREST {
         } else {
             return new ResponseEntity<>(resultDto, null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @PreAuthorize("hasRole('ROLE_RISKS_EDITOR') OR hasRole('ROLE_RISKS_VIEWER') OR hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/topPortfolio/export", method = RequestMethod.POST)
+    public void exportTopPortfolio(@RequestBody Date selectedDate,
+                                   HttpServletResponse response) {
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
+        try {
+            response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+            response.setHeader("Content-disposition", "attachment;");
+            ByteArrayInputStream stream = this.riskService.exportTopPortfolio(selectedDate);
+            IOUtils.copy(stream, response.getOutputStream());
+            response.flushBuffer();
+        } catch (IOException e) {
+            logger.error("IO Exception");
+        }
+    }
+
+    @PreAuthorize("hasRole('ROLE_RISKS_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/topPortfolio/delete/{selectedDate}", method = RequestMethod.GET)
+    public ResponseEntity deleteTopPortfolio(@PathVariable @DateTimeFormat(pattern="dd-MM-yyyy") Date selectedDate) {
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
+        boolean deleted = this.riskService.deletePortfolios(selectedDate, username);
+        if(deleted){
+            logger.info("Successfully deleted Top Portfolio record: record date " + selectedDate + " [user " + username + "]");
+        }else{
+            logger.error("Failed to delete Top Portfolio record: record date " + selectedDate + " [user " + username + "]");
+        }
+        return buildDeleteResponseEntity(deleted);
     }
 
 }
