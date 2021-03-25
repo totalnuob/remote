@@ -224,57 +224,276 @@ export class MonitoringPortfolioComponent extends GoogleChartComponent {
         dataNAV.addColumn("number", "MTD");
         dataNAV.addColumn("number", "QTD");
         dataNAV.addColumn("number", "YTD");
+        dataNAV.addColumn("number", "Trailing 12 month");
+        dataNAV.addColumn("number", "Since RP inception (annualized)");
+        dataNAV.addColumn("number", "Since inception (annualized)");
 
         if(tableData != null) {
             if(tableData.nicTotalAumNav != null) {
-                dataNAV.addRows([["NIC total AUM", tableData.nicTotalAumNav, null, null, null]]);
+                dataNAV.addRows([["NIC total AUM", tableData.nicTotalAumNav, null, null, null, null, null, null]]);
                 dataNAV.setProperty(0, 0, 'style', 'font-weight: bold;')
                 dataNAV.setProperty(0, 1, 'style', 'font-weight: bold;')
             }
-            if(tableData.transitionPortfolioNav != null || tableData.transitionPortfolioMtd != null || tableData.transitionPortfolioQtd != null || tableData.transitionPortfolioYtd != null) {
-                dataNAV.addRows([["&nbsp;&nbsp;&nbsp;&nbsp;" + "Transition portfolio", tableData.transitionPortfolioNav, tableData.transitionPortfolioMtd, tableData.transitionPortfolioQtd, tableData.transitionPortfolioYtd]]);
+            if(tableData.transitionPortfolioNav != null ||
+                tableData.transitionPortfolioMtd != null ||
+                tableData.transitionPortfolioQtd != null ||
+                tableData.transitionPortfolioYtd != null ||
+                tableData.transitionPortfolioTrailing != null ||
+                tableData.transitionPortfolioRPInception != null ||
+                tableData.transitionPortfolioInception != null
+            ) {
+                dataNAV.addRows([["&nbsp;&nbsp;&nbsp;&nbsp;" + "Transition portfolio",
+                    tableData.transitionPortfolioNav,
+                    tableData.transitionPortfolioMtd,
+                    tableData.transitionPortfolioQtd,
+                    tableData.transitionPortfolioYtd,
+                    tableData.transitionPortfolioTrailing,
+                    tableData.transitionPortfolioRPInception,
+                    tableData.transitionPortfolioInception
+                ]]);
             }
-            if(tableData.alternativePortfolioNav != null || tableData.alternativePortfolioMtd != null || tableData.alternativePortfolioQtd != null || tableData.alternativePortfolioYtd != null) {
-                dataNAV.addRows([["&nbsp;&nbsp;&nbsp;&nbsp;" + "Alternative portfolio", tableData.alternativePortfolioNav, tableData.alternativePortfolioMtd, tableData.alternativePortfolioQtd, tableData.alternativePortfolioYtd]]);
+            if(tableData.alternativePortfolioNav != null ||
+                tableData.alternativePortfolioMtd != null ||
+                tableData.alternativePortfolioQtd != null ||
+                tableData.alternativePortfolioYtd != null ||
+                tableData.alternativePortfolioTrailing != null ||
+                tableData.alternativePortfolioRPInception != null ||
+                tableData.alternativePortfolioInception != null
+            ) {
+                dataNAV.addRows([["&nbsp;&nbsp;&nbsp;&nbsp;" + "Alternative portfolio",
+                    tableData.alternativePortfolioNav,
+                    tableData.alternativePortfolioMtd,
+                    tableData.alternativePortfolioQtd,
+                    tableData.alternativePortfolioYtd,
+                    tableData.alternativePortfolioTrailing,
+                    tableData.alternativePortfolioRPInception,
+                    tableData.alternativePortfolioInception
+                ]]);
             }
-            if(tableData.fixedPortfolioNav != null || tableData.fixedPortfolioMtd != null || tableData.fixedPortfolioQtd != null || tableData.fixedPortfolioYtd != null) {
-                dataNAV.addRows([["&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + "Fixed portfolio", tableData.fixedPortfolioNav, tableData.fixedPortfolioMtd, tableData.fixedPortfolioQtd, tableData.fixedPortfolioYtd]]);
+            if(tableData.fixedPortfolioNav != null ||
+                tableData.fixedPortfolioMtd != null ||
+                tableData.fixedPortfolioQtd != null ||
+                tableData.fixedPortfolioYtd != null ||
+                tableData.fixedPortfolioTrailing != null ||
+                tableData.fixedPortfolioRPInception != null ||
+                tableData.fixedPortfolioInception != null
+            ) {
+                dataNAV.addRows([["&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + "Fixed portfolio",
+                    tableData.fixedPortfolioNav,
+                    tableData.fixedPortfolioMtd,
+                    tableData.fixedPortfolioQtd,
+                    tableData.fixedPortfolioYtd,
+                    tableData.fixedPortfolioTrailing,
+                    tableData.fixedPortfolioRPInception,
+                    tableData.fixedPortfolioInception
+                ]]);
             }
-            if(tableData.equityPortfolioNav != null || tableData.equityPortfolioMtd != null || tableData.equityPortfolioQtd != null || tableData.equityPortfolioYtd != null) {
-                dataNAV.addRows([["&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + "Equity portfolio", tableData.equityPortfolioNav, tableData.equityPortfolioMtd, tableData.equityPortfolioQtd, tableData.equityPortfolioYtd]]);
+            if(tableData.equityPortfolioNav != null ||
+                tableData.equityPortfolioMtd != null ||
+                tableData.equityPortfolioQtd != null ||
+                tableData.equityPortfolioYtd != null ||
+                tableData.equityPortfolioTrailing != null ||
+                tableData.equityPortfolioRPInception != null ||
+                tableData.equityPortfolioInception != null
+            ) {
+                dataNAV.addRows([["&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + "Equity portfolio",
+                    tableData.equityPortfolioNav,
+                    tableData.equityPortfolioMtd,
+                    tableData.equityPortfolioQtd,
+                    tableData.equityPortfolioYtd,
+                    tableData.equityPortfolioTrailing,
+                    tableData.equityPortfolioRPInception,
+                    tableData.equityPortfolioInception
+                ]]);
             }
-            if(tableData.nickMFConsolidatedNav != null || tableData.nickMFConsolidatedMtd != null || tableData.nickMFConsolidatedQtd != null || tableData.nickMFConsolidatedYtd != null) {
-                dataNAV.addRows([["&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + "NICK Master Fund Consolidated", tableData.nickMFConsolidatedNav, tableData.nickMFConsolidatedMtd, tableData.nickMFConsolidatedQtd, tableData.nickMFConsolidatedYtd]]);
+            if(tableData.nickMFConsolidatedNav != null ||
+                tableData.nickMFConsolidatedMtd != null ||
+                tableData.nickMFConsolidatedQtd != null ||
+                tableData.nickMFConsolidatedYtd != null ||
+                tableData.nickMFConsolidatedTrailing != null ||
+                tableData.nickMFConsolidatedRPInception != null ||
+                tableData.nickMFConsolidatedInception != null
+            ) {
+                dataNAV.addRows([["&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + "NICK Master Fund Consolidated",
+                    tableData.nickMFConsolidatedNav,
+                    tableData.nickMFConsolidatedMtd,
+                    tableData.nickMFConsolidatedQtd,
+                    tableData.nickMFConsolidatedYtd,
+                    tableData.nickMFConsolidatedTrailing,
+                    tableData.nickMFConsolidatedRPInception,
+                    tableData.nickMFConsolidatedInception
+                ]]);
             }
-            if(tableData.hedgeFundsNav != null || tableData.hedgeFundsMtd != null || tableData.hedgeFundsQtd != null || tableData.hedgeFundsYtd != null) {
-                dataNAV.addRows([["&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + "Singularity Consolidated", tableData.hedgeFundsNav, tableData.hedgeFundsMtd, tableData.hedgeFundsQtd, tableData.hedgeFundsYtd]]);
+            if(tableData.hedgeFundsNav != null ||
+                tableData.hedgeFundsMtd != null ||
+                tableData.hedgeFundsQtd != null ||
+                tableData.hedgeFundsYtd != null ||
+                tableData.hedgeFundsTrailing != null ||
+                tableData.hedgeFundsRPInception != null ||
+                tableData.hedgeFundsInception != null
+            ) {
+                dataNAV.addRows([["&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + "Singularity Consolidated",
+                    tableData.hedgeFundsNav,
+                    tableData.hedgeFundsMtd,
+                    tableData.hedgeFundsQtd,
+                    tableData.hedgeFundsYtd,
+                    tableData.hedgeFundsTrailing,
+                    tableData.hedgeFundsRPInception,
+                    tableData.hedgeFundsInception
+                ]]);
             }
-            if(tableData.hedgeFundsClassANav != null || tableData.hedgeFundsClassAMtd != null || tableData.hedgeFundsClassAQtd != null || tableData.hedgeFundsClassAYtd != null) {
-                dataNAV.addRows([["&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + "Singularity A", tableData.hedgeFundsClassANav, tableData.hedgeFundsClassAMtd, tableData.hedgeFundsClassAQtd, tableData.hedgeFundsClassAYtd]]);
+            if(tableData.hedgeFundsClassANav != null ||
+                tableData.hedgeFundsClassAMtd != null ||
+                tableData.hedgeFundsClassAQtd != null ||
+                tableData.hedgeFundsClassAYtd != null ||
+                tableData.hedgeFundsClassATrailing != null ||
+                tableData.hedgeFundsClassARPInception != null ||
+                tableData.hedgeFundsClassAInception != null
+            ) {
+                dataNAV.addRows([["&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + "Singularity A",
+                    tableData.hedgeFundsClassANav,
+                    tableData.hedgeFundsClassAMtd,
+                    tableData.hedgeFundsClassAQtd,
+                    tableData.hedgeFundsClassAYtd,
+                    tableData.hedgeFundsClassATrailing,
+                    tableData.hedgeFundsClassARPInception,
+                    tableData.hedgeFundsClassAInception
+                ]]);
             }
-            if(tableData.hedgeFundsClassBNav != null || tableData.hedgeFundsClassBMtd != null || tableData.hedgeFundsClassBQtd != null || tableData.hedgeFundsClassBYtd != null) {
-                dataNAV.addRows([["&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + "Singularity B", tableData.hedgeFundsClassBNav, tableData.hedgeFundsClassBMtd, tableData.hedgeFundsClassBQtd, tableData.hedgeFundsClassBYtd]]);
+            if(tableData.hedgeFundsClassBNav != null ||
+                tableData.hedgeFundsClassBMtd != null ||
+                tableData.hedgeFundsClassBQtd != null ||
+                tableData.hedgeFundsClassBYtd != null ||
+                tableData.hedgeFundsClassBTrailing != null ||
+                tableData.hedgeFundsClassBRPInception != null ||
+                tableData.hedgeFundsClassBInception != null
+            ) {
+                dataNAV.addRows([["&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + "Singularity B",
+                    tableData.hedgeFundsClassBNav,
+                    tableData.hedgeFundsClassBMtd,
+                    tableData.hedgeFundsClassBQtd,
+                    tableData.hedgeFundsClassBYtd,
+                    tableData.hedgeFundsClassBTrailing,
+                    tableData.hedgeFundsClassBRPInception,
+                    tableData.hedgeFundsClassBInception
+                ]]);
             }
-            if(tableData.privateEquityNav != null || tableData.privateEquityMtd != null || tableData.privateEquityQtd != null || tableData.privateEquityYtd != null) {
-                dataNAV.addRows([["&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + "Tarragon", tableData.privateEquityNav, tableData.privateEquityMtd, tableData.privateEquityQtd, tableData.privateEquityYtd]]);
+            if(tableData.privateEquityNav != null ||
+                tableData.privateEquityMtd != null ||
+                tableData.privateEquityQtd != null ||
+                tableData.privateEquityYtd != null ||
+                tableData.privateEquityTrailing != null ||
+                tableData.privateEquityRPInception != null ||
+                tableData.privateEquityInception != null
+            ) {
+                dataNAV.addRows([["&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + "Tarragon",
+                    tableData.privateEquityNav,
+                    tableData.privateEquityMtd,
+                    tableData.privateEquityQtd,
+                    tableData.privateEquityYtd,
+                    tableData.privateEquityTrailing,
+                    tableData.privateEquityRPInception,
+                    tableData.privateEquityInception
+                ]]);
             }
-            if(tableData.privateEquityTarragonANav != null || tableData.privateEquityTarragonAMtd != null || tableData.privateEquityTarragonAQtd != null || tableData.privateEquityTarragonAYtd != null) {
-                dataNAV.addRows([["&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + "Tarragon A", tableData.privateEquityTarragonANav, tableData.privateEquityTarragonAMtd, tableData.privateEquityTarragonAQtd, tableData.privateEquityTarragonAYtd]]);
+            if(tableData.privateEquityTarragonANav != null ||
+                tableData.privateEquityTarragonAMtd != null ||
+                tableData.privateEquityTarragonAQtd != null ||
+                tableData.privateEquityTarragonAYtd != null ||
+                tableData.privateEquityTarragonATrailing != null ||
+                tableData.privateEquityTarragonARPInception != null ||
+                tableData.privateEquityTarragonAInception != null
+            ) {
+                dataNAV.addRows([["&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + "Tarragon A",
+                    tableData.privateEquityTarragonANav,
+                    tableData.privateEquityTarragonAMtd,
+                    tableData.privateEquityTarragonAQtd,
+                    tableData.privateEquityTarragonAYtd,
+                    tableData.privateEquityTarragonATrailing,
+                    tableData.privateEquityTarragonARPInception,
+                    tableData.privateEquityTarragonAInception
+                ]]);
             }
-            if(tableData.privateEquityTarragonA2Nav != null || tableData.privateEquityTarragonA2Mtd != null || tableData.privateEquityTarragonA2Qtd != null || tableData.privateEquityTarragonA2Ytd != null) {
-                dataNAV.addRows([["&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + "Tarragon A-2", tableData.privateEquityTarragonA2Nav, tableData.privateEquityTarragonA2Mtd, tableData.privateEquityTarragonA2Qtd, tableData.privateEquityTarragonA2Ytd]]);
+            if(tableData.privateEquityTarragonA2Nav != null ||
+                tableData.privateEquityTarragonA2Mtd != null ||
+                tableData.privateEquityTarragonA2Qtd != null ||
+                tableData.privateEquityTarragonA2Ytd != null ||
+                tableData.privateEquityTarragonA2Trailing != null ||
+                tableData.privateEquityTarragonA2RPInception != null ||
+                tableData.privateEquityTarragonA2Inception != null
+            ) {
+                dataNAV.addRows([["&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + "Tarragon A-2",
+                    tableData.privateEquityTarragonA2Nav,
+                    tableData.privateEquityTarragonA2Mtd,
+                    tableData.privateEquityTarragonA2Qtd,
+                    tableData.privateEquityTarragonA2Ytd,
+                    tableData.privateEquityTarragonA2Trailing,
+                    tableData.privateEquityTarragonA2RPInception,
+                    tableData.privateEquityTarragonA2Inception
+                ]]);
             }
-            if(tableData.privateEquityTarragonBNav != null || tableData.privateEquityTarragonBMtd != null || tableData.privateEquityTarragonBQtd != null || tableData.privateEquityTarragonBYtd != null) {
-                dataNAV.addRows([["&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + "Tarragon B", tableData.privateEquityTarragonBNav, tableData.privateEquityTarragonBMtd, tableData.privateEquityTarragonBQtd, tableData.privateEquityTarragonBYtd]]);
+            if(tableData.privateEquityTarragonBNav != null ||
+                tableData.privateEquityTarragonBMtd != null ||
+                tableData.privateEquityTarragonBQtd != null ||
+                tableData.privateEquityTarragonBYtd != null ||
+                tableData.privateEquityTarragonBTrailing != null ||
+                tableData.privateEquityTarragonBRPInception != null ||
+                tableData.privateEquityTarragonBInception != null
+            ) {
+                dataNAV.addRows([["&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + "Tarragon B",
+                    tableData.privateEquityTarragonBNav,
+                    tableData.privateEquityTarragonBMtd,
+                    tableData.privateEquityTarragonBQtd,
+                    tableData.privateEquityTarragonBYtd,
+                    tableData.privateEquityTarragonBTrailing,
+                    tableData.privateEquityTarragonBRPInception,
+                    tableData.privateEquityTarragonBInception
+                ]]);
             }
-            if(tableData.privateEquityTarragonB2Nav != null || tableData.privateEquityTarragonB2Mtd != null || tableData.privateEquityTarragonB2Qtd != null || tableData.privateEquityTarragonB2Ytd != null) {
-                dataNAV.addRows([["&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + "Tarragon B-2", tableData.privateEquityTarragonB2Nav, tableData.privateEquityTarragonB2Mtd, tableData.privateEquityTarragonB2Qtd, tableData.privateEquityTarragonB2Ytd]]);
+            if(tableData.privateEquityTarragonB2Nav != null ||
+                tableData.privateEquityTarragonB2Mtd != null ||
+                tableData.privateEquityTarragonB2Qtd != null ||
+                tableData.privateEquityTarragonB2Ytd != null ||
+                tableData.privateEquityTarragonB2Trailing != null ||
+                tableData.privateEquityTarragonB2RPInception != null ||
+                tableData.privateEquityTarragonB2Inception != null
+            ) {
+                dataNAV.addRows([["&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + "Tarragon B-2",
+                    tableData.privateEquityTarragonB2Nav,
+                    tableData.privateEquityTarragonB2Mtd,
+                    tableData.privateEquityTarragonB2Qtd,
+                    tableData.privateEquityTarragonB2Ytd,
+                    tableData.privateEquityTarragonB2Trailing,
+                    tableData.privateEquityTarragonB2RPInception,
+                    tableData.privateEquityTarragonB2Inception
+                ]]);
             }
-            if(tableData.realEstateNav != null || tableData.realEstateMtd != null || tableData.realEstateQtd != null || tableData.realEstateYtd != null) {
-                dataNAV.addRows([["&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + "Terra", tableData.realEstateNav, tableData.realEstateMtd, tableData.realEstateQtd, tableData.realEstateYtd]]);
+            if(tableData.realEstateNav != null ||
+                tableData.realEstateMtd != null ||
+                tableData.realEstateQtd != null ||
+                tableData.realEstateYtd != null ||
+                tableData.realEstateTrailing != null ||
+                tableData.realEstateRPInception != null ||
+                tableData.realEstateInception != null
+            ) {
+                dataNAV.addRows([["&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + "Terra",
+                    tableData.realEstateNav,
+                    tableData.realEstateMtd,
+                    tableData.realEstateQtd,
+                    tableData.realEstateYtd,
+                    tableData.realEstateTrailing,
+                    tableData.realEstateRPInception,
+                    tableData.realEstateInception
+                ]]);
             }
-            if(tableData.nickMfOtherNav != null || tableData.nickMfOtherMtd != null || tableData.nickMfOtherQtd != null || tableData.nickMfOtherYtd != null) {
-                dataNAV.addRows([["&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + "NICK MF cash, other assets and liabilities", tableData.nickMfOtherNav, tableData.nickMfOtherMtd, tableData.nickMfOtherQtd, tableData.nickMfOtherYtd]]);
+            if(tableData.nickMfOtherNav != null ||
+            tableData.nickMfOtherMtd != null ||
+            tableData.nickMfOtherQtd != null ||
+            tableData.nickMfOtherYtd != null
+            ) {
+                dataNAV.addRows([["&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + "NICK MF cash, other assets and liabilities",
+                    tableData.nickMfOtherNav, null, null, null, null, null, null
+                ]]);
             }
 //             if(tableData.transferNav != null) {
 //                 dataNAV.addRows([["&nbsp;&nbsp;&nbsp;&nbsp;" + "Transfer portfolio", tableData.transferNav]]);
