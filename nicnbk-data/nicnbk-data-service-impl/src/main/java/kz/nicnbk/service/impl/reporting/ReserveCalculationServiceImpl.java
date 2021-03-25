@@ -178,7 +178,9 @@ public class ReserveCalculationServiceImpl implements ReserveCalculationService 
 
             int pageSize = searchParams != null && searchParams.getPageSize() > 0 ? searchParams.getPageSize() : DEFAULT_PAGE_SIZE;
             page = searchParams != null && searchParams.getPage() > 0 ? searchParams.getPage() - 1 : 0;
-            entityPage = reserveCalculationRepository.search(new PageRequest(page, pageSize, new Sort(Sort.Direction.DESC, "date", "id")));
+            entityPage = reserveCalculationRepository.search(searchParams.getExpenseType(), searchParams.getSourceType(),
+                    searchParams.getDestinationType(), searchParams.getDateFromNonEmpty(), searchParams.getDateToNonEmpty(),
+                    new PageRequest(page, pageSize, new Sort(Sort.Direction.DESC, "date", "id")));
 
             ReserveCalculationPagedSearchResult result = new ReserveCalculationPagedSearchResult();
             if (entityPage != null) {
@@ -749,6 +751,7 @@ public class ReserveCalculationServiceImpl implements ReserveCalculationService 
                     FilesDto fileDto = new FilesDto();
                     fileDto.setId(entity.getFile().getId());
                     fileDto.setFileName(entity.getFile().getFileName());
+                    fileDto.setMimeType(entity.getFile().getMimeType());
                     files.add(fileDto);
                 }
             }

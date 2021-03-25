@@ -44,6 +44,7 @@ export class ReserveCalculationFormNBReportingComponent extends CommonNBReportin
 
     searchParams = new ReserveCalculationSearchParams();
     searchResult: ReserveCalculationSearchResults;
+    totalSumRecord = {"amount": 0, "amountToSPV": 0};
 
     private records: ReserveCalculationFormRecord[]
     //private addedRecords: ReserveCalculationFormRecord[];
@@ -52,6 +53,7 @@ export class ReserveCalculationFormNBReportingComponent extends CommonNBReportin
 
     private expenseTypeLookup: BaseDictionary[];
     private entityTypeLookup: BaseDictionary[];
+    private entityTypeLookupNonDeleted: BaseDictionary[];
 
 
     private exportDirectorLookup: BaseDictionary[];
@@ -77,7 +79,7 @@ export class ReserveCalculationFormNBReportingComponent extends CommonNBReportin
         this.moduleAccessChecker = new ModuleAccessCheckerService;
 
         this.records = [];
-        //this.editedRecord = new ReserveCalculationFormRecord();
+        this.searchParams = new ReserveCalculationSearchParams();
 
         this.busy = Observable.forkJoin(
             // Load lookups
@@ -91,9 +93,21 @@ export class ReserveCalculationFormNBReportingComponent extends CommonNBReportin
                 ([data1, data2, data3, data4, data5]) => {
                     this.expenseTypeLookup = data1;
                     this.entityTypeLookup = data2;
+                    if(this.entityTypeLookup != null){
+                        this.entityTypeLookupNonDeleted = [];
+                        for(var i = 0; i < this.entityTypeLookup.length; i++){
+                            if(this.entityTypeLookup[i].deleted == null || !this.entityTypeLookup[i].deleted){
+                                this.entityTypeLookupNonDeleted.push(this.entityTypeLookup[i]);
+                            }
+                        }
+                    }
+                    console.log(this.entityTypeLookupNonDeleted);
                     this.exportDirectorLookup = data3;
                     this.exportDoerLookup = data4;
                     this.exportApproveListLookup =  data5;
+                    if(this.exportApproveListLookup != null && this.exportApproveListLookup.length > 1){
+                        this.exportApproveList.push(this.exportApproveListLookup[1].code);
+                    }
                     this.sub = this.route
                         .params
                         .subscribe(params => {
@@ -116,27 +130,55 @@ export class ReserveCalculationFormNBReportingComponent extends CommonNBReportin
     }
 
     ngOnInit(): any {
+        $('#fromDateDTPickeer').datetimepicker({
+            //defaultDate: new Date(),
+            format: 'DD-MM-YYYY'
+        });
+        $('#untilDateDTPickeer').datetimepicker({
+            //defaultDate: new Date(),
+            format: 'DD-MM-YYYY'
+        });
+    }
+
+    clearSearchForm(){
+        this.searchParams = new ReserveCalculationSearchParams();
     }
 
     search(page?){
         this.searchParams.pageSize = 20;
         if(page) {
             this.searchParams.page = page;
+        }else{
+            this.searchParams.page = 0;
         }
-
+        if(this.searchParams.expenseType != null && this.searchParams.expenseType === 'NONE'){
+            this.searchParams.expenseType = null;
+        }
+        if(this.searchParams.sourceType != null && this.searchParams.sourceType === 'NONE'){
+            this.searchParams.sourceType = null;
+        }
+        if(this.searchParams.destinationType != null && this.searchParams.destinationType === 'NONE'){
+            this.searchParams.destinationType = null;
+        }
+        this.searchParams.dateFrom = $('#fromDate').val();
+        this.searchParams.dateTo = $('#toDate').val();
+        console.log(this.searchParams);
         this.busy = this.periodicReportService.searchReserveCalculations(this.searchParams)
             .subscribe(
                 searchResult  => {
                     this.records = searchResult.records;
+                    this.totalSumRecord = {"amount": 0, "amountToSPV": 0};
                     if(this.records != null){
                         for(var i = 0; i < this.records.length; i++){
+                            this.totalSumRecord.amount += Number(this.records[i].amount);
+                            this.totalSumRecord.amountToSPV += Number(this.records[i].amountToSPV);
                             this.onNumberChange(this.records[i]);
                         }
+                        this.onNumberChange(this.totalSumRecord);
                     }
                     this.searchResult = searchResult;
 
                     this.checkRecords();
-
                     if(this.exportDirectorLookup != null && this.exportDirectorLookup.length > 0){
                         this.exportDirectorOption = this.exportDirectorLookup[0].code;
                     }
@@ -145,13 +187,13 @@ export class ReserveCalculationFormNBReportingComponent extends CommonNBReportin
                         this.exportDoerOption = this.exportDoerLookup[0].code;
                     }
 
-                    if(this.exportApproveListLookup && this.exportApproveListLookup.length > 1) {
-                        this.exportApproveList.push(this.exportApproveListLookup[0].code);
-                        this.exportApproveList.push(this.exportApproveListLookup[1].code);
-                    }
-                    if(this.exportApproveListLookup && this.exportApproveListLookup.length > 2) {
-                        this.exportApproveList.push(this.exportApproveListLookup[2].code);
-                    }
+                    //if(this.exportApproveListLookup && this.exportApproveListLookup.length > 1) {
+                    //    this.exportApproveList.push(this.exportApproveListLookup[0].code);
+                    //    this.exportApproveList.push(this.exportApproveListLookup[1].code);
+                    //}
+                    //if(this.exportApproveListLookup && this.exportApproveListLookup.length > 2) {
+                    //    this.exportApproveList.push(this.exportApproveListLookup[2].code);
+                    //}
                     this.checkApproveList();
 
                 },
@@ -181,6 +223,7 @@ export class ReserveCalculationFormNBReportingComponent extends CommonNBReportin
     addRecord(){
         this.editedRecord = new ReserveCalculationFormRecord();
         this.editedRecord.canDelete = true;
+        if(this.entityTypeLookup)
 
         // FIX, since ngFor rendering takes time, no element for datetimepicker() function call
         setTimeout(function(){
@@ -207,6 +250,7 @@ export class ReserveCalculationFormNBReportingComponent extends CommonNBReportin
     editRecord(record){
         this.editedRecord = record;
 
+        console.log(this.editedRecord.files);
         // FIX, since ngFor rendering takes time, no element for datetimepicker() function call
         setTimeout(function(){
             $('#dateDivId').datetimepicker({
@@ -431,6 +475,7 @@ export class ReserveCalculationFormNBReportingComponent extends CommonNBReportin
     public exportOrder(record){
         var fileName = record.date.replace(/-/g, "_") + "-Letter of Direction $ " + record.amount;
         fileName = fileName.replace(".", ",");
+        console.log(this.exportApproveList);
         var exportParams = {'director': this.exportDirectorOption, 'doer': this.exportDoerOption, 'approveList': this.exportApproveList};
         this.busyExport = this.periodicReportService.makeFileRequest(DATA_APP_URL + `periodicReport/reserveCalculation/export/${record.id}/${'ORDER'}`,
             fileName, 'POST', exportParams)
@@ -496,8 +541,8 @@ export class ReserveCalculationFormNBReportingComponent extends CommonNBReportin
     onFileChange(event) {
         var target = event.target || event.srcElement;
         var files = target.files;
-        this.uploadFiles.length = 0;
-        this.uploadFiles = [];
+        //this.uploadFiles.length = 0;
+        this.uploadFiles = this.uploadFiles == null? [] : this.uploadFiles;
         for (let i = 0; i < files.length; i++) {
             this.uploadFiles.push(files[i]);
         }
