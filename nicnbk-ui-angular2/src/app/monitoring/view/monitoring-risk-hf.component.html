@@ -175,13 +175,23 @@
             <div *ngIf="canEdit()">
                 <form #yourForm="ngForm" (ngSubmit)="onSubmitTopPortfolio()">
                     <label class="btn btn-sm btn-primary">
-                        <input type="file" #fileupload id="fileuploadTopPortfolio" (change)="fileChangeTopPortfolio(fileupload.files)" style="display: none"/>Upload
+                        <input type="file" #fileupload id="fileuploadTopPortfolio" (change)="fileChangeTopPortfolio(fileupload.files)"
+                               data-toggle="tooltip" data-placement="bottom" title="Format: Date, Fund Name, Class, " style="display: none"/>Upload
                     </label>
                     <button type="submit" class="btn btn-sm btn-success" *ngIf="this.myFilesTopPortfolio.length > 0">Submit</button>
                 </form>
                 <div *ngFor="let file of this.myFilesTopPortfolio" class="label label-info">
                     <span>{{file.name}}</span>
                 </div>
+            </div>
+            <br>
+            <div class="btn-toolbar">
+                <form #yourForm="ngForm" (ngSubmit)="onDeleteTopPortfolio()">
+                    <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                </form>
+                <form #yourForm="ngForm" (ngSubmit)="onExportTopPortfolio()">
+                    <button type="submit" class="btn btn-sm btn-success" style="margin-right: 3px">Export</button>
+                </form>
             </div>
             <br>
             <div class="alert alert-danger small" *ngIf="selectedDateMonitoringInfo?.topFundAllocationsError != null">
@@ -234,11 +244,17 @@
                 <span>{{file.name}}</span>
             </div>
         </div>
+        <form #yourForm="ngForm" (ngSubmit)="onDeleteSubStrategy()">
+            <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+        </form>
+        <form #yourForm="ngForm" (ngSubmit)="onExportSubStrategy()">
+            <button type="submit" class="btn btn-sm btn-success" style="margin-right: 3px">Export</button>
+        </form>
+    </div>
         <div class="row">
             <div id="allocation123" style="height: 500px;">
             </div>
         </div>
-    </div>
     <br/>
 
     <!-- STRESS TESTS -->

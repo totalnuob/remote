@@ -4,6 +4,7 @@ import kz.nicnbk.repo.model.files.Files;
 import kz.nicnbk.service.dto.files.FilesDto;
 import kz.nicnbk.service.dto.monitoring.*;
 
+import java.io.ByteArrayInputStream;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -22,5 +23,11 @@ public interface MonitoringRiskService {
 
     MonitoringRiskHedgeFundAllocationResultDto uploadTopPortfolio(Set<FilesDto> filesDtoSet, String updater);
 
+    ByteArrayInputStream exportTopPortfolio(Date date);
 
+    boolean deletePortfolios(Date date, String updater);
+
+    ByteArrayInputStream exportStrategy(Date date);
+
+    boolean deleteStrategy(Date date, String updater);
 }

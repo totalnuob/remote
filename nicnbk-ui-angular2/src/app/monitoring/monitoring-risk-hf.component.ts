@@ -322,6 +322,39 @@ export class MonitoringRiskHedgeFundComponent extends GoogleChartComponent {
         return null;
     }
 
+    private onExportTopPortfolio() {
+        this.busy = this.monitoringRiskHFService.exportTopPortfolio(this.selectedDate).
+            subscribe(
+                response => {
+                    console.log("ok");
+                },
+                error => {
+                    console.log(this.selectedDate)
+                    this.postAction(null, "Error exporting data");
+                }
+        );
+    }
+
+    private onDeleteTopPortfolio() {
+        if (confirm('Are you sure?')) {
+            this.busy = this.monitoringRiskHFService.deleteTopPortfolio(this.selectedDate).
+            subscribe(
+                response => {
+                    console.log("ok");
+
+                    this.postAction(response.messageEn, null);
+                },
+                error => {
+                    console.log(this.selectedDate)
+                    this.postAction(null, "Error deleting data");
+                }
+            );
+        } else {
+            this.postAction(null, null);
+            console.log('Not deleted');
+        }
+    }
+
     private onSubmitTopPortfolio() {
         this.busy = this.monitoringRiskHFService.postFilesTopPortfolio(this.myFilesTopPortfolio)
             .subscribe(
@@ -353,6 +386,39 @@ export class MonitoringRiskHedgeFundComponent extends GoogleChartComponent {
                     console.log(JSON.parse(error).message.nameEn);
                 }
             )
+    }
+
+    private onExportSubStrategy() {
+        this.busy = this.monitoringRiskHFService.exportSubStrategy(this.selectedDate).
+        subscribe(
+            response => {
+                console.log("ok");
+            },
+            error => {
+                console.log(this.selectedDate)
+                this.postAction(null, "Error exporting data");
+            }
+        );
+    }
+
+    private onDeleteSubStrategy() {
+        if (confirm('Are you sure?')) {
+            this.busy = this.monitoringRiskHFService.deleteSubStrategy(this.selectedDate).
+            subscribe(
+                response => {
+                    console.log("ok");
+
+                    this.postAction(response.messageEn, null);
+                },
+                error => {
+                    console.log(this.selectedDate)
+                    this.postAction(null, "Error deleting data");
+                }
+            );
+        } else {
+            this.postAction(null, null);
+            console.log('Not deleted');
+        }
     }
 
     private onSubmitSubStrategy() {
