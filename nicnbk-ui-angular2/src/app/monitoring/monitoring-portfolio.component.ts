@@ -519,6 +519,9 @@ export class MonitoringPortfolioComponent extends GoogleChartComponent {
         formatter1.format(dataNAV, 2);
         formatter1.format(dataNAV, 3);
         formatter1.format(dataNAV, 4);
+        formatter1.format(dataNAV, 5);
+        formatter1.format(dataNAV, 6);
+        formatter1.format(dataNAV, 7);
 
         var optionsNAV = {
             showRowNumber: false,
