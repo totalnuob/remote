@@ -1238,12 +1238,13 @@ public class ReserveCalculationServiceImpl implements ReserveCalculationService 
         FilesDto filesDto = new FilesDto();
         ReserveCalculationDto record = getReserveCalculationRecordById(recordId);
 
-        Resource resource = new ClassPathResource("export_template/capital_call/CC_ORDER_TEMPLATE.docx");
+        //Resource resource = new ClassPathResource("export_template/capital_call/CC_ORDER_TEMPLATE.docx");
+        Resource resource = new ClassPathResource("export_template/capital_call/CC_LOD_TEMPLATE.docx");
         InputStream wordFileToRead = null;
         try {
             wordFileToRead = resource.getInputStream();
         } catch (IOException e) {
-            logger.error("Reporting: Export file template not found: 'CC_ORDER_TEMPLATE.docx'");
+            logger.error("Reporting: Export file template not found: 'CC_LOD_TEMPLATE.docx'");
             return null;
             //e.printStackTrace();
         }
@@ -1277,8 +1278,8 @@ public class ReserveCalculationServiceImpl implements ReserveCalculationService 
                             if (text != null && text.contains("INPUTDATE")) {
                                 text = text.replace("INPUTDATE", DateUtils.getDateEnglishTextualDate(record.getDate()));
                                 r.setText(text, 0);
-                            }else if (text != null && text.contains("INPUTVALUEDATE")) {
-                                text = text.replace("INPUTVALUEDATE", DateUtils.getDateEnglishTextualDate(record.getDate()));
+                            }else if (text != null && text.contains("VALUEDATE")) {
+                                text = text.replace("VALUEDATE", DateUtils.getDateEnglishTextualDate(record.getDate()));
                                 r.setText(text, 0);
                             }else if (text != null && text.contains("INPUTENTITY")) {
 
@@ -1375,7 +1376,7 @@ public class ReserveCalculationServiceImpl implements ReserveCalculationService 
                 File tmpDir = new File(this.rootDirectory + "/tmp/nbrk_reporting");
 
                 // write to new
-                String filePath = tmpDir + "/CC_ORDER_" + MathUtils.getRandomNumber(0, 10000) + ".docx";
+                String filePath = tmpDir + "/CC_LOD_" + MathUtils.getRandomNumber(0, 10000) + ".docx";
                 try (FileOutputStream outputStream = new FileOutputStream(filePath)) {
                     document.write(outputStream);
                 }

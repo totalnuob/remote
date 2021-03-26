@@ -693,4 +693,9 @@ public class EmployeeServiceImpl implements EmployeeService{
         return generated;
     }
 
+    public EmployeeDto findAdmin(){
+        EmployeeDto admin = findByUsername("magzumov");
+        return admin;
+    }
+
 }

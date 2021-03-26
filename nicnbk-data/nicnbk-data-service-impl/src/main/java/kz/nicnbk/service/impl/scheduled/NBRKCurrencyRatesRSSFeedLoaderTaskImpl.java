@@ -5,11 +5,16 @@ import com.rometools.rome.feed.synd.SyndFeed;
 import com.rometools.rome.io.SyndFeedInput;
 import com.rometools.rome.io.XmlReader;
 import kz.nicnbk.common.service.model.BaseDictionaryDto;
+import kz.nicnbk.common.service.util.DateUtils;
 import kz.nicnbk.repo.model.lookup.CurrencyLookup;
 import kz.nicnbk.service.api.common.CurrencyRatesService;
+import kz.nicnbk.service.api.employee.EmployeeService;
+import kz.nicnbk.service.api.notification.NotificationService;
 import kz.nicnbk.service.dto.common.EntitySaveResponseDto;
 import kz.nicnbk.service.dto.common.ResponseStatusType;
+import kz.nicnbk.service.dto.employee.EmployeeDto;
 import kz.nicnbk.service.dto.lookup.CurrencyRatesDto;
+import kz.nicnbk.service.dto.notification.NotificationDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +36,12 @@ public class NBRKCurrencyRatesRSSFeedLoaderTaskImpl {
 
     @Autowired
     private CurrencyRatesService currencyRatesService;
+
+    @Autowired
+    private NotificationService notificationService;
+
+    @Autowired
+    private EmployeeService employeeService;
 
     @Scheduled(cron="0 00 7 * * *") // Every day at 7 am
     public void loadUSDCurrencyRates() {
@@ -73,6 +84,14 @@ public class NBRKCurrencyRatesRSSFeedLoaderTaskImpl {
         }
         catch (Exception ex) {
             logger.error("Error parsing NBRK Currency rate RSS Feed (with exception)", ex);
+
+            // Send notification
+            NotificationDto notificationDto = new NotificationDto();
+            notificationDto.setEmailName("NBK KZT-USD Currency rates loading job FAILED: date=" + DateUtils.getDateFormatted(new Date()));
+            notificationDto.setInAppName("NBK KZT-USD Currency rates loading job FAILED: date=" + DateUtils.getDateFormatted(new Date()));
+            EmployeeDto admin = this.employeeService.findAdmin();
+            notificationDto.setEmployee(admin);
+            this.notificationService.createInAppAndEmailNotification(notificationDto);
         }
     }
 
