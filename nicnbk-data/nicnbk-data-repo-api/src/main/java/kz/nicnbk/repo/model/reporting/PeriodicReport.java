@@ -18,8 +18,6 @@ public class PeriodicReport extends CreateUpdateBaseEntity{
     private Date reportDate;
     private ReportStatus status;
 
-    private String interestRate;
-
     public PeriodicReport(){}
 
     public PeriodicReport(Long id){

@@ -7,9 +7,6 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import java.util.Date;
 
-/**
- * Created by zhambyl on 22-Sep-16.
- */
 @Entity
 @Table(name = "risk_stress_tests")
 public class RiskStressTests extends CreateUpdateBaseEntity{
