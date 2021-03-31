@@ -167,7 +167,7 @@ public class ICMeetingTopicDto extends CreateUpdateBaseEntityDto<ICMeetingTopic>
         String decision = "";
         if(this.decisions != null){
             for(int i = 0; i < this.decisions.size(); i++){
-                decision += (i + 1) + ")" + this.decisions.get(i).getName() + " ";
+                decision += (i + 1) + ") " + this.decisions.get(i).getName() + " ";
             }
         }else if(this.decision != null){
             return this.decision;

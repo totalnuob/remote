@@ -528,7 +528,7 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
             // TODO: Check Transactional behavior !!
 
             if((dto.getStatus() == null || !dto.getStatus().equalsIgnoreCase(ICMeetingTopicDto.FINALIZED)) &&
-                    entity.getPublishedUpd() != null && entity.getPublishedUpd().booleanValue() &&
+                    entity.getPublishedUpd() != null && entity.getPublishedUpd().booleanValue() && entity.getIcMeeting() != null &&
                     entity.getIcMeeting().getUnlockedForFinalize() != null && entity.getIcMeeting().getUnlockedForFinalize().booleanValue()){
                 // Unlocked for finalize
                 if(entity.getIcMeeting() != null && entity.getIcMeeting().getId() != null) {
