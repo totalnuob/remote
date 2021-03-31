@@ -161,6 +161,10 @@ public class GenericFileServiceREST {
                         }
                     }
                 }
+            }else if(filesDto.getType().equalsIgnoreCase(FileTypeLookup.MONITORING_HF_RISK_RETURNS_CLASS_A.getCode()) ||
+                    filesDto.getType().equalsIgnoreCase(FileTypeLookup.MONITORING_HF_RISK_RETURNS_CLASS_B.getCode())){
+                //
+                return true;
             }else {
                 // Other files types?
                 // TODO

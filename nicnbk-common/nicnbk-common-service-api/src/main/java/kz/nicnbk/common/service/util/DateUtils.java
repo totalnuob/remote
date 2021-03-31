@@ -70,6 +70,16 @@ public class DateUtils {
         return null;
     }
 
+    public static Date getDate(String date, String format){
+        try {
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format);
+            return simpleDateFormat.parse(date);
+        } catch (ParseException e) {
+            //e.printStackTrace();
+        }
+        return null;
+    }
+
     public static Date getDate_MMddyyyy(String date){
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM/dd/yyyy");
         try {

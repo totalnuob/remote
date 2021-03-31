@@ -47,7 +47,9 @@ INSERT INTO files_type(id, code, name_en, name_ru, name_kz, catalog) VALUES(38, 
 INSERT INTO files_type(id, code, name_en, name_ru, name_kz, catalog) VALUES(39, 'IC_AGENDA', 'IC Meeting Agenda File', '', '', 'ic_meeting');
 INSERT INTO files_type(id, code, name_en, name_ru, name_kz, catalog) VALUES(40, 'IC_BLTN', 'IC Meeting Bulletin File', '', '', 'ic_meeting');
 
-
+INSERT INTO files_type(id, code, name_en, name_ru, name_kz, catalog) VALUES(41, 'MONHFRISK1', 'Monitoring HF Risk Return ClassA', '', '', 'monitoring/hf_risk');
+INSERT INTO files_type(id, code, name_en, name_ru, name_kz, catalog) VALUES(42, 'MONHFRISK2', 'Monitoring HF Risk Return ClassB', '', '', 'monitoring/hf_risk');
+INSERT INTO files_type(id, code, name_en, name_ru, name_kz, catalog) VALUES(43, 'MONHFRISK3', 'Monitoring HF Risk Return Consolidated', '', '', 'monitoring/hf_risk');
 
 
 

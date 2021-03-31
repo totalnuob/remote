@@ -143,7 +143,7 @@ public class BloombergCurrencyRatesLoaderTaskImpl {
                 case "HFRIFOF Index": {
                     Double value = Double.valueOf(hfriDto.getFieldDataDtoList().get(0).getValue());
                     hfri.setReturnValue(value);
-                    hfri.setBenchmark(new BaseDictionaryDto(BenchmarkLookup.HFRI.getCode(), null, null, null));
+                    hfri.setBenchmark(new BaseDictionaryDto(BenchmarkLookup.HFRIFOF.getCode(), null, null, null));
                     EntitySaveResponseDto saveResponseDto = this.benchmarkService.save(hfri, JOBNAME);
                     if(saveResponseDto.getStatus().getCode().equalsIgnoreCase(ResponseStatusType.SUCCESS.getCode())){
                         logger.info("Successfully saved HFRI values (from Bloomberg): " + hfri.getReturnValue());

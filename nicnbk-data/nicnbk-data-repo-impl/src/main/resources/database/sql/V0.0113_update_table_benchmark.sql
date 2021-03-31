@@ -1,0 +1,1 @@
+UPDATE benchmark SET deleted=TRUE WHERE code='HFRI';

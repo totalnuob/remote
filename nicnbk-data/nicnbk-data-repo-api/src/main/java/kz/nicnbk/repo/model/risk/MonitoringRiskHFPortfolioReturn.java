@@ -13,6 +13,7 @@ public class MonitoringRiskHFPortfolioReturn extends CreateUpdateBaseEntity {
     private Date date;
     private Double value;
     private MonitoringRiskHFPortfolioType portfolioType;
+    private MonitoringRiskHFMonthlyReport report;
 
     @Column(name = "date", nullable = false)
     public Date getDate() {
@@ -40,5 +41,15 @@ public class MonitoringRiskHFPortfolioReturn extends CreateUpdateBaseEntity {
 
     public void setPortfolioType(MonitoringRiskHFPortfolioType portfolioType) {
         this.portfolioType = portfolioType;
+    }
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "report_id", nullable = false)
+    public MonitoringRiskHFMonthlyReport getReport() {
+        return report;
+    }
+
+    public void setReport(MonitoringRiskHFMonthlyReport report) {
+        this.report = report;
     }
 }

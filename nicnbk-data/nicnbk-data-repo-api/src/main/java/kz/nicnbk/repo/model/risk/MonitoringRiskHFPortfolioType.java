@@ -8,4 +8,10 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "monitoring_risk_hf_portfolio_type")
 public class MonitoringRiskHFPortfolioType extends BaseTypeEntityImpl {
+
+    public MonitoringRiskHFPortfolioType(){}
+
+    public MonitoringRiskHFPortfolioType(int id){
+        setId(id);
+    }
 }

@@ -18,15 +18,26 @@ declare var $: any;
 
 @Component({
     selector: 'monitoring-risk-hf',
-    templateUrl: 'view/monitoring-risk-hf.component.html',
+    templateUrl: 'view/monitoring-risk-hf.component2.html',
     styleUrls: [],
     providers: [MonitoringRiskHedgeFundService],
 })
 export class MonitoringRiskHedgeFundComponent extends GoogleChartComponent {
 
+    reportMonth;
+    reportYear;
+    reportYearList = [];
+
+    modalErrorMessage;
+    modalSuccessMessage;
+
     private moduleAccessChecker = new ModuleAccessCheckerService;
 
     private tableDate;
+
+    returnsFileClassA: File[];
+    returnsFileClassB: File[];
+    returnsFileCons: File[];
 
     private subStrategyList = [];
 
@@ -50,11 +61,20 @@ export class MonitoringRiskHedgeFundComponent extends GoogleChartComponent {
         super();
 
         this.myFiles = [];
-        this,this.myFilesTopPortfolio = [];
+        this.myFilesTopPortfolio = [];
+
+        this.returnsFileClassA = [];
+        this.returnsFileClassB = [];
+        this.returnsFileCons = [];
+
+        var currentYear = new Date().getFullYear();
+        for(var y = 2016; y <= currentYear; y++){
+            this.reportYearList.push(y);
+        }
 
          Observable.forkJoin(
                     // Load dates
-                    this.monitoringRiskHFService.getAvailableDates()
+                    this.busy = this.monitoringRiskHFService.getAvailableDates()
                     )
                     .subscribe(
                         ([data]) => {
@@ -273,9 +293,6 @@ export class MonitoringRiskHedgeFundComponent extends GoogleChartComponent {
                                 stressTestsDatesItem.push(this.selectedDateMonitoringInfo.stressTests[i].date);
                                 stressTestsValueItem.push(this.selectedDateMonitoringInfo.stressTests[i].value);
                             }
-                            console.log(stressTestsNames);
-                            console.log(stressTestsDates);
-                            console.log(stressTestsValues);
                             this.selectedDateMonitoringInfoStressTests = [];
                             for(var i = 0; i < stressTestsNames.length; i++){
                                 this.selectedDateMonitoringInfoStressTests.push(stressTestsNames[i]);
@@ -305,7 +322,44 @@ export class MonitoringRiskHedgeFundComponent extends GoogleChartComponent {
 
     fileChange(files: any){
         this.myFiles = files;
-        console.log(this.myFiles);
+        //console.log(this.myFiles);
+    }
+
+    onFileChangeReturnsClassA(event){
+        var target = event.target || event.srcElement;
+        var files = target.files;
+        this.returnsFileClassA.length = 0;
+        for (var i = 0; i < files.length; i++) {
+            this.returnsFileClassA.push(files[i]);
+        }
+    }
+
+    removeUnsavedReturnsFileClassA(){
+        this.returnsFileClassA = [];
+    }
+
+    onFileChangeReturnsClassB(files: any){
+        var target = event.target || event.srcElement;
+        var files = target.files;
+        this.returnsFileClassB.length = 0;
+        for (var i = 0; i < files.length; i++) {
+            this.returnsFileClassB.push(files[i]);
+        }
+    }
+    removeUnsavedReturnsFileClassB(){
+        this.returnsFileClassB = [];
+    }
+
+    onFileChangeReturnsCons(files: any){
+        var target = event.target || event.srcElement;
+        var files = target.files;
+        this.returnsFileCons.length = 0;
+        for (var i = 0; i < files.length; i++) {
+            this.returnsFileCons.push(files[i]);
+        }
+    }
+    removeUnsavedReturnsFileCons(){
+        this.returnsFileCons = [];
     }
 
     fileChangeTopPortfolio(files: any){
@@ -401,6 +455,64 @@ export class MonitoringRiskHedgeFundComponent extends GoogleChartComponent {
         );
     }
 
+    deleteReturnsFileClassA(){
+        if (confirm('Are you sure want to delete?')) {
+            this.busy = this.monitoringRiskHFService.deleteReturnsClassAFile(this.selectedDateMonitoringInfo.reportId).
+            subscribe(
+                response => {
+                    console.log("ok");
+                    this.postAction(response.messageEn, null);
+                    this.selectDate(this.selectedDate);
+                },
+                error => {
+                    console.log(this.selectedDate)
+                    this.postAction(null, "Error deleting data");
+                }
+            );
+        } else {
+            this.postAction(null, null);
+            console.log('Not deleted');
+        }
+    }
+    deleteReturnsFileClassB(){
+        if (confirm('Are you sure want to delete?')) {
+            this.busy = this.monitoringRiskHFService.deleteReturnsClassBFile(this.selectedDateMonitoringInfo.reportId).
+            subscribe(
+                response => {
+                    console.log("ok");
+                    this.postAction(response.messageEn, null);
+                    this.selectDate(this.selectedDate);
+                },
+                error => {
+                    console.log(this.selectedDate)
+                    this.postAction(null, "Error deleting data");
+                }
+            );
+        } else {
+            this.postAction(null, null);
+            console.log('Not deleted');
+        }
+    }
+    deleteReturnsFileCons(){
+        if (confirm('Are you sure want to delete?')) {
+            this.busy = this.monitoringRiskHFService.deleteReturnsConsFile(this.selectedDateMonitoringInfo.reportId).
+            subscribe(
+                response => {
+                    console.log("ok");
+                    this.postAction(response.messageEn, null);
+                    this.selectDate(this.selectedDate);
+                },
+                error => {
+                    console.log(this.selectedDate)
+                    this.postAction(null, "Error deleting data");
+                }
+            );
+        } else {
+            this.postAction(null, null);
+            console.log('Not deleted');
+        }
+    }
+
     private onDeleteSubStrategy() {
         if (confirm('Are you sure?')) {
             this.busy = this.monitoringRiskHFService.deleteSubStrategy(this.selectedDate).
@@ -433,10 +545,6 @@ export class MonitoringRiskHedgeFundComponent extends GoogleChartComponent {
                     this.postAction(response.message.nameEn, null);
 
                     if(this.subStrategyList.length > 0) {
-                        // this.tableDate = this.getAllDates()[0];
-                        // this.tableDate = this.getAllDates()[0];
-                        // this.drawActualAllocationChart(this.tableDate);
-                        // this.drawNewlyCreatedAllocationChart(this.subStrategyList);
 
                         this.postAction(response.message.nameEn, null);
 
@@ -462,5 +570,109 @@ export class MonitoringRiskHedgeFundComponent extends GoogleChartComponent {
             dates.push(this.subStrategyList[i].date);
         }
         return dates;
+    }
+
+    public uploadReturnsClassA(){
+        var data = JSON.stringify({"report":{"id": this.selectedDateMonitoringInfo.reportId}, "fileType": 'MONHFRISK1'});
+        this.busy = this.monitoringRiskHFService.uploadReturns(this.returnsFileClassA, data)
+            .subscribe(
+                (response) => {
+                    this.postAction("Successfully saved Class A Returns", null);
+                    this.returnsFileClassA = [];
+                     $("#fileUploadReturnsClassA").val(null);
+                     this.selectDate(this.selectedDate);
+                },
+                error => {
+                    // this.processErrorMessage(error);
+                    console.log(error);
+                    this.postAction(null, "Failed to parse returns file class A");
+                }
+            )
+    }
+    public uploadReturnsClassB(){
+        var data = JSON.stringify({"report":{"id": this.selectedDateMonitoringInfo.reportId}, "fileType": 'MONHFRISK2'});
+        this.busy = this.monitoringRiskHFService.uploadReturns(this.returnsFileClassB, data)
+            .subscribe(
+                (response) => {
+                    this.postAction("Successfully saved Class B Returns", null);
+                    this.returnsFileClassB = [];
+                     $("#fileUploadReturnsClassB").val(null);
+                     this.selectDate(this.selectedDate);
+                },
+                error => {
+                    // this.processErrorMessage(error);
+                    console.log(error);
+                    this.postAction(null, "Failed to parse returns file class B");
+                }
+            )
+    }
+    public uploadReturnsCons(){
+        var data = JSON.stringify({"report":{"id": this.selectedDateMonitoringInfo.reportId}, "fileType": 'MONHFRISK3'});
+        this.busy = this.monitoringRiskHFService.uploadReturns(this.returnsFileCons, data)
+            .subscribe(
+                (response) => {
+                    this.postAction("Successfully saved Cons Returns", null);
+                    this.returnsFileClassB = [];
+                     $("#fileUploadReturnsCons").val(null);
+                     this.selectDate(this.selectedDate);
+                },
+                error => {
+                    // this.processErrorMessage(error);
+                    console.log(error);
+                    this.postAction(null, "Failed to parse returns file cons");
+                }
+            )
+    }
+
+    public createNewReport(){
+        var report = {"reportDate": null};
+        report.reportDate = '01-' + this.reportMonth + '-' + this.reportYear;
+        if(this.availableDates && this.availableDates.length > 0){
+            for(var i = 0; i < this.availableDates.length; i++){
+                if(report.reportDate == this.availableDates[i]){
+                    this.modalErrorMessage = "Report date already exists";
+                    this.report = null;
+                    return false;
+                }
+            }
+        }
+
+        this.busyCreate = this.monitoringRiskHFService.saveReport(report)
+            .subscribe(
+                (response: SaveResponse)  => {
+                    this.modalSuccessMessage = response.message != null && response.message.nameEn != null ?
+                        response.message.nameEn : "Successfully saved report";
+                    this.modalErrorMessage = null;
+                    this.reportMonth = null;
+                    this.reportYear = null;
+
+                    //this.postAction(this.modalSuccessMessage, this.modalErrorMessage);
+                },
+                (error) => {
+                    this.processErrorResponse(error);
+                }
+            )
+    }
+
+    closeModal(){
+        $('#newReportModal').modal('toggle');
+
+        this.reportMonth = null;
+        this.reportYear = null;
+        this.modalErrorMessage = null;
+        this.modalSuccessMessage = null;
+        this.busy = this.monitoringRiskHFService.getAvailableDates()
+            .subscribe(
+                response  => {
+                    this.availableDates = response;
+                    if(this.availableDates != null && this.availableDates.length > 0){
+                        this.selectDate(this.availableDates[0]);
+                    }
+                },
+                (error: ErrorResponse) => {
+                    this.processErrorResponse(error);
+                }
+            )
+
     }
 }

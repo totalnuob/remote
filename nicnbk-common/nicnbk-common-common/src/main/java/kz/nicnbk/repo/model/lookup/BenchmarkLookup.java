@@ -19,7 +19,7 @@ public enum BenchmarkLookup {
     GLOBAL_FI("GLOBAL_FI"),
     GLOBAL_FI_U("GLOBAL_FI_U"),
     BARCLAYS_GLOBAL_AGG("BRCL_G_AGG"),
-    HFRI("HFRI"),
+    //HFRI("HFRI"),
     HFRIFOF("HFRI_FOF"),
     EM_DEBT("EM_DEBT"),
     HFRIAWC("HFRI_AWC");

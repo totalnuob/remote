@@ -412,11 +412,12 @@ public class LookupServiceImpl implements LookupService {
     public List<BaseDictionaryDto> getBenchmarkTypes() {
         try {
             List<BaseDictionaryDto> dtoList = new ArrayList<>();
-            Iterator<Benchmark> iterator = this.benchmarkTypeRepository.findAll().iterator();
-            while (iterator.hasNext()) {
-                Benchmark entity = iterator.next();
-                BaseDictionaryDto dto = disassemble(entity);
-                dtoList.add(dto);
+            List<Benchmark> benchmarks = this.benchmarkTypeRepository.findNonDeleted();
+            if(benchmarks != null) {
+                for (Benchmark benchmark : benchmarks) {
+                    BaseDictionaryDto dto = disassemble(benchmark);
+                    dtoList.add(dto);
+                }
             }
             return dtoList;
         }catch (Exception ex){

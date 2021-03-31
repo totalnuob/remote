@@ -1,0 +1,247 @@
+<div [ngBusy]="busy" class="container">
+    <div class="row">
+        <div class="row top-buffer" >
+            <div class="col-md-12">
+                <div class="alert alert-info" *ngIf="successMessage != null"><span>{{successMessage}}</span>
+                </div>
+            </div>
+        </div>
+        <div class="row top-buffer" >
+            <div class="col-md-12">
+                <div class="alert alert-danger" *ngIf="errorMessage != null"><span>{{errorMessage}}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br/>
+
+    <!-- REPORT HEADER-->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="col-md-6">
+                <h3>HEDGE FUND PORTFOLIO RISK</h3>
+            </div>
+            <div class="col-md-2">
+                <select (change)="selectDate($event.target.value)" [(ngModel)]="selectedDate" id="selectedDate" class="form-control"
+                    style="margin-top: 10px; margin-bottom: 10px;">
+                    <option *ngFor="let item of availableDates" [value]="item">{{item}}</option>
+                </select>
+            </div>
+            <div class="col-md-2 text-center">
+                <button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#newReportModal">Create report</button>
+            </div>
+        </div>
+    </div>
+    <br/>
+    <br/>
+
+    <div *ngIf="selectedDateMonitoringInfo != null">
+        <!-- PERFORMANCE SUMMARY -->
+        <div class="row withpadding">
+            <div class="col-md-2"><label>Returns (ClassA):</label></div>
+            <div class="col-md-6">
+                <div class="pull-left">
+                    <file-attachment-downloader *ngIf="selectedDateMonitoringInfo.returnsFileClassA != null" fileId="{{selectedDateMonitoringInfo.returnsFileClassA?.id}}"
+                                                fileName="{{selectedDateMonitoringInfo.returnsFileClassA?.fileName |  slice:0:55 }} {{selectedDateMonitoringInfo.returnsFileClassA?.fileName?.length > 55 ? '...': ''}}"
+                                                fileType="MONHFRISK1" mimeType="{{selectedDateMonitoringInfo.returnsFileClassA?.mimeType}}">
+                    </file-attachment-downloader>
+                </div>
+                <button class="btn btn-xs pull-left"  (click)="deleteReturnsFileClassA()" *ngIf="selectedDateMonitoringInfo.returnsFileClassA != null && canEdit()">
+                    <i class="glyphicon glyphicon-trash"></i>
+                </button>
+
+                <label class="btn btn-xs btn-primary pull-left" *ngIf="selectedDateMonitoringInfo.returnsFileClassA == null && canEdit() && returnsFileClassA.length == 0">
+                    <input type="file" id="fileUploadReturnsClassA" (change)="onFileChangeReturnsClassA($event)"
+                           data-toggle="tooltip" data-placement="bottom" title="Format: Date, Fund Name, Class, " style="display: none"/>upload
+                </label>
+                <div class="row" *ngFor="let file of this.returnsFileClassA">
+                    <span class="label label-info">{{file.name}}</span>
+                    <button class="btn btn-xs btn-danger" (click)="removeUnsavedReturnsFileClassA()" *ngIf="returnsFileClassA != null">
+                        <i class="glyphicon glyphicon-trash"></i>
+                    </button>
+                    <button type="submit" class="btn btn-xs btn-success"
+                            *ngIf="returnsFileClassA != null && returnsFileClassA.length > 0" (click)="uploadReturnsClassA()">
+                        <i class="glyphicon glyphicon-upload"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="row withpadding">
+            <div class="col-md-2"><label>Returns (ClassB):</label></div>
+            <div class="col-md-6">
+                <div class="pull-left">
+                    <file-attachment-downloader *ngIf="selectedDateMonitoringInfo.returnsFileClassB != null" fileId="{{selectedDateMonitoringInfo.returnsFileClassB?.id}}"
+                                                fileName="{{selectedDateMonitoringInfo.returnsFileClassB?.fileName |  slice:0:55 }} {{selectedDateMonitoringInfo.returnsFileClassB?.fileName?.length > 55 ? '...': ''}}"
+                                                fileType="MONHFRISK2" mimeType="{{selectedDateMonitoringInfo.returnsFileClassB?.mimeType}}">
+                    </file-attachment-downloader>
+                </div>
+                <button class="btn btn-xs pull-left"  (click)="deleteReturnsFileClassB()" *ngIf="selectedDateMonitoringInfo.returnsFileClassB != null && canEdit()">
+                    <i class="glyphicon glyphicon-trash"></i>
+                </button>
+
+                <label class="btn btn-xs btn-primary" *ngIf="selectedDateMonitoringInfo.returnsFileClassB == null && canEdit() && returnsFileClassB.length == 0">
+                    <input type="file" id="fileUploadReturnsClassB" (change)="onFileChangeReturnsClassB($event)"
+                           data-toggle="tooltip" data-placement="bottom" title="Format: Date, Fund Name, Class, " style="display: none"/>upload
+                </label>
+
+                <div class="row" *ngFor="let file of this.returnsFileClassB">
+                    <span class="label label-info">{{file.name}}</span>
+                    <button class="btn btn-xs btn-danger" (click)="removeUnsavedReturnsFileClassB()" *ngIf="returnsFileClassB != null">
+                        <i class="glyphicon glyphicon-trash"></i>
+                    </button>
+                    <button type="submit" class="btn btn-xs btn-success"
+                            *ngIf="returnsFileClassB != null && returnsFileClassB.length > 0" (click)="uploadReturnsClassB()">
+                        <i class="glyphicon glyphicon-upload"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="row withpadding">
+            <div class="col-md-2"><label>Returns (Cons):</label></div>
+            <div class="col-md-6">
+                <div class="pull-left">
+                    <file-attachment-downloader *ngIf="selectedDateMonitoringInfo.returnsFileCons != null" fileId="{{selectedDateMonitoringInfo.returnsFileCons?.id}}"
+                                                fileName="{{selectedDateMonitoringInfo.returnsFileCons?.fileName |  slice:0:55 }} {{selectedDateMonitoringInfo.returnsFileCons?.fileName?.length > 55 ? '...': ''}}"
+                                                fileType="MONHFRISK3" mimeType="{{selectedDateMonitoringInfo.returnsFileCons?.mimeType}}">
+                    </file-attachment-downloader>
+                </div>
+                <button class="btn btn-xs pull-left"  (click)="deleteReturnsFileCons()" *ngIf="selectedDateMonitoringInfo.returnsFileCons != null && canEdit()">
+                    <i class="glyphicon glyphicon-trash"></i>
+                </button>
+
+                <label class="btn btn-xs btn-primary" *ngIf="selectedDateMonitoringInfo.returnsFileCons == null && canEdit() && returnsFileCons.length == 0">
+                    <input type="file" id="fileUploadReturnsCons" (change)="onFileChangeReturnsCons($event)"
+                           data-toggle="tooltip" data-placement="bottom" title="Format: Date, Fund Name, Class, " style="display: none"/>upload
+                </label>
+
+                <div class="row" *ngFor="let file of this.returnsFileCons">
+                    <span class="label label-info">{{file.name}}</span>
+                    <button class="btn btn-xs btn-danger" (click)="removeUnsavedReturnsFileCons()" *ngIf="returnsFileCons != null">
+                        <i class="glyphicon glyphicon-trash"></i>
+                    </button>
+                    <button type="submit" class="btn btn-xs btn-success"
+                            *ngIf="returnsFileCons != null && returnsFileCons.length > 0" (click)="uploadReturnsCons()">
+                        <i class="glyphicon glyphicon-upload"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <br/>
+
+
+        <div class="row" [hidden]="selectedDateMonitoringInfo == null">
+            <div class="col-md-12">
+                <div class="alert alert-danger small" *ngIf="selectedDateMonitoringInfo?.performanceError != null">
+                    <span>{{selectedDateMonitoringInfo?.performanceError}}</span>
+                </div>
+                <div class="alert alert-warning small" *ngIf="selectedDateMonitoringInfo?.performanceWarning != null">
+                    <span>* {{selectedDateMonitoringInfo.performanceWarning}}</span>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="col-md-12">
+                    <table class="table table-hover table-responsive table-condensed">
+                        <thead>
+                        <tr style="background-color: #3664ab; color: white;">
+                            <th width="40%">PERFORMANCE SUMMARY 12M</th>
+                            <th width="15%">Portfolio A-class</th>
+                            <th width="15%">HFRI FoF</th>
+                            <th width="15%">Portfolio B-class</th>
+                            <th width="15%">HFRIAWC</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr *ngFor="let performance of selectedDateMonitoringInfo?.performance12M">
+                            <td>{{performance.name}}</td>
+                            <td>{{performance.portfolioValueTxt}}
+                                <!--                                <span data-toggle="tooltip">{{performance.portfolioValue | percent : '1.2'}}</span>-->
+                            </td>
+                            <td>{{performance.benchmarkValueTxt}}</td>
+                            <td>{{performance.portfolioBValueTxt}}
+                                <!--                                <span data-toggle="tooltip">{{performance.portfolioValue | percent : '1.2'}}</span>-->
+                            </td>
+                            <td>{{performance.benchmarkAwcValueTxt}}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-md-12">
+                    <table class="table table-hover table-responsive table-condensed">
+                        <thead>
+                        <tr style="background-color: #3664ab; color: white;">
+                            <th width="40%">PERFORMANCE SUMMARY SINCE INC.</th>
+                            <th width="15%">Portfolio A-class</th>
+                            <th width="15%">HFRI FoF</th>
+                            <th width="15%">Portfolio B-class</th>
+                            <th width="15%">HFRIAWC</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr *ngFor="let performance of selectedDateMonitoringInfo?.performanceSinceInception">
+                            <td>{{performance.name}}</td>
+                            <td>{{performance.portfolioValueTxt}}
+                            </td>
+                            <td>{{performance.benchmarkValueTxt}}</td>
+                            <td>{{performance.portfolioBValueTxt}}
+                            </td>
+                            <td>{{performance.benchmarkAwcValueTxt}}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <br/>
+    </div>
+
+    <div class="modal fade" id="newReportModal" role="dialog">
+        <div [ngBusy]="busyCreate" class="modal-dialog" style="overflow-y: scroll; min-height: 100px; max-height:85%;  margin-top: 100px; margin-bottom:50px; width:65%;">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="alert alert-danger" *ngIf="errorMessage != null"><span>{{modalErrorMessage}}</span>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="alert alert-info" *ngIf="successMessage != null"><span>{{modalSuccessMessage}}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-2">
+                            <select class="form-control" [(ngModel)]="reportMonth">
+                                <option value="01">JAN</option>
+                                <option value="02">FEB</option>
+                                <option value="03">MAR</option>
+                                <option value="04">APR</option>
+                                <option value="05">MAY</option>
+                                <option value="06">JUN</option>
+                                <option value="07">JUL</option>
+                                <option value="08">AUG</option>
+                                <option value="09">SEP</option>
+                                <option value="10">OCT</option>
+                                <option value="11">NOV</option>
+                                <option value="12">DEC</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <select class="form-control" [(ngModel)]="reportYear">
+                                <option *ngFor="let year of reportYearList" value="{{year}}">{{year}}</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default pull-left" (click)="closeModal()" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary pull-right" (click)="createNewReport()" [disabled]="reportMonth == null || reportYear  == null">Create</button>
+
+                    <button type="button" class="btn btn-primary pull-right" (click)="closeModal()" *ngIf="report != null">OK</button>
+
+                    <!--<a [routerLink]="['/reporting/inputFileUpload', report.id]" class="btn btn-primary pull-right"-->
+                    <!--*ngIf="report != null && report.id > 0" (click)="closeModal()">Go to report</a>-->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

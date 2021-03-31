@@ -1,16 +1,19 @@
 package kz.nicnbk.service.impl.monitoring;
 
+import kz.nicnbk.common.service.exception.ExcelFileParseException;
 import kz.nicnbk.common.service.util.*;
 import kz.nicnbk.repo.api.employee.EmployeeRepository;
 import kz.nicnbk.repo.api.risk.AllocationBySubStrategyRepository;
 import kz.nicnbk.repo.api.risk.AllocationByTopPortfolioRepository;
+import kz.nicnbk.repo.api.risk.MonitoringRiskHFMonthlyReportRepository;
+import kz.nicnbk.repo.api.risk.MonitoringRiskHFPortfolioReturnRepository;
 import kz.nicnbk.repo.model.employee.Employee;
 import kz.nicnbk.repo.model.files.Files;
 import kz.nicnbk.repo.model.lookup.BenchmarkLookup;
 import kz.nicnbk.repo.model.lookup.FileTypeLookup;
 import kz.nicnbk.repo.model.lookup.PortfolioVarLookup;
-import kz.nicnbk.repo.model.risk.AllocationBySubStrategy;
-import kz.nicnbk.repo.model.risk.AllocationByTopPortfolio;
+import kz.nicnbk.repo.model.lookup.reporting.MonitoringRiskHFPortfolioTypeLookup;
+import kz.nicnbk.repo.model.risk.*;
 import kz.nicnbk.service.api.benchmark.BenchmarkService;
 import kz.nicnbk.service.api.files.FileService;
 import kz.nicnbk.service.api.monitoring.MonitoringHedgeFundService;
@@ -21,11 +24,15 @@ import kz.nicnbk.service.api.reporting.hedgefunds.HFGeneralLedgerBalanceService;
 import kz.nicnbk.service.api.reporting.hedgefunds.HFITDService;
 import kz.nicnbk.service.api.reporting.hedgefunds.HFPortfolioRiskService;
 import kz.nicnbk.service.api.risk.RiskStressTestsService;
+import kz.nicnbk.service.converter.files.FilesEntityConverter;
 import kz.nicnbk.service.converter.risk.AllocationBySubStrategyEntityConverter;
 import kz.nicnbk.service.converter.risk.AllocationByTopPortfolioEntityConverter;
 import kz.nicnbk.service.dto.benchmark.BenchmarkValueDto;
+import kz.nicnbk.service.dto.common.EntitySaveResponseDto;
 import kz.nicnbk.service.dto.common.ListResponseDto;
+import kz.nicnbk.service.dto.common.ResponseDto;
 import kz.nicnbk.service.dto.common.ResponseStatusType;
+import kz.nicnbk.service.dto.employee.EmployeeDto;
 import kz.nicnbk.service.dto.files.FilesDto;
 import kz.nicnbk.service.dto.m2s2.MeetingMemoDto;
 import kz.nicnbk.service.dto.monitoring.*;
@@ -39,6 +46,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import sun.reflect.annotation.ExceptionProxy;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -51,6 +60,7 @@ public class MonitoringRiskServiceImpl implements MonitoringRiskService {
 
     private static final Logger logger = LoggerFactory.getLogger(MonitoringRiskServiceImpl.class);
     public static final Date SINGULAR_PORTFOLIO_START_DATE = DateUtils.getDate("31.08.2015");
+    public static final Date SINGULAR_PORTFOLIO_CLASS_B_START_DATE = DateUtils.getDate("31.01.2017");
 
     @Autowired
     private PeriodicReportService periodicReportService;
@@ -94,6 +104,146 @@ public class MonitoringRiskServiceImpl implements MonitoringRiskService {
     @Autowired
     private AllocationByTopPortfolioEntityConverter topPortfolioEntityConverter;
 
+    @Autowired
+    private MonitoringRiskHFMonthlyReportRepository riskReportRepository;
+
+    @Autowired
+    private MonitoringRiskHFPortfolioReturnRepository riskHFReturnRepository;
+
+    @Autowired
+    private FilesEntityConverter filesEntityConverter;
+
+    @Override
+    public MonitoringRiskHedgeFundReportDto getMonthlyHedgeFundRiskReport(MonitoringRiskReportSearchParamsDto searchParamsDto){
+        MonitoringRiskHedgeFundReportDto reportDto = new MonitoringRiskHedgeFundReportDto();
+
+        MonitoringRiskHFMonthlyReport report = this.riskReportRepository.findByReportDate(searchParamsDto.getDate());
+        reportDto.setReportId(report.getId());
+
+        if(report.getReturnsClassAFile() != null) {
+            FilesDto filesDto = this.filesEntityConverter.disassemble(report.getReturnsClassAFile());
+            reportDto.setReturnsFileClassA(filesDto);
+        }
+        if(report.getReturnsClassBFile() != null) {
+            FilesDto filesDto = this.filesEntityConverter.disassemble(report.getReturnsClassBFile());
+            reportDto.setReturnsFileClassB(filesDto);
+        }
+
+        if(report.getReturnsConsFile() != null) {
+            FilesDto filesDto = this.filesEntityConverter.disassemble(report.getReturnsConsFile());
+            reportDto.setReturnsFileCons(filesDto);
+        }
+        // Performance summary
+        Date dateTo = DateUtils.getLastDayOfCurrentMonth(searchParamsDto.getDate());
+        Date dateFrom12M = DateUtils.getLastDayOfCurrentMonth(DateUtils.moveDateByMonths(searchParamsDto.getDate(), -11));
+        ListResponseDto performance12MResponsePortfolioA = null;
+        ListResponseDto performance12MResponsePortfolioB = null;
+        ListResponseDto performance12MResponseHfriFoF = null;
+        ListResponseDto performance12MResponseHfriAWC = null;
+
+        // Get returns
+        List<DateDoubleValue> valuesA = new ArrayList<>();
+        List<DateDoubleValue> valuesB = new ArrayList<>();
+        Iterator<MonitoringRiskHFPortfolioReturn> returnsIterator = this.riskHFReturnRepository.findAll().iterator();
+        if(returnsIterator != null){
+            while(returnsIterator.hasNext()){
+                MonitoringRiskHFPortfolioReturn value = returnsIterator.next();
+                if(value.getPortfolioType().getCode().equalsIgnoreCase(MonitoringRiskHFPortfolioTypeLookup.SINGULAR_A.getCode())){
+                    DateDoubleValue valueA = new DateDoubleValue(DateUtils.getLastDayOfCurrentMonth(value.getDate()), value.getValue());
+                    valuesA.add(valueA);
+                }else if(value.getPortfolioType().getCode().equalsIgnoreCase(MonitoringRiskHFPortfolioTypeLookup.SINGULAR_B.getCode())){
+                    DateDoubleValue valueB = new DateDoubleValue(DateUtils.getLastDayOfCurrentMonth(value.getDate()), value.getValue());
+                    valuesB.add(valueB);
+                }
+            }
+        }
+        // 12M
+        performance12MResponsePortfolioA = getHedgeFundsPerformanceSummary(dateFrom12M, dateTo, valuesA, 1,false);
+        performance12MResponsePortfolioB = getHedgeFundsPerformanceSummary(dateFrom12M, dateTo, valuesB, 2, false);
+
+
+        String[] benchmarkCodesHFRIFOF = {BenchmarkLookup.HFRIFOF.getCode()};
+        String[] benchmarkCodesHFRIAWC = {BenchmarkLookup.HFRIAWC.getCode()};
+        List<BenchmarkValueDto> hfrifof12M = this.benchmarkService.getBenchmarkValuesEndOfMonthForDateRangeAndTypes(dateFrom12M, dateTo, 10, benchmarkCodesHFRIFOF);
+        List<BenchmarkValueDto> hfriawc12M = this.benchmarkService.getBenchmarkValuesEndOfMonthForDateRangeAndTypes(dateFrom12M, dateTo, 10, benchmarkCodesHFRIAWC);
+        if(hfrifof12M != null && !hfrifof12M.isEmpty()){
+            List<DateDoubleValue> valuesHfriFoF = new ArrayList<>();
+            for(BenchmarkValueDto dto: hfrifof12M){
+                DateDoubleValue value = new DateDoubleValue(DateUtils.getLastDayOfCurrentMonth(dto.getDate()), dto.getReturnValue());
+                valuesHfriFoF.add(value);
+            }
+            performance12MResponseHfriFoF = getHedgeFundsPerformanceSummary(dateFrom12M, dateTo, valuesHfriFoF, 1, true);
+        }
+        if (hfriawc12M != null && !hfriawc12M.isEmpty()){
+            List<DateDoubleValue> valuesHfriAWC = new ArrayList<>();
+            for (BenchmarkValueDto dto : hfriawc12M) {
+                DateDoubleValue value = new DateDoubleValue(DateUtils.getLastDayOfCurrentMonth(dto.getDate()), dto.getReturnValue());
+                valuesHfriAWC.add(value);
+            }
+            performance12MResponseHfriAWC = getHedgeFundsPerformanceSummary(dateFrom12M, dateTo, valuesHfriAWC, 2, true);
+        }
+
+        ListResponseDto mergedPortfolioPerformance12MResponse = mergePortfolioPerformanceResponses(performance12MResponsePortfolioA, performance12MResponsePortfolioB);
+        ListResponseDto mergedBenchmarkPerformance12mResponse = mergeBenchmarkPerformanceResponses(performance12MResponseHfriFoF, performance12MResponseHfriAWC);
+        ListResponseDto mergedPerformance12MResponse = mergePerformanceResponses(mergedPortfolioPerformance12MResponse, mergedBenchmarkPerformance12mResponse);
+        if(!mergedPerformance12MResponse.isStatusOK()){
+            reportDto.setPerformanceError(mergedPerformance12MResponse.getErrorMessageEn());
+        }
+        List<MonitoringRiskHedgeFundPerformanceRecordDto> performance12M = mergedPerformance12MResponse.getRecords();
+        reportDto.setPerformance12M(performance12M);
+
+
+        // Performance since inception
+        Date dateFromSI = DateUtils.getLastDayOfCurrentMonth(SINGULAR_PORTFOLIO_START_DATE);
+        Date dateFromSIClassB = DateUtils.getLastDayOfCurrentMonth(SINGULAR_PORTFOLIO_CLASS_B_START_DATE);
+        ListResponseDto performanceSIResponsePortfolioA = null;
+        ListResponseDto performanceSIResponsePortfolioB = null;
+        ListResponseDto performanceSIResponseHfriFoF = null;
+        ListResponseDto performanceSIResponseHfriAWC = null;
+
+        performanceSIResponsePortfolioA = getHedgeFundsPerformanceSummary(dateFromSI, dateTo, valuesA, 1, false);
+        performanceSIResponsePortfolioB = getHedgeFundsPerformanceSummary(dateFromSIClassB, dateTo, valuesB, 2, false);
+
+        List<BenchmarkValueDto> hfriFoFSI = this.benchmarkService.getBenchmarkValuesEndOfMonthForDateRangeAndTypes(dateFromSI, dateTo, 10, benchmarkCodesHFRIFOF);
+        List<BenchmarkValueDto> hfriAWCSI = this.benchmarkService.getBenchmarkValuesEndOfMonthForDateRangeAndTypes(dateFromSIClassB, dateTo, 10, benchmarkCodesHFRIAWC);
+        if(hfriFoFSI != null && !hfriFoFSI.isEmpty()){
+            List<DateDoubleValue> valuesHfriFoF = new ArrayList<>();
+            for(BenchmarkValueDto dto: hfriFoFSI){
+                DateDoubleValue value = new DateDoubleValue(DateUtils.getLastDayOfCurrentMonth(dto.getDate()), dto.getReturnValue());
+                valuesHfriFoF.add(value);
+            }
+
+            performanceSIResponseHfriFoF = getHedgeFundsPerformanceSummary(dateFromSI, dateTo, valuesHfriFoF,1, true);
+        }
+        if (hfriAWCSI != null && !hfriAWCSI.isEmpty()) {
+            List<DateDoubleValue> valuesHfriAWC = new ArrayList<>();
+            for (BenchmarkValueDto dto: hfriAWCSI){
+                DateDoubleValue value = new DateDoubleValue(DateUtils.getLastDayOfCurrentMonth(dto.getDate()), dto.getReturnValue());
+                valuesHfriAWC.add(value);
+            }
+            performanceSIResponseHfriAWC = getHedgeFundsPerformanceSummary(dateFromSIClassB, dateTo, valuesHfriAWC, 2, true);
+        }
+
+        ListResponseDto mergedPortfolioPerformanceSIResponse = mergePortfolioPerformanceResponses(performanceSIResponsePortfolioA, performanceSIResponsePortfolioB);
+        ListResponseDto mergedBenchmarkPerformanceSIResponse = mergeBenchmarkPerformanceResponses(performanceSIResponseHfriFoF, performanceSIResponseHfriAWC);
+        ListResponseDto mergedPerformanceSIResponse = mergePerformanceResponses(mergedPortfolioPerformanceSIResponse, mergedBenchmarkPerformanceSIResponse);
+        if(!mergedPerformanceSIResponse.isStatusOK()){
+            String performanceError = reportDto.getPerformanceError();
+            reportDto.setPerformanceError((StringUtils.isNotEmpty(performanceError) ? performanceError : "") + mergedPerformanceSIResponse.getErrorMessageEn());
+        }
+        List<MonitoringRiskHedgeFundPerformanceRecordDto> performanceSI = mergedPerformanceSIResponse.getRecords();
+        reportDto.setPerformanceSinceInception(performanceSI);
+
+        // Factor Betas
+//        ListResponseDto factorBetasResponse = getHedgeFundsFactorBetas(searchParamsDto.getDate(),nicPortfolioResultDto);
+//        if(!factorBetasResponse.isStatusOK()){
+//            reportDto.setFactorBetasError(factorBetasResponse.getErrorMessageEn());
+//        }
+//        List<MonitoringRiskHedgeFundBetaFactorDto> factorBetas = factorBetasResponse.getRecords();
+//        reportDto.setFactorBetas(factorBetas);
+
+        return reportDto;
+    }
 
     @Override
     public MonitoringRiskHedgeFundReportDto getMonthlyHedgeFundReport(MonitoringRiskReportSearchParamsDto searchParamsDto) {
@@ -168,8 +318,8 @@ public class MonitoringRiskServiceImpl implements MonitoringRiskService {
                 valuesB.add(valueB);
             }
 
-            performance12MResponsePortfolioA = getHedgeFundsPerformanceSummary(dateFrom12M, dateTo, valuesA, false);
-            performance12MResponsePortfolioB = getHedgeFundsPerformanceSummary(dateFrom12M, dateTo, valuesB, false);
+            performance12MResponsePortfolioA = getHedgeFundsPerformanceSummary(dateFrom12M, dateTo, valuesA, 1, false);
+            performance12MResponsePortfolioB = getHedgeFundsPerformanceSummary(dateFrom12M, dateTo, valuesB, 2, false);
         }
 
 
@@ -184,7 +334,7 @@ public class MonitoringRiskServiceImpl implements MonitoringRiskService {
                 valuesHfriFoF.add(value);
             }
 
-            performance12MResponseHfriFoF = getHedgeFundsPerformanceSummary(dateFrom12M, dateTo, valuesHfriFoF, true);
+            performance12MResponseHfriFoF = getHedgeFundsPerformanceSummary(dateFrom12M, dateTo, valuesHfriFoF,1,  true);
         }
         if (hfriawc12M != null && !hfriawc12M.isEmpty()){
             List<DateDoubleValue> valuesHfriAWC = new ArrayList<>();
@@ -192,7 +342,7 @@ public class MonitoringRiskServiceImpl implements MonitoringRiskService {
                 DateDoubleValue value = new DateDoubleValue(DateUtils.getLastDayOfCurrentMonth(dto.getDate()), dto.getReturnValue());
                 valuesHfriAWC.add(value);
             }
-            performance12MResponseHfriAWC = getHedgeFundsPerformanceSummary(dateFrom12M, dateTo, valuesHfriAWC, true);
+            performance12MResponseHfriAWC = getHedgeFundsPerformanceSummary(dateFrom12M, dateTo, valuesHfriAWC,2,  true);
         }
 
         ListResponseDto mergedPortfolioPerformance12MResponse = mergePortfolioPerformanceResponses(performance12MResponsePortfolioA, performance12MResponsePortfolioB);
@@ -221,8 +371,8 @@ public class MonitoringRiskServiceImpl implements MonitoringRiskService {
                 valuesB.add(valueB);
             }
 
-            performanceSIResponsePortfolioA = getHedgeFundsPerformanceSummary(dateFromSI, dateTo, valuesA, false);
-            performanceSIResponsePortfolioB = getHedgeFundsPerformanceSummary(dateFromSI, dateTo, valuesB, false);
+            performanceSIResponsePortfolioA = getHedgeFundsPerformanceSummary(dateFromSI, dateTo, valuesA, 1,  false);
+            performanceSIResponsePortfolioB = getHedgeFundsPerformanceSummary(dateFromSI, dateTo, valuesB, 2,  false);
         }
 
         List<BenchmarkValueDto> hfriFoFSI = this.benchmarkService.getBenchmarkValuesEndOfMonthForDateRangeAndTypes(dateFromSI, dateTo, 10, benchmarkCodesHFRIFOF);
@@ -234,14 +384,14 @@ public class MonitoringRiskServiceImpl implements MonitoringRiskService {
                 valuesHfriFoF.add(value);
             }
 
-            performanceSIResponseHfriFoF = getHedgeFundsPerformanceSummary(dateFromSI, dateTo, valuesHfriFoF, true);
+            performanceSIResponseHfriFoF = getHedgeFundsPerformanceSummary(dateFromSI, dateTo, valuesHfriFoF, 1, true);
         }
         if (hfriAWCSI != null && !hfriAWCSI.isEmpty()) {
             List<DateDoubleValue> valuesHfriAWC = new ArrayList<>();
             for (BenchmarkValueDto dto: hfriAWCSI){
                 DateDoubleValue value = new DateDoubleValue(DateUtils.getLastDayOfCurrentMonth(dto.getDate()), dto.getReturnValue());
             }
-            performanceSIResponseHfriAWC = getHedgeFundsPerformanceSummary(dateFromSI, dateTo, valuesHfriAWC, true);
+            performanceSIResponseHfriAWC = getHedgeFundsPerformanceSummary(dateFromSI, dateTo, valuesHfriAWC, 2, true);
         }
 
         ListResponseDto mergedPortfolioPerformanceSIResponse = mergePortfolioPerformanceResponses(performanceSIResponsePortfolioA, performanceSIResponsePortfolioB);
@@ -309,6 +459,125 @@ public class MonitoringRiskServiceImpl implements MonitoringRiskService {
         return null;
     }
 
+    @Override
+    public List<Date> getReportDateList(){
+        List<Date> dates = new ArrayList<>();
+        Iterator<MonitoringRiskHFMonthlyReport> iterator = this.riskReportRepository.findAll().iterator();
+        if(iterator != null){
+            while(iterator.hasNext()){
+                MonitoringRiskHFMonthlyReport report = iterator.next();
+                dates.add(DateUtils.getLastDayOfCurrentMonth(report.getReportDate()));
+            }
+        }
+        Collections.reverse(dates);
+        return dates;
+    }
+
+    @Transactional
+    public ResponseDto uploadHFReturns(Long reportId, FilesDto filesDto, String updater){
+        ResponseDto responseDto = new ResponseDto();
+        // Save file
+        if(filesDto == null || filesDto.getType() == null){
+            responseDto.setErrorMessageEn("Failed to save return file: file missing or type not specified");
+            return responseDto;
+        }
+        String catalog = filesDto.getType().equalsIgnoreCase(FileTypeLookup.MONITORING_HF_RISK_RETURNS_CLASS_A.getCode()) ?
+                FileTypeLookup.MONITORING_HF_RISK_RETURNS_CLASS_A.getCatalog() :
+                filesDto.getType().equalsIgnoreCase(FileTypeLookup.MONITORING_HF_RISK_RETURNS_CLASS_B.getCode()) ?
+                        FileTypeLookup.MONITORING_HF_RISK_RETURNS_CLASS_B.getCatalog():
+                        filesDto.getType().equalsIgnoreCase(FileTypeLookup.MONITORING_HF_RISK_RETURNS_CONS.getCode()) ?
+                                FileTypeLookup.MONITORING_HF_RISK_RETURNS_CONS.getCatalog(): null;
+        if(catalog == null){
+            responseDto.setErrorMessageEn("Failed to save return file: file type could not be determined");
+            return responseDto;
+        }
+        // Save file
+        Long fileId = this.fileService.save(filesDto, catalog);
+        MonitoringRiskHFMonthlyReport report = this.riskReportRepository.findOne(reportId);
+        if(report == null){
+            responseDto.setErrorMessageEn("Failed to save return file: missing report");
+            return responseDto;
+        }
+        try{
+            InputStream inputFile = new ByteArrayInputStream(filesDto.getBytes());
+            XSSFWorkbook workbook = new XSSFWorkbook(inputFile);
+            //XSSFSheet sheet = workbook.getSheet("Returns");
+            Iterator<Row> rowIterator = null;
+            try {
+                rowIterator = ExcelUtils.getRowIterator(filesDto.getBytes(), filesDto.getFileName(), 0);
+            }catch (ExcelFileParseException ex){
+                String errorMessage = "Error parsing data file." + ex.getMessage();
+                logger.error(errorMessage, ex);
+                responseDto.setErrorMessageEn(errorMessage);
+            }
+            if(rowIterator != null) {
+                int rowNum = 0;
+                boolean headerOk = false;
+                List<MonitoringRiskHFPortfolioReturn> returns = new ArrayList<>();
+                while (rowIterator.hasNext()) { // each row
+                    Row row = rowIterator.next();
+                    if(headerOk) {
+                        if (row.getCell(0) != null && row.getCell(1) != null && row.getCell(2) != null) {
+                            String portfolio = ExcelUtils.getStringValueFromCell(row.getCell(0));
+                            Date date = row.getCell(1).getDateCellValue();
+                            Double value = ExcelUtils.getDoubleValueFromCell(row.getCell(2));
+
+                            MonitoringRiskHFPortfolioReturn returnEntity = new MonitoringRiskHFPortfolioReturn();
+                            returnEntity.setReport(report);
+                            returnEntity.setDate(date);
+                            returnEntity.setValue(value);
+                            if(portfolio != null){
+                                if(portfolio.equalsIgnoreCase("SINGULAR")){
+                                    returnEntity.setPortfolioType(new MonitoringRiskHFPortfolioType(MonitoringRiskHFPortfolioTypeLookup.SINGULAR_A.getId()));
+                                }else  if(portfolio.equalsIgnoreCase("SINGULAR B")){
+                                    returnEntity.setPortfolioType(new MonitoringRiskHFPortfolioType(MonitoringRiskHFPortfolioTypeLookup.SINGULAR_B.getId()));
+                                }else  if(portfolio.equalsIgnoreCase("SINGULARCONS")){
+                                    returnEntity.setPortfolioType(new MonitoringRiskHFPortfolioType(MonitoringRiskHFPortfolioTypeLookup.SINGULAR_CONS.getId()));
+                                }
+                            }
+                            if(returnEntity.getDate() == null){
+                                responseDto.setErrorMessageEn("Failed to save file: missing date value for one of records");
+                                return responseDto;
+                            }
+                            if(returnEntity.getValue() == null){
+                                responseDto.setErrorMessageEn("Failed to save file: missing return value for one of records");
+                                return responseDto;
+                            }
+                            if(returnEntity.getPortfolioType() == null){
+                                responseDto.setErrorMessageEn("Failed to save file: missing portfolio type for one of records " +
+                                        "(must be SINGULAR, SINGULAR B, SINGULARCONS)");
+                                return responseDto;
+                            }
+                            returns.add(returnEntity);
+                        }
+                    }else{
+                        headerOk = ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(0),"Portfolio") &&
+                                ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(1),"Date") &&
+                                ExcelUtils.isCellStringValueEqualIgnoreCase(row.getCell(2),"Rate of Return");
+                    }
+                }
+                if(!returns.isEmpty()){
+                    this.riskHFReturnRepository.save(returns);
+                    if(filesDto.getType().equalsIgnoreCase(FileTypeLookup.MONITORING_HF_RISK_RETURNS_CLASS_A.getCode())) {
+                        report.setReturnsClassAFile(new Files(fileId));
+                    }else if(filesDto.getType().equalsIgnoreCase(FileTypeLookup.MONITORING_HF_RISK_RETURNS_CLASS_B.getCode())) {
+                        report.setReturnsClassBFile(new Files(fileId));
+                    }else if(filesDto.getType().equalsIgnoreCase(FileTypeLookup.MONITORING_HF_RISK_RETURNS_CONS.getCode())) {
+                        report.setReturnsConsFile(new Files(fileId));
+                    }
+                    this.riskReportRepository.save(report);
+                }
+            }
+
+        }catch (Exception ex){
+            logger.error("Monitoring Risk HF Monthly: failed to parse HF returns with exception",ex);
+            responseDto.setErrorMessageEn("Failed to parse HF returns");
+            return responseDto;
+        }
+        responseDto.setStatus(ResponseStatusType.SUCCESS);
+        return responseDto;
+    }
+
     private ListResponseDto mergePortfolioPerformanceResponses(ListResponseDto portfolioAResponse, ListResponseDto portfolioBResponse) {
         if (portfolioAResponse == null) {
             return portfolioBResponse;
@@ -336,8 +605,8 @@ public class MonitoringRiskServiceImpl implements MonitoringRiskService {
                     for (MonitoringRiskHedgeFundPerformanceRecordDto portfolioDto: (List<MonitoringRiskHedgeFundPerformanceRecordDto>) mergedPortfolioResponse.getRecords()) {
                         for (MonitoringRiskHedgeFundPerformanceRecordDto portfolioBDto: (List<MonitoringRiskHedgeFundPerformanceRecordDto>) portfolioBResponse.getRecords()) {
                             if (portfolioDto.getName().equalsIgnoreCase(portfolioBDto.getName())) {
-                                portfolioDto.setPortfolioBValue(portfolioBDto.getPortfolioValue());
-                                portfolioDto.setPortfolioBValueTxt(portfolioBDto.getPortfolioValueTxt());
+                                portfolioDto.setPortfolioBValue(portfolioBDto.getPortfolioBValue());
+                                portfolioDto.setPortfolioBValueTxt(portfolioBDto.getPortfolioBValueTxt());
                                 break;
                             }
                         }
@@ -375,7 +644,9 @@ public class MonitoringRiskServiceImpl implements MonitoringRiskService {
                     for (MonitoringRiskHedgeFundPerformanceRecordDto benchmarkDto: (List<MonitoringRiskHedgeFundPerformanceRecordDto>) mergedBenchmarkResponse.getRecords()) {
                         for (MonitoringRiskHedgeFundPerformanceRecordDto hfriAwcDto: (List<MonitoringRiskHedgeFundPerformanceRecordDto>) hfriAwcResponse.getRecords()) {
                             if (benchmarkDto.getName().equalsIgnoreCase(hfriAwcDto.getName())) {
+                                //benchmarkDto.setBenchmarkValue(hfriAwcDto.getBenchmarkValue());
                                 benchmarkDto.setBenchmarkAwcValue(hfriAwcDto.getBenchmarkAwcValue());
+                                //benchmarkDto.setBenchmarkValueTxt(hfriAwcDto.getBenchmarkValueTxt());
                                 benchmarkDto.setBenchmarkAwcValueTxt(hfriAwcDto.getBenchmarkAwcValueTxt());
                                 break;
                             }
@@ -416,6 +687,8 @@ public class MonitoringRiskServiceImpl implements MonitoringRiskService {
                             if(portfolioDto.getName().equalsIgnoreCase(benchmarkDto.getName())){
                                 portfolioDto.setBenchmarkValue(benchmarkDto.getBenchmarkValue());
                                 portfolioDto.setBenchmarkValueTxt(benchmarkDto.getBenchmarkValueTxt());
+                                portfolioDto.setBenchmarkAwcValue(benchmarkDto.getBenchmarkAwcValue());
+                                portfolioDto.setBenchmarkAwcValueTxt(benchmarkDto.getBenchmarkAwcValueTxt());
                                 break;
                             }
                         }
@@ -1037,7 +1310,8 @@ public class MonitoringRiskServiceImpl implements MonitoringRiskService {
     /* ****************************************************************************************************************/
 
     /* HEDGE FUNDS PERFORMANCE SUMMARY 12M ****************************************************************************/
-    private ListResponseDto getHedgeFundsPerformanceSummary(Date dateFrom, Date dateTo, List<DateDoubleValue> returnValues, boolean isBenchmark){
+    private ListResponseDto getHedgeFundsPerformanceSummary(Date dateFrom, Date dateTo, List<DateDoubleValue> returnValues,
+                                                            int tranche, boolean isBenchmark){
         int period = DateUtils.getMonthsChanged(dateFrom, dateTo);
         ListResponseDto responseDto = new ListResponseDto();
         List<MonitoringRiskHedgeFundPerformanceRecordDto> performance = new ArrayList<>();
@@ -1091,47 +1365,67 @@ public class MonitoringRiskServiceImpl implements MonitoringRiskService {
             }
             // AnRoR
             Double annRoR = MathUtils.getAnnualizedReturn(returns, 18);
-            Double annRoR1 = isBenchmark ? null : annRoR;
-            Double annRoR2 = !isBenchmark ? null : annRoR;
-            performance.add(new MonitoringRiskHedgeFundPerformanceRecordDto("Annualized Return", annRoR1, annRoR2,
+            Double annRoR1 = isBenchmark || tranche == 2 ? null : annRoR;
+            Double annRoR2 = !isBenchmark || tranche == 2 ? null : annRoR;
+            Double annRoR3 = isBenchmark || tranche == 1 ? null : annRoR;
+            Double annRoR4 = !isBenchmark || tranche == 1 ? null : annRoR;
+            performance.add(new MonitoringRiskHedgeFundPerformanceRecordDto("Annualized Return", annRoR1, annRoR2, annRoR3, annRoR4,
                     annRoR1 != null ? (MathUtils.multiply(4, annRoR1, 100.0) + "%") : null,
-                    annRoR2 != null ? (MathUtils.multiply(4, annRoR2, 100.0) + "%") : null));
+                    annRoR2 != null ? (MathUtils.multiply(4, annRoR2, 100.0) + "%") : null,
+                    annRoR3 != null ? (MathUtils.multiply(4, annRoR3, 100.0) + "%") : null,
+                    annRoR4 != null ? (MathUtils.multiply(4, annRoR4, 100.0) + "%") : null));
 
             // STD
             Double std = MathUtils.getStandardDeviation(returns, true);
             if(std != null) {
                 Double annStd = MathUtils.multiply(18, std, Math.sqrt(12));
-                Double annStd1 = isBenchmark ? null : annStd;
-                Double annStd2 = !isBenchmark ? null : annStd;
-                performance.add(new MonitoringRiskHedgeFundPerformanceRecordDto("Ann Standard Deviation", annStd1, annStd2,
+                Double annStd1 = isBenchmark || tranche == 2 ? null : annStd;
+                Double annStd2 = !isBenchmark || tranche == 2 ? null : annStd;
+                Double annStd3 = isBenchmark || tranche == 1 ? null : annStd;
+                Double annStd4 = !isBenchmark || tranche == 1? null : annStd;
+                performance.add(new MonitoringRiskHedgeFundPerformanceRecordDto("Ann Standard Deviation", annStd1, annStd2,annStd3, annStd4,
                         annStd1 != null ? (MathUtils.multiply(4, annStd1, 100.0) + "%") : null,
-                        annStd2 != null ? (MathUtils.multiply(4, annStd2, 100.0) + "%") : null));
+                        annStd2 != null ? (MathUtils.multiply(4, annStd2, 100.0) + "%") : null,
+                        annStd3 != null ? (MathUtils.multiply(4, annStd3, 100.0) + "%") : null,
+                        annStd4 != null ? (MathUtils.multiply(4, annStd4, 100.0) + "%") : null));
             }
 
             // Downside Deviation
             Double downsideDeviation = MathUtils.getAnnualizedDownsideDeviation(18, returns);
-            Double downsideDeviation1 = isBenchmark ? null : downsideDeviation;
-            Double downsideDeviation2 = !isBenchmark ? null : downsideDeviation;
-            performance.add(new MonitoringRiskHedgeFundPerformanceRecordDto("Downside Deviation", downsideDeviation1, downsideDeviation2,
+            Double downsideDeviation1 = isBenchmark || tranche == 2 ? null : downsideDeviation;
+            Double downsideDeviation2 = !isBenchmark || tranche == 2 ? null : downsideDeviation;
+            Double downsideDeviation3 = isBenchmark || tranche == 1 ? null : downsideDeviation;
+            Double downsideDeviation4 = !isBenchmark || tranche == 1 ? null : downsideDeviation;
+            performance.add(new MonitoringRiskHedgeFundPerformanceRecordDto("Downside Deviation", downsideDeviation1, downsideDeviation2,downsideDeviation3, downsideDeviation4,
                     downsideDeviation1 != null ? (MathUtils.multiply(4, downsideDeviation1, 100.0) + "%") : null,
-                    downsideDeviation2 != null ? (MathUtils.multiply(4, downsideDeviation2, 100.0) + "%") : null));
+                    downsideDeviation2 != null ? (MathUtils.multiply(4, downsideDeviation2, 100.0) + "%") : null,
+                    downsideDeviation3 != null ? (MathUtils.multiply(4, downsideDeviation3, 100.0) + "%") : null,
+                    downsideDeviation4 != null ? (MathUtils.multiply(4, downsideDeviation4, 100.0) + "%") : null));
 
             // Sharpe Ratio
             Double sharpeRatio = MathUtils.getSharpeRatioAvg12MReturns(18, returns, tbillsReturns, true);
-            Double sharpeRatio1 = isBenchmark ? null : sharpeRatio;
-            Double sharpeRatio2 = !isBenchmark ? null : sharpeRatio;
-            performance.add(new MonitoringRiskHedgeFundPerformanceRecordDto("Sharpe Ratio", sharpeRatio1, sharpeRatio2,
+            Double sharpeRatio1 = isBenchmark || tranche == 2 ? null : sharpeRatio;
+            Double sharpeRatio2 = !isBenchmark || tranche == 2 ? null : sharpeRatio;
+            Double sharpeRatio3 = isBenchmark || tranche == 1 ? null : sharpeRatio;
+            Double sharpeRatio4 = !isBenchmark || tranche == 1 ? null : sharpeRatio;
+            performance.add(new MonitoringRiskHedgeFundPerformanceRecordDto("Sharpe Ratio", sharpeRatio1, sharpeRatio2,sharpeRatio3, sharpeRatio4,
                     sharpeRatio1 != null ? MathUtils.add(sharpeRatio1, 0.0).toString() : null,
-                    sharpeRatio2 != null ? MathUtils.add(sharpeRatio2, 0.0).toString() : null));
+                    sharpeRatio2 != null ? MathUtils.add(sharpeRatio2, 0.0).toString() : null,
+                    sharpeRatio3 != null ? MathUtils.add(sharpeRatio3, 0.0).toString() : null,
+                    sharpeRatio4 != null ? MathUtils.add(sharpeRatio4, 0.0).toString() : null));
 
             // Sortino
             Double annRoRTbills = MathUtils.getAnnualizedReturn(tbillsReturns, 18);
             Double sortino = MathUtils.getSortinoRatioAvgReturns(annRoRTbills, returns, 18);
-            Double sortino1 = isBenchmark ? null : sortino;
-            Double sortino2 = !isBenchmark ? null : sortino;
-            performance.add(new MonitoringRiskHedgeFundPerformanceRecordDto("Sortino Ratio", sortino1, sortino2,
+            Double sortino1 = isBenchmark || tranche == 2 ? null : sortino;
+            Double sortino2 = !isBenchmark || tranche == 2 ? null : sortino;
+            Double sortino3 = isBenchmark || tranche == 1 ? null : sortino;
+            Double sortino4 = !isBenchmark || tranche == 1 ? null : sortino;
+            performance.add(new MonitoringRiskHedgeFundPerformanceRecordDto("Sortino Ratio", sortino1, sortino2,sortino3, sortino4,
                     sortino1 != null ? MathUtils.add(sortino1, 0.0).toString() : null,
-                    sortino2 != null ? MathUtils.add(sortino2, 0.0).toString() : null));
+                    sortino2 != null ? MathUtils.add(sortino2, 0.0).toString() : null,
+                    sortino3 != null ? MathUtils.add(sortino3, 0.0).toString() : null,
+                    sortino4 != null ? MathUtils.add(sortino4, 0.0).toString() : null));
 
             // Worst Drawdown
             double[] cumulativeReturnsSI = MathUtils.getCumulativeReturnsFromInitial(18, returnsSI, 1.0);
@@ -1167,30 +1461,46 @@ public class MonitoringRiskServiceImpl implements MonitoringRiskService {
                 cumulativeReturnsPeriod = arrPrepended;
             }
             WorstDrawdownDto worstDDDto = MathUtils.getWorstDrawdown(18, cumulativeReturnsPeriod);
-            WorstDrawdownDto worstDDDto1 = isBenchmark ? null : worstDDDto;
-            WorstDrawdownDto worstDDDto2 = !isBenchmark ? null : worstDDDto;
+            WorstDrawdownDto worstDDDto1 = isBenchmark || tranche == 2 ? null : worstDDDto;
+            WorstDrawdownDto worstDDDto2 = !isBenchmark || tranche == 2 ? null : worstDDDto;
+            WorstDrawdownDto worstDDDto3 = isBenchmark || tranche == 1 ? null : worstDDDto;
+            WorstDrawdownDto worstDDDto4 = !isBenchmark || tranche == 1 ? null : worstDDDto;
             performance.add(new MonitoringRiskHedgeFundPerformanceRecordDto("Worst DD",
                     worstDDDto1 != null && worstDDDto1.getWorstDDValue() != null ? worstDDDto1.getWorstDDValue() : null,
                     worstDDDto2 != null && worstDDDto2.getWorstDDValue() != null ? worstDDDto2.getWorstDDValue() : null,
+                    worstDDDto3 != null && worstDDDto3.getWorstDDValue() != null ? worstDDDto3.getWorstDDValue() : null,
+                    worstDDDto4 != null && worstDDDto4.getWorstDDValue() != null ? worstDDDto4.getWorstDDValue() : null,
                     worstDDDto1 != null && worstDDDto1.getWorstDDValue() != null ? (MathUtils.multiply(4, worstDDDto1.getWorstDDValue(), 100.0) + "%") : null,
-                    worstDDDto2 != null && worstDDDto2.getWorstDDValue() != null ? (MathUtils.multiply(4, worstDDDto2.getWorstDDValue(), 100.0) + "%") : null));
+                    worstDDDto2 != null && worstDDDto2.getWorstDDValue() != null ? (MathUtils.multiply(4, worstDDDto2.getWorstDDValue(), 100.0) + "%") : null,
+                    worstDDDto3 != null && worstDDDto3.getWorstDDValue() != null ? (MathUtils.multiply(4, worstDDDto3.getWorstDDValue(), 100.0) + "%") : null,
+                    worstDDDto4 != null && worstDDDto4.getWorstDDValue() != null ? (MathUtils.multiply(4, worstDDDto4.getWorstDDValue(), 100.0) + "%") : null));
 
             // Worst DD Period
             performance.add(new MonitoringRiskHedgeFundPerformanceRecordDto("Worst DD Duration (months)",
                     worstDDDto1 != null && worstDDDto1.getWorstDDPeriod() != null ? MathUtils.add(worstDDDto1.getWorstDDPeriod(), 0.0) : null,
                     worstDDDto2 != null && worstDDDto2.getWorstDDPeriod() != null ? MathUtils.add(worstDDDto2.getWorstDDPeriod(), 0.0) : null,
+                    worstDDDto3 != null && worstDDDto3.getWorstDDPeriod() != null ? MathUtils.add(worstDDDto3.getWorstDDPeriod(), 0.0) : null,
+                    worstDDDto4 != null && worstDDDto4.getWorstDDPeriod() != null ? MathUtils.add(worstDDDto4.getWorstDDPeriod(), 0.0) : null,
                     worstDDDto1 != null && worstDDDto1.getWorstDDPeriod() != null ? worstDDDto1.getWorstDDPeriod().toString() : null,
-                    worstDDDto2 != null && worstDDDto2.getWorstDDPeriod() != null ? worstDDDto2.getWorstDDPeriod().toString() : null));
+                    worstDDDto2 != null && worstDDDto2.getWorstDDPeriod() != null ? worstDDDto2.getWorstDDPeriod().toString() : null,
+                    worstDDDto3 != null && worstDDDto3.getWorstDDPeriod() != null ? worstDDDto3.getWorstDDPeriod().toString() : null,
+                    worstDDDto4 != null && worstDDDto4.getWorstDDPeriod() != null ? worstDDDto4.getWorstDDPeriod().toString() : null));
 
             // Recovery Months
             Integer recoveryMonths = MathUtils.getRecoveryMonths(18, returns);
-            Integer recoveryMonths1 = isBenchmark ? null : recoveryMonths;
-            Integer recoveryMonths2 = !isBenchmark ? null : recoveryMonths;
+            Integer recoveryMonths1 = isBenchmark || tranche == 2 ? null : recoveryMonths;
+            Integer recoveryMonths2 = !isBenchmark || tranche == 2  ? null : recoveryMonths;
+            Integer recoveryMonths3 = isBenchmark || tranche == 1 ? null : recoveryMonths;
+            Integer recoveryMonths4 = !isBenchmark || tranche == 1  ? null : recoveryMonths;
             performance.add(new MonitoringRiskHedgeFundPerformanceRecordDto("Recovery (months)",
                     recoveryMonths1 != null ? MathUtils.add(recoveryMonths1, 0.0) : null,
                     recoveryMonths2 != null ? MathUtils.add(recoveryMonths2, 0.0) : null,
+                    recoveryMonths3 != null ? MathUtils.add(recoveryMonths3, 0.0) : null,
+                    recoveryMonths4 != null ? MathUtils.add(recoveryMonths4, 0.0) : null,
                     recoveryMonths1 != null ? recoveryMonths1.toString() : null,
-                    recoveryMonths2 != null ? recoveryMonths2.toString() : null));
+                    recoveryMonths2 != null ? recoveryMonths2.toString() : null,
+                    recoveryMonths3 != null ? recoveryMonths3.toString() : null,
+                    recoveryMonths4 != null ? recoveryMonths4.toString() : null));
 
             // Positive & Negative Months
             int positives = 0;
@@ -1207,33 +1517,47 @@ public class MonitoringRiskServiceImpl implements MonitoringRiskService {
                 }
             }
             performance.add(new MonitoringRiskHedgeFundPerformanceRecordDto("Positive Months",
-                    !isBenchmark ? MathUtils.divide(positives + 0.0, returns.length + 0.0) : null,
-                    isBenchmark ? MathUtils.divide(positives + 0.0, returns.length + 0.0) : null,
-                    !isBenchmark ? MathUtils.multiply(2, 100.0, MathUtils.divide(positives + 0.0, returns.length + 0.0)) + "%" : null,
-                    isBenchmark ? MathUtils.multiply(2, 100.0, MathUtils.divide(positives + 0.0, returns.length + 0.0)) + "%" : null));
+                    !isBenchmark && tranche == 1 ? MathUtils.divide(positives + 0.0, returns.length + 0.0) : null,
+                    isBenchmark && tranche == 1 ? MathUtils.divide(positives + 0.0, returns.length + 0.0) : null,
+                    !isBenchmark && tranche == 2 ? MathUtils.divide(positives + 0.0, returns.length + 0.0) : null,
+                    isBenchmark && tranche == 2 ? MathUtils.divide(positives + 0.0, returns.length + 0.0) : null,
+                    !isBenchmark && tranche == 1 ? MathUtils.multiply(2, 100.0, MathUtils.divide(positives + 0.0, returns.length + 0.0)) + "%" : null,
+                    isBenchmark && tranche == 1 ? MathUtils.multiply(2, 100.0, MathUtils.divide(positives + 0.0, returns.length + 0.0)) + "%" : null,
+                    !isBenchmark && tranche == 2 ? MathUtils.multiply(2, 100.0, MathUtils.divide(positives + 0.0, returns.length + 0.0)) + "%" : null,
+                    isBenchmark && tranche == 2 ? MathUtils.multiply(2, 100.0, MathUtils.divide(positives + 0.0, returns.length + 0.0)) + "%" : null));
 
             performance.add(new MonitoringRiskHedgeFundPerformanceRecordDto("Negative Months",
-                    !isBenchmark ? MathUtils.divide(negatives + 0.0, returns.length + 0.0) : null,
-                    isBenchmark ? MathUtils.divide(negatives + 0.0, returns.length + 0.0) : null,
-                    !isBenchmark ? MathUtils.multiply(2, 100.0, MathUtils.divide(negatives + 0.0, returns.length + 0.0)) + "%" : null,
-                    isBenchmark ? MathUtils.multiply(2, 100.0, MathUtils.divide(negatives + 0.0, returns.length + 0.0)) + "%" : null));
+                    !isBenchmark && tranche == 1? MathUtils.divide(negatives + 0.0, returns.length + 0.0) : null,
+                    isBenchmark && tranche == 1 ? MathUtils.divide(negatives + 0.0, returns.length + 0.0) : null,
+                    !isBenchmark && tranche == 2 ? MathUtils.divide(negatives + 0.0, returns.length + 0.0) : null,
+                    isBenchmark && tranche == 2 ? MathUtils.divide(negatives + 0.0, returns.length + 0.0) : null,
+                    !isBenchmark && tranche == 1 ? MathUtils.multiply(2, 100.0, MathUtils.divide(negatives + 0.0, returns.length + 0.0)) + "%" : null,
+                    isBenchmark && tranche == 1 ? MathUtils.multiply(2, 100.0, MathUtils.divide(negatives + 0.0, returns.length + 0.0)) + "%" : null,
+                    !isBenchmark && tranche == 2 ? MathUtils.multiply(2, 100.0, MathUtils.divide(negatives + 0.0, returns.length + 0.0)) + "%" : null,
+                    isBenchmark && tranche == 2 ? MathUtils.multiply(2, 100.0, MathUtils.divide(negatives + 0.0, returns.length + 0.0)) + "%" : null));
 
             // Gain Loss ratio
             Double gainLossRatio = null;
             Double gainLossRatio1 = null;
             Double gainLossRatio2 = null;
+            Double gainLossRatio3 = null;
+            Double gainLossRatio4 = null;
             if(negatives > 0 && negativeSum != 0.0) {
                 Double positiveAvg = MathUtils.divide(18, positiveSum, positives + 0.0);
                 Double negativeAvg = MathUtils.divide(18, negativeSum, negatives + 0.0);
 
                 gainLossRatio = MathUtils.abs(MathUtils.divide(18, positiveAvg, negativeAvg));
-                gainLossRatio1 = !isBenchmark ? gainLossRatio : null;
-                gainLossRatio2 = isBenchmark ? gainLossRatio : null;
+                gainLossRatio1 = !isBenchmark && tranche == 1 ? gainLossRatio : null;
+                gainLossRatio2 = isBenchmark && tranche == 1 ? gainLossRatio : null;
+                gainLossRatio3 = !isBenchmark && tranche == 2 ? gainLossRatio : null;
+                gainLossRatio4 = isBenchmark && tranche == 2 ? gainLossRatio : null;
 
             }
-            performance.add(new MonitoringRiskHedgeFundPerformanceRecordDto("Gain/Loss Ratio",gainLossRatio1, gainLossRatio2,
-                    !isBenchmark ? MathUtils.add(0.0, gainLossRatio).toString() : null,
-                    isBenchmark ? MathUtils.add(0.0, gainLossRatio).toString() : null));
+            performance.add(new MonitoringRiskHedgeFundPerformanceRecordDto("Gain/Loss Ratio",gainLossRatio1, gainLossRatio2,gainLossRatio3, gainLossRatio4,
+                    !isBenchmark && tranche == 1 ? MathUtils.add(0.0, gainLossRatio).toString() : null,
+                    isBenchmark && tranche == 1 ? MathUtils.add(0.0, gainLossRatio).toString() : null,
+                    !isBenchmark && tranche == 2? MathUtils.add(0.0, gainLossRatio).toString() : null,
+                    isBenchmark && tranche == 2 ? MathUtils.add(0.0, gainLossRatio).toString() : null));
         }
         responseDto.setRecords(performance);
         if(responseDto.getStatus() == null){
@@ -1527,6 +1851,85 @@ public class MonitoringRiskServiceImpl implements MonitoringRiskService {
     }
 
     @Override
+    public boolean deleteReturnsClassAFile(Long reportId, String updater){
+        try {
+            Employee employee = this.employeeRepository.findByUsername(updater);
+
+            if (employee == null) {
+                logger.error("Failed to delete Monitoring Risk HF returns file: the user is not found in the database!");
+                return false;
+            }
+            MonitoringRiskHFMonthlyReport report = this.riskReportRepository.findOne(reportId);
+            if(report != null){
+                this.riskHFReturnRepository.deleteByReportIdAndPortfolioTypeCode(reportId, MonitoringRiskHFPortfolioTypeLookup.SINGULAR_A.getCode());
+                // delete file
+                this.fileService.safeDelete(report.getReturnsClassAFile().getId());
+                // delete file association
+                report.setReturnsClassAFile(null);
+                this.riskReportRepository.save(report);
+                logger.info("Monitoring Risk HF Returns class A file data has been deleted successfully, updater: " + updater);
+                return true;
+            }
+        } catch (Exception ex) {
+            logger.error("Failed to delete Monitoring Risk HF Returns class A data: repository problem, ", ex);
+        }
+        return false;
+    }
+
+    @Override
+    public boolean deleteReturnsClassBFile(Long reportId, String updater){
+        try {
+            Employee employee = this.employeeRepository.findByUsername(updater);
+
+            if (employee == null) {
+                logger.error("Failed to delete Monitoring Risk HF returns file: the user is not found in the database!");
+                return false;
+            }
+            MonitoringRiskHFMonthlyReport report = this.riskReportRepository.findOne(reportId);
+            if(report != null){
+                this.riskHFReturnRepository.deleteByReportIdAndPortfolioTypeCode(reportId, MonitoringRiskHFPortfolioTypeLookup.SINGULAR_B.getCode());
+                // delete file
+                this.fileService.safeDelete(report.getReturnsClassBFile().getId());
+                // delete file association
+                report.setReturnsClassBFile(null);
+                this.riskReportRepository.save(report);
+                logger.info("Monitoring Risk HF Returns class A file data has been deleted successfully, updater: " + updater);
+                return true;
+            }
+        } catch (Exception ex) {
+            logger.error("Failed to delete Monitoring Risk HF Returns class A data: repository problem, ", ex);
+        }
+        return false;
+    }
+
+    @Override
+    public boolean deleteReturnsConsFile(Long reportId, String updater){
+        try {
+            Employee employee = this.employeeRepository.findByUsername(updater);
+
+            if (employee == null) {
+                logger.error("Failed to delete Monitoring Risk HF returns file: the user is not found in the database!");
+                return false;
+            }
+            MonitoringRiskHFMonthlyReport report = this.riskReportRepository.findOne(reportId);
+            if(report != null){
+                this.riskHFReturnRepository.deleteByReportIdAndPortfolioTypeCode(reportId, MonitoringRiskHFPortfolioTypeLookup.SINGULAR_CONS.getCode());
+                // delete file
+                this.fileService.safeDelete(report.getReturnsClassBFile().getId());
+                // delete file association
+                report.setReturnsConsFile(null);
+                this.riskReportRepository.save(report);
+                logger.info("Monitoring Risk HF Returns cons file data has been deleted successfully, updater: " + updater);
+                return true;
+            }
+        } catch (Exception ex) {
+            logger.error("Failed to delete Monitoring Risk HF Returns cons data: repository problem, ", ex);
+        }
+        return false;
+    }
+
+
+    @Override
     public boolean deleteStrategy(Date date, String updater) {
         try {
             Employee employee = this.employeeRepository.findByUsername(updater);
@@ -1652,6 +2055,23 @@ public class MonitoringRiskServiceImpl implements MonitoringRiskService {
         } catch (Exception ex) {
             logger.error("Failed to update Sub-strategy data, ", ex);
             return new MonitoringRiskHedgeFundAllocationSubStrategyResultDto(null, ResponseStatusType.FAIL, "", "Failed to update Sub-strategy data!", "");
+        }
+    }
+
+    @Override
+    public EntitySaveResponseDto saveReport(MonitoringRiskHFMonthlyReportDto reportDto) {
+        EntitySaveResponseDto saveResponseDto = new EntitySaveResponseDto();
+        if(reportDto != null){
+            MonitoringRiskHFMonthlyReport entity = new MonitoringRiskHFMonthlyReport();
+            entity.setReportDate(DateUtils.getLastDayOfCurrentMonth(reportDto.getReportDate()));
+            entity.setId(reportDto.getId());
+            this.riskReportRepository.save(entity);
+            saveResponseDto.setEntityId(entity.getId());
+            saveResponseDto.setStatus(ResponseStatusType.SUCCESS);
+            return saveResponseDto;
+        }else {
+            saveResponseDto.setStatus(ResponseStatusType.FAIL);
+            return saveResponseDto;
         }
     }
 

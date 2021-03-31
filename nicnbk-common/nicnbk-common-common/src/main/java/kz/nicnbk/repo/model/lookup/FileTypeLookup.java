@@ -34,6 +34,9 @@ public enum FileTypeLookup {
     MONITORING_LIQUID_PORTFOLIO("MON_LIQ", "monitoring/liquid_portfolio"),
     MONITORING_RISK_ALLOCATION_BY_SUB_STRATEGY("MON_SUB_STR", "risk/allocation_sub_strategy"),
     MONITORING_RISK_ALLOCATION_BY_TOP_PORTFOLIO("MON_TOP_PFO", "risk/allocation_top_portfolio"),
+    MONITORING_HF_RISK_RETURNS_CLASS_A("MONHFRISK1", "monitoring/hf_risk"),
+    MONITORING_HF_RISK_RETURNS_CLASS_B("MONHFRISK2", "monitoring/hf_risk"),
+    MONITORING_HF_RISK_RETURNS_CONS("MONHFRISK3", "monitoring/hf_risk"),
 
     HR_DOCS("HR_DOCS", "hr/docs"),
 
@@ -45,7 +48,6 @@ public enum FileTypeLookup {
     IC_EXPLANATORY_NOTE("IC_EXPNOTE", "ic_meeting"),
     IC_AGENDA("IC_AGENDA", "ic_meeting"),
     IC_BULLETIN("IC_BLTN", "ic_meeting"),
-
 
     HF_SCREENING_DATA_FILE("HFSCRNDATA", "hf_screening"),
     HF_SCREENING_UCITS_FILE("HFSCRNUCTS", "hf_screening");

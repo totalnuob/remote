@@ -1,6 +1,7 @@
 package kz.nicnbk.service.dto.monitoring;
 
 import kz.nicnbk.service.dto.common.ResponseDto;
+import kz.nicnbk.service.dto.files.FilesDto;
 
 import java.util.Date;
 import java.util.List;
@@ -10,7 +11,14 @@ import java.util.List;
  */
 
 public class MonitoringRiskHedgeFundReportDto extends ResponseDto {
+
+    private Long reportId;
     private Date date;
+    private FilesDto returnsFileClassA;
+    private FilesDto returnsFileClassB;
+    private FilesDto returnsFileCons;
+
+
     private List<MonitoringRiskHedgeFundFundAllocationDto> topFundAllocations;
     private String topFundAllocationsWarning;
     private String topFundAllocationsError;
@@ -231,5 +239,37 @@ public class MonitoringRiskHedgeFundReportDto extends ResponseDto {
 
     public void setSubStrategyAllocationsError(String subStrategyAllocationsError) {
         this.subStrategyAllocationsError = subStrategyAllocationsError;
+    }
+
+    public Long getReportId() {
+        return reportId;
+    }
+
+    public void setReportId(Long reportId) {
+        this.reportId = reportId;
+    }
+
+    public FilesDto getReturnsFileClassA() {
+        return returnsFileClassA;
+    }
+
+    public void setReturnsFileClassA(FilesDto returnsFileClassA) {
+        this.returnsFileClassA = returnsFileClassA;
+    }
+
+    public FilesDto getReturnsFileClassB() {
+        return returnsFileClassB;
+    }
+
+    public void setReturnsFileClassB(FilesDto returnsFileClassB) {
+        this.returnsFileClassB = returnsFileClassB;
+    }
+
+    public FilesDto getReturnsFileCons() {
+        return returnsFileCons;
+    }
+
+    public void setReturnsFileCons(FilesDto returnsFileCons) {
+        this.returnsFileCons = returnsFileCons;
     }
 }
