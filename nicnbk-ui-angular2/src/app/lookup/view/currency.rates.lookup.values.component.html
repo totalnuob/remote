@@ -69,26 +69,38 @@
                             <option *ngFor="let currency of currencyList" [value]="currency.code">{{currency.code}}</option>
                         </select>
                     </div>
+                    <div class="col-md-1">
+                        <button type="button" class="btn-xs btn-success" style="display: inline-block; margin-top: 28px"
+                                (click)="swapSearch()">
+                            <span class="glyphicon glyphicon-arrow-right"></span>
+                        </button>
+                    </div>
                     <div class="col-md-3">
+                        <label for="quoteCurrencySearchParam">Quote Currency</label>
+                        <select class="form-control" style="width: 100%" [(ngModel)]="searchParams.quoteCurrencyCode" id="quoteCurrencySearchParam"
+                                [ngModelOptions]="{standalone: true}">
+                            <option *ngFor="let currency of getNonIdenticalCurrencyListSearch(currencyList)" [value]="currency.code">{{currency.code}}</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
                         <label for="fromDateDTPickeer">From</label>
                         <div class='input-group date col-md-3' id='fromDateDTPickeer' style="width: 100%">
                             <input type='text' class="form-control" id="fromDate" [(ngModel)]="searchParams.fromDate"/>
-                                        <span class="input-group-addon">
+                            <span class="input-group-addon">
                                             <span class="glyphicon glyphicon-calendar"></span>
                                         </span>
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-2">
                         <label for="untilDateDTPickeer">To</label>
                         <div class='input-group date col-md-3' id='untilDateDTPickeer' style="width: 100%">
                             <input type='text' class="form-control" id="toDate" [(ngModel)]="searchParams.toDate"/>
-                                        <span class="input-group-addon">
+                            <span class="input-group-addon">
                                             <span class="glyphicon glyphicon-calendar"></span>
                                         </span>
                         </div>
                     </div>
                 </div>
-            </div>
             <br/>
             <div class="row">
                 <button type="button"class="btn-xs btn-default pull-left" (click)="clearSearchForm()">
@@ -104,7 +116,7 @@
         <div>
             <label>Total found: <span>{{searchResults?.totalElements > 0 ?  searchResults?.totalElements : 0}}</span></label>
         </div>
-
+        </div>
         <div class="row">
             <div class="row pull-right">
                 <ul class="pagination" *ngIf="searchResults?.showPageFrom > 0">
@@ -123,6 +135,8 @@
                     <th>CURRENCY</th>
                     <th>KZT</th>
                     <th>USD</th>
+                    <th>QUOTE</th>
+                    <th>QUOTE VALUE</th>
                     <th>AVG MONTH</th>
                     <th>AVG YEAR</th>
                     <!--<th>AVG VALUE</th>-->
@@ -136,6 +150,8 @@
                         <td>{{item?.currency?.code}}</td>
                         <td>{{item.value}}</td>
                         <td>{{item.valueUSD}}</td>
+                        <td>{{item.quoteCurrencyCode}}</td>
+                        <td>{{item.quoteCurrencyValue}}</td>
                         <td>{{item.averageValue}}</td>
                         <td>{{item.averageValueYear}}</td>
                         <td>
@@ -143,17 +159,6 @@
                                     data-toggle="modal" data-target="#addNewModal" (click)="edit(item)">
                                 <span class="glyphicon glyphicon-pencil"></span>
                             </button>
-
-                            <!--<button *ngIf = "item.editable" type="button" class="btn btn-xs btn-danger" style="display: inline-block"-->
-                                    <!--disabled (click)="delete(item)">-->
-                                <!--<span class="glyphicon glyphicon-trash"></span>-->
-                            <!--</button>-->
-
-                            <!--<a class="btn btn-primary" data-toggle="modal" data-target="#addNewModal" (click)="edit(item)" style="cursor: pointer">-->
-                                <!--<span class="glyphicon glyphicon-edit"></span>-->
-                            <!--</a>-->
-
-
                         </td>
                     </tr>
                 </tbody>

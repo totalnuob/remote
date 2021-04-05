@@ -264,44 +264,19 @@ public class BenchmarkServiceImpl implements BenchmarkService {
         return responseDto;
     }
 
-    private String getUrlFromDB(String stationCode) {
-        String base_url = "";
-        switch (stationCode) {
-            case "DAI_2":
-                base_url = BloombergStationLookup.DAI_2.getCode();
-                break;
-            case "RISK":
-                base_url = BloombergStationLookup.RISK.getCode();
-                break;
-            case "DAI_1":
-                base_url = BloombergStationLookup.DAI_1.getCode();
-                break;
-            default:
-                base_url = BloombergStationLookup.YAO.getCode();
-        }
-        return base_url + "bloomberg/benchmark";
-
-    }
-
     private String getUrlStatic(String stationCode) throws UnknownHostException {
         String base_url = "";
-        InetAddress address = InetAddress.getByName("10.10.165.123");
-        String host = address.getHostName();
         switch (stationCode) {
-            case "DAI_2":
-                base_url = "http://10.10.165.??:8080";
+            case "HF":
+                base_url = "BloombergHF-778";
                 break;
             case "RISK":
-                base_url = "http://10.10.165.???:8080";
-                break;
-            case "DAI_1":
-                base_url = "http://10.10.165.?:8080";
+                base_url = "BloombergRISK-790";
                 break;
             default:
-//                base_url = host;
-                base_url = "http://10.10.165.123:8080";
+                base_url = "BloombergYAO-788";
         }
-        return base_url + "bloomberg/benchmark";
+        return "http://" + base_url + ":8080/bloomberg/benchmark";
     }
 
     private List<BenchmarkValueDto> loadBenchmarksBB(BenchmarkSearchParams searchParams) throws ConnectException, Exception {

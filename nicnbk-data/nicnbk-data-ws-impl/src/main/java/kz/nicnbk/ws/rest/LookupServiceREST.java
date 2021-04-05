@@ -131,7 +131,7 @@ public class LookupServiceREST extends CommonServiceREST{
 
     @RequestMapping(value = "/BloombergStation", method = RequestMethod.GET)
     public ResponseEntity getBloombergStations(){
-        List<BaseDictionaryDto> lookups = this.lookupService.getBloombergStations();
+        List<BaseDictionaryDto> lookups = this.lookupService.getBloombergStationsSimple();
         return buildNonNullResponse(lookups);
     }
 

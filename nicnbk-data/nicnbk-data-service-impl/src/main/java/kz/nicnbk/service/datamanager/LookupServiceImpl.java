@@ -441,6 +441,19 @@ public class LookupServiceImpl implements LookupService {
     }
 
     @Override
+    public List<BaseDictionaryDto> getBloombergStationsSimple() {
+        List<BaseDictionaryDto> stations = new ArrayList<>();
+        BaseDictionaryDto stationHF = new BaseDictionaryDto("HF", "BloombergHF-778", "", "");
+        BaseDictionaryDto stationRISK = new BaseDictionaryDto("RISK", "BloombergRISK-790", "", "");
+        BaseDictionaryDto stationYAO = new BaseDictionaryDto("YAO", "BloombergYAO-788", "", "");
+        stations.add(stationHF);
+        stations.add(stationRISK);
+        stations.add(stationYAO);
+
+        return stations;
+    }
+
+    @Override
     public List<BaseDictionaryDto> getPortfolioVarTypes() {
         try {
             List<BaseDictionaryDto> dtoList = new ArrayList<>();

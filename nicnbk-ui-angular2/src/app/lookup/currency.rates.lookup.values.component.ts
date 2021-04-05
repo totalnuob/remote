@@ -60,6 +60,7 @@ export class CurrencyRatesLookupValuesComponent extends CommonNBReportingCompone
 
     busy: Subscription;
     currencyList = [];
+    bloombergStations = [];
     searchResults: CurrencyRatesSearchResults;
     searchParams = new CurrencyRatesSearchParams();
     newCurrencyRateParams = new NewCurrencyRateParams();
@@ -86,19 +87,20 @@ export class CurrencyRatesLookupValuesComponent extends CommonNBReportingCompone
 
         Observable.forkJoin(
             // Load lookups
-            this.lookupService.getCurrencyList()
-                           )
-                           .subscribe(
-                               ([data1]) => {
-                                   this.currencyList = data1;
+            this.lookupService.getCurrencyList(),
+            this.lookupService.getBloombergStationsList()
+            )
+           .subscribe(
+               ([data1, data2]) => {
+                   this.currencyList = data1;
+                   this.bloombergStations = data2;
+                   this.search(0);
 
-                                   this.search(0);
-
-                                   if(this.newCurrencyRateParams && this.newCurrencyRateParams.date != null && this.newCurrencyRateParams.currency != null) {
-                                       console.log("auto click button")
-                                       document.getElementById("openCurrencyModalButton").click();
-                                   }
-                           });
+                   if(this.newCurrencyRateParams && this.newCurrencyRateParams.date != null && this.newCurrencyRateParams.currency != null) {
+                       console.log("auto click button")
+                       document.getElementById("openCurrencyModalButton").click();
+                   }
+           });
 
     }
 
@@ -409,10 +411,27 @@ export class CurrencyRatesLookupValuesComponent extends CommonNBReportingCompone
         return rates;
     }
 
+    getNonIdenticalCurrencyListSearch(){
+        var rates = [];
+        for (var i = 0; i < this.currencyList.length; i++){
+            if (this.currencyList[i].code != this.searchParams.currencyCode) {
+                rates.push(this.currencyList[i]);
+            }
+        }
+        return rates;
+    }
+
     swap(){
         var temp;
         temp = this.uploadCurrencyCode;
         this.uploadCurrencyCode = this.uploadQuoteCurrencyCode;
         this.uploadQuoteCurrencyCode = temp;
+    }
+
+    swapSearch(){
+        var temp;
+        temp = this.searchParams.currencyCode;
+        this.searchParams.currencyCode = this.searchParams.quoteCurrencyCode;
+        this.searchParams.quoteCurrencyCode = temp;
     }
 }
