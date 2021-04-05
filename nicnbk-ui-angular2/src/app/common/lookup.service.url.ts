@@ -15,6 +15,8 @@ export const CURRENCIES_URL = LOOKUP_SERVICE_URL + "Currency";
 
 export const BENCHMARK_TYPE_URL = LOOKUP_SERVICE_URL + "BenchmarkType";
 
+export const BLOOMBERG_STATIONS_URL = LOOKUP_SERVICE_URL + "BloombergStation";
+
 export const PORTFOLIO_VAR_TYPE_URL = LOOKUP_SERVICE_URL + "PortfolioVarType";
 
 export const HEDGE_FUND_STATUS_URL = LOOKUP_SERVICE_URL + "HedgeFundStatus";
@@ -88,7 +90,6 @@ export const NIC_SINGULARITY_CHART_ACCOUNTS_URL = LOOKUP_SERVICE_URL + "Singular
 export const NIC_TARRAGON_CHART_ACCOUNTS_URL = LOOKUP_SERVICE_URL + "TarragonNICReportingChartOfAccounts/";
 export const NIC_TERRA_CHART_ACCOUNTS_URL = LOOKUP_SERVICE_URL + "TerraNICReportingChartOfAccounts/";
 
-export const SAVE_LOOKUP_VALUE_URL = LOOKUP_SERVICE_URL + "saveLookupValue/";
 export const SAVE_MATCHING_NIC_CHART_ACCOUNTS_URL = LOOKUP_SERVICE_URL + "saveMatchingNICChartAccounts/";
 export const SAVE_NIC_CHART_ACCOUNTS_URL = LOOKUP_SERVICE_URL + "saveNICChartAccounts/";
 

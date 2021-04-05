@@ -23,23 +23,40 @@
 
         <div class="row">
             <div class="col-md-12">
-                <div class="col-md-2 pull-right">
-                    <a class="btn btn-primary" id="openCurrencyModalButton" data-toggle="modal" data-target="#addNewModal" (click)="edit()" style="cursor: pointer">
-                        <!--<span class="glyphicon glyphicon-edit"></span>-->Add
-                    </a>
+                <div class="col-md-2 col-md-offset-10">
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a class="btn-sm btn-primary" id="openCurrencyModalButton" data-toggle="modal" data-target="#addNewModal" (click)="edit()"
+                           style="cursor: pointer; margin-left: 26px">
+                            <!--<span class="glyphicon glyphicon-edit"></span>-->Add
+                        </a>
+                        <a class="btn-sm btn-primary" data-toggle="modal" data-target="#currencyUploadModal"
+                           style="cursor: pointer; margin-left: 5px">
+                            <!--<span class="glyphicon glyphicon-edit"></span>-->Paste
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
-        <br/>
-        <div class="row">
-            <div class="col-md-12">
-                <div class="col-md-2 pull-right">
-                    <a class="btn btn-primary" data-toggle="modal" data-target="#currencyUploadModal" style="cursor: pointer">
-                        <!--<span class="glyphicon glyphicon-edit"></span>-->Add multiple USD rates
-                    </a>
-                </div>
-            </div>
-        </div>
+
+<!--        <div class="row">-->
+<!--            <div class="col-md-12">-->
+<!--                <div class="col-md-2 pull-right">-->
+<!--                    <a class="btn-sm btn-primary" id="openCurrencyModalButton" data-toggle="modal" data-target="#addNewModal" (click)="edit()" style="cursor: pointer">-->
+<!--                        &lt;!&ndash;<span class="glyphicon glyphicon-edit"></span>&ndash;&gt;Add-->
+<!--                    </a>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--        <br/>-->
+<!--        <div class="row">-->
+<!--            <div class="col-md-12">-->
+<!--                <div class="col-md-2 pull-right">-->
+<!--                    <a class="btn-group-sm btn-primary" data-toggle="modal" data-target="#currencyUploadModal" style="cursor: pointer">-->
+<!--                        &lt;!&ndash;<span class="glyphicon glyphicon-edit"></span>&ndash;&gt;Paste-->
+<!--                    </a>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
         <br/>
 
         <div class="jumbotron">
@@ -240,27 +257,79 @@
                         <div class="alert alert-danger" *ngIf="currencyUploadModalErrorMessage != null"><span>{{currencyUploadModalErrorMessage}}</span></div>
                         <div class="alert alert-info" *ngIf="currencyUploadModalSuccessMessage != null"><span>{{currencyUploadModalSuccessMessage}}</span></div>
                         <br/>
-                        <div>
-                            <label>Currency</label>
-                            <select class="form-control" style="width: 100%" [(ngModel)]="uploadCurrencyCode" id="uploadCurrencyCode"
-                                    [ngModelOptions]="{standalone: true}">
-                                <option *ngFor="let currency of getNonUSDCurrencyList(currencyList)" [value]="currency.code">{{currency.code}}</option>
-                            </select>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="col-md-4">
+                                    <div>
+                                        <label>Base currency</label>
+                                        <select class="form-control" style="width: 100%" [(ngModel)]="uploadCurrencyCode" id="uploadCurrencyCode"
+                                                [ngModelOptions]="{standalone: true}">
+                                            <option *ngFor="let currency of currencyList" [value]="currency.code">{{currency.code}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-1">
+                                    <button type="button" class="btn-xs btn-success" style="display: inline-block; margin-top: 28px"
+                                            (click)="swap()">
+                                        <span class="glyphicon glyphicon-arrow-right"></span>
+                                    </button>
+                                </div>
+                                <div class="col-md-4">
+                                    <div>
+                                        <label>Quote currency</label>
+                                        <select class="form-control" style="width: 100%" [(ngModel)]="uploadQuoteCurrencyCode" id="uploadQuoteCurrencyCode"
+                                                [ngModelOptions]="{standalone: true}">
+                                            <option *ngFor="let currency of getNonIdenticalCurrencyList(currencyList)" [value]="currency.code">{{currency.code}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <br/>
+                            </div>
                         </div>
-                        <br/>
-                        <div>Format: <span style="font-weight: bold">date [tab] rate USD</span></div>
-                        <div>
-                            Date format: <span style="font-weight: bold">dd.mm.yyyy</span>
+
+                        <div class="row" *ngIf="uploadCurrencyCode != null && uploadQuoteCurrencyCode != null">
+                            <div class="col-md-12">
+                                <dl class="row" style="margin-left: 10px">
+                                    <dt class="col-md-4">1 {{uploadCurrencyCode.toString()}}</dt>
+                                    <dt class="col-md-1">=</dt>
+                                    <dt class="col-md-4">X {{uploadQuoteCurrencyCode.toString()}}</dt>
+                                </dl>
+                            </div>
                         </div>
-                        <div>
-                            Return format: <span style="font-weight: bold">xx.xxxx</span>
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div><span style="font-weight: bold">date [tab] X Quote</span></div>
+                                <div>Format: <span style="font-weight: bold">date [tab] X Quote</span></div>
+                                <div>
+                                    Date format: <span style="font-weight: bold">dd.mm.yyyy</span>
+                                </div>
+                                <div>
+                                    Return format: <span style="font-weight: bold">xx.xxxx</span>
+                                </div>
+                                <textarea class="form-control" placeholder="Paste values here..."
+                                          name="uploadedValues" [(ngModel)]="uploadedValues"></textarea>
+                            </div>
                         </div>
-                    <textarea class="form-control" placeholder="Paste values here..."
-                              name="uploadedValues" [(ngModel)]="uploadedValues"></textarea>
+
+<!--                        <div class="row">-->
+<!--                            <div class="col-md-12">-->
+<!--                                <div><span style="font-weight: bold">date [tab] rate USD</span></div>-->
+<!--                                <div>Format: <span style="font-weight: bold">date [tab] rate USD</span></div>-->
+<!--                                <div>-->
+<!--                                    Date format: <span style="font-weight: bold">dd.mm.yyyy</span>-->
+<!--                                </div>-->
+<!--                                <div>-->
+<!--                                    Return format: <span style="font-weight: bold">xx.xxxx</span>-->
+<!--                                </div>-->
+<!--                                <textarea class="form-control" placeholder="Paste values here..."-->
+<!--                                          name="uploadedValues" [(ngModel)]="uploadedValues"></textarea>-->
+<!--                            </div>-->
+<!--                        </div>-->
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default pull-left" data-dismiss="modal" (click)='closeCurrencyUploadModal()'>Close</button>
-                        <button [disabled]="uploadCurrencyCode === 'USD' " type="button" class="btn btn-success pull-right" (click)="parseCurrencyValues()">Save</button>
+                        <button [disabled]="uploadCurrencyCode === uploadQuoteCurrencyCode " type="button" class="btn btn-success pull-right" (click)="parseCurrencyValues()">Save</button>
                     </div>
                 </div>
             </div>

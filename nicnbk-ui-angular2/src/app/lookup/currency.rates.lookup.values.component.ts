@@ -67,6 +67,7 @@ export class CurrencyRatesLookupValuesComponent extends CommonNBReportingCompone
 
     uploadedValues;
     uploadCurrencyCode;
+    uploadQuoteCurrencyCode;
 
     ngOnInit():void {
         $('#fromDateDTPickeer').datetimepicker({
@@ -288,13 +289,18 @@ export class CurrencyRatesLookupValuesComponent extends CommonNBReportingCompone
 
     parseCurrencyValues(){
         var currencies = [];
-        if(this.uploadCurrencyCode == null || this.uploadCurrencyCode === ''){
+        if((this.uploadCurrencyCode == null || this.uploadCurrencyCode === '')
+            && (this.uploadQuoteCurrencyCode == null || this.uploadQuoteCurrencyCode === '')){
             this.currencyUploadModalSuccessMessage = null;
-            this.currencyUploadModalErrorMessage = "Currency required";
+            this.currencyUploadModalErrorMessage = "Base and Quote currencies required";
             return;
-        }else if(this.uploadCurrencyCode === 'USD'){
+        }else if(this.uploadCurrencyCode == null || this.uploadCurrencyCode === ''){
             this.currencyUploadModalSuccessMessage = null;
-            this.currencyUploadModalErrorMessage = "Cannot choose USD";
+            this.currencyUploadModalErrorMessage = "Base currency required";
+            return;
+        }else if(this.uploadQuoteCurrencyCode == null || this.uploadQuoteCurrencyCode === ''){
+            this.currencyUploadModalSuccessMessage = null;
+            this.currencyUploadModalErrorMessage = "Quote currency required";
             return;
         }
         if(this.uploadedValues == null || this.uploadedValues.trim() === ''){
@@ -326,8 +332,10 @@ export class CurrencyRatesLookupValuesComponent extends CommonNBReportingCompone
             var value = row[1].replace(/,/g, '.');
             value = value.replace('%', '');
             var currency =  new BaseDictionary();
+            var quoteCurrency = new BaseDictionary();
             currency.code = this.uploadCurrencyCode;
-            currencies.push({"date": day + '-' + month + '-' + year, "valueUSD": parseFloat(Number(value)).toFixed(10), "currency":currency});
+            quoteCurrency.code = this.uploadQuoteCurrencyCode;
+            currencies.push({"date": day + '-' + month + '-' + year, "quoteCurrencyValue": parseFloat(Number(value)).toFixed(10), "currency":currency, "quoteCurrencyCode":quoteCurrency.code});
         }
 
         console.log(currencies);
@@ -389,5 +397,22 @@ export class CurrencyRatesLookupValuesComponent extends CommonNBReportingCompone
             }
         }
         return rates;
+    }
+
+    getNonIdenticalCurrencyList(){
+        var rates = [];
+        for (var i = 0; i < this.currencyList.length; i++){
+            if (this.currencyList[i].code != this.uploadCurrencyCode) {
+                rates.push(this.currencyList[i]);
+            }
+        }
+        return rates;
+    }
+
+    swap(){
+        var temp;
+        temp = this.uploadCurrencyCode;
+        this.uploadCurrencyCode = this.uploadQuoteCurrencyCode;
+        this.uploadQuoteCurrencyCode = temp;
     }
 }

@@ -23,47 +23,74 @@
 
         <div class="row">
             <div class="col-md-12">
-                <div class="col-md-2 pull-right">
-                    <a class="btn btn-primary" id="openCurrencyModalButton" data-toggle="modal" data-target="#addNewModal" (click)="edit()" style="cursor: pointer">
-                        <!--<span class="glyphicon glyphicon-edit"></span>-->Add
+                <div class="col-md-2 col-md-offset-10">
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a class="btn-sm btn-primary" id="openCurrencyModalButton" data-toggle="modal" data-target="#addNewModal" (click)="edit()"
+                           style="cursor: pointer; margin-left: 26px">
+                            <!--<span class="glyphicon glyphicon-edit"></span>-->Add
+                        </a>
+                        <a class="btn-sm btn-primary" data-toggle="modal" data-target="#benchmarkUploadModal"
+                           style="cursor: pointer; margin-left: 5px">
+                            <!--<span class="glyphicon glyphicon-edit"></span>-->Paste
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="col-md-offset-10">
+                    <a class="btn-sm btn-primary" data-toggle="modal" data-target="#bloombergModal"
+                       style="cursor: pointer">
+                        <!--<span class="glyphicon glyphicon-edit"></span>-->Download from Bloomberg
                     </a>
+                </div>
+            </div>
+        </div>
+        <br>
 
-                </div>
-            </div>
-        </div>
-        <br/>
-        <div class="row">
-            <div class="col-md-12">
-                <div class="col-md-2 pull-right">
-                    <a class="btn btn-primary" data-toggle="modal" data-target="#benchmarkUploadModal" style="cursor: pointer">
-                        <!--<span class="glyphicon glyphicon-edit"></span>-->Add multiple
-                    </a>
-                </div>
-            </div>
-        </div>
-        <br/>
-        <div class="row">
-            <div class="col-md-12">
-                <div class="col-md-2 pull-right">
-                    <a class="btn btn-primary" data-toggle="modal" data-target="#bloombergModal" style="cursor: pointer">
-                        <!--<span class="glyphicon glyphicon-edit"></span>-->Bloomberg
-                    </a>
-                </div>
-            </div>
-        </div>
-        <br/>
+<!--        <div class="row">-->
+<!--            <div class="col-md-12">-->
+<!--                <div class="col-md-2 pull-right">-->
+<!--                    <a class="btn-sm btn-primary" id="openCurrencyModalButton" data-toggle="modal" data-target="#addNewModal" (click)="edit()" style="cursor: pointer">-->
+<!--                        &lt;!&ndash;<span class="glyphicon glyphicon-edit"></span>&ndash;&gt;Add-->
+<!--                    </a>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--        <br/>-->
+<!--        <div class="row">-->
+<!--            <div class="col-md-12">-->
+<!--                <div class="col-md-2 pull-right">-->
+<!--                    <a class="btn-sm btn-primary" data-toggle="modal" data-target="#benchmarkUploadModal" style="cursor: pointer">-->
+<!--                        &lt;!&ndash;<span class="glyphicon glyphicon-edit"></span>&ndash;&gt;Paste-->
+<!--                    </a>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--        <br/>-->
+<!--        <div class="row">-->
+<!--            <div class="col-md-12">-->
+<!--                <div class="col-md-2 pull-right">-->
+<!--                    <a class="btn btn-primary" data-toggle="modal" data-target="#bloombergModal" style="cursor: pointer">-->
+<!--                        &lt;!&ndash;<span class="glyphicon glyphicon-edit"></span>&ndash;&gt;Bloomberg-->
+<!--                    </a>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
 
         <div class="jumbotron">
             <div class="row">
                 <div class="col-md-12">
-                    <div class="col-md-3">
+                    <div class="col-md-4">
                         <label for="benchmarkCodeParam">Type</label>
                         <select class="form-control" style="width: 100%" [(ngModel)]="searchParams.benchmarkCode" id="benchmarkCodeParam"
                                 [ngModelOptions]="{standalone: true}">
                             <option *ngFor="let type of benchmarkTypes" [value]="type.code">{{type.nameEn}}</option>
                         </select>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-4">
                         <label for="fromDateDTPickeer">From</label>
                         <div class='input-group date col-md-3' id='fromDateDTPickeer' style="width: 100%">
                             <input type='text' class="form-control" id="fromDate" [(ngModel)]="searchParams.fromDate"/>
@@ -72,7 +99,7 @@
                                         </span>
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-4">
                         <label for="untilDateDTPickeer">To</label>
                         <div class='input-group date col-md-3' id='untilDateDTPickeer' style="width: 100%">
                             <input type='text' class="form-control" id="toDate" [(ngModel)]="searchParams.toDate"/>
@@ -81,14 +108,16 @@
                                         </span>
                         </div>
                     </div>
+                    <div class="col-md-1">
+                        <button type="button"class="btn-xs btn-default pull-left" (click)="clearSearchForm()"
+                            style="margin-top: 5px">
+                            <!--<i class="glyphicon glyphicon-trash"></i>-->Reset
+                        </button>
+                    </div>
                 </div>
             </div>
             <br/>
-            <div class="row">
-                <button type="button"class="btn-xs btn-default pull-left" (click)="clearSearchForm()">
-                    <!--<i class="glyphicon glyphicon-trash"></i>-->Reset
-                </button>
-            </div>
+
             <div class="row">
                 <div class="col-md-12">
                     <button type="button" class="btn btn-success pull-right" (click)="search()">Search</button>
@@ -236,7 +265,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <!--<h3 class="modal-title" >HEADER</h3>-->
+                        <h3 class="modal-title" >Paste multiple values of benchmark</h3>
                     </div>
                     <div class="modal-body">
                         <div class="alert alert-danger" *ngIf="benchmarkUploadModalErrorMessage != null"><span>{{benchmarkUploadModalErrorMessage}}</span></div>
@@ -275,7 +304,7 @@
             <div class="modal-dialog" style="overflow-y: scroll; max-height:85%;  margin-top: 50px; margin-bottom:50px; width:65%;">
                 <div class="modal-content" style="min-height: 400px">
                     <div class="modal-header">
-                        <h3 class="modal-title"  style="word-wrap: break-word">Get Benchmark from Bloomberg</h3>
+                        <h3 class="modal-title"  style="word-wrap: break-word">Download benchmark from Bloomberg</h3>
                     </div>
                     <div class="modal-body">
 
@@ -290,6 +319,13 @@
 
                         <div class="row">
                             <div class="col-md-12">
+                                <div class="col-md-3">
+                                    <label for="benchmarkCodeParam">Station</label>
+                                    <select class="form-control" style="width: 100%" [(ngModel)]="searchParams.stationCode" id="benchmarkCodeParamBB"
+                                            [ngModelOptions]="{standalone: true}">
+                                        <option *ngFor="let station of bloombergStations" [value]="station.code">{{station.nameEn}}</option>
+                                    </select>
+                                </div>
                                 <div class="col-md-3">
                                     <label for="benchmarkCodeParam">Type</label>
                                     <select class="form-control" style="width: 100%" [(ngModel)]="searchParams.benchmarkCode" id="benchmarkCodeParamBB"
@@ -315,14 +351,14 @@
                                         </span>
                                     </div>
                                 </div>
+                                <div class="col-md-1">
+                                    <button type="button" class="btn-xs btn-default" style="margin-top: 5px" (click)="clearSearchForm()">
+                                        <!--<i class="glyphicon glyphicon-trash"></i>-->Reset
+                                    </button>
+                                </div>
                             </div>
                         </div>
                         <br/>
-                        <div class="row">
-                            <button type="button"class="btn-xs btn-default pull-left" (click)="clearSearchForm()">
-                                <!--<i class="glyphicon glyphicon-trash"></i>-->Reset
-                            </button>
-                        </div>
 
                     <div class="modal-footer">
                         <button type="button" class="btn btn-success" (click)="getBenchmarkBB()">Get Benchmark</button>
@@ -334,4 +370,5 @@
             </div>
         </div>
     </div>
+</div>
 </div>
