@@ -178,7 +178,9 @@ public class ReserveCalculationServiceImpl implements ReserveCalculationService 
 
             int pageSize = searchParams != null && searchParams.getPageSize() > 0 ? searchParams.getPageSize() : DEFAULT_PAGE_SIZE;
             page = searchParams != null && searchParams.getPage() > 0 ? searchParams.getPage() - 1 : 0;
-            entityPage = reserveCalculationRepository.search(new PageRequest(page, pageSize, new Sort(Sort.Direction.DESC, "date", "id")));
+            entityPage = reserveCalculationRepository.search(searchParams.getExpenseType(), searchParams.getSourceType(),
+                    searchParams.getDestinationType(), searchParams.getDateFromNonEmpty(), searchParams.getDateToNonEmpty(),
+                    new PageRequest(page, pageSize, new Sort(Sort.Direction.DESC, "date", "id")));
 
             ReserveCalculationPagedSearchResult result = new ReserveCalculationPagedSearchResult();
             if (entityPage != null) {
@@ -749,6 +751,7 @@ public class ReserveCalculationServiceImpl implements ReserveCalculationService 
                     FilesDto fileDto = new FilesDto();
                     fileDto.setId(entity.getFile().getId());
                     fileDto.setFileName(entity.getFile().getFileName());
+                    fileDto.setMimeType(entity.getFile().getMimeType());
                     files.add(fileDto);
                 }
             }
@@ -1235,12 +1238,13 @@ public class ReserveCalculationServiceImpl implements ReserveCalculationService 
         FilesDto filesDto = new FilesDto();
         ReserveCalculationDto record = getReserveCalculationRecordById(recordId);
 
-        Resource resource = new ClassPathResource("export_template/capital_call/CC_ORDER_TEMPLATE.docx");
+        //Resource resource = new ClassPathResource("export_template/capital_call/CC_ORDER_TEMPLATE.docx");
+        Resource resource = new ClassPathResource("export_template/capital_call/CC_LOD_TEMPLATE.docx");
         InputStream wordFileToRead = null;
         try {
             wordFileToRead = resource.getInputStream();
         } catch (IOException e) {
-            logger.error("Reporting: Export file template not found: 'CC_ORDER_TEMPLATE.docx'");
+            logger.error("Reporting: Export file template not found: 'CC_LOD_TEMPLATE.docx'");
             return null;
             //e.printStackTrace();
         }
@@ -1274,8 +1278,8 @@ public class ReserveCalculationServiceImpl implements ReserveCalculationService 
                             if (text != null && text.contains("INPUTDATE")) {
                                 text = text.replace("INPUTDATE", DateUtils.getDateEnglishTextualDate(record.getDate()));
                                 r.setText(text, 0);
-                            }else if (text != null && text.contains("INPUTVALUEDATE")) {
-                                text = text.replace("INPUTVALUEDATE", DateUtils.getDateEnglishTextualDate(record.getDate()));
+                            }else if (text != null && text.contains("VALUEDATE")) {
+                                text = text.replace("VALUEDATE", DateUtils.getDateEnglishTextualDate(record.getDate()));
                                 r.setText(text, 0);
                             }else if (text != null && text.contains("INPUTENTITY")) {
 
@@ -1372,7 +1376,7 @@ public class ReserveCalculationServiceImpl implements ReserveCalculationService 
                 File tmpDir = new File(this.rootDirectory + "/tmp/nbrk_reporting");
 
                 // write to new
-                String filePath = tmpDir + "/CC_ORDER_" + MathUtils.getRandomNumber(0, 10000) + ".docx";
+                String filePath = tmpDir + "/CC_LOD_" + MathUtils.getRandomNumber(0, 10000) + ".docx";
                 try (FileOutputStream outputStream = new FileOutputStream(filePath)) {
                     document.write(outputStream);
                 }

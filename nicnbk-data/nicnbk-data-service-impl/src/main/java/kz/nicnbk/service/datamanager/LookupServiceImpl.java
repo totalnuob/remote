@@ -3,7 +3,6 @@ package kz.nicnbk.service.datamanager;
 import kz.nicnbk.common.service.model.BaseDictionaryDto;
 import kz.nicnbk.common.service.util.PaginationUtils;
 import kz.nicnbk.common.service.util.StringUtils;
-import kz.nicnbk.repo.api.corpmeetings.ICMeetingVoteRepository;
 import kz.nicnbk.repo.api.lookup.*;
 import kz.nicnbk.repo.api.lookup.CurrencyRepository;
 import kz.nicnbk.repo.api.lookup.GeographyRepository;
@@ -865,13 +864,15 @@ public class LookupServiceImpl implements LookupService {
     }
 
     @Override
-    public List<BaseDictionaryDto> getReserveCalculationEntityTypeLookup() {
-        List<BaseDictionaryDto> dtoList = new ArrayList<>();
+    public List<ReserveCalculationEntityTypeDto> getReserveCalculationEntityTypeLookup() {
+        List<ReserveCalculationEntityTypeDto> dtoList = new ArrayList<>();
         Iterator<ReserveCalculationEntityType>  iterator = this.reserveCalculationEntityTypeRepository.findAll().iterator();
         while (iterator.hasNext()) {
             ReserveCalculationEntityType entity = iterator.next();
             BaseDictionaryDto type = disassemble(entity);
-            dtoList.add(type);
+            ReserveCalculationEntityTypeDto dto = new ReserveCalculationEntityTypeDto(type);
+            dto.setDeleted(entity.isDeleted());
+            dtoList.add(dto);
         }
         return dtoList;
     }
@@ -891,7 +892,8 @@ public class LookupServiceImpl implements LookupService {
     @Override
     public List<BaseDictionaryDto> getReserveCalculationExportDoerTypeLookup() {
         List<BaseDictionaryDto> dtoList = new ArrayList<>();
-        Iterator<ReserveCalculationExportDoerType>  iterator = this.reserveCalculationExportDoerTypeRepository.findAll().iterator();
+        Iterator<ReserveCalculationExportDoerType>  iterator =
+                this.reserveCalculationExportDoerTypeRepository.findAll(new Sort(Sort.Direction.ASC, "id")).iterator();
         while (iterator.hasNext()) {
             ReserveCalculationExportDoerType entity = iterator.next();
             BaseDictionaryDto type = disassemble(entity);

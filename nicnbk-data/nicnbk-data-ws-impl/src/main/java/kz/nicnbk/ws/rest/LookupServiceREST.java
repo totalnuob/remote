@@ -1,6 +1,7 @@
 package kz.nicnbk.ws.rest;
 
 import kz.nicnbk.common.service.model.BaseDictionaryDto;
+import kz.nicnbk.repo.model.reporting.ReserveCalculationEntityType;
 import kz.nicnbk.service.api.authentication.TokenService;
 import kz.nicnbk.service.api.benchmark.BenchmarkService;
 import kz.nicnbk.service.api.common.CurrencyRatesService;
@@ -238,7 +239,7 @@ public class LookupServiceREST extends CommonServiceREST{
 
     @RequestMapping(value = "/ReserveCalculationEntityTypes/", method = RequestMethod.GET)
     public ResponseEntity getReserveCalculationEntityTypeLookup(){
-        List<BaseDictionaryDto> lookups = this.lookupService.getReserveCalculationEntityTypeLookup();
+        List<ReserveCalculationEntityTypeDto> lookups = this.lookupService.getReserveCalculationEntityTypeLookup();
         return buildNonNullResponse(lookups);
     }
 

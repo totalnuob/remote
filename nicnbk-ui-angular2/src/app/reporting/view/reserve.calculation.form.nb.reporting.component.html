@@ -22,7 +22,6 @@
         <h3 *ngIf="reportId != null">Reserve Calculation</h3>
     </div>
 
-
     <div class="row withpadding">
         <div class="col-md-12">
             <div class="col-md-6">
@@ -42,152 +41,80 @@
     <!--</button>-->
 
     <br/>
-    <!--<form *ngIf="addedRecord != null" (ngSubmit)="saveAddedRecord()" #addedRecordForm="ngForm" class="well span">-->
-        <!--<div class="row withpadding">-->
 
-            <!--<div *ngIf="addedRecord != null">-->
-                <!--<table class="table table-hover table-responsive table-condensed" style="font-size: small">-->
-                    <!--<thead>-->
-                    <!--<tr style="font-weight: bold; font-size: small">-->
-                        <!--<td>Статья</td>-->
-                        <!--<td>Источник</td>-->
-                        <!--<td>Получатель</td>-->
-                        <!--<td>Дата</td>-->
-                        <!--<td>Дата валютирования</td>-->
-                        <!--<td>Сумма USD</td>-->
-                        <!--<td>Сумма USD SPV</td>-->
-                        <!--<td>&nbsp;</td>-->
-                    <!--</tr>-->
-                    <!--</thead>-->
-                    <!--<tr style="font-size: small">-->
-                        <!--<td>-->
-                            <!--<select required class="form-control" style="width: 100%" [ngModelOptions]="{standalone: true}" [(ngModel)]="addedRecord.expenseType.code">-->
-                                <!--<option *ngFor="let item of expenseTypeLookup" [value]="item.code">{{item.nameRu}}</option>-->
-                            <!--</select>-->
-                        <!--</td>-->
-                        <!--<td>-->
-                            <!--<select required class="form-control" style="width: 100%" [ngModelOptions]="{standalone: true}" [(ngModel)]="addedRecord.source.code">-->
-                                <!--<option *ngFor="let item of entityTypeLookup" [value]="item.code">{{item.nameRu}}</option>-->
-                            <!--</select>-->
-                        <!--</td>-->
-                        <!--<td>-->
-                            <!--<select required class="form-control" style="width: 100%" [ngModelOptions]="{standalone: true}" [(ngModel)]="addedRecord.recipient.code">-->
-                                <!--<option *ngFor="let item of entityTypeLookup" [value]="item.code">{{item.nameRu}}</option>-->
-                            <!--</select>-->
-                        <!--</td>-->
+    <div class="jumbotron">
+        <form (ngSubmit)="search(0)">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="col-md-3">
+                        <label>Статья</label>
+                        <select class="form-control" [(ngModel)]="searchParams.expenseType" [ngModelOptions]="{standalone: true}">
+                            <option value="NONE">---</option>
+                            <option *ngFor="let item of expenseTypeLookup" [value]="item.code">{{item.nameRu}}</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label>Источник</label>
+                        <select class="form-control" [(ngModel)]="searchParams.sourceType" [ngModelOptions]="{standalone: true}">
+                            <option value="NONE">---</option>
+                            <option *ngFor="let item of entityTypeLookup" [value]="item.code">{{item.nameRu}}</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label>Получатель</label>
+                        <select class="form-control" [(ngModel)]="searchParams.destinationType" [ngModelOptions]="{standalone: true}">
+                            <option value="NONE">---</option>
+                            <option *ngFor="let item of entityTypeLookup" [value]="item.code">{{item.nameRu}}</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label for="fromDateDTPickeer">Date From</label>
+                        <div class='input-group date col-md-2' id='fromDateDTPickeer' style="width: 100%">
+                            <input type='text' class="form-control" id="fromDate" name="fromDate" style="font-size: small" [(ngModel)]="searchParams.dateFrom"/>
+                            <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </span>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <label for="untilDateDTPickeer">Date To</label>
+                        <div class='input-group date col-md-2' id='untilDateDTPickeer' style="width: 100%">
+                            <input type='text' class="form-control" id="toDate" name="toDate"style="font-size: small" [(ngModel)]="searchParams.dateTo"/>
+                            <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--                        <div class="row">-->
+            <!--                            <div class="col-md-12">-->
+            <!--                                <div class="col-md-4">-->
+            <!--                                    <select class="form-control" id="type" name="type" [(ngModel)]="icTopicSearchParams.type">-->
+            <!--                                        <option *ngIf="icMeetingTopicTypes?.length > 1" value="NONE">-&#45;&#45;</option>-->
+            <!--                                        <option *ngFor = "let type of icMeetingTopicTypes" [value]="type.code">{{type.nameEn}}</option>-->
+            <!--                                    </select>-->
+            <!--                                </div>-->
+            <!--                            </div>-->
+            <!--                        </div>-->
+            <div class="row">
+                &nbsp;
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <button type="button" class="btn-xs btn-default pull-left" (click)="clearSearchForm()">
+                        <!--<i class="glyphicon glyphicon-trash"></i>-->Reset
+                    </button>
+                    <button type="submit"class="btn btn-success pull-right">Search</button>
+                </div>
+            </div>
+        </form>
+    </div>
 
-                        <!--<td>-->
-                            <!--<div class='input-group date col-md-2' id='dateDivId' style="width: 100%">-->
-                                <!--<input required type="text" class="form-control" id="dateInputId" name="dateInput" [(ngModel)]="addedRecord.date"/>-->
-                                            <!--<span class="input-group-addon">-->
-                                                <!--<span class="glyphicon glyphicon-calendar"></span>-->
-                                            <!--</span>-->
-                            <!--</div>-->
-                        <!--</td>-->
-                        <!--<td>-->
-                            <!--<div class='input-group date col-md-2' id='dateDivId2' style="width: 100%">-->
-                                <!--<input type="text" class="form-control" name="dateInput2" id="dateInputId2" [(ngModel)]="addedRecord.valueDate"/>-->
-                                    <!--<span class="input-group-addon">-->
-                                        <!--<span class="glyphicon glyphicon-calendar"></span>-->
-                                    <!--</span>-->
-                            <!--</div>-->
-                        <!--</td>-->
 
-                        <!--<td>-->
-                            <!--<input required type="text" class="form-control" (keyup)="onNumberChange(addedRecord)" [(ngModel)]="addedRecord.amount" [ngModelOptions]="{standalone: true}"/>-->
-                        <!--</td>-->
-                        <!--<td>-->
-                            <!--<input (keyup)="onNumberChange(addedRecord)" type="text" class="form-control" [(ngModel)]="addedRecord.amountToSPV" [ngModelOptions]="{standalone: true}"/>-->
-                        <!--</td>-->
-                        <!--<td>-->
-                            <!--<button type="button" class="btn-xs btn-danger" style="display: inline-block"  (click)="removeRecord(addedRecord)">-->
-                                <!--<span class="glyphicon glyphicon-minus"></span>-->
-                            <!--</button>-->
-                        <!--</td>-->
-                    <!--</tr>-->
-                    <!--<tr  style="font-size: small">-->
-                        <!--<td colspan="3">-->
-                            <!--<input *ngIf="addedRecord.expenseType.code == 'ADM_FEE'" type="text" class="form-control"-->
-                                               <!--placeholder="Enter Reference..." [(ngModel)]="addedRecord.referenceInfo" [ngModelOptions]="{standalone: true}"/>-->
-                        <!--</td>-->
-                        <!--<td>&nbsp;</td>-->
-                        <!--<td>&nbsp;</td>-->
-                        <!--<td>&nbsp;</td>-->
-                        <!--<td>&nbsp;</td>-->
-                    <!--</tr>-->
-                    <!--<tr>-->
-                        <!--<td>-->
-                            <!--<label class="btn btn-primary" for="attachmentFile">-->
-                            <!--<input type="file" id="attachmentFile" (change)="onFileChange($event)" name="file" multiple style="display:none;" />-->
-                                <!--Add-->
-                            <!--</label>-->
-                        <!--</td>-->
-                        <!--<td colspan="6">-->
-                            <!--<div class="row" *ngFor="let newFile of uploadFiles" class="label label-info" style="display: table;">-->
-                                <!--<span>{{newFile.name}}</span>-->
-                            <!--</div>-->
-                        <!--</td>-->
-                    <!--</tr>-->
-                    <!--<tr style="font-size: small">-->
-                        <!--<td colspan="7">-->
-                            <!--<div *ngFor="let attachment of addedRecord?.files">-->
-                                <!--<file-attachment-downloader fileId="{{attachment.id}}"-->
-                                                            <!--fileName="{{attachment.fileName}}"-->
-                                                            <!--fileType="CC_ATTACH">-->
-                                <!--</file-attachment-downloader>-->
-
-                                <!--<a (click)="deleteAttachment(attachment.id)" *ngIf="canEdit()">-->
-                                    <!--<i class="glyphicon glyphicon-trash"></i>-->
-                                <!--</a>-->
-                            <!--</div>-->
-                        <!--</td>-->
-                    <!--</tr>-->
-                <!--</table>-->
-                <!--<div class="row">-->
-                    <!--<div class="col-md-12">-->
-                        <!--<button type="submit" class="btn btn-success pull-right">SAVE</button>-->
-                    <!--</div>-->
-                <!--</div>-->
-            <!--</div>-->
-        <!--</div>-->
-    <!--</form>-->
-
-    <!--<button class="btn btn-sm btn-primary" type="button" data-toggle="collapse" data-target="#exportSettings"-->
-            <!--aria-expanded="false" aria-controls="exportSettings">-->
-        <!--Export settings-->
-    <!--</button>-->
-    <!--<br/>-->
-    <!--<div class="collapse jumbotron" id="exportSettings">-->
-        <!--<div class="card card-body">-->
-            <!--<div class="row withpadding">-->
-                <!--<div class="col-md-12">-->
-                    <!--<div class="col-md-4">-->
-                        <!--<label for="directorOption">Подписант</label>-->
-                        <!--<select id="directorOption" required class="form-control" [ngModelOptions]="{standalone: true}" [(ngModel)]="exportDirectorOption">-->
-                            <!--<option *ngFor="let item of exportDirectorLookup" [value]="item.code">{{item.nameRu}}</option>-->
-                        <!--</select>-->
-                    <!--</div>-->
-                    <!--<div class="col-md-4">-->
-                        <!--<label>Визы (макс. 3)</label>-->
-                        <!--<div *ngFor="let item of exportApproveListLookup; let i = index" [attr.data-index]="i">-->
-                            <!--<input id="vizaOptions" class="form-check-input" type="checkbox" [checked]="i <= 2" name="approvelistCheckbox"-->
-                                   <!--(change)="checkApproveListOption(item, $event.target.checked)"/>-->
-                            <!--<label class="form-check-label" for="vizaOptions">{{item.nameRu}}</label>-->
-                        <!--</div>-->
-                    <!--</div>-->
-                    <!--<div class="col-md-4">-->
-                        <!--<label for="doerOption">Исполнитель</label>-->
-                        <!--<select id="doerOption" required class="form-control" [ngModelOptions]="{standalone: true}" [(ngModel)]="exportDoerOption">-->
-                            <!--<option *ngFor="let item of exportDoerLookup" [value]="item.code">{{item.nameRu}}</option>-->
-                        <!--</select>-->
-                    <!--</div>-->
-                <!--</div>-->
-
-            <!--</div>-->
-        <!--</div>-->
-    <!--</div>-->
 
     <div class="row withpadding" style="position: relative; min-height: 80px;">
+        <label>Total found: <span>{{searchResult?.totalElements > 0 ?  searchResult?.totalElements : 0}}</span></label><br/>
         <div class="row pull-right">
             <ul class="pagination" *ngIf="searchResult?.showPageFrom > 0">
                 <li><a *ngIf="searchResult?.showPageFrom > 1" (click)="search(searchResult.showPageFrom - 1)">&laquo;</a></li>
@@ -199,18 +126,18 @@
         </div>
     </div>
     <div>
-        <label>Total found: <span>{{searchResult?.totalElements > 0 ?  searchResult?.totalElements : 0}}</span></label>
+        <label>Сумма НБРК, $: <span style="font-weight: bold; font-style: italic">{{totalSumRecord.amount}}</span></label><br/>
+        <label>Сумма SPV, $: <span style="font-weight: bold; font-style: italic">{{totalSumRecord.amountToSPV}}</span></label><br/>
     </div>
-
     <div [ngBusy]="{busy: busyExport, message: 'Exporting...'}" class="row withpadding">
         <table [ngBusy]="busy" class="table table-hover table-condensed" style="font-size: small" *ngIf="records != null">
             <tr bgcolor="#e7e7e7" style="font-weight: bold; font-size: small">
                 <td>Статья</td>
                 <td>Источник</td>
                 <td>Получатель</td>
-                <td>Дата</td>
-                <td>Дата валютирования</td>
-                <td>Сумма USD (SPV)</td>
+                <td>Дата валютирования НБРК</td>
+                <td>Дата валютирования SPV</td>
+                <td>Сумма НБРК (Сумма SPV)</td>
                 <!--<td>Сумма USD SPV</td>-->
                 <td>Курс</td>
                 <td>Сумма KZT</td>
@@ -235,9 +162,9 @@
                         Letter
                     </button>
 
-                    <button *ngIf="record.expenseType.code == 'ADD'" class="btn btn-xs btn-success" style="margin-left: 10px;" type="button" (click)="exportFAFToOperations(record)">
-                        OPs
-                    </button>
+<!--                    <button *ngIf="record.expenseType.code == 'ADD'" class="btn btn-xs btn-success" style="margin-left: 10px;" type="button" (click)="exportFAFToOperations(record)">-->
+<!--                        OPs-->
+<!--                    </button>-->
                     <button *ngIf="record.expenseType.code == 'ADD'" class="btn btn-xs btn-success" style="margin-left: 10px;" type="button" (click)="exportFAFToSPV(record)">
                         SPV
                     </button>
@@ -295,7 +222,7 @@
                             <div class="col-md-4">
                                 <label>Визы (макс. 3)</label>
                                 <div *ngFor="let item of exportApproveListLookup; let i = index" [attr.data-index]="i">
-                                    <input id="vizaOptions" class="form-check-input" type="checkbox" [checked]="i <= 2" name="approvelistCheckbox"
+                                    <input id="vizaOptions" class="form-check-input" type="checkbox" [checked]="i == 1" name="approvelistCheckbox"
                                            (change)="checkApproveListOption(item, $event.target.checked)"/>
                                     <label class="form-check-label" for="vizaOptions">{{item.nameRu}}</label>
                                 </div>
@@ -351,7 +278,7 @@
                                 <div class="col-md-4">
                                     <select required [disabled]="!editedRecord.canDelete" class="form-control" [ngModelOptions]="{standalone: true}"
                                             [(ngModel)]="editedRecord.source.code">
-                                        <option *ngFor="let item of entityTypeLookup" [value]="item.code">{{item.nameRu}}</option>
+                                        <option *ngFor="let item of entityTypeLookupNonDeleted" [value]="item.code">{{item.nameRu}}</option>
                                     </select>
                                 </div>
                             </div>
@@ -362,14 +289,14 @@
                                 <div class="col-md-4">
                                     <select required [disabled]="!editedRecord.canDelete" class="form-control" [ngModelOptions]="{standalone: true}"
                                             [(ngModel)]="editedRecord.recipient.code">
-                                        <option *ngFor="let item of entityTypeLookup" [value]="item.code">{{item.nameRu}}</option>
+                                        <option *ngFor="let item of entityTypeLookupNonDeleted" [value]="item.code">{{item.nameRu}}</option>
                                     </select>
                                 </div>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-12">
-                                <div class="col-md-2">Дата</div>
+                                <div class="col-md-2">Дата валютирования НБРК</div>
                                 <div class="col-md-3">
                                     <div class='input-group date' id='dateDivId' style="width: 100%">
                                         <input [disabled]="!editedRecord.canDelete" required type="text" class="form-control" id="dateInputId" name="dateInput" [(ngModel)]="editedRecord.date"/>
@@ -380,7 +307,7 @@
                         </div>
                         <div class="row">
                             <div class="col-md-12">
-                                <div class="col-md-2">Дата валютирования</div>
+                                <div class="col-md-2">Дата валютирования SPV</div>
                                 <div class="col-md-3">
                                     <div class='input-group date' id='dateDivId2' style="width: 100%">
                                         <input [disabled]="!editedRecord.canDelete" type="text" class="form-control" name="dateInput2" id="dateInputId2" [(ngModel)]="editedRecord.valueDate"/>
@@ -391,7 +318,7 @@
                         </div>
                         <div class="row">
                             <div class="col-md-12">
-                                <div class="col-md-2">Сумма USD </div>
+                                <div class="col-md-2">Сумма НБРК </div>
                                 <div class="col-md-4">
                                     <input [disabled]="!editedRecord.canDelete" required type="text" class="form-control" (keyup)="onNumberChange(editedRecord)" [(ngModel)]="editedRecord.amount" [ngModelOptions]="{standalone: true}"/>
                                     <!--{{editedRecord.amount != null && editedRecord.amount > 0 ? (editedRecord.amount | number:'1.2-2') : ''}}{{editedRecord.amountToSPV != null && editedRecord.amountToSPV > 0 ? (' (' + (editedRecord.amountToSPV | number:'1.2-2') + ')') : ''}}-->
