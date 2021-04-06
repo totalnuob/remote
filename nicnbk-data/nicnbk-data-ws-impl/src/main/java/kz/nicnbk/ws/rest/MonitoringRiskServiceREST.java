@@ -120,6 +120,37 @@ public class MonitoringRiskServiceREST extends CommonServiceREST {
     }
 
     @PreAuthorize("hasRole('ROLE_RISKS_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/allocations/upload", method = RequestMethod.POST,
+            consumes = { MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE })
+    public ResponseEntity uploadAllocations( @RequestPart("data") String data,
+                                         @RequestPart(name="file", required=true) MultipartFile[] files) {
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
+        // Deserialize string to object
+        SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
+        ObjectMapper objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        objectMapper.setDateFormat(df);
+        try {
+            MonitoringRiskHFReturnsHolderDto holderDto = objectMapper.readValue(data, MonitoringRiskHFReturnsHolderDto.class);
+            List<FilesDto> filesDto = files != null ? buildFilesListDtoFromMultipart(files, holderDto.getFileType()) : null;
+            if(holderDto.isEmpty()){
+                ResponseDto responseDto = new ResponseDto();
+                responseDto.setErrorMessageEn("Failed to upload returns file: file meta data is missing");
+                return new ResponseEntity<>(responseDto, null, HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+            ResponseDto responseDto = this.riskService.uploadHFAllocations(holderDto.getReport().getId(), filesDto.get(0), username);
+            if (responseDto.getStatus().getCode().equals(ResponseStatusType.SUCCESS.getCode())) {
+                return new ResponseEntity<>(responseDto, null, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(responseDto, null, HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        } catch (IOException ex) {
+            logger.error("Monitoring Risk HF - Returns file upload failed: could not deserialize object (with exception)", ex);
+        }
+        return new ResponseEntity<>(null, null, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @PreAuthorize("hasRole('ROLE_RISKS_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/returns/classA/delete/{reportId}", method = RequestMethod.GET)
     public ResponseEntity deleteReturnsClassAFile(@PathVariable Long reportId) {
         String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
@@ -160,6 +191,21 @@ public class MonitoringRiskServiceREST extends CommonServiceREST {
             logger.info("Successfully deleted Returns Cons data: report id=" + reportId.longValue() + " [user " + username + "]");
         }else{
             logger.error("Failed to delete Returns Cons data: report id= " + reportId.longValue() + " [user " + username + "]");
+        }
+        return buildDeleteResponseEntity(deleted);
+    }
+
+    @PreAuthorize("hasRole('ROLE_RISKS_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/allocations/cons/delete/{reportId}", method = RequestMethod.GET)
+    public ResponseEntity deleteAllocationsConsFile(@PathVariable Long reportId) {
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
+
+        boolean deleted = this.riskService.deleteAllocationsConsFile(reportId, username);
+        if(deleted){
+            logger.info("Successfully deleted Allocations Cons data: report id=" + reportId.longValue() + " [user " + username + "]");
+        }else{
+            logger.error("Failed to delete Allocations Cons data: report id= " + reportId.longValue() + " [user " + username + "]");
         }
         return buildDeleteResponseEntity(deleted);
     }

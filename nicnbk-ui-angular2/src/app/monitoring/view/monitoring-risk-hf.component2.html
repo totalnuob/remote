@@ -19,24 +19,84 @@
     <div class="row">
         <div class="col-md-12">
             <div class="col-md-6">
-                <h3>HEDGE FUND PORTFOLIO RISK</h3>
+                <h3 style="margin-top: 0;">HEDGE FUND PORTFOLIO RISK</h3>
             </div>
             <div class="col-md-2">
-                <select (change)="selectDate($event.target.value)" [(ngModel)]="selectedDate" id="selectedDate" class="form-control"
-                    style="margin-top: 10px; margin-bottom: 10px;">
+                <select (change)="selectDate($event.target.value)" [(ngModel)]="selectedDate" id="selectedDate" class="form-control" (ngModelChange)="drawGraph()">
                     <option *ngFor="let item of availableDates" [value]="item">{{item}}</option>
                 </select>
             </div>
-            <div class="col-md-2 text-center">
-                <button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#newReportModal">Create report</button>
+            <div class="col-md-2">
+                <button class="btn btn-sm btn-primary form-control" data-toggle="modal" data-target="#newReportModal">Create report</button>
             </div>
         </div>
     </div>
     <br/>
     <br/>
 
+    <div class="modal fade" id="newReportModal" role="dialog">
+        <div [ngBusy]="busyCreate" class="modal-dialog" style="overflow-y: scroll; min-height: 100px; max-height:85%;  margin-top: 100px; margin-bottom:50px; width:65%;">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="alert alert-danger" *ngIf="errorMessage != null"><span>{{modalErrorMessage}}</span>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="alert alert-info" *ngIf="successMessage != null"><span>{{modalSuccessMessage}}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-2">
+                            <select class="form-control" [(ngModel)]="reportMonth">
+                                <option value="01">JAN</option>
+                                <option value="02">FEB</option>
+                                <option value="03">MAR</option>
+                                <option value="04">APR</option>
+                                <option value="05">MAY</option>
+                                <option value="06">JUN</option>
+                                <option value="07">JUL</option>
+                                <option value="08">AUG</option>
+                                <option value="09">SEP</option>
+                                <option value="10">OCT</option>
+                                <option value="11">NOV</option>
+                                <option value="12">DEC</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <select class="form-control" [(ngModel)]="reportYear">
+                                <option *ngFor="let year of reportYearList" value="{{year}}">{{year}}</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default pull-left" (click)="closeModal()" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary pull-right" (click)="createNewReport()" [disabled]="reportMonth == null || reportYear  == null">Create</button>
+
+                    <button type="button" class="btn btn-primary pull-right" (click)="closeModal()" *ngIf="report != null">OK</button>
+
+                    <!--<a [routerLink]="['/reporting/inputFileUpload', report.id]" class="btn btn-primary pull-right"-->
+                    <!--*ngIf="report != null && report.id > 0" (click)="closeModal()">Go to report</a>-->
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div *ngIf="selectedDateMonitoringInfo != null">
         <!-- PERFORMANCE SUMMARY -->
+        <div class="row withpadding">
+            <div class="col-md-2"><label>Prev Date (compare):</label>
+            </div>
+            <div class="col-md-2">
+                <select (change)="selectPrevDate($event.target.value)" [(ngModel)]="selectedPrevDate" id="selectedPrevDate" class="form-control">
+                    <option *ngFor="let item of availablePrevDates" [value]="item">{{item}}</option>
+                </select>
+            </div>
+        </div>
+        <br/>
         <div class="row withpadding">
             <div class="col-md-2"><label>Returns (ClassA):</label></div>
             <div class="col-md-6">
@@ -126,10 +186,40 @@
                 </div>
             </div>
         </div>
+        <div class="row withpadding">
+            <div class="col-md-2"><label>Allocations (Cons):</label></div>
+            <div class="col-md-6">
+                <div class="pull-left">
+                    <file-attachment-downloader *ngIf="selectedDateMonitoringInfo.allocationsFileCons != null" fileId="{{selectedDateMonitoringInfo.allocationsFileCons?.id}}"
+                                                fileName="{{selectedDateMonitoringInfo.allocationsFileCons?.fileName |  slice:0:55 }} {{selectedDateMonitoringInfo.allocationsFileCons?.fileName?.length > 55 ? '...': ''}}"
+                                                fileType="MONHFRISK4" mimeType="{{selectedDateMonitoringInfo.allocationsFileCons?.mimeType}}">
+                    </file-attachment-downloader>
+                </div>
+                <button class="btn btn-xs pull-left"  (click)="deleteAllocationsFileCons()" *ngIf="selectedDateMonitoringInfo.allocationsFileCons != null && canEdit()">
+                    <i class="glyphicon glyphicon-trash"></i>
+                </button>
+
+                <label class="btn btn-xs btn-primary" *ngIf="selectedDateMonitoringInfo.allocationsFileCons == null && canEdit() && allocationsFileCons.length == 0">
+                    <input type="file" id="fileUploadAllocationsCons" (change)="onFileChangeAllocationsCons($event)"
+                           data-toggle="tooltip" data-placement="bottom" style="display: none"/>upload
+                </label>
+
+                <div class="row" *ngFor="let file of this.allocationsFileCons">
+                    <span class="label label-info">{{file.name}}</span>
+                    <button class="btn btn-xs btn-danger" (click)="removeUnsavedAllocationsFileCons()" *ngIf="allocationsFileCons != null">
+                        <i class="glyphicon glyphicon-trash"></i>
+                    </button>
+                    <button type="submit" class="btn btn-xs btn-success"
+                            *ngIf="allocationsFileCons != null && allocationsFileCons.length > 0" (click)="uploadAllocationsCons()">
+                        <i class="glyphicon glyphicon-upload"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
         <br/>
 
-
-        <div class="row" [hidden]="selectedDateMonitoringInfo == null">
+        <div class="row">
+            <!-- PERFORMANCE SUMMARY -->
             <div class="col-md-12">
                 <div class="alert alert-danger small" *ngIf="selectedDateMonitoringInfo?.performanceError != null">
                     <span>{{selectedDateMonitoringInfo?.performanceError}}</span>
@@ -190,58 +280,153 @@
                     </table>
                 </div>
             </div>
-        </div>
-        <br/>
-    </div>
 
-    <div class="modal fade" id="newReportModal" role="dialog">
-        <div [ngBusy]="busyCreate" class="modal-dialog" style="overflow-y: scroll; min-height: 100px; max-height:85%;  margin-top: 100px; margin-bottom:50px; width:65%;">
-            <div class="modal-content">
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="alert alert-danger" *ngIf="errorMessage != null"><span>{{modalErrorMessage}}</span>
+            <!--FACTOR BETAS AND MARKET SENSITIVITY-->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="row withpadding">
+                        <div class="alert alert-danger small" *ngIf="selectedDateMonitoringInfo?.factorBetasError != null">
+                            <span>{{selectedDateMonitoringInfo?.factorBetasError}}</span>
+                        </div>
+                    </div>
+                    <div class="row withpadding">
+                        <div class="alert alert-danger small" *ngIf="selectedDateMonitoringInfo?.marketSensitivityError != null">
+                            <span>{{selectedDateMonitoringInfo?.marketSensitivityError}}</span>
+                        </div>
+                    </div>
+                    <div class="row withpadding">
+                        <div class="alert alert-warning small" *ngIf="selectedDateMonitoringInfo?.factorBetasWarning != null">
+                            <span>* {{selectedDateMonitoringInfo.factorBetasWarning}}</span>
+                        </div>
+                    </div>
+                    <div class="row withpadding">
+                        <div class="alert alert-warning small" *ngIf="selectedDateMonitoringInfo?.marketSensitivityWarning != null">
+                            <span>* {{selectedDateMonitoringInfo.marketSensitivityWarning}}</span>
+                        </div>
+                    </div>
+                    <div class="col-md-5" [hidden]="selectedDateMonitoringInfo == null || selectedDateMonitoringInfo.factorBetas == null">
+                        <table class="table table-hover table-responsive table-condensed">
+                            <thead>
+                            <tr style="background-color: #3664ab; color: white;">
+                                <th width="60%">FACTOR BETAS</th>
+                                <th width="20%">SI</th>
+                                <th width="20%">12M</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr *ngFor="let factor of selectedDateMonitoringInfo?.factorBetas">
+                                <td>{{factor.name}}</td>
+                                <td>{{factor.valueSinceInception | number: '1.2' }}</td>
+                                <td>{{factor.value12M | number: '1.2' }}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <table class="table table-hover table-responsive table-condensed">
+                            <thead>
+                            <tr style="background-color: #3664ab; color: white;">
+                                <th width="80%">HF Portfolio VaR</th>
+                                <th width="20%">&nbsp;</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr *ngFor="let item of selectedDateMonitoringInfo?.portfolioVars">
+                                <td>{{item.name}}</td>
+                                <td>{{item.value}}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+
+                    </div>
+                    <div class="col-md-7">
+                        <h5>MARKET UP/DOWN SENSITIVITIES SINCE INCEPTION</h5>
+                        <div class="row">
+                            <div id="marketSensitivitiesSinceInceptionMSCI">
                             </div>
                         </div>
-                        <div class="col-md-12">
-                            <div class="alert alert-info" *ngIf="successMessage != null"><span>{{modalSuccessMessage}}</span>
+                        <div class="row">
+                            <div id="marketSensitivitiesSinceInceptionLEGATRUH">
                             </div>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-md-2">
-                            <select class="form-control" [(ngModel)]="reportMonth">
-                                <option value="01">JAN</option>
-                                <option value="02">FEB</option>
-                                <option value="03">MAR</option>
-                                <option value="04">APR</option>
-                                <option value="05">MAY</option>
-                                <option value="06">JUN</option>
-                                <option value="07">JUL</option>
-                                <option value="08">AUG</option>
-                                <option value="09">SEP</option>
-                                <option value="10">OCT</option>
-                                <option value="11">NOV</option>
-                                <option value="12">DEC</option>
-                            </select>
-                        </div>
-                        <div class="col-md-2">
-                            <select class="form-control" [(ngModel)]="reportYear">
-                                <option *ngFor="let year of reportYearList" value="{{year}}">{{year}}</option>
-                            </select>
-                        </div>
+                </div>
+            </div >
+            <br/>
+            <!-- TOP PORTFOLIO FUND ALLOCATIONS-->
+            <div class="row">
+                <div class="col-md-12">
+                    <h4>TOP PORTFOLIO FUND ALLOCATIONS</h4>
+                    <br>
+                    <div class="alert alert-danger small" *ngIf="selectedDateMonitoringInfo?.topFundAllocationsError != null">
+                        <span>{{selectedDateMonitoringInfo?.topFundAllocationsError}}</span>
+                    </div>
+                    <div class="alert alert-warning small" *ngIf="selectedDateMonitoringInfo?.topFundAllocationsWarning != null">
+                        <span>* {{selectedDateMonitoringInfo.topFundAllocationsWarning}}</span>
+                    </div>
+                    <table class="table table-hover table-responsive table-condensed">
+                        <thead>
+                        <tr style="background-color: #3664ab; color: white;">
+                            <th width="30%">FUND</th>
+                            <th width="10%">Class</th>
+                            <th width="10%">% NAV</th>
+                            <th width="10%">MTD</th>
+                            <th width="10%">QTD</th>
+                            <th width="10%">YTD</th>
+                            <th width="10%">Contrib to YTD</th>
+                            <th width="10%">Contrib to VAR</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr *ngFor="let fund of selectedDateMonitoringInfo?.topFundAllocations; let i = index" [style.font-weight]="index > selectedDateMonitoringInfo.topFundAllocations.length - 3 ? 'bold' : ''">
+                            <td  width="30%">{{fund.fundName}}</td>
+                            <td width="10%">{{fund.className}}</td>
+                            <td width="10%">
+                                <span data-toggle="tooltip" data-placement="top">{{fund.navPercent | percent: '1.1-1' }}</span>
+                            </td>
+                            <td width="10%">{{fund.mtd | percent: '1.1-1' }}</td>
+                            <td width="10%">{{fund.qtd | percent: '1.1-1' }}</td>
+                            <td width="10%">{{fund.ytd | percent: '1.1-1' }}</td>
+                            <td width="10%">{{fund.contributionToYTD | percent: '1.1-1' }}</td>
+                            <td width="10%">{{fund.contributionToVAR | percent: '1.1-1' }}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <br/>
+            </div>
+
+            <div class="row">
+                <div id="allocationByStrategy"></div>
+            </div>
+
+            <!-- STRESS TESTS -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="alert alert-danger small" *ngIf="selectedDateMonitoringInfo?.stressTestsError != null">
+                        <span>{{selectedDateMonitoringInfo?.stressTestsError}}</span>
+                    </div>
+                    <div class="alert alert-warning small" *ngIf="selectedDateMonitoringInfo?.stressTestsWarning != null">
+                        <span>* {{selectedDateMonitoringInfo.stressTestsWarning}}</span>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default pull-left" (click)="closeModal()" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary pull-right" (click)="createNewReport()" [disabled]="reportMonth == null || reportYear  == null">Create</button>
-
-                    <button type="button" class="btn btn-primary pull-right" (click)="closeModal()" *ngIf="report != null">OK</button>
-
-                    <!--<a [routerLink]="['/reporting/inputFileUpload', report.id]" class="btn btn-primary pull-right"-->
-                    <!--*ngIf="report != null && report.id > 0" (click)="closeModal()">Go to report</a>-->
-                </div>
+                <table class="table table-hover table-responsive table-condensed">
+                    <thead>
+                    <tr style="background-color: #3664ab; color: white;">
+                        <th colspan="5" >STRESS TESTS</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr *ngFor="let item of selectedDateMonitoringInfoStressTests; let i = index"
+                        [style.font-weight]="i % 3 == 0 ? 'bold' : ''" [style.text-align]="'center'">
+                        <td>{{item[0]}}</td>
+                        <td>{{item[1]}}</td>
+                        <td>{{item[2]}}</td>
+                        <td>{{item[3]}}</td>
+                        <td>{{item[4]}}</td>
+                    </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
+        <br/>
     </div>
 </div>

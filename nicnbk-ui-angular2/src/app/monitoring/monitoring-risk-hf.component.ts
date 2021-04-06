@@ -38,6 +38,7 @@ export class MonitoringRiskHedgeFundComponent extends GoogleChartComponent {
     returnsFileClassA: File[];
     returnsFileClassB: File[];
     returnsFileCons: File[];
+    allocationsFileCons: File[];
 
     private subStrategyList = [];
 
@@ -50,9 +51,12 @@ export class MonitoringRiskHedgeFundComponent extends GoogleChartComponent {
     busy: Subscription;
 
     availableDates: any[];
+    availablePrevDates: any[];
 
     selectedDate;
-    selectedDateMonitoringInfo;
+    selectedPrevDate;
+    selectedDateMonitoringInfo = {};
+
     selectedDateMonitoringInfoStressTests;
 
     constructor(
@@ -66,6 +70,7 @@ export class MonitoringRiskHedgeFundComponent extends GoogleChartComponent {
         this.returnsFileClassA = [];
         this.returnsFileClassB = [];
         this.returnsFileCons = [];
+        this.allocationsFileCons = [];
 
         var currentYear = new Date().getFullYear();
         for(var y = 2016; y <= currentYear; y++){
@@ -80,6 +85,14 @@ export class MonitoringRiskHedgeFundComponent extends GoogleChartComponent {
                         ([data]) => {
                             this.availableDates = data;
                             if(this.availableDates != null && this.availableDates.length > 0){
+                                this.availablePrevDates = [];
+                                for(var i = 1; i < this.availableDates.length; i++){
+                                    this.availablePrevDates.push(this.availableDates[i]);
+                                }
+                                if(this.availablePrevDates != null && this.availablePrevDates.length > 0){
+                                    this.selectedPrevDate = this.availablePrevDates[0];
+                                }
+                                //console.log(this.availablePrevDates);
                                 this.selectDate(this.availableDates[0]);
                             }
                         },
@@ -93,22 +106,25 @@ export class MonitoringRiskHedgeFundComponent extends GoogleChartComponent {
         //console.log("MonitoringRiskHedgeFundComponent: drawGraph");
         if(this.selectedDateMonitoringInfo != null){
             this.drawMarketSensitivitiesSinceInceptionMSCI();
-            this.drawMarketSensitivitiesSinceInceptionBarclaysGblAgg();
+            this.drawMarketSensitivitiesSinceInceptionLEGATRUH();
             this.drawAllocationBySubStrategy();
             //this.drawAllocationBySubStrategy2();
         }
     }
 
     drawMarketSensitivitiesSinceInceptionMSCI(){
-        //console.log("drawMarketSensitivitiesSinceInceptionMSCI");
+        console.log("drawMarketSensitivitiesSinceInceptionMSCI");
         if(typeof google.charts === 'undefined'){
            console.log("google undefined");
            return;
        }
        if(this.selectedDateMonitoringInfo.marketSensitivitesMSCI == null || this.selectedDateMonitoringInfo.marketSensitivitesMSCI.length == 0){
+            // clear graph
+            $('#marketSensitivitiesSinceInceptionMSCI').hide();
             return;
        }
 
+       $('#marketSensitivitiesSinceInceptionMSCI').show();
         var dataArr = [];
         dataArr.push(['', 'Portfolio', 'MSCI ACWI IMI', { role: 'style' }]);
         for(var i = 0; i < this.selectedDateMonitoringInfo.marketSensitivitesMSCI.length; i++){
@@ -140,29 +156,32 @@ export class MonitoringRiskHedgeFundComponent extends GoogleChartComponent {
           }
         };
 
+        //console.log(document.getElementById('marketSensitivitiesSinceInceptionMSCI'));
         var chart = new google.charts.Bar(document.getElementById('marketSensitivitiesSinceInceptionMSCI'));
         chart.draw(data, options);
     }
 
-    drawMarketSensitivitiesSinceInceptionBarclaysGblAgg(){
-        //console.log("drawMarketSensitivitiesSinceInceptionBarclaysGblAgg");
+    drawMarketSensitivitiesSinceInceptionLEGATRUH(){
+        //console.log("drawMarketSensitivitiesSinceInceptionLEGATRUH");
 
         if(typeof google.charts === 'undefined'){
            console.log("google undefined");
            return;
        }
        if(this.selectedDateMonitoringInfo.marketSensitivitesBarclays == null || this.selectedDateMonitoringInfo.marketSensitivitesBarclays.length == 0){
+            $('#marketSensitivitiesSinceInceptionLEGATRUH').hide();
             return;
        }
+       $('#marketSensitivitiesSinceInceptionLEGATRUH').show();
         var dataArr = [];
-        dataArr.push(['', 'Portfolio', 'Barclays Gbl Agg', { role: 'style' }]);
+        dataArr.push(['', 'Portfolio', 'LEGATRUH', { role: 'style' }]);
         for(var i = 0; i < this.selectedDateMonitoringInfo.marketSensitivitesBarclays.length; i++){
             dataArr.push([this.selectedDateMonitoringInfo.marketSensitivitesBarclays[i].name,
                         Number((this.selectedDateMonitoringInfo.marketSensitivitesBarclays[i].portfolioValue * 100).toFixed(2)),
                         Number((this.selectedDateMonitoringInfo.marketSensitivitesBarclays[i].benchmarkValue * 100).toFixed(2)),
                         'grey']);
         }
-        console.log(dataArr);
+        //console.log(dataArr);
         var data = google.visualization.arrayToDataTable(dataArr);
 
         var formatNumber = new google.visualization.NumberFormat({
@@ -185,7 +204,7 @@ export class MonitoringRiskHedgeFundComponent extends GoogleChartComponent {
             }
         };
 
-        var chart = new google.charts.Bar(document.getElementById('marketSensitivitiesSinceInceptionBarclaysGblAgg'));
+        var chart = new google.charts.Bar(document.getElementById('marketSensitivitiesSinceInceptionLEGATRUH'));
         chart.draw(data, options);
     }
 
@@ -195,15 +214,21 @@ export class MonitoringRiskHedgeFundComponent extends GoogleChartComponent {
             return;
         }
         if(this.selectedDateMonitoringInfo.subStrategyAllocations == null || this.selectedDateMonitoringInfo.subStrategyAllocations.length == 0){
+            $('#allocationByStrategy').hide();
             return;
         }
+        $('#allocationByStrategy').show();
         var dataArr = [];
-        dataArr.push(['Sub-Strategy', this.selectedDateMonitoringInfo.subStrategyAllocations[0].firstDate,
-            this.selectedDateMonitoringInfo.subStrategyAllocations[0].lastDate]);
+        var prevDate = this.selectedDateMonitoringInfo.subStrategyAllocations[0].previousDate != null ?
+                            this.selectedDateMonitoringInfo.subStrategyAllocations[0].previousDate : "";
+        dataArr.push(['Strategy', prevDate, this.selectedDateMonitoringInfo.subStrategyAllocations[0].currentDate]);
         for (var i = 0; i < this.selectedDateMonitoringInfo.subStrategyAllocations.length; i++) {
+            var prevValue = this.selectedDateMonitoringInfo.subStrategyAllocations[i].previousValue != null ?
+                            this.selectedDateMonitoringInfo.subStrategyAllocations[i].previousValue : 0.0;
             dataArr.push([this.selectedDateMonitoringInfo.subStrategyAllocations[i].subStrategyName,
-                Number((this.selectedDateMonitoringInfo.subStrategyAllocations[i].currentValue * 100).toFixed(2)),
-                Number((this.selectedDateMonitoringInfo.subStrategyAllocations[i].previousValue * 100).toFixed(2))]);
+                Number((prevValue * 100).toFixed(2)),
+                Number((this.selectedDateMonitoringInfo.subStrategyAllocations[i].currentValue * 100).toFixed(2))
+                ]);
         }
         console.log(dataArr);
         var data = google.visualization.arrayToDataTable(dataArr);
@@ -219,7 +244,7 @@ export class MonitoringRiskHedgeFundComponent extends GoogleChartComponent {
             },
             bars: 'horizontal'
         };
-        var chart = new google.charts.Bar(document.getElementById('allocation123'));
+        var chart = new google.charts.Bar(document.getElementById('allocationByStrategy'));
         chart.draw(data, google.charts.Bar.convertOptions(options));
     }
 
@@ -254,10 +279,32 @@ export class MonitoringRiskHedgeFundComponent extends GoogleChartComponent {
         chart.draw(data, google.charts.Bar.convertOptions(options));
     }
 
-    selectDate(value){
+    selectPrevDate(prevDate){
+        this.selectedPrevDate = prevDate;
+        this.selectDate(this.selectedDate, this.selectedPrevDate);
+    }
+
+    selectDate(value, prevDate){
         this.selectedDate = value;
+        this.availablePrevDates = [];
+        this.selectedPrevDate = null;
+        var startPrevious = false;
+        for(var i = 0; i < this.availableDates.length; i++){
+            if(this.availableDates[i] === this.selectedDate){
+                startPrevious = true;
+                continue;
+            }
+            if(startPrevious){
+                this.availablePrevDates.push(this.availableDates[i]);
+            }
+        }
+        if(prevDate != null){
+             this.selectedPrevDate = prevDate;
+        }else if(this.availablePrevDates != null && this.availablePrevDates.length > 0){
+            this.selectedPrevDate = this.availablePrevDates[0];
+        }
         this.selectedDateMonitoringInfoStressTests = null;
-        this.busy = this.monitoringRiskHFService.getMonthlyHFRiskReport(value)
+        this.busy = this.monitoringRiskHFService.getMonthlyHFRiskReport(value, this.selectedPrevDate)
             .subscribe(
                 monitoringData => {
                     console.log(monitoringData);
@@ -305,6 +352,8 @@ export class MonitoringRiskHedgeFundComponent extends GoogleChartComponent {
                             this.errorMessage = monitoringData.message.nameEn;
                         }
                     }
+                    //console.log("draw after select date");
+                    //console.log(this.selectedDateMonitoringInfo);
                     this.drawGraph();
                 },
                 (error: ErrorResponse) => {
@@ -346,6 +395,7 @@ export class MonitoringRiskHedgeFundComponent extends GoogleChartComponent {
             this.returnsFileClassB.push(files[i]);
         }
     }
+
     removeUnsavedReturnsFileClassB(){
         this.returnsFileClassB = [];
     }
@@ -360,6 +410,19 @@ export class MonitoringRiskHedgeFundComponent extends GoogleChartComponent {
     }
     removeUnsavedReturnsFileCons(){
         this.returnsFileCons = [];
+    }
+
+    onFileChangeAllocationsCons(files: any){
+        var target = event.target || event.srcElement;
+        var files = target.files;
+        this.allocationsFileCons.length = 0;
+        for (var i = 0; i < files.length; i++) {
+            this.allocationsFileCons.push(files[i]);
+        }
+    }
+
+    removeUnsavedAllocationsFileCons(){
+        this.allocationsFileCons = [];
     }
 
     fileChangeTopPortfolio(files: any){
@@ -513,6 +576,26 @@ export class MonitoringRiskHedgeFundComponent extends GoogleChartComponent {
         }
     }
 
+    deleteAllocationsFileCons(){
+        if (confirm('Are you sure want to delete?')) {
+            this.busy = this.monitoringRiskHFService.deleteAllocationsConsFile(this.selectedDateMonitoringInfo.reportId).
+            subscribe(
+                response => {
+                    console.log("ok");
+                    this.postAction(response.messageEn, null);
+                    this.selectDate(this.selectedDate);
+                },
+                error => {
+                    console.log(this.selectedDate)
+                    this.postAction(null, "Error deleting data");
+                }
+            );
+        } else {
+            this.postAction(null, null);
+            console.log('Not deleted');
+        }
+    }
+
     private onDeleteSubStrategy() {
         if (confirm('Are you sure?')) {
             this.busy = this.monitoringRiskHFService.deleteSubStrategy(this.selectedDate).
@@ -583,9 +666,17 @@ export class MonitoringRiskHedgeFundComponent extends GoogleChartComponent {
                      this.selectDate(this.selectedDate);
                 },
                 error => {
-                    // this.processErrorMessage(error);
-                    console.log(error);
-                    this.postAction(null, "Failed to parse returns file class A");
+                    var errorResponse = JSON.parse(error);
+                    if(errorResponse != null && errorResponse.message != null && errorResponse.message.nameEn != null){
+                        this.errorMessage = errorResponse.message.nameEn;
+                    }else if(errorResponse != null && errorResponse.errorMessageEn != null){
+                        this.errorMessage = errorResponse.errorMessageEnn;
+                    }else {
+                        this.errorMessage = "Failed to parse returns class A file";
+                    }
+                     this.returnsFileClassA = [];
+                     $("#fileUploadReturnsClassA").val(null);
+                    this.postAction(null, this.errorMessage);
                 }
             )
     }
@@ -600,9 +691,17 @@ export class MonitoringRiskHedgeFundComponent extends GoogleChartComponent {
                      this.selectDate(this.selectedDate);
                 },
                 error => {
-                    // this.processErrorMessage(error);
-                    console.log(error);
-                    this.postAction(null, "Failed to parse returns file class B");
+                    var errorResponse = JSON.parse(error);
+                    if(errorResponse != null && errorResponse.message != null && errorResponse.message.nameEn != null){
+                        this.errorMessage = errorResponse.message.nameEn;
+                    }else if(errorResponse != null && errorResponse.errorMessageEn != null){
+                        this.errorMessage = errorResponse.errorMessageEnn;
+                    }else {
+                        this.errorMessage = "Failed to parse returns class B file";
+                    }
+                     this.returnsFileClassB = [];
+                     $("#fileUploadReturnsClassB").val(null);
+                    this.postAction(null, this.errorMessage);
                 }
             )
     }
@@ -612,14 +711,50 @@ export class MonitoringRiskHedgeFundComponent extends GoogleChartComponent {
             .subscribe(
                 (response) => {
                     this.postAction("Successfully saved Cons Returns", null);
-                    this.returnsFileClassB = [];
+                    this.returnsFileCons = [];
                      $("#fileUploadReturnsCons").val(null);
                      this.selectDate(this.selectedDate);
                 },
                 error => {
-                    // this.processErrorMessage(error);
-                    console.log(error);
-                    this.postAction(null, "Failed to parse returns file cons");
+                    var errorResponse = JSON.parse(error);
+                    if(errorResponse != null && errorResponse.message != null && errorResponse.message.nameEn != null){
+                        this.errorMessage = errorResponse.message.nameEn;
+                    }else if(errorResponse != null && errorResponse.errorMessageEn != null){
+                        this.errorMessage = errorResponse.errorMessageEnn;
+                    }else {
+                        this.errorMessage = "Failed to parse returns cons file";
+                    }
+                     this.returnsFileCons = [];
+                     $("#fileUploadReturnsCons").val(null);
+                    this.postAction(null, this.errorMessage);
+                }
+            )
+    }
+
+
+    public uploadAllocationsCons(){
+        var data = JSON.stringify({"report":{"id": this.selectedDateMonitoringInfo.reportId}, "fileType": 'MONHFRISK4'});
+        this.busy = this.monitoringRiskHFService.uploadAllocations(this.allocationsFileCons, data)
+            .subscribe(
+                (response) => {
+                    this.postAction("Successfully saved Cons Allocations", null);
+                    this.allocationsFileCons = [];
+                     $("#fileUploadAllocationsCons").val(null);
+                     this.selectDate(this.selectedDate);
+                },
+                error => {
+                    //console.log(error);
+                    var errorResponse = JSON.parse(error);
+                    if(errorResponse != null && errorResponse.message != null && errorResponse.message.nameEn != null){
+                        this.errorMessage = errorResponse.message.nameEn;
+                    }else if(errorResponse != null && errorResponse.errorMessageEn != null){
+                        this.errorMessage = errorResponse.errorMessageEnn;
+                    }else {
+                        this.errorMessage = "Failed to parse allocations file cons";
+                    }
+                     this.allocationsFileCons = [];
+                     $("#fileUploadAllocationsCons").val(null);
+                    this.postAction(null, this.errorMessage);
                 }
             )
     }
@@ -645,8 +780,8 @@ export class MonitoringRiskHedgeFundComponent extends GoogleChartComponent {
                     this.modalErrorMessage = null;
                     this.reportMonth = null;
                     this.reportYear = null;
-
-                    //this.postAction(this.modalSuccessMessage, this.modalErrorMessage);
+                    this.postAction(this.modalSuccessMessage, this.modalErrorMessage);
+                    this.selectDate(report.reportDate)
                 },
                 (error) => {
                     this.processErrorResponse(error);

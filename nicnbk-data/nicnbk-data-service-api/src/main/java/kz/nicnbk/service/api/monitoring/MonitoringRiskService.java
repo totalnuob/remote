@@ -31,6 +31,8 @@ public interface MonitoringRiskService {
 
     ResponseDto uploadHFReturns(Long reportId, FilesDto filesDto, String updater);
 
+    ResponseDto uploadHFAllocations(Long reportId, FilesDto filesDto, String updater);
+
     MonitoringRiskHedgeFundAllocationResultDto uploadTopPortfolio(Set<FilesDto> filesDtoSet, String updater);
 
     ByteArrayInputStream exportTopPortfolio(Date date);
@@ -44,5 +46,6 @@ public interface MonitoringRiskService {
     boolean deleteReturnsClassAFile(Long reportId, String updater);
     boolean deleteReturnsClassBFile(Long reportId, String updater);
     boolean deleteReturnsConsFile(Long reportId, String updater);
+    boolean deleteAllocationsConsFile(Long reportId, String updater);
 
 }

@@ -13,10 +13,20 @@ public class MonitoringRiskHedgeFundPerformanceRecordDto implements BaseDto {
     private Double portfolioBValue;
     private Double benchmarkAwcValue;
 
+    private Double portfolioValuePrev;
+    private Double benchmarkValuePrev;
+    private Double portfolioBValuePrev;
+    private Double benchmarkAwcValuePrev;
+
     private String portfolioValueTxt;
     private String benchmarkValueTxt;
     private String portfolioBValueTxt;
     private String benchmarkAwcValueTxt;
+
+    private String portfolioValueTxtPrev;
+    private String benchmarkValueTxtPrev;
+    private String portfolioBValueTxtPrev;
+    private String benchmarkAwcValueTxtPrev;
 
     public MonitoringRiskHedgeFundPerformanceRecordDto(){}
 
@@ -117,5 +127,69 @@ public class MonitoringRiskHedgeFundPerformanceRecordDto implements BaseDto {
 
     public void setBenchmarkAwcValueTxt(String benchmarkAwcValueTxt) {
         this.benchmarkAwcValueTxt = benchmarkAwcValueTxt;
+    }
+
+    public Double getPortfolioValuePrev() {
+        return portfolioValuePrev;
+    }
+
+    public void setPortfolioValuePrev(Double portfolioValuePrev) {
+        this.portfolioValuePrev = portfolioValuePrev;
+    }
+
+    public Double getBenchmarkValuePrev() {
+        return benchmarkValuePrev;
+    }
+
+    public void setBenchmarkValuePrev(Double benchmarkValuePrev) {
+        this.benchmarkValuePrev = benchmarkValuePrev;
+    }
+
+    public Double getPortfolioBValuePrev() {
+        return portfolioBValuePrev;
+    }
+
+    public void setPortfolioBValuePrev(Double portfolioBValuePrev) {
+        this.portfolioBValuePrev = portfolioBValuePrev;
+    }
+
+    public Double getBenchmarkAwcValuePrev() {
+        return benchmarkAwcValuePrev;
+    }
+
+    public void setBenchmarkAwcValuePrev(Double benchmarkAwcValuePrev) {
+        this.benchmarkAwcValuePrev = benchmarkAwcValuePrev;
+    }
+
+    public String getPortfolioValueTxtPrev() {
+        return portfolioValueTxtPrev;
+    }
+
+    public void setPortfolioValueTxtPrev(String portfolioValueTxtPrev) {
+        this.portfolioValueTxtPrev = portfolioValueTxtPrev;
+    }
+
+    public String getBenchmarkValueTxtPrev() {
+        return benchmarkValueTxtPrev;
+    }
+
+    public void setBenchmarkValueTxtPrev(String benchmarkValueTxtPrev) {
+        this.benchmarkValueTxtPrev = benchmarkValueTxtPrev;
+    }
+
+    public String getPortfolioBValueTxtPrev() {
+        return portfolioBValueTxtPrev;
+    }
+
+    public void setPortfolioBValueTxtPrev(String portfolioBValueTxtPrev) {
+        this.portfolioBValueTxtPrev = portfolioBValueTxtPrev;
+    }
+
+    public String getBenchmarkAwcValueTxtPrev() {
+        return benchmarkAwcValueTxtPrev;
+    }
+
+    public void setBenchmarkAwcValueTxtPrev(String benchmarkAwcValueTxtPrev) {
+        this.benchmarkAwcValueTxtPrev = benchmarkAwcValueTxtPrev;
     }
 }

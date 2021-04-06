@@ -37,6 +37,7 @@ public enum FileTypeLookup {
     MONITORING_HF_RISK_RETURNS_CLASS_A("MONHFRISK1", "monitoring/hf_risk"),
     MONITORING_HF_RISK_RETURNS_CLASS_B("MONHFRISK2", "monitoring/hf_risk"),
     MONITORING_HF_RISK_RETURNS_CONS("MONHFRISK3", "monitoring/hf_risk"),
+    MONITORING_HF_RISK_ALLOCATIONS_CONS("MONHFRISK4", "monitoring/hf_risk"),
 
     HR_DOCS("HR_DOCS", "hr/docs"),
 

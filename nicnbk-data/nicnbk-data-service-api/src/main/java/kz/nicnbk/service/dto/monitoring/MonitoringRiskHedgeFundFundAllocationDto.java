@@ -1,5 +1,6 @@
 package kz.nicnbk.service.dto.monitoring;
 
+import com.bloomberglp.blpapi.impl.D;
 import kz.nicnbk.common.service.model.BaseDto;
 import kz.nicnbk.common.service.util.MathUtils;
 
@@ -19,6 +20,23 @@ public class MonitoringRiskHedgeFundFundAllocationDto implements BaseDto, Compar
     private Double ytd;
     private Double contributionToYTD;
     private Double contributionToVAR;
+    //private Double ctr;
+
+    public MonitoringRiskHedgeFundFundAllocationDto(){}
+
+    public MonitoringRiskHedgeFundFundAllocationDto(String fundName, String className, Double nav, Double navPercent,
+                                                    Double mtd, Double qtd, Double ytd, Double contributionToYTD, Double contributionToVAR){
+        this.fundName = fundName;
+        this.className = className;
+        this.nav = nav;
+        this.navPercent = navPercent;
+        this.mtd = mtd;
+        this.qtd = qtd;
+        this.ytd = ytd;
+        this.contributionToYTD = contributionToYTD;
+        this.contributionToVAR = contributionToVAR;
+
+    }
 
     public String getFundName() {
         return fundName;
@@ -91,6 +109,14 @@ public class MonitoringRiskHedgeFundFundAllocationDto implements BaseDto, Compar
     public void setNavPercent(Double navPercent) {
         this.navPercent = navPercent;
     }
+
+//    public Double getCtr() {
+//        return ctr;
+//    }
+//
+//    public void setCtr(Double ctr) {
+//        this.ctr = ctr;
+//    }
 
     @Override
     public int compareTo(Object o) {

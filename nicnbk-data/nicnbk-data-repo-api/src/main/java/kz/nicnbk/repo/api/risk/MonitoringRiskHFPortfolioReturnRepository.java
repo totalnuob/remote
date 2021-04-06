@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface MonitoringRiskHFPortfolioReturnRepository extends PagingAndSortingRepository<MonitoringRiskHFPortfolioReturn, Long> {
 
-    List<MonitoringRiskHFPortfolioReturn> findByPortfolioTypeCode(String code);
+    List<MonitoringRiskHFPortfolioReturn> findByReportId(Long reportId);
 
     @Modifying
     @Transactional

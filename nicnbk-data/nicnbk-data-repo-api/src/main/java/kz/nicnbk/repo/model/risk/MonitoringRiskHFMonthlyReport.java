@@ -15,6 +15,7 @@ public class MonitoringRiskHFMonthlyReport extends CreateUpdateBaseEntity {
     private Files returnsClassAFile;
     private Files returnsClassBFile;
     private Files returnsConsFile;
+    private Files allocationsConsFile;
 
 
     @Column(name="report_date", nullable = false, unique = true)
@@ -56,5 +57,15 @@ public class MonitoringRiskHFMonthlyReport extends CreateUpdateBaseEntity {
 
     public void setReturnsConsFile(Files returnsConsFile) {
         this.returnsConsFile = returnsConsFile;
+    }
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="allocations_cons_file_id")
+    public Files getAllocationsConsFile() {
+        return allocationsConsFile;
+    }
+
+    public void setAllocationsConsFile(Files allocationsConsFile) {
+        this.allocationsConsFile = allocationsConsFile;
     }
 }

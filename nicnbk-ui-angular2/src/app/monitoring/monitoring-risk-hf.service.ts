@@ -25,6 +25,9 @@ export class MonitoringRiskHedgeFundService extends CommonService {
     private MONITORING_RISK_RETURNS_CLASS_B_FILE_DELETE_URL = this.MONITORING_RISK_BASE_URL + "returns/classB/delete/";
     private MONITORING_RISK_RETURNS_CONS_FILE_DELETE_URL = this.MONITORING_RISK_BASE_URL + "returns/cons/delete/";
 
+    private MONITORING_RISK_ALLOCATIONS_UPLOAD_URL = this.MONITORING_RISK_BASE_URL + "allocations/upload/";
+    private MONITORING_RISK_ALLOCATIONS_CONS_FILE_DELETE_URL = this.MONITORING_RISK_BASE_URL + "allocations/cons/delete/";
+
 
     constructor(
         private uploadService: FileUploadService,
@@ -40,8 +43,8 @@ export class MonitoringRiskHedgeFundService extends CommonService {
             .catch(this.handleErrorResponse);
     }
 
-    getMonthlyHFRiskReport(selectedDate) {
-        var body = JSON.stringify({"date": selectedDate});
+    getMonthlyHFRiskReport(selectedDate, prevDate) {
+        var body = JSON.stringify({"date": selectedDate, "previousDate": prevDate});
         return this.http.post(this.MONITORING_RISK_MONTHLY_HF_GET_URL, body, this.getOptionsWithCredentials())
             .map(this.extractData)
             .catch(this.handleErrorResponse);
@@ -65,6 +68,10 @@ export class MonitoringRiskHedgeFundService extends CommonService {
         return this.uploadService.postFilesWithData(this.MONITORING_RISK_RETURNS_UPLOAD_URL, [], files, data);
     }
 
+    uploadAllocations(files, data) {
+        return this.uploadService.postFilesWithData(this.MONITORING_RISK_ALLOCATIONS_UPLOAD_URL, [], files, data);
+    }
+
     deleteReturnsClassAFile(reportId){
         return this.http.get(this.MONITORING_RISK_RETURNS_CLASS_A_FILE_DELETE_URL + reportId, this.getOptionsWithCredentials())
                     .map(this.extractData)
@@ -77,6 +84,11 @@ export class MonitoringRiskHedgeFundService extends CommonService {
     }
     deleteReturnsConsFile(reportId){
         return this.http.get(this.MONITORING_RISK_RETURNS_CONS_FILE_DELETE_URL + reportId, this.getOptionsWithCredentials())
+                    .map(this.extractData)
+                    .catch(this.handleErrorResponse);
+    }
+    deleteAllocationsConsFile(reportId){
+        return this.http.get(this.MONITORING_RISK_ALLOCATIONS_CONS_FILE_DELETE_URL + reportId, this.getOptionsWithCredentials())
                     .map(this.extractData)
                     .catch(this.handleErrorResponse);
     }

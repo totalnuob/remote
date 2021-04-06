@@ -10,7 +10,10 @@ INSERT INTO public.benchmark(id, code, name_en, name_kz, name_ru) VALUES (8, 'MS
 INSERT INTO public.benchmark(id, code, name_en, name_kz, name_ru) VALUES (9, 'OIL', 'Oil', null, '');
 INSERT INTO public.benchmark(id, code, name_en, name_kz, name_ru) VALUES (10, 'USD', 'US Dollar', null, '');
 INSERT INTO public.benchmark(id, code, name_en, name_kz, name_ru) VALUES (11, 'GOLD', 'Gold', null, '');
-INSERT INTO public.benchmark(id, code, name_en, name_kz, name_ru) VALUES (12, 'GLOBAL_FI', 'Global FI', null, '');
+INSERT INTO public.benchmark(id, code, name_en, name_kz, name_ru) VALUES (12, 'LEGATRUH', 'LEGATRUH', null, '');
 INSERT INTO public.benchmark(id, code, name_en, name_kz, name_ru) VALUES (13, 'SP500_SPX', 'S $ P 500 (SPX)', null, '');
 INSERT INTO public.benchmark(id, code, name_en, name_kz, name_ru) VALUES (14, 'HFRI_FOF', 'HFRI FoF', null, '');
 INSERT INTO public.benchmark(id, code, name_en, name_kz, name_ru) VALUES (15, 'HFRI_AWC', 'HFRI AWC', null, '');
+
+INSERT INTO public.benchmark(id, code, name_en, name_kz, name_ru) VALUES (16, 'LEGATRUU', 'LEGATRUU', null, '');
+INSERT INTO public.benchmark(id, code, name_en, name_kz, name_ru) VALUES (17, 'EM_DEBT', 'EM Debt', null, '');

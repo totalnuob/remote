@@ -50,6 +50,7 @@ INSERT INTO files_type(id, code, name_en, name_ru, name_kz, catalog) VALUES(40, 
 INSERT INTO files_type(id, code, name_en, name_ru, name_kz, catalog) VALUES(41, 'MONHFRISK1', 'Monitoring HF Risk Return ClassA', '', '', 'monitoring/hf_risk');
 INSERT INTO files_type(id, code, name_en, name_ru, name_kz, catalog) VALUES(42, 'MONHFRISK2', 'Monitoring HF Risk Return ClassB', '', '', 'monitoring/hf_risk');
 INSERT INTO files_type(id, code, name_en, name_ru, name_kz, catalog) VALUES(43, 'MONHFRISK3', 'Monitoring HF Risk Return Consolidated', '', '', 'monitoring/hf_risk');
+INSERT INTO files_type(id, code, name_en, name_ru, name_kz, catalog) VALUES(44, 'MONHFRISK4', 'Monitoring HF Risk Allocations Consolidated', '', '', 'monitoring/hf_risk');
 
 
 

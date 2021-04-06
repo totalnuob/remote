@@ -17,6 +17,7 @@ public class MonitoringRiskHedgeFundReportDto extends ResponseDto {
     private FilesDto returnsFileClassA;
     private FilesDto returnsFileClassB;
     private FilesDto returnsFileCons;
+    private FilesDto allocationsFileCons;
 
 
     private List<MonitoringRiskHedgeFundFundAllocationDto> topFundAllocations;
@@ -271,5 +272,13 @@ public class MonitoringRiskHedgeFundReportDto extends ResponseDto {
 
     public void setReturnsFileCons(FilesDto returnsFileCons) {
         this.returnsFileCons = returnsFileCons;
+    }
+
+    public FilesDto getAllocationsFileCons() {
+        return allocationsFileCons;
+    }
+
+    public void setAllocationsFileCons(FilesDto allocationsFileCons) {
+        this.allocationsFileCons = allocationsFileCons;
     }
 }
