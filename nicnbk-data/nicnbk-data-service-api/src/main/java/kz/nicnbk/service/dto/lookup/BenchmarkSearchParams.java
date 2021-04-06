@@ -12,6 +12,8 @@ import java.util.Date;
  */
 public class BenchmarkSearchParams implements BaseParams {
 
+    String stationCode;
+
     String benchmarkCode;
 
     //@DateTimeFormat(pattern="dd-MM-yyyy")
@@ -23,6 +25,14 @@ public class BenchmarkSearchParams implements BaseParams {
     /* Pagination */
     private int page;
     private int pageSize;
+
+    public String getStationCode() {
+        return stationCode;
+    }
+
+    public void setStationCode(String stationCode) {
+        this.stationCode = stationCode;
+    }
 
     public String getBenchmarkCode() {
         return benchmarkCode;

@@ -130,6 +130,12 @@ public class LookupServiceREST extends CommonServiceREST{
         return buildNonNullResponse(lookups);
     }
 
+    @RequestMapping(value = "/BloombergStation", method = RequestMethod.GET)
+    public ResponseEntity getBloombergStations(){
+        List<BaseDictionaryDto> lookups = this.lookupService.getBloombergStationsSimple();
+        return buildNonNullResponse(lookups);
+    }
+
     @RequestMapping(value = "/PortfolioVarType", method = RequestMethod.GET)
     public ResponseEntity getPortfolioVarTypes(){
         List<BaseDictionaryDto> lookups = this.lookupService.getPortfolioVarTypes();

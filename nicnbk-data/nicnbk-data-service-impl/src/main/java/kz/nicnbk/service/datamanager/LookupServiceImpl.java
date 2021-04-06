@@ -261,6 +261,9 @@ public class LookupServiceImpl implements LookupService {
     @Autowired
     private PortfolioVarRepository portfolioTypeRepository;
 
+    @Autowired
+    private BloombergStationRepository bloombergStationRepository;
+
 
     @Override
     public <T extends BaseTypeEntity> T findByTypeAndCode(Class<T> clazz, String code) {
@@ -422,6 +425,36 @@ public class LookupServiceImpl implements LookupService {
             logger.error("Failed to load lookup: Benchmark", ex);
         }
         return null;
+    }
+
+    @Override
+    public List<BaseDictionaryDto> getBloombergStations() {
+        try {
+            List<BaseDictionaryDto> dtoList = new ArrayList<>();
+            Iterator<BloombergStation> iterator = this.bloombergStationRepository.findAll().iterator();
+            while (iterator.hasNext()) {
+                BloombergStation entity = iterator.next();
+                BaseDictionaryDto dto = disassemble(entity);
+                dtoList.add(dto);
+            }
+            return dtoList;
+        }catch (Exception ex){
+            logger.error("Failed to load lookup: Bloomberg Station", ex);
+        }
+        return null;
+    }
+
+    @Override
+    public List<BaseDictionaryDto> getBloombergStationsSimple() {
+        List<BaseDictionaryDto> stations = new ArrayList<>();
+        BaseDictionaryDto stationHF = new BaseDictionaryDto("HF", "BloombergHF-778", "", "");
+        BaseDictionaryDto stationRISK = new BaseDictionaryDto("RISK", "BloombergRISK-790", "", "");
+        BaseDictionaryDto stationYAO = new BaseDictionaryDto("YAO", "BloombergYAO-788", "", "");
+        stations.add(stationHF);
+        stations.add(stationRISK);
+        stations.add(stationYAO);
+
+        return stations;
     }
 
     @Override

@@ -39,6 +39,8 @@ public interface LookupService extends BaseService {
     List<BaseDictionaryDto> getGeographies();
     List<BaseDictionaryDto> getCurrencies();
     List<BaseDictionaryDto> getBenchmarkTypes();
+    List<BaseDictionaryDto> getBloombergStations();
+    List<BaseDictionaryDto> getBloombergStationsSimple();
     List<BaseDictionaryDto> getPortfolioVarTypes();
     List<BaseDictionaryDto> getHedgeFundStatuses();
     List<BaseDictionaryDto> getSubscriptionFrequencies();

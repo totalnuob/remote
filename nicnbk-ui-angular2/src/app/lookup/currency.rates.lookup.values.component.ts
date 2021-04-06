@@ -60,6 +60,7 @@ export class CurrencyRatesLookupValuesComponent extends CommonNBReportingCompone
 
     busy: Subscription;
     currencyList = [];
+    bloombergStations = [];
     searchResults: CurrencyRatesSearchResults;
     searchParams = new CurrencyRatesSearchParams();
     newCurrencyRateParams = new NewCurrencyRateParams();
@@ -67,6 +68,7 @@ export class CurrencyRatesLookupValuesComponent extends CommonNBReportingCompone
 
     uploadedValues;
     uploadCurrencyCode;
+    uploadQuoteCurrencyCode;
 
     ngOnInit():void {
         $('#fromDateDTPickeer').datetimepicker({
@@ -85,19 +87,20 @@ export class CurrencyRatesLookupValuesComponent extends CommonNBReportingCompone
 
         Observable.forkJoin(
             // Load lookups
-            this.lookupService.getCurrencyList()
-                           )
-                           .subscribe(
-                               ([data1]) => {
-                                   this.currencyList = data1;
+            this.lookupService.getCurrencyList(),
+            this.lookupService.getBloombergStationsList()
+            )
+           .subscribe(
+               ([data1, data2]) => {
+                   this.currencyList = data1;
+                   this.bloombergStations = data2;
+                   this.search(0);
 
-                                   this.search(0);
-
-                                   if(this.newCurrencyRateParams && this.newCurrencyRateParams.date != null && this.newCurrencyRateParams.currency != null) {
-                                       console.log("auto click button")
-                                       document.getElementById("openCurrencyModalButton").click();
-                                   }
-                           });
+                   if(this.newCurrencyRateParams && this.newCurrencyRateParams.date != null && this.newCurrencyRateParams.currency != null) {
+                       console.log("auto click button")
+                       document.getElementById("openCurrencyModalButton").click();
+                   }
+           });
 
     }
 
@@ -288,13 +291,18 @@ export class CurrencyRatesLookupValuesComponent extends CommonNBReportingCompone
 
     parseCurrencyValues(){
         var currencies = [];
-        if(this.uploadCurrencyCode == null || this.uploadCurrencyCode === ''){
+        if((this.uploadCurrencyCode == null || this.uploadCurrencyCode === '')
+            && (this.uploadQuoteCurrencyCode == null || this.uploadQuoteCurrencyCode === '')){
             this.currencyUploadModalSuccessMessage = null;
-            this.currencyUploadModalErrorMessage = "Currency required";
+            this.currencyUploadModalErrorMessage = "Base and Quote currencies required";
             return;
-        }else if(this.uploadCurrencyCode === 'USD'){
+        }else if(this.uploadCurrencyCode == null || this.uploadCurrencyCode === ''){
             this.currencyUploadModalSuccessMessage = null;
-            this.currencyUploadModalErrorMessage = "Cannot choose USD";
+            this.currencyUploadModalErrorMessage = "Base currency required";
+            return;
+        }else if(this.uploadQuoteCurrencyCode == null || this.uploadQuoteCurrencyCode === ''){
+            this.currencyUploadModalSuccessMessage = null;
+            this.currencyUploadModalErrorMessage = "Quote currency required";
             return;
         }
         if(this.uploadedValues == null || this.uploadedValues.trim() === ''){
@@ -326,8 +334,10 @@ export class CurrencyRatesLookupValuesComponent extends CommonNBReportingCompone
             var value = row[1].replace(/,/g, '.');
             value = value.replace('%', '');
             var currency =  new BaseDictionary();
+            var quoteCurrency = new BaseDictionary();
             currency.code = this.uploadCurrencyCode;
-            currencies.push({"date": day + '-' + month + '-' + year, "valueUSD": parseFloat(Number(value)).toFixed(10), "currency":currency});
+            quoteCurrency.code = this.uploadQuoteCurrencyCode;
+            currencies.push({"date": day + '-' + month + '-' + year, "quoteCurrencyValue": parseFloat(Number(value)).toFixed(10), "currency":currency, "quoteCurrencyCode":quoteCurrency.code});
         }
 
         console.log(currencies);
@@ -389,5 +399,39 @@ export class CurrencyRatesLookupValuesComponent extends CommonNBReportingCompone
             }
         }
         return rates;
+    }
+
+    getNonIdenticalCurrencyList(){
+        var rates = [];
+        for (var i = 0; i < this.currencyList.length; i++){
+            if (this.currencyList[i].code != this.uploadCurrencyCode) {
+                rates.push(this.currencyList[i]);
+            }
+        }
+        return rates;
+    }
+
+    getNonIdenticalCurrencyListSearch(){
+        var rates = [];
+        for (var i = 0; i < this.currencyList.length; i++){
+            if (this.currencyList[i].code != this.searchParams.currencyCode) {
+                rates.push(this.currencyList[i]);
+            }
+        }
+        return rates;
+    }
+
+    swap(){
+        var temp;
+        temp = this.uploadCurrencyCode;
+        this.uploadCurrencyCode = this.uploadQuoteCurrencyCode;
+        this.uploadQuoteCurrencyCode = temp;
+    }
+
+    swapSearch(){
+        var temp;
+        temp = this.searchParams.currencyCode;
+        this.searchParams.currencyCode = this.searchParams.quoteCurrencyCode;
+        this.searchParams.quoteCurrencyCode = temp;
     }
 }

@@ -10,6 +10,7 @@ import { Http, Response, Headers, RequestOptions } from '@angular/http';
 import {Observable} from "rxjs/Observable";
 import {CommonService} from "./common.service";
 import {
+    BLOOMBERG_STATIONS_URL,
     PE_STRATEGIES_URL,
     PORTFOLIO_VAR_TYPE_URL,
     SAVE_PORTFOLIO_VARS_URL, SAVE_STRESS_TESTS_URL,
@@ -189,6 +190,12 @@ export class LookupService extends CommonService{
 
     getBenchmarkTypeList(){
         return this.http.get(BENCHMARK_TYPE_URL, this.getOptionsWithCredentials())
+            .map(this.extractDataList)
+            .catch(this.handleErrorResponse);
+    }
+
+    getBloombergStationsList(){
+        return this.http.get(BLOOMBERG_STATIONS_URL, this.getOptionsWithCredentials())
             .map(this.extractDataList)
             .catch(this.handleErrorResponse);
     }

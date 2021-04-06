@@ -10,6 +10,7 @@ import kz.nicnbk.repo.model.benchmark.BenchmarkValue;
 import kz.nicnbk.repo.model.bloomberg.SecurityData;
 import kz.nicnbk.repo.model.employee.Employee;
 import kz.nicnbk.repo.model.lookup.BenchmarkLookup;
+import kz.nicnbk.repo.model.lookup.BloombergStationLookup;
 import kz.nicnbk.service.api.benchmark.BenchmarkService;
 import kz.nicnbk.service.api.employee.EmployeeService;
 import kz.nicnbk.service.converter.benchmark.BenchmarkValueEntityConverter;
@@ -34,6 +35,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.net.ConnectException;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -245,55 +250,77 @@ public class BenchmarkServiceImpl implements BenchmarkService {
 
     @Override
     public EntityListSaveResponseDto getBenchmarksBB(BenchmarkSearchParams searchParams, String username) {
-        List<BenchmarkValueDto> dtoList = loadBenchmarksBB(searchParams);
-        return save(dtoList, username);
+        EntityListSaveResponseDto responseDto = new EntityListSaveResponseDto();
+        try {
+            List<BenchmarkValueDto> dtoList = loadBenchmarksBB(searchParams);
+            return save(dtoList, username);
+        } catch (ConnectException connectException) {
+            logger.error("Connection error: connect timed out. Most likely given Bloomberg terminal is not available at the moment");
+            responseDto.appendErrorMessageEn("Connection error: connect timed out. Most likely given Bloomberg terminal is not available at the moment");
+        } catch (Exception e) {
+            logger.error("Error parsing Benchmark from Bloomberg with exception" + e);
+            responseDto.appendErrorMessageEn("Error parsing Benchmark from Bloomberg with exception" + e);
+        }
+        return responseDto;
     }
 
-    private List<BenchmarkValueDto> loadBenchmarksBB(BenchmarkSearchParams searchParams) {
+    private String getUrlStatic(String stationCode) throws UnknownHostException {
+        String base_url = "";
+        switch (stationCode) {
+            case "HF":
+                base_url = "BloombergHF-778";
+                break;
+            case "RISK":
+                base_url = "BloombergRISK-790";
+                break;
+            default:
+                base_url = "BloombergYAO-788";
+        }
+        return "http://" + base_url + ":8080/bloomberg/benchmark";
+    }
+
+    private List<BenchmarkValueDto> loadBenchmarksBB(BenchmarkSearchParams searchParams) throws ConnectException, Exception {
         Date nextMonth = DateUtils.getLastDayOfNextMonth(searchParams.getToDate());
         if (nextMonth.before(new Date())) {
             searchParams.setToDate(nextMonth);
         }
         List<BenchmarkValueDto> benchmarks = new ArrayList<>();
-        String url = "http://10.10.165.123:8080/bloomberg/benchmark";
+
+        String url = getUrlStatic(searchParams.getStationCode());
+        logger.info(url);
         ResponseEntity<String> responseEntity = (new RestTemplate()).postForEntity(url, searchParams, String.class);
         String response = responseEntity.getBody();
+        ObjectMapper mapper = new ObjectMapper();
+        ResponseDto result = mapper.readValue(response, new TypeReference<ResponseDto>() {});
 
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            ResponseDto result = mapper.readValue(response, new TypeReference<ResponseDto>() {});
+        SecurityDataDto securityData = new SecurityDataDto();
+        String benchmarkCode = renameCode(searchParams.getBenchmarkCode()) + " " + "Index";
+        for (int i = 0; i < result.getSecurityDataDtoList().size(); i++) {
+            if (result.getSecurityDataDtoList().get(i).getSecurity().equals(benchmarkCode)){
+                securityData = result.getSecurityDataDtoList().get(i);
+            }
+        }
+        if (securityData == null || securityData.getFieldDataDtoList().isEmpty()) {
+            return benchmarks;
+        }
+        if (securityData != null || !securityData.getFieldDataDtoList().isEmpty()) {
+            List<FieldDataDto> fieldDataDtoList = new ArrayList<>(securityData.getFieldDataDtoList());
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+            for (int i = 0; i < fieldDataDtoList.size(); i++) {
+                Date date = formatter.parse(fieldDataDtoList.get(i).getDate());
+                BenchmarkValueDto benchmark = new BenchmarkValueDto();
+                benchmark.setBenchmark(new BaseDictionaryDto(searchParams.getBenchmarkCode(), null, null, null));
+                benchmark.setDate(date);
 
-            SecurityDataDto securityData = new SecurityDataDto();
-            String benchmarkCode = renameCode(searchParams.getBenchmarkCode()) + " " + "Index";
-            for (int i = 0; i < result.getSecurityDataDtoList().size(); i++) {
-                if (result.getSecurityDataDtoList().get(i).getSecurity().equals(benchmarkCode)){
-                    securityData = result.getSecurityDataDtoList().get(i);
+                if (i + 1 < fieldDataDtoList.size()) {
+                    Double startIndex = Double.valueOf(fieldDataDtoList.get(i).getValue());
+                    Double endIndex = Double.valueOf(fieldDataDtoList.get(i+1).getValue());
+                    benchmark.setReturnValue(getRateOfReturn(startIndex, endIndex));
+                } else {
+                    benchmark.setReturnValue(null);
                 }
+                benchmarks.add(benchmark);
             }
-            if (securityData == null || securityData.getFieldDataDtoList().isEmpty()) {
-                return benchmarks;
-            }
-            if (securityData != null || !securityData.getFieldDataDtoList().isEmpty()) {
-                List<FieldDataDto> fieldDataDtoList = new ArrayList<>(securityData.getFieldDataDtoList());
-                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-                for (int i = 0; i < fieldDataDtoList.size(); i++) {
-                    Date date = formatter.parse(fieldDataDtoList.get(i).getDate());
-                    BenchmarkValueDto benchmark = new BenchmarkValueDto();
-                    benchmark.setBenchmark(new BaseDictionaryDto(searchParams.getBenchmarkCode(), null, null, null));
-                    benchmark.setDate(date);
-
-                    if (i + 1 < fieldDataDtoList.size()) {
-                        Double startIndex = Double.valueOf(fieldDataDtoList.get(i).getValue());
-                        Double endIndex = Double.valueOf(fieldDataDtoList.get(i+1).getValue());
-                        benchmark.setReturnValue(getRateOfReturn(startIndex, endIndex));
-                    } else {
-                        benchmark.setReturnValue(null);
-                    }
-                    benchmarks.add(benchmark);
-                }
-            }
-        } catch (Exception e) {
-            logger.error("Error parsing Benchmark from Bloomberg with exception" + e);
         }
         return benchmarks;
     }

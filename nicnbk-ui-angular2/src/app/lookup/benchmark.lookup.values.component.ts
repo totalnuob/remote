@@ -60,6 +60,7 @@ export class BenchmarkLookupValuesComponent extends CommonNBReportingComponent i
 
     busy: Subscription;
     benchmarkTypes = [];
+    bloombergStations = [];
     searchResults: BenchmarkSearchResults;
     searchParams = new BenchmarkSearchParams();
     selectedBenchmark = new BenchmarkValue();
@@ -90,12 +91,13 @@ export class BenchmarkLookupValuesComponent extends CommonNBReportingComponent i
 
         Observable.forkJoin(
             // Load lookups
-            this.lookupService.getBenchmarkTypeList()
+            this.lookupService.getBenchmarkTypeList(),
+            this.lookupService.getBloombergStationsList()
             )
             .subscribe(
-                ([data1]) => {
+                ([data1, data2]) => {
                     this.benchmarkTypes = data1;
-
+                    this.bloombergStations = data2;
                     this.search(0);
             });
 
