@@ -22,8 +22,8 @@ public class CurrencyRatesDto extends CreateUpdateBaseEntityDto<CurrencyRates> {
     private Double averageValue;
     private Double averageValueYear;
     private Double valueUSD;
-    private Double quoteCurrencyValue;
-    private String quoteCurrencyCode;
+//    private Double quoteCurrencyValue;
+//    private String quoteCurrencyCode;
 
     private boolean editable;
 
@@ -109,19 +109,19 @@ public class CurrencyRatesDto extends CreateUpdateBaseEntityDto<CurrencyRates> {
         this.valueUSD = valueUSD;
     }
 
-    public Double getQuoteCurrencyValue() {
-        return quoteCurrencyValue;
-    }
-
-    public void setQuoteCurrencyValue(Double quoteCurrencyValue) {
-        this.quoteCurrencyValue = quoteCurrencyValue;
-    }
-
-    public String getQuoteCurrencyCode() {
-        return quoteCurrencyCode;
-    }
-
-    public void setQuoteCurrencyCode(String quoteCurrencyCode) {
-        this.quoteCurrencyCode = quoteCurrencyCode;
-    }
+//    public Double getQuoteCurrencyValue() {
+//        return quoteCurrencyValue;
+//    }
+//
+//    public void setQuoteCurrencyValue(Double quoteCurrencyValue) {
+//        this.quoteCurrencyValue = quoteCurrencyValue;
+//    }
+//
+//    public String getQuoteCurrencyCode() {
+//        return quoteCurrencyCode;
+//    }
+//
+//    public void setQuoteCurrencyCode(String quoteCurrencyCode) {
+//        this.quoteCurrencyCode = quoteCurrencyCode;
+//    }
 }

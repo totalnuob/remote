@@ -60,7 +60,9 @@ export class BenchmarkLookupValuesComponent extends CommonNBReportingComponent i
 
     busy: Subscription;
     benchmarkTypes = [];
+    benchmarksLoaded = [];
     bloombergStations = [];
+
     searchResults: BenchmarkSearchResults;
     searchParams = new BenchmarkSearchParams();
     selectedBenchmark = new BenchmarkValue();
@@ -137,6 +139,7 @@ export class BenchmarkLookupValuesComponent extends CommonNBReportingComponent i
     }
 
     getBenchmarkBB(page){
+        this.benchmarksLoaded = [];
         if(this.searchParams == null){
             this.searchParams = new BenchmarkSearchParams();
         }
@@ -153,13 +156,12 @@ export class BenchmarkLookupValuesComponent extends CommonNBReportingComponent i
 
                 (saveResponse: SaveResponse) => {
                     if(saveResponse.status === 'SUCCESS' ){
-                        //console.log(saveResponse);
-
-                        // TODO: Search params
                         this.search(0);
 
                         this.successMessageSaveBenchmark = saveResponse.message.nameEn;
                         this.errorMessageSaveBenchmark = null;
+
+                        this.benchmarksLoaded = saveResponse.records;
 
                     }else{
                         if(saveResponse.message != null){
@@ -294,6 +296,13 @@ export class BenchmarkLookupValuesComponent extends CommonNBReportingComponent i
 
     closeBenchmarkEditModal(){
         this.selectedBenchmark = new BenchmarkValue();
+        this.benchmarksLoaded = [];
+        this.errorMessageSaveBenchmark = null;
+        this.successMessageSaveBenchmark = null;
+    }
+
+    openBloombegUploadModal(){
+        this.benchmarksLoaded = [];
         this.errorMessageSaveBenchmark = null;
         this.successMessageSaveBenchmark = null;
     }
@@ -335,7 +344,12 @@ export class BenchmarkLookupValuesComponent extends CommonNBReportingComponent i
             //index_value = index_value.replace('%', '');
 
             var return_value = row[1].replace(/,/g, '.');
-            return_value = return_value.replace('%', '');
+            if(return_value.includes('%')){
+                this.benchmarkUploadModalSuccessMessage = null;
+                this.benchmarkUploadModalErrorMessage = "Invalid format - return: must not percent value";
+                return;
+            }
+            //return_value = return_value.replace('%', '');
 
             var benchmark =  new BaseDictionary();
             benchmark.code = this.uploadBenchmarkCode;

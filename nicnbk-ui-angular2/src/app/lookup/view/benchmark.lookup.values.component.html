@@ -23,7 +23,7 @@
 
         <div class="row">
             <div class="col-md-12">
-                <div class="col-md-2 col-md-offset-10">
+                <div class="col-md-3 col-md-offset-10">
                     <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                         <a class="btn-sm btn-primary" id="openCurrencyModalButton" data-toggle="modal" data-target="#addNewModal" (click)="edit()"
                            style="cursor: pointer; margin-left: 26px">
@@ -31,7 +31,7 @@
                         </a>
                         <a class="btn-sm btn-primary" data-toggle="modal" data-target="#benchmarkUploadModal"
                            style="cursor: pointer; margin-left: 5px">
-                            <!--<span class="glyphicon glyphicon-edit"></span>-->Paste
+                            <!--<span class="glyphicon glyphicon-edit"></span>-->Paste from xlsx
                         </a>
                     </div>
                 </div>
@@ -40,8 +40,8 @@
         <br>
         <div class="row">
             <div class="col-md-12">
-                <div class="col-md-offset-10">
-                    <a class="btn-sm btn-primary" data-toggle="modal" data-target="#bloombergModal"
+                <div class="col-md-offset-9">
+                    <a class="btn-sm btn-primary pull-right" data-toggle="modal" (click)="openBloombegUploadModal()" data-target="#bloombergModal"
                        style="cursor: pointer">
                         <!--<span class="glyphicon glyphicon-edit"></span>-->Download from Bloomberg
                     </a>
@@ -287,7 +287,7 @@
                             <!--Index format: <span style="font-weight: bold">xx.xxxx</span>-->
                         <!--</div>-->
                         <div>
-                            Return format: <span style="font-weight: bold">xx.xxxx</span>
+                            Return value format: <span style="font-weight: bold">x.xxxx (NOT PERCENTAGE)</span>
                         </div>
                     <textarea class="form-control" placeholder="Paste values here..."
                               name="uploadedValues" [(ngModel)]="uploadedValues"></textarea>
@@ -321,7 +321,7 @@
                             <div class="col-md-12">
                                 <div class="col-md-3">
                                     <label for="benchmarkCodeParam">Station</label>
-                                    <select class="form-control" style="width: 100%" [(ngModel)]="searchParams.stationCode" id="benchmarkCodeParamBB"
+                                    <select class="form-control" style="width: 100%" [(ngModel)]="searchParams.stationCode" id="benchmarkStationCodeParamBB"
                                             [ngModelOptions]="{standalone: true}">
                                         <option *ngFor="let station of bloombergStations" [value]="station.code">{{station.nameEn}}</option>
                                     </select>
@@ -359,14 +359,33 @@
                             </div>
                         </div>
                         <br/>
-
-                    <div class="modal-footer">
                         <button type="button" class="btn btn-success" (click)="getBenchmarkBB()">Get Benchmark</button>
-                    </div>
+                        <br/>
+                        <div class="row" *ngIf="benchmarksLoaded != null && benchmarksLoaded.length > 0">
+                            <table [ngBusy]="busy" class="table table-hover">
+                                <thead>
+                                <tr>
+                                    <th>DATE</th>
+                                    <th>TYPE</th>
+                                    <th>RETURN</th>
+                                    <th>&nbsp;</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr *ngFor="let item of benchmarksLoaded">
+                                    <td>{{item.date}}</td>
+                                    <td>{{item?.benchmark?.nameEn}}</td>
+                                    <td>{{item.returnValue}}</td>
+                                    <td>&nbsp;
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" (click)='closeBenchmarkEditModal()' data-dismiss="modal">Close</button>
                     </div>
-                </div>
             </div>
         </div>
     </div>

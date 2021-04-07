@@ -272,8 +272,7 @@ public class CurrencyRatesServiceImpl implements CurrencyRatesService {
             saveResponse.setErrorMessageEn(errorMessage);
             return saveResponse;
         }
-        if((dto.getValue() != null && dto.getValue() <= 0) || (dto.getValueUSD() != null && dto.getValueUSD() <= 0)
-            || dto.getQuoteCurrencyValue() != null && dto.getQuoteCurrencyValue() <= 0){
+        if((dto.getValue() != null && dto.getValue() <= 0) || (dto.getValueUSD() != null && dto.getValueUSD() <= 0)){
             String errorMessage = "Currency rate save failed: value must be positive";
             logger.error(errorMessage);
             saveResponse.setErrorMessageEn(errorMessage);

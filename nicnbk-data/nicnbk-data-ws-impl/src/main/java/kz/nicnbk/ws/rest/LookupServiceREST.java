@@ -320,11 +320,11 @@ public class LookupServiceREST extends CommonServiceREST{
 
     @PreAuthorize("hasRole('ROLE_LOOKUPS_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/currencyRates/saveList", method = RequestMethod.POST)
-    public ResponseEntity saveCurrencyRatesList(@RequestBody List<CurrencyRatesDto> currencyRatessDtoList){
+    public ResponseEntity saveCurrencyRatesList(@RequestBody List<CurrencyRatesDto> currencyRatesDtoList){
         String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
         String username = this.tokenService.decode(token).getUsername();
 
-        EntityListSaveResponseDto saveResponse = this.currencyRatesService.save(currencyRatessDtoList, username);
+        EntityListSaveResponseDto saveResponse = this.currencyRatesService.save(currencyRatesDtoList, username);
         return buildEntityListSaveResponse(saveResponse);
     }
 

@@ -332,12 +332,23 @@ export class CurrencyRatesLookupValuesComponent extends CommonNBReportingCompone
             var year = row[0].split(".")[2];
 
             var value = row[1].replace(/,/g, '.');
-            value = value.replace('%', '');
+            //value = value.replace('%', '');
             var currency =  new BaseDictionary();
             var quoteCurrency = new BaseDictionary();
             currency.code = this.uploadCurrencyCode;
             quoteCurrency.code = this.uploadQuoteCurrencyCode;
-            currencies.push({"date": day + '-' + month + '-' + year, "quoteCurrencyValue": parseFloat(Number(value)).toFixed(10), "currency":currency, "quoteCurrencyCode":quoteCurrency.code});
+
+            var currencyRate = {};
+            currencyRate.date =  day + '-' + month + '-' + year;
+            currencyRate.currency = currency;
+            if(this.uploadQuoteCurrencyCode === 'USD'){
+                currencyRate.valueUSD =  parseFloat(Number(value)).toFixed(10);
+            }else if(this.uploadQuoteCurrencyCode === 'KZT'){
+                currencyRate.value =  parseFloat(Number(value)).toFixed(10);
+            }
+            currencies.push(currencyRate);
+
+            //currencies.push({"date": day + '-' + month + '-' + year, "quoteCurrencyValue": parseFloat(Number(value)).toFixed(10), "currency":currency, "quoteCurrencyCode":quoteCurrency.code});
         }
 
         console.log(currencies);
@@ -401,17 +412,20 @@ export class CurrencyRatesLookupValuesComponent extends CommonNBReportingCompone
         return rates;
     }
 
-    getNonIdenticalCurrencyList(){
+    getQuoteCurrencyList(){
         var rates = [];
-        for (var i = 0; i < this.currencyList.length; i++){
-            if (this.currencyList[i].code != this.uploadCurrencyCode) {
-                rates.push(this.currencyList[i]);
-            }
+        // USD
+        if (this.uploadCurrencyCode != 'USD') {
+            rates.push({'code': 'USD'});
+        }
+        // KZT
+        if (this.uploadCurrencyCode != 'KZT') {
+            rates.push({'code': 'KZT'});
         }
         return rates;
     }
 
-    getNonIdenticalCurrencyListSearch(){
+    /*getNonIdenticalCurrencyListSearch(){
         var rates = [];
         for (var i = 0; i < this.currencyList.length; i++){
             if (this.currencyList[i].code != this.searchParams.currencyCode) {
@@ -419,7 +433,7 @@ export class CurrencyRatesLookupValuesComponent extends CommonNBReportingCompone
             }
         }
         return rates;
-    }
+    }*/
 
     swap(){
         var temp;

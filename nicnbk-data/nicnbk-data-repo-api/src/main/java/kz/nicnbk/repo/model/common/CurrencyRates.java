@@ -22,12 +22,12 @@ public class CurrencyRates extends CreateUpdateBaseEntity {
 
     private Currency currency;
     private Date date;
-    private Double value; // KZT value
-    private Double averageValue;
+    private Double value; // USD-KZT value
+    private Double averageValue; // KZT value
     private Double averageValueYear;
     private Double valueUSD;
-    private String quoteCurrencyCode;
-    private Double quoteCurrencyValue;
+//    private String quoteCurrencyCode;
+//    private Double quoteCurrencyValue;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "currency_id", nullable = false)
@@ -87,21 +87,21 @@ public class CurrencyRates extends CreateUpdateBaseEntity {
         this.valueUSD = valueUSD;
     }
 
-    @Column(name="quote_curr_code")
-    public String getQuoteCurrencyCode() {
-        return quoteCurrencyCode;
-    }
-
-    public void setQuoteCurrencyCode(String quoteCurrencyCode) {
-        this.quoteCurrencyCode = quoteCurrencyCode;
-    }
-
-    @Column(name="quote_curr_value")
-    public Double getQuoteCurrencyValue() {
-        return quoteCurrencyValue;
-    }
-
-    public void setQuoteCurrencyValue(Double quoteCurrencyValue) {
-        this.quoteCurrencyValue = quoteCurrencyValue;
-    }
+//    @Column(name="quote_curr_code")
+//    public String getQuoteCurrencyCode() {
+//        return quoteCurrencyCode;
+//    }
+//
+//    public void setQuoteCurrencyCode(String quoteCurrencyCode) {
+//        this.quoteCurrencyCode = quoteCurrencyCode;
+//    }
+//
+//    @Column(name="quote_curr_value")
+//    public Double getQuoteCurrencyValue() {
+//        return quoteCurrencyValue;
+//    }
+//
+//    public void setQuoteCurrencyValue(Double quoteCurrencyValue) {
+//        this.quoteCurrencyValue = quoteCurrencyValue;
+//    }
 }

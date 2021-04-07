@@ -23,7 +23,7 @@
 
         <div class="row">
             <div class="col-md-12">
-                <div class="col-md-2 col-md-offset-10">
+                <div class="col-md-3 col-md-offset-10">
                     <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                         <a class="btn-sm btn-primary" id="openCurrencyModalButton" data-toggle="modal" data-target="#addNewModal" (click)="edit()"
                            style="cursor: pointer; margin-left: 26px">
@@ -31,7 +31,7 @@
                         </a>
                         <a class="btn-sm btn-primary" data-toggle="modal" data-target="#currencyUploadModal"
                            style="cursor: pointer; margin-left: 5px">
-                            <!--<span class="glyphicon glyphicon-edit"></span>-->Paste
+                            <!--<span class="glyphicon glyphicon-edit"></span>-->Paste from xlsx
                         </a>
                     </div>
                 </div>
@@ -61,48 +61,49 @@
 
         <div class="jumbotron">
             <div class="row">
-                <div class="col-md-12">
-                    <div class="col-md-3">
-                        <label for="currencySearchParam">Currency</label>
-                        <select class="form-control" style="width: 100%" [(ngModel)]="searchParams.currencyCode" id="currencySearchParam"
-                                [ngModelOptions]="{standalone: true}">
-                            <option *ngFor="let currency of currencyList" [value]="currency.code">{{currency.code}}</option>
-                        </select>
-                    </div>
-                    <div class="col-md-1">
-                        <button type="button" class="btn-xs btn-success" style="display: inline-block; margin-top: 28px"
-                                (click)="swapSearch()">
-                            <span class="glyphicon glyphicon-arrow-right"></span>
-                        </button>
-                    </div>
-                    <div class="col-md-3">
-                        <label for="quoteCurrencySearchParam">Quote Currency</label>
-                        <select class="form-control" style="width: 100%" [(ngModel)]="searchParams.quoteCurrencyCode" id="quoteCurrencySearchParam"
-                                [ngModelOptions]="{standalone: true}">
-                            <option *ngFor="let currency of getNonIdenticalCurrencyListSearch(currencyList)" [value]="currency.code">{{currency.code}}</option>
-                        </select>
-                    </div>
-                    <div class="col-md-2">
-                        <label for="fromDateDTPickeer">From</label>
-                        <div class='input-group date col-md-3' id='fromDateDTPickeer' style="width: 100%">
-                            <input type='text' class="form-control" id="fromDate" [(ngModel)]="searchParams.fromDate"/>
-                            <span class="input-group-addon">
-                                            <span class="glyphicon glyphicon-calendar"></span>
-                                        </span>
+                <div class="row withpadding">
+                    <div class="col-md-12">
+                        <div class="col-md-3">
+                            <label for="currencySearchParam">Currency</label>
+                            <select class="form-control" style="width: 100%" [(ngModel)]="searchParams.currencyCode" id="currencySearchParam"
+                                    [ngModelOptions]="{standalone: true}">
+                                <option *ngFor="let currency of currencyList" [value]="currency.code">{{currency.code}}</option>
+                            </select>
                         </div>
-                    </div>
-                    <div class="col-md-2">
-                        <label for="untilDateDTPickeer">To</label>
-                        <div class='input-group date col-md-3' id='untilDateDTPickeer' style="width: 100%">
-                            <input type='text' class="form-control" id="toDate" [(ngModel)]="searchParams.toDate"/>
-                            <span class="input-group-addon">
-                                            <span class="glyphicon glyphicon-calendar"></span>
-                                        </span>
+    <!--                    <div class="col-md-1">-->
+    <!--                        <button type="button" class="btn-xs btn-success" style="display: inline-block; margin-top: 28px" disabled>-->
+    <!--                            <span class="glyphicon glyphicon-arrow-right"></span>-->
+    <!--                        </button>-->
+    <!--                    </div>-->
+    <!--                    <div class="col-md-3">-->
+    <!--                        <label for="quoteCurrencySearchParam">Quote Currency</label>-->
+    <!--                        <select class="form-control" style="width: 100%" [(ngModel)]="searchParams.quoteCurrencyCode" id="quoteCurrencySearchParam"-->
+    <!--                                [ngModelOptions]="{standalone: true}">-->
+    <!--                            <option *ngFor="let currency of getNonIdenticalCurrencyListSearch(currencyList)" [value]="currency.code">{{currency.code}}</option>-->
+    <!--                        </select>-->
+    <!--                    </div>-->
+                        <div class="col-md-3">
+                            <label for="fromDateDTPickeer">From</label>
+                            <div class='input-group date col-md-3' id='fromDateDTPickeer' style="width: 100%">
+                                <input type='text' class="form-control" id="fromDate" [(ngModel)]="searchParams.fromDate"/>
+                                <span class="input-group-addon">
+                                                <span class="glyphicon glyphicon-calendar"></span>
+                                            </span>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="untilDateDTPickeer">To</label>
+                            <div class='input-group date col-md-3' id='untilDateDTPickeer' style="width: 100%">
+                                <input type='text' class="form-control" id="toDate" [(ngModel)]="searchParams.toDate"/>
+                                <span class="input-group-addon">
+                                                <span class="glyphicon glyphicon-calendar"></span>
+                                            </span>
+                            </div>
                         </div>
                     </div>
                 </div>
             <br/>
-            <div class="row">
+            <div class="row withpadding">
                 <button type="button"class="btn-xs btn-default pull-left" (click)="clearSearchForm()">
                     <!--<i class="glyphicon glyphicon-trash"></i>-->Reset
                 </button>
@@ -135,10 +136,8 @@
                     <th>CURRENCY</th>
                     <th>KZT</th>
                     <th>USD</th>
-                    <th>QUOTE</th>
-                    <th>QUOTE VALUE</th>
-                    <th>AVG MONTH</th>
-                    <th>AVG YEAR</th>
+                    <th>AVG KZT MONTH</th>
+                    <th>AVG KZT YEAR</th>
                     <!--<th>AVG VALUE</th>-->
                     <!--<th>AVG VALUE YR</th>-->
                     <th>&nbsp;</th>
@@ -150,8 +149,6 @@
                         <td>{{item?.currency?.code}}</td>
                         <td>{{item.value}}</td>
                         <td>{{item.valueUSD}}</td>
-                        <td>{{item.quoteCurrencyCode}}</td>
-                        <td>{{item.quoteCurrencyValue}}</td>
                         <td>{{item.averageValue}}</td>
                         <td>{{item.averageValueYear}}</td>
                         <td>
@@ -274,8 +271,7 @@
                                     </div>
                                 </div>
                                 <div class="col-md-1">
-                                    <button type="button" class="btn-xs btn-success" style="display: inline-block; margin-top: 28px"
-                                            (click)="swap()">
+                                    <button type="button" class="btn-xs btn-success" style="display: inline-block; margin-top: 28px" disabled>
                                         <span class="glyphicon glyphicon-arrow-right"></span>
                                     </button>
                                 </div>
@@ -284,7 +280,7 @@
                                         <label>Quote currency</label>
                                         <select class="form-control" style="width: 100%" [(ngModel)]="uploadQuoteCurrencyCode" id="uploadQuoteCurrencyCode"
                                                 [ngModelOptions]="{standalone: true}">
-                                            <option *ngFor="let currency of getNonIdenticalCurrencyList(currencyList)" [value]="currency.code">{{currency.code}}</option>
+                                            <option *ngFor="let currency of getQuoteCurrencyList()" [value]="currency.code">{{currency.code}}</option>
                                         </select>
                                     </div>
                                 </div>
@@ -297,20 +293,20 @@
                                 <dl class="row" style="margin-left: 10px">
                                     <dt class="col-md-4">1 {{uploadCurrencyCode.toString()}}</dt>
                                     <dt class="col-md-1">=</dt>
-                                    <dt class="col-md-4">X {{uploadQuoteCurrencyCode.toString()}}</dt>
+                                    <dt class="col-md-4">xxx {{uploadQuoteCurrencyCode.toString()}}</dt>
                                 </dl>
                             </div>
                         </div>
 
                         <div class="row">
                             <div class="col-md-12">
-                                <div><span style="font-weight: bold">date [tab] X Quote</span></div>
-                                <div>Format: <span style="font-weight: bold">date [tab] X Quote</span></div>
+<!--                                <div><span style="font-weight: bold">date [tab] xxx</span></div>-->
+                                <div>Format: <span style="font-weight: bold">date [tab] rate</span></div>
                                 <div>
                                     Date format: <span style="font-weight: bold">dd.mm.yyyy</span>
                                 </div>
                                 <div>
-                                    Return format: <span style="font-weight: bold">xx.xxxx</span>
+                                    Rate format: <span style="font-weight: bold">xx.xxx</span>
                                 </div>
                                 <textarea class="form-control" placeholder="Paste values here..."
                                           name="uploadedValues" [(ngModel)]="uploadedValues"></textarea>

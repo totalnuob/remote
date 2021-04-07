@@ -21,6 +21,7 @@ import kz.nicnbk.service.dto.bloomberg.ResponseDto;
 import kz.nicnbk.service.dto.bloomberg.SecurityDataDto;
 import kz.nicnbk.service.dto.common.EntityListSaveResponseDto;
 import kz.nicnbk.service.dto.common.EntitySaveResponseDto;
+import kz.nicnbk.service.dto.common.ListResponseDto;
 import kz.nicnbk.service.dto.common.ResponseStatusType;
 import kz.nicnbk.service.dto.employee.EmployeeDto;
 import kz.nicnbk.service.dto.lookup.BenchmarkPagedSearchResult;
@@ -33,6 +34,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.ConnectException;
@@ -234,13 +236,14 @@ public class BenchmarkServiceImpl implements BenchmarkService {
     @Override
     public EntityListSaveResponseDto save(List<BenchmarkValueDto> dtoList, String username) {
         EntityListSaveResponseDto saveListResponse = new EntityListSaveResponseDto();
+        saveListResponse.setRecords(new ArrayList());
         for(BenchmarkValueDto dto: dtoList){
             EntitySaveResponseDto saveResponseDto = save(dto, username);
+            saveListResponse.getRecords().add(dto);
             if(saveResponseDto.getStatus() != null && saveResponseDto.getStatus().getCode().equalsIgnoreCase(ResponseStatusType.FAIL.getCode())){
                 // Error
                 saveListResponse.setErrorMessageEn(saveResponseDto.getMessage().getNameEn());
                 saveListResponse.setStatus(ResponseStatusType.FAIL);
-
                 return saveListResponse;
             }
         }
@@ -252,14 +255,23 @@ public class BenchmarkServiceImpl implements BenchmarkService {
     public EntityListSaveResponseDto getBenchmarksBB(BenchmarkSearchParams searchParams, String username) {
         EntityListSaveResponseDto responseDto = new EntityListSaveResponseDto();
         try {
-            List<BenchmarkValueDto> dtoList = loadBenchmarksBB(searchParams);
-            return save(dtoList, username);
-        } catch (ConnectException connectException) {
+            ListResponseDto listResponseDto = loadBenchmarksBB(searchParams);
+            if(listResponseDto.isStatusOK()) {
+                List<BenchmarkValueDto> dtoList = listResponseDto.getRecords();
+                return save(dtoList, username);
+            }else{
+                responseDto.setErrorMessageEn(listResponseDto.getErrorMessageEn());
+                return responseDto;
+            }
+        } catch (ResourceAccessException ex){
+            logger.error("Connection error: connect timed out. Most likely given Bloomberg terminal is not available at the moment");
+            responseDto.appendErrorMessageEn("Connection error: connect timed out. Most likely given Bloomberg terminal is not available at the moment");
+        }catch (ConnectException connectException) {
             logger.error("Connection error: connect timed out. Most likely given Bloomberg terminal is not available at the moment");
             responseDto.appendErrorMessageEn("Connection error: connect timed out. Most likely given Bloomberg terminal is not available at the moment");
         } catch (Exception e) {
-            logger.error("Error parsing Benchmark from Bloomberg with exception" + e);
-            responseDto.appendErrorMessageEn("Error parsing Benchmark from Bloomberg with exception" + e);
+            logger.error("Error parsing Benchmark from Bloomberg with exception", e);
+            responseDto.appendErrorMessageEn("Error parsing Benchmark from Bloomberg");
         }
         return responseDto;
     }
@@ -273,13 +285,17 @@ public class BenchmarkServiceImpl implements BenchmarkService {
             case "RISK":
                 base_url = "BloombergRISK-790";
                 break;
+            case "RA":
+                base_url = "BloombergYAO-788";
+                break;
             default:
                 base_url = "BloombergYAO-788";
         }
         return "http://" + base_url + ":8080/bloomberg/benchmark";
     }
 
-    private List<BenchmarkValueDto> loadBenchmarksBB(BenchmarkSearchParams searchParams) throws ConnectException, Exception {
+    private ListResponseDto loadBenchmarksBB(BenchmarkSearchParams searchParams) throws ConnectException, Exception {
+        ListResponseDto responseDto = new ListResponseDto();
         Date nextMonth = DateUtils.getLastDayOfNextMonth(searchParams.getToDate());
         if (nextMonth.before(new Date())) {
             searchParams.setToDate(nextMonth);
@@ -295,13 +311,19 @@ public class BenchmarkServiceImpl implements BenchmarkService {
 
         SecurityDataDto securityData = new SecurityDataDto();
         String benchmarkCode = renameCode(searchParams.getBenchmarkCode()) + " " + "Index";
+        if(benchmarkCode.equalsIgnoreCase("")){
+            responseDto.setErrorMessageEn("Error loading becnhmarks: Bloomberg benchmark code missing for '" + searchParams.getBenchmarkCode() + "'");
+            return responseDto;
+        }
         for (int i = 0; i < result.getSecurityDataDtoList().size(); i++) {
             if (result.getSecurityDataDtoList().get(i).getSecurity().equals(benchmarkCode)){
                 securityData = result.getSecurityDataDtoList().get(i);
             }
         }
         if (securityData == null || securityData.getFieldDataDtoList().isEmpty()) {
-            return benchmarks;
+            responseDto.setStatus(ResponseStatusType.SUCCESS);
+            responseDto.setRecords(new ArrayList());
+            return responseDto;
         }
         if (securityData != null || !securityData.getFieldDataDtoList().isEmpty()) {
             List<FieldDataDto> fieldDataDtoList = new ArrayList<>(securityData.getFieldDataDtoList());
@@ -322,7 +344,9 @@ public class BenchmarkServiceImpl implements BenchmarkService {
                 benchmarks.add(benchmark);
             }
         }
-        return benchmarks;
+        responseDto.setStatus(ResponseStatusType.SUCCESS);
+        responseDto.setRecords(benchmarks);
+        return responseDto;
     }
 
     private Double getRateOfReturn(Double startIndex, Double endIndex) {
@@ -331,6 +355,7 @@ public class BenchmarkServiceImpl implements BenchmarkService {
     }
 
     private String renameCode(String benchmarkCode) {
+        // TODO: Add BenchmarkLoookup --> Bloomberg Code
         switch (benchmarkCode) {
             case "HFRI_FOF":
                 return "HFRIFOF";
@@ -348,6 +373,8 @@ public class BenchmarkServiceImpl implements BenchmarkService {
                 return "SPX";
             case "GLOBAL_FI":
                 return "LEGATRUH";
+            case "LEGATRUU":
+                return "LEGATRUU";
             default:
                 return "";
         }
