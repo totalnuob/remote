@@ -41,7 +41,7 @@ public class BenchmarkValue extends CreateUpdateBaseEntity {
         this.date = date;
     }
 
-    @Column (name = "return_value", nullable = false)
+    @Column (name = "return_value"/*, nullable = false*/)
     public Double getReturnValue() {
         return returnValue;
     }
@@ -50,7 +50,7 @@ public class BenchmarkValue extends CreateUpdateBaseEntity {
         this.returnValue = returnValue;
     }
 
-    @Column (name = "index_value"/*, nullable = false*/)
+    @Column (name = "index_value", nullable = false)
     public Double getIndexValue() {
         return indexValue;
     }
