@@ -22,6 +22,8 @@ public class HedgeFundScreeningSavedResultsBenchmark extends BaseEntity {
     private Benchmark benchmark;
     private Date date;
     private Double returnValue;
+    private Double indexValue;
+    private Double calculatedMonthReturn;
     private Double ytd;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -70,5 +72,23 @@ public class HedgeFundScreeningSavedResultsBenchmark extends BaseEntity {
 
     public void setSavedResults(HedgeFundScreeningSavedResults savedResults) {
         this.savedResults = savedResults;
+    }
+
+    @Column (name = "index_value" /*, nullable = false*/)
+    public Double getIndexValue() {
+        return indexValue;
+    }
+
+    public void setIndexValue(Double indexValue) {
+        this.indexValue = indexValue;
+    }
+
+    @Column (name = "calc_month_return_value" /*, nullable = false*/)
+    public Double getCalculatedMonthReturn() {
+        return calculatedMonthReturn;
+    }
+
+    public void setCalculatedMonthReturn(Double calculatedMonthReturn) {
+        this.calculatedMonthReturn = calculatedMonthReturn;
     }
 }

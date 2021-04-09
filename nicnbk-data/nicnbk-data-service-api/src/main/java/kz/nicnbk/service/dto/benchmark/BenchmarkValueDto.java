@@ -12,9 +12,11 @@ import java.util.Date;
 public class BenchmarkValueDto extends BaseEntityDto<BenchmarkValue> implements Comparable{
     private BaseDictionaryDto benchmark;
     private Date date;
-    private Double returnValue;
+    //private Double returnValue;
     private Double ytd;
-//    private Double indexValue;
+    private Double indexValue;
+
+    private Double calculatedMonthReturn;
 
     public BaseDictionaryDto getBenchmark() {
         return benchmark;
@@ -32,22 +34,21 @@ public class BenchmarkValueDto extends BaseEntityDto<BenchmarkValue> implements 
         this.date = date;
     }
 
-    public Double getReturnValue() {
-        return returnValue;
-    }
-
-    public void setReturnValue(Double returnValue) {
-        this.returnValue = returnValue;
-    }
-
-//    public Double getIndexValue() {
-//        return indexValue;
+//    public Double getReturnValue() {
+//        return returnValue;
 //    }
 //
-//    public void setIndexValue(Double indexValue) {
-//        this.indexValue = indexValue;
+//    public void setReturnValue(Double returnValue) {
+//        this.returnValue = returnValue;
 //    }
 
+    public Double getIndexValue() {
+        return indexValue;
+    }
+
+    public void setIndexValue(Double indexValue) {
+        this.indexValue = indexValue;
+    }
 
     public Double getYtd() {
         return ytd;
@@ -55,6 +56,14 @@ public class BenchmarkValueDto extends BaseEntityDto<BenchmarkValue> implements 
 
     public void setYtd(Double ytd) {
         this.ytd = ytd;
+    }
+
+    public Double getCalculatedMonthReturn() {
+        return calculatedMonthReturn;
+    }
+
+    public void setCalculatedMonthReturn(Double calculatedMonthReturn) {
+        this.calculatedMonthReturn = calculatedMonthReturn;
     }
 
     @Override

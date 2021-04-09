@@ -15,20 +15,20 @@ import java.util.List;
  */
 public interface BenchmarkService extends BaseService {
 
-    List<BenchmarkValueDto> getValuesFromDateAsList(Date fromDate, String benchmarkCode);
+    //List<BenchmarkValueDto> getValuesFromDateAsList(Date fromDate, String benchmarkCode);
 
-    double[] getReturnValuesFromDateAsArray(Date date, String benchmarkCode);
+    //double[] getMonthReturnValuesFromDateAsArray(Date date, String benchmarkCode);
 
-    double[] getReturnValuesBetweenDatesAsArray(Date dateFrom, Date dateTo, String benchmarkCode);
+    double[] getMonthReturnValuesBetweenDatesAsArray(Date dateFrom, Date dateTo, String benchmarkCode);
 
 
     BenchmarkPagedSearchResult search(BenchmarkSearchParams params);
 
     EntitySaveResponseDto save(BenchmarkValueDto dto, String username);
 
-    EntityListSaveResponseDto save(List<BenchmarkValueDto> dtoList, String username);
+    EntityListSaveResponseDto save(List<BenchmarkValueDto> dtoList, boolean stopOnError, String username);
 
-    EntityListSaveResponseDto getBenchmarksBB(BenchmarkSearchParams searchParams, String username);
+    EntityListSaveResponseDto downloadBenchmarksBB(BenchmarkSearchParams searchParams, String username);
 
     List<BenchmarkValueDto> getBenchmarkValuesForDatesAndType(Date dateFrom, Date dateTo, String benchmarkCode);
 

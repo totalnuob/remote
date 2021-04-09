@@ -194,7 +194,7 @@ public class MonitoringHedgeFundServiceImpl implements MonitoringHedgeFundServic
                 for (BenchmarkValueDto dto : benchmarks) {
                     MonitoringHedgeFundDateDoubleValueDto valueHFRI = new MonitoringHedgeFundDateDoubleValueDto();
                     valueHFRI.setDate(dto.getDate());
-                    valueHFRI.setValue(dto.getReturnValue());
+                    valueHFRI.setValue(dto.getCalculatedMonthReturn());
                     returnsHFRI.add(valueHFRI);
 
                     if (DateUtils.getMonth(dto.getDate()) == 11 && DateUtils.getDay(dto.getDate()) == 31) {
@@ -207,9 +207,9 @@ public class MonitoringHedgeFundServiceImpl implements MonitoringHedgeFundServic
                     cumulativeValueHFRI.setDate(dto.getDate());
                     Double cumulativeValue = null;
                     if (previousCumulativeValue == null) {
-                        cumulativeValue = dto.getReturnValue();
+                        cumulativeValue = dto.getCalculatedMonthReturn();
                     } else {
-                        cumulativeValue = MathUtils.getCumulativeReturn(18, previousCumulativeValue, dto.getReturnValue());
+                        cumulativeValue = MathUtils.getCumulativeReturn(18, previousCumulativeValue, dto.getCalculatedMonthReturn());
                     }
                     cumulativeValueHFRI.setValue(cumulativeValue);
                     cumulativeReturnsHFRI.add(cumulativeValueHFRI);

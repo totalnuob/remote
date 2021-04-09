@@ -76,6 +76,8 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
 
     public static final String IC_BULLETIN_DECISION_PLACEHOLDER = "DECISION";
     public static final String IC_BULLETIN_NAME_PLACEHOLDER = "NAME";
+    public static final String IC_BULLETIN_ICNUM_PLACEHOLDER = "ICNUM";
+    public static final String IC_BULLETIN_ICDATE_PLACEHOLDER = "ICDATE";
 
 
     /* Root folder on the server */
@@ -532,7 +534,10 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
                     entity.getIcMeeting().getUnlockedForFinalize() != null && entity.getIcMeeting().getUnlockedForFinalize().booleanValue()){
                 // Unlocked for finalize
                 if(entity.getIcMeeting() != null && entity.getIcMeeting().getId() != null) {
-                    sendNotificationsIfAllTopicsFinalized(entity.getIcMeeting().getId());
+                    if(!resetApprovals || dto.getApproveList() == null || dto.getApproveList().isEmpty()){
+                        // send notifications if current topic has no approve list or approve list is not reset
+                        sendNotificationsIfAllTopicsFinalized(entity.getIcMeeting().getId());
+                    }
                 }
             }
 
@@ -3183,7 +3188,7 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
         removePlaceholders(document, IC_PROTOCOL_QUESTION_PLACEHOLDER);
     }
 
-    private void updateICMeetingBulletin(XWPFDocument document, List<ICMeetingTopicDto> topics, String name){
+    private void updateICMeetingBulletin(XWPFDocument document, List<ICMeetingTopicDto> topics, String name, String icNum, Date icDate){
         if(topics != null && !topics.isEmpty()){
             List<XWPFParagraph> paragraphs = document.getParagraphs();
             int index = 0;
@@ -3204,7 +3209,30 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
                             }
                         }
                     }
-                }else if(paragraph.getText().startsWith(IC_BULLETIN_DECISION_PLACEHOLDER)){
+                }else if(paragraph.getText().contains(IC_BULLETIN_ICNUM_PLACEHOLDER) ||
+                        paragraph.getText().contains(IC_BULLETIN_ICDATE_PLACEHOLDER)){
+                    List<XWPFRun> runs = paragraph.getRuns();
+                    if (runs != null) {
+                        for (XWPFRun r : runs) {
+                            String text = r.getText(0);
+                            if (text != null && text.contains(IC_BULLETIN_ICNUM_PLACEHOLDER)) {
+                                if(name != null) {
+                                    text = text.replace(IC_BULLETIN_ICNUM_PLACEHOLDER, icNum);
+                                }else{
+                                    text = text.replace(IC_BULLETIN_ICNUM_PLACEHOLDER, "");
+                                }
+                                r.setText(text, 0);
+                            }else if (text != null && text.contains(IC_BULLETIN_ICDATE_PLACEHOLDER)) {
+                                if(name != null) {
+                                    text = text.replace(IC_BULLETIN_ICDATE_PLACEHOLDER, DateUtils.getDateFormatted(icDate));
+                                }else{
+                                    text = text.replace(IC_BULLETIN_ICDATE_PLACEHOLDER, "");
+                                }
+                                r.setText(text, 0);
+                            }
+                        }
+                    }
+                } if(paragraph.getText().startsWith(IC_BULLETIN_DECISION_PLACEHOLDER)){
                     break;
                 }
                 index++;
@@ -3663,7 +3691,7 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
                     return null;
                 }
                 String name = employeeDto.getFullNamePossessiveInitialsRu();
-                updateICMeetingBulletin(document, icMeeting.getTopics(), name);
+                updateICMeetingBulletin(document, icMeeting.getTopics(), name, icMeeting.getNumber(), icMeeting.getDate());
 
                 File tmpDir = new File(this.rootDirectory + "/tmp/corp_meetings");
 

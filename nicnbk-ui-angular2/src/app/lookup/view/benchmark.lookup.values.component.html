@@ -144,7 +144,8 @@
                 <tr>
                     <th>DATE</th>
                     <th>TYPE</th>
-                    <th>RETURN</th>
+                    <th>INDEX</th>
+                    <th>CALC. MONTH RETURN</th>
                     <th>YTD</th>
                     <!--<th>INDEX</th>-->
                     <!--<th>AVG VALUE</th>-->
@@ -156,9 +157,9 @@
                     <tr *ngFor="let item of searchResults?.benchmarks">
                         <td>{{item.date}}</td>
                         <td>{{item?.benchmark?.nameEn}}</td>
-                        <td>{{item.returnValue}}</td>
+                        <td>{{item.indexValue}}</td>
+                        <td>{{item.calculatedMonthReturn}}</td>
                         <td>{{item.ytd}}</td>
-                        <!--<td>{{item.indexValue}}</td>-->
                         <!--<td>{{item.averageValue}}</td>-->
                         <!--<td>{{item.averageValueYear}}</td>-->
                         <td>
@@ -222,7 +223,7 @@
                                         </span>
                                     </div>
                                 </div>
-                                <div class="col-md-2">
+                                <div class="col-md-3">
                                     <label>Benchmark</label>
                                     <select class="form-control" required style="width: 100%" [(ngModel)]="selectedBenchmark.benchmark.code"
                                             [ngModelOptions]="{standalone: true}">
@@ -230,16 +231,17 @@
                                     </select>
                                 </div>
                                 <div class="col-md-3">
-                                    <label>Return value</label>
-                                    <input type="number" required class="form-control" placeholder="Enter return value..." [(ngModel)]="selectedBenchmark.returnValue"/>
+                                    <label>Index value</label>
+                                    <input type="number" required class="form-control" placeholder="Enter index value..." [(ngModel)]="selectedBenchmark.indexValue"/>
                                 </div>
+<!--                                <div class="col-md-3">-->
+<!--                                    <label>Return value</label>-->
+<!--                                    <input type="number" required class="form-control" placeholder="Enter return value..." [(ngModel)]="selectedBenchmark.returnValue"/>-->
+<!--                                </div>-->
                                 <div class="col-md-3">
                                     <label>Return value YTD</label>
-                                    <input type="number" [disabled]="!checkYTD()" class="form-control" placeholder="Enter YTD value..." [(ngModel)]="selectedBenchmark.ytd"/>
+                                    <input type="number" [disabled]="true" class="form-control" placeholder="Enter YTD value..." [(ngModel)]="selectedBenchmark.ytd"/>
                                 </div>
-                                <!--<div class="col-md-2">-->
-                                    <!--<input type="number" required class="form-control" placeholder="Enter value..." [(ngModel)]="selectedBenchmark.indexValue"/>-->
-                                <!--</div>-->
                                 <!--<div class="col-md-2">-->
                                     <!--<input type="number" class="form-control" [disabled]="!checkAverageValue()" placeholder="KZT MON AVG..." [(ngModel)]="selectedBenchmark.averageValue"/>-->
                                 <!--</div>-->
@@ -279,7 +281,7 @@
                             </select>
                         </div>
                         <br/>
-                        <div>Format: <span style="font-weight: bold">date [tab] return </span></div>
+                        <div>Format: <span style="font-weight: bold">date [tab] index </span></div>
                         <div>
                             Date format: <span style="font-weight: bold">dd.mm.yyyy</span>
                         </div>
@@ -287,7 +289,7 @@
                             <!--Index format: <span style="font-weight: bold">xx.xxxx</span>-->
                         <!--</div>-->
                         <div>
-                            Return value format: <span style="font-weight: bold">x.xxxx (NOT PERCENTAGE)</span>
+                            Index format: <span style="font-weight: bold">x.xxxx </span>
                         </div>
                     <textarea class="form-control" placeholder="Paste values here..."
                               name="uploadedValues" [(ngModel)]="uploadedValues"></textarea>
@@ -299,18 +301,19 @@
                 </div>
             </div>
         </div>
-
         <div class="modal fade" id="bloombergModal" role="dialog">
             <div class="modal-dialog" style="overflow-y: scroll; max-height:85%;  margin-top: 50px; margin-bottom:50px; width:65%;">
-                <div class="modal-content" style="min-height: 400px">
+                <div [ngBusy]="busy" class="modal-content" style="min-height: 600px">
                     <div class="modal-header">
-                        <h3 class="modal-title"  style="word-wrap: break-word">Download benchmark from Bloomberg</h3>
+                        <h3 class="modal-title"  style="word-wrap: break-word">Download monthly benchmark index values from Bloomberg</h3>
                     </div>
                     <div class="modal-body">
 
                         <div class="row top-buffer" >
                             <div class="col-md-12">
                                 <div class="alert alert-danger" *ngIf="errorMessageSaveBenchmark != null"><span style="white-space: pre-wrap">{{errorMessageSaveBenchmark}}</span>
+                                </div>
+                                <div class="alert alert-warning" *ngIf="warningMessageSaveBenchmark != null"><span>{{warningMessageSaveBenchmark}}</span>
                                 </div>
                                 <div class="alert alert-info" *ngIf="successMessageSaveBenchmark != null"><span>{{successMessageSaveBenchmark}}</span>
                                 </div>
@@ -359,23 +362,24 @@
                             </div>
                         </div>
                         <br/>
-                        <button type="button" class="btn btn-success" (click)="getBenchmarkBB()">Get Benchmark</button>
+                        <button type="button" class="btn btn-success pull-right" (click)="getBenchmarkBB()">Get Benchmark</button>
+                        <br/>
                         <br/>
                         <div class="row" *ngIf="benchmarksLoaded != null && benchmarksLoaded.length > 0">
-                            <table [ngBusy]="busy" class="table table-hover">
+                            <table class="table table-hover">
                                 <thead>
                                 <tr>
                                     <th>DATE</th>
                                     <th>TYPE</th>
-                                    <th>RETURN</th>
+                                    <th>INDEX VALUE</th>
                                     <th>&nbsp;</th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 <tr *ngFor="let item of benchmarksLoaded">
                                     <td>{{item.date}}</td>
-                                    <td>{{item?.benchmark?.nameEn}}</td>
-                                    <td>{{item.returnValue}}</td>
+                                    <td>{{item?.benchmark?.code}}</td>
+                                    <td>{{item.indexValue}}</td>
                                     <td>&nbsp;
                                     </td>
                                 </tr>
@@ -387,6 +391,7 @@
                         <button type="button" class="btn btn-default" (click)='closeBenchmarkEditModal()' data-dismiss="modal">Close</button>
                     </div>
             </div>
+
         </div>
     </div>
 </div>

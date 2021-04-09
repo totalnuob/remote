@@ -1,7 +1,6 @@
 package kz.nicnbk.ws.rest;
 
 import kz.nicnbk.common.service.model.BaseDictionaryDto;
-import kz.nicnbk.repo.model.reporting.ReserveCalculationEntityType;
 import kz.nicnbk.service.api.authentication.TokenService;
 import kz.nicnbk.service.api.benchmark.BenchmarkService;
 import kz.nicnbk.service.api.common.CurrencyRatesService;
@@ -25,7 +24,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import javax.swing.text.html.parser.Entity;
 import java.util.Collections;
 import java.util.List;
 
@@ -304,7 +302,7 @@ public class LookupServiceREST extends CommonServiceREST{
         String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
         String username = this.tokenService.decode(token).getUsername();
 
-        EntityListSaveResponseDto saveResponse = this.benchmarkService.getBenchmarksBB(searchParams, username);
+        EntityListSaveResponseDto saveResponse = this.benchmarkService.downloadBenchmarksBB(searchParams, username);
         return buildEntityListSaveResponse(saveResponse);
     }
 
@@ -364,7 +362,7 @@ public class LookupServiceREST extends CommonServiceREST{
         String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
         String username = this.tokenService.decode(token).getUsername();
 
-        EntityListSaveResponseDto saveResponse = this.benchmarkService.save(benchmarkDtoList, username);
+        EntityListSaveResponseDto saveResponse = this.benchmarkService.save(benchmarkDtoList, false, username);
         return buildEntityListSaveResponse(saveResponse);
     }
 

@@ -29,7 +29,8 @@ public class HedgeFundScreeningSavedResultsBenchmarkEntityConverter extends Base
         Benchmark benchmark = this.lookupService.findByTypeAndCode(Benchmark.class, benchmarkValueDto.getBenchmark().getCode());
         entity.setBenchmark(benchmark);
         entity.setDate(benchmarkValueDto.getDate());
-        entity.setReturnValue(benchmarkValueDto.getReturnValue());
+        //entity.setReturnValue(benchmarkValueDto.getReturnValue());
+        entity.setIndexValue(benchmarkValueDto.getIndexValue());
         entity.setYtd(benchmarkValueDto.getYtd());
         return  entity;
     }

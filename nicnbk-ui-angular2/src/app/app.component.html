@@ -420,10 +420,10 @@
                                            (click)="setActiveMenu('MONITORING')">NIC Portfolio</a></li>
                                     <li><a [routerLink]="['/monitoring/liq']" class="navigation__sublink"
                                            (click)="setActiveMenu('MONITORING')">Liquid Portfolio</a></li>
-                                    <li><a [routerLink]="['/monitoring/peFund']" class="navigation__sublink"
-                                           (click)="setActiveMenu('MONITORING')">Tarragon</a></li>
-                                    <li><a [routerLink]="['/monitoring/hf2']" class="navigation__sublink"
-                                           (click)="setActiveMenu('MONITORING')">Singularity</a></li>
+<!--                                    <li><a [routerLink]="['/monitoring/peFund']" class="navigation__sublink"-->
+<!--                                           (click)="setActiveMenu('MONITORING')">Tarragon</a></li>-->
+<!--                                    <li><a [routerLink]="['/monitoring/hf2']" class="navigation__sublink"-->
+<!--                                           (click)="setActiveMenu('MONITORING')">Singularity</a></li>-->
                                     <li><a [routerLink]="['/monitoring/hflist']" class="navigation__sublink"
                                            (click)="setActiveMenu('MONITORING')">HF Portfolio Updates</a>
                                     </li>
@@ -434,9 +434,9 @@
                                     </li>
                                 </ul>
                             </li>
-                            <li class="navigation__item dropdown" *ngIf="checkAvailable('MACROMONITOR')">
-                                <a [routerLink]="['/macromonitor']" class="navigation__link" title="Macro Monitor"
-                                                                     [style.border-bottom-color]="activeMenu === 'MACROMONITOR' ? '#D9A158' : 'white'" (click)="setActiveMenu('MACROMONITOR')">MM</a></li>
+<!--                            <li class="navigation__item dropdown" *ngIf="checkAvailable('MACROMONITOR')">-->
+<!--                                <a [routerLink]="['/macromonitor']" class="navigation__link" title="Macro Monitor"-->
+<!--                                                                     [style.border-bottom-color]="activeMenu === 'MACROMONITOR' ? '#D9A158' : 'white'" (click)="setActiveMenu('MACROMONITOR')">MM</a></li>-->
                             <li class="navigation__item dropdown" *ngIf="checkAvailable('M2S2')">
                                 <a [routerLink]="['/m2s2']"  class="navigation__link" [style.border-bottom-color]="activeMenu === 'M2S2' ? '#D9A158' : 'white'" (click)="setActiveMenu('M2S2')">M2S2</a></li>
                             <li class="navigation__item dropdown" *ngIf="checkAvailable('TRAININGS')">

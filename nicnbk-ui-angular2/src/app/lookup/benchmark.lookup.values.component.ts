@@ -51,9 +51,10 @@ export class BenchmarkLookupValuesComponent extends CommonNBReportingComponent i
 
     errorMessageSaveBenchmark;
     successMessageSaveBenchmark;
+    warningMessageSaveBenchmark;
 
     benchmarkUploadModalSuccessMessage;
-    benchmarkUploadModalErrorMessage
+    benchmarkUploadModalErrorMessage;
 
     uploadBenchmarkCode;
     uploadedValues;
@@ -139,6 +140,10 @@ export class BenchmarkLookupValuesComponent extends CommonNBReportingComponent i
     }
 
     getBenchmarkBB(page){
+        if(!confirm('Downloading data from Bloomberg, usage quota will be affected. Do you want to proceed?')){
+            return;
+        }
+
         this.benchmarksLoaded = [];
         if(this.searchParams == null){
             this.searchParams = new BenchmarkSearchParams();
@@ -150,18 +155,27 @@ export class BenchmarkLookupValuesComponent extends CommonNBReportingComponent i
 
         this.searchParams.fromDate = $('#fromDateBB').val();
         this.searchParams.toDate = $('#toDateBB').val();
-
+        //console.log(this.searchParams);
         this.busy = this.lookupService.getBenchmarksBB(this.searchParams)
             .subscribe(
-
                 (saveResponse: SaveResponse) => {
-                    if(saveResponse.status === 'SUCCESS' ){
-                        this.search(0);
-
-                        this.successMessageSaveBenchmark = saveResponse.message.nameEn;
-                        this.errorMessageSaveBenchmark = null;
-
+                    if(saveResponse.status === 'SUCCESS' || saveResponse.status === 'OK_WITH_ERRORS'){
                         this.benchmarksLoaded = saveResponse.records;
+                        //this.search(0);
+                        if(saveResponse.status === 'OK_WITH_ERRORS'){
+                            this.warningMessageSaveBenchmark = saveResponse.message.nameEn;
+                            this.successMessageSaveBenchmark = null;
+                            this.errorMessageSaveBenchmark = null;
+                        }
+                        if(this.benchmarksLoaded == null || this.benchmarksLoaded.length == 0){
+                            this.warningMessageSaveBenchmark = "Request successful, but no records have been loaded";
+                            this.successMessageSaveBenchmark = null;
+                            this.errorMessageSaveBenchmark = null;
+                        }else{
+                            this.successMessageSaveBenchmark = saveResponse.message.nameEn;
+                            this.errorMessageSaveBenchmark = null;
+                            this.warningMessageSaveBenchmark = null;
+                        }
 
                     }else{
                         if(saveResponse.message != null){
@@ -177,6 +191,7 @@ export class BenchmarkLookupValuesComponent extends CommonNBReportingComponent i
                 },
                 (error: ErrorResponse) => {
                     this.successMessageSaveBenchmark = null;
+                    this.warningMessageSaveBenchmark= null;
                     this.errorMessageSaveBenchmark = error && error.message ? error.message : "Error saving benchmark.";
                     //this.processErrorMessage(error);
                 }
@@ -189,7 +204,7 @@ export class BenchmarkLookupValuesComponent extends CommonNBReportingComponent i
 
     edit(item){
         this.errorMessageSaveBenchmark = null;
-        this.errorMessageSaveBenchmark = null;
+        this.warningMessageSaveBenchmark= null;
         this.successMessageSaveBenchmark = null;
         if(item){
             this.selectedBenchmark = item;
@@ -203,6 +218,7 @@ export class BenchmarkLookupValuesComponent extends CommonNBReportingComponent i
         // TODO: check required fields
         if(!this.selectedBenchmark.date){
             this.successMessageSaveBenchmark = null;
+            this.warningMessageSaveBenchmark= null;
             this.errorMessageSaveBenchmark = "Date required.";
             return false;
         }
@@ -210,20 +226,22 @@ export class BenchmarkLookupValuesComponent extends CommonNBReportingComponent i
 
         if(!this.selectedBenchmark.benchmark){
             this.successMessageSaveBenchmark = null;
+            this.warningMessageSaveBenchmark= null;
             this.errorMessageSaveBenchmark = "Type required.";
             return false;
         }
 
-        if(!this.selectedBenchmark.returnValue){
-            this.successMessageSaveBenchmark = null;
-            this.errorMessageSaveBenchmark = "Return value required.";
-            return false;
-        }
-        //if(!this.selectedBenchmark.indexValue){
+        //if(!this.selectedBenchmark.returnValue){
         //    this.successMessageSaveBenchmark = null;
-        //    this.errorMessageSaveBenchmark = "Index value required.";
+        //    this.errorMessageSaveBenchmark = "Return value required.";
         //    return false;
         //}
+        if(!this.selectedBenchmark.indexValue){
+            this.successMessageSaveBenchmark = null;
+            this.warningMessageSaveBenchmark= null;
+            this.errorMessageSaveBenchmark = "Index value required.";
+            return false;
+        }
 
         this.busy = this.lookupService.saveBenchmark(this.selectedBenchmark)
             .subscribe(
@@ -237,6 +255,7 @@ export class BenchmarkLookupValuesComponent extends CommonNBReportingComponent i
 
                         this.successMessageSaveBenchmark = saveResponse.message.nameEn;
                         this.errorMessageSaveBenchmark = null;
+                        this.warningMessageSaveBenchmark= null;
 
                     }else{
                         if(saveResponse.message != null){
@@ -252,6 +271,7 @@ export class BenchmarkLookupValuesComponent extends CommonNBReportingComponent i
                 },
                 (error: ErrorResponse) => {
                     this.successMessageSaveBenchmark = null;
+                    this.warningMessageSaveBenchmark= null;
                     this.errorMessageSaveBenchmark = error && error.message ? error.message : "Error saving benchmark.";
                     //this.processErrorMessage(error);
                 }
@@ -299,12 +319,14 @@ export class BenchmarkLookupValuesComponent extends CommonNBReportingComponent i
         this.benchmarksLoaded = [];
         this.errorMessageSaveBenchmark = null;
         this.successMessageSaveBenchmark = null;
+        this.warningMessageSaveBenchmark= null;
     }
 
     openBloombegUploadModal(){
         this.benchmarksLoaded = [];
         this.errorMessageSaveBenchmark = null;
         this.successMessageSaveBenchmark = null;
+        this.warningMessageSaveBenchmark= null;
     }
 
     parseBenchmarkValues(){
@@ -327,7 +349,7 @@ export class BenchmarkLookupValuesComponent extends CommonNBReportingComponent i
             var row = rows[i].split("\t");
             if(row.length != 2){
                 this.benchmarkUploadModalSuccessMessage = null;
-                this.benchmarkUploadModalErrorMessage = "Invalid format. Expected: date [tab] return";
+                this.benchmarkUploadModalErrorMessage = "Invalid format. Expected: date [tab] index";
                 return;
             }
             if(row[0] == null || row[0] === 'undefined' || row[0].split(".").length != 3){
@@ -340,32 +362,33 @@ export class BenchmarkLookupValuesComponent extends CommonNBReportingComponent i
             var month = row[0].split(".")[1];
             var year = row[0].split(".")[2];
 
-            //var index_value = row[1].replace(/,/g, '.');
-            //index_value = index_value.replace('%', '');
+            var index_value = row[1].replace(/,/g, '.');
 
-            var return_value = row[1].replace(/,/g, '.');
-            if(return_value.includes('%')){
-                this.benchmarkUploadModalSuccessMessage = null;
-                this.benchmarkUploadModalErrorMessage = "Invalid format - return: must not percent value";
-                return;
-            }
-            //return_value = return_value.replace('%', '');
+            //var return_value = row[1].replace(/,/g, '.');
+            //if(return_value.includes('%')){
+            //    this.benchmarkUploadModalSuccessMessage = null;
+            //   this.benchmarkUploadModalErrorMessage = "Invalid format - return: must not percent value";
+            //    return;
+            //}
 
             var benchmark =  new BaseDictionary();
             benchmark.code = this.uploadBenchmarkCode;
-            benchmarks.push({"date": day + '-' + month + '-' + year, /*"indexValue": parseFloat(Number(index_value)).toFixed(4),*/
-                "returnValue": parseFloat(Number(return_value)),"benchmark":benchmark});
+            benchmarks.push({"date": day + '-' + month + '-' + year, "indexValue": parseFloat(Number(index_value)),
+                /*"returnValue": parseFloat(Number(return_value))*/,"benchmark":benchmark});
         }
 
         this.busy = this.lookupService.saveBenchmarksList(benchmarks)
             .subscribe(
                 (saveResponse: SaveResponse) => {
-                    if(saveResponse.status === 'SUCCESS' ){
+                    if(saveResponse.status === 'SUCCESS'){
                         this.search(0);
                         this.benchmarkUploadModalSuccessMessage = saveResponse.message.nameEn;
                         this.benchmarkUploadModalErrorMessage = null;
-
-                    }else{
+                    }else if(saveResponse.status === 'OK_WITH_ERRORS' ){
+                         this.search(0);
+                         this.benchmarkUploadModalErrorMessage = saveResponse.message.nameEn;
+                         this.benchmarkUploadModalSuccessMessage = null;
+                     }else{
                         if(saveResponse.message != null){
                             var message = saveResponse.message.nameEn != null ? saveResponse.message.nameEn :
                                 saveResponse.message.nameRu != null ? saveResponse.message.nameRu : saveResponse.message.nameKz;
@@ -383,7 +406,6 @@ export class BenchmarkLookupValuesComponent extends CommonNBReportingComponent i
                     //this.processErrorMessage(error);
                 }
             );
-
     }
 
     checkYTD(){

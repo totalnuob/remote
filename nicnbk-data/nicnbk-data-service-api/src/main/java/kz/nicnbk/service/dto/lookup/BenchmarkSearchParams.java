@@ -43,7 +43,7 @@ public class BenchmarkSearchParams implements BaseParams {
     }
 
     public Date getFromDate() {
-        return fromDate != null ? fromDate : DateUtils.getDate("01.01.1970");
+        return fromDate;
     }
 
     public void setFromDate(Date fromDate) {
@@ -51,7 +51,7 @@ public class BenchmarkSearchParams implements BaseParams {
     }
 
     public Date getToDate() {
-        return toDate != null ? toDate : DateUtils.getDate("12.31." + (DateUtils.getYear(new Date()) + 10));
+        return toDate;
     }
 
     public void setToDate(Date toDate) {

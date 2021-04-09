@@ -34,7 +34,7 @@ public class CurrencyRatesSearchParams implements BaseParams {
     }
 
     public Date getFromDate() {
-        return fromDate != null ? fromDate : DateUtils.getDate("01.01.1970");
+        return fromDate != null ? fromDate : DateUtils.DEFAULT_START;
     }
 
     public void setFromDate(Date fromDate) {

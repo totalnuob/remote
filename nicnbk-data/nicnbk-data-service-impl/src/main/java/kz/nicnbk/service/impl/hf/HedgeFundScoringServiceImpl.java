@@ -154,7 +154,7 @@ public class HedgeFundScoringServiceImpl implements HedgeFundScoringService {
             }
             double[] tbillsReturns = new double[tbills.size()];
             for(int i = 0; i < tbillsReturns.length; i++){
-                if(tbills.get(i).getReturnValue() == null){
+                if(tbills.get(i).getCalculatedMonthReturn() == null){
                     String errorMessage = "HF Scoring calculation failed: missing T-bills return values for date " + DateUtils.getDateFormatted(tbills.get(i).getDate());
                     logger.error(errorMessage);
                     responseDto.setErrorMessageEn(errorMessage);
@@ -162,7 +162,7 @@ public class HedgeFundScoringServiceImpl implements HedgeFundScoringService {
                     return responseDto;
                     //throw new IllegalStateException(errorMessage);
                 }
-                tbillsReturns[i] = tbills.get(i).getReturnValue();
+                tbillsReturns[i] = tbills.get(i).getCalculatedMonthReturn();
             }
 
             //S & P
@@ -177,7 +177,7 @@ public class HedgeFundScoringServiceImpl implements HedgeFundScoringService {
             }
             double[] snpReturns = new double[snp.size()];
             for(int i = 0; i < snpReturns.length; i++){
-                if(snp.get(i).getReturnValue() == null){
+                if(snp.get(i).getCalculatedMonthReturn() == null){
                     String errorMessage = "HF Scoring calculation failed: missing S & P reeturn values for date " + DateUtils.getDateFormatted(snp.get(i).getDate());
                     logger.error(errorMessage);
                     responseDto.setErrorMessageEn(errorMessage);
@@ -185,7 +185,7 @@ public class HedgeFundScoringServiceImpl implements HedgeFundScoringService {
                     return responseDto;
                     //throw new IllegalStateException(errorMessage);
                 }
-                snpReturns[i] = snp.get(i).getReturnValue();
+                snpReturns[i] = snp.get(i).getCalculatedMonthReturn();
             }
 
             Collections.sort(screeningList);
