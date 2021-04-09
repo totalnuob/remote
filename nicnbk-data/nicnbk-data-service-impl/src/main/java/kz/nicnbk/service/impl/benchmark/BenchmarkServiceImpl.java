@@ -182,10 +182,12 @@ public class BenchmarkServiceImpl implements BenchmarkService {
         if(searchParams.getToDate() == null){
             searchParams.setToDate(new Date());
         }
-        // add 1 month before to calculate Return, and add 1 to page size
-        Date prevMonthFromDate = DateUtils.moveDateByDays(searchParams.getFromDate(), -1, false);
-        Page<BenchmarkValue> entityPage = this.benchmarkValueRepository.getValuesBetweenDates(prevMonthFromDate, searchParams.getToDate(), searchParams.getBenchmarkCode(),
-                new PageRequest(page, searchParams.getPageSize() + 1, // add 1 to page size
+        // add 1 month before to calculate Return
+        Date prevMonthFromDate = DateUtils.getLastDayOfCurrentMonth(DateUtils.moveDateByMonths(searchParams.getFromDate(), -1));
+        BenchmarkValue prevMonthBenchmark = this.benchmarkValueRepository.getValuesForDateAndType(prevMonthFromDate, searchParams.getBenchmarkCode());
+
+        Page<BenchmarkValue> entityPage = this.benchmarkValueRepository.getValuesBetweenDates(searchParams.getFromDate(), searchParams.getToDate(), searchParams.getBenchmarkCode(),
+                new PageRequest(page, searchParams.getPageSize(),
                         new Sort(Sort.Direction.DESC, "date", "id")));
         if(entityPage != null && entityPage.getContent() != null){
 
@@ -204,23 +206,24 @@ public class BenchmarkServiceImpl implements BenchmarkService {
             if(entityPage != null && entityPage.getContent() != null) {
                 List<BenchmarkValueDto> dtoList =this.benchmarkValueEntityConverter.disassembleList(entityPage.getContent());
                 if(dtoList != null && !dtoList.isEmpty()){
-                    setCalculatedMonthReturn(dtoList);
-                    List<BenchmarkValueDto> withinDatesDtoList = new ArrayList<>();
-                    // value within dates
-                    int count = 0;
-                    for(BenchmarkValueDto dto: dtoList){
-                        boolean datesOk = (dto.getDate().after(searchParams.getFromDate()) || DateUtils.isSameDate(dto.getDate(), searchParams.getFromDate())) &&
-                                (dto.getDate().before(searchParams.getToDate()) || DateUtils.isSameDate(dto.getDate(), searchParams.getToDate()));
-                        if(datesOk){
-                            withinDatesDtoList.add(dto);
-                            count++;
-                        }
-                        if(count == searchParams.getPageSize()){ // pageSize + 1 elements loaded for return calculation, remove extra
-                            // extra records not added
-                            break;
-                        }
+                    if(prevMonthBenchmark != null) {
+                        BenchmarkValueDto prevMonthBenchmarkDto = this.benchmarkValueEntityConverter.disassemble(prevMonthBenchmark);
+                        dtoList.add(prevMonthBenchmarkDto);
                     }
-                    result.setBenchmarks(withinDatesDtoList);
+                    setCalculatedMonthReturn(dtoList);
+                    if(prevMonthBenchmark != null) {
+                        dtoList.remove(dtoList.size() - 1);
+                    }
+//                    List<BenchmarkValueDto> withinDatesDtoList = new ArrayList<>();
+//                    // value within dates
+//                    for(BenchmarkValueDto dto: dtoList){
+//                        boolean datesOk = (dto.getDate().after(searchParams.getFromDate()) || DateUtils.isSameDate(dto.getDate(), searchParams.getFromDate())) &&
+//                                (dto.getDate().before(searchParams.getToDate()) || DateUtils.isSameDate(dto.getDate(), searchParams.getToDate()));
+//                        if(datesOk){
+//                            withinDatesDtoList.add(dto);
+//                        }
+//                    }
+                    result.setBenchmarks(dtoList);
                 }
             }
         }
