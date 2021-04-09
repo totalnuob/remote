@@ -181,7 +181,7 @@ public class MonitoringHedgeFundServiceImpl implements MonitoringHedgeFundServic
         Date dateTo = maxDate;
 
         if(dateTo != null) {
-            List<BenchmarkValueDto> benchmarks = benchmarkService.getBenchmarkValuesForDatesAndType(dateFrom, dateTo, BenchmarkLookup.HFRI.getCode());
+            List<BenchmarkValueDto> benchmarks = benchmarkService.getBenchmarkValuesForDatesAndType(dateFrom, dateTo, BenchmarkLookup.HFRIFOF.getCode());
             if (benchmarks != null) {
                 List<MonitoringHedgeFundDateDoubleValueDto> returnsHFRI = new ArrayList<>();
                 List<MonitoringHedgeFundDateDoubleValueDto> cumulativeReturnsHFRI = new ArrayList<>();
