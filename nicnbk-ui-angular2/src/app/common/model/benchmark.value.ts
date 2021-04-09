@@ -15,7 +15,7 @@ export class BenchmarkValue{
     id: number;
     benchmark: BaseDictionary;
     date: Date;
-    returnValue: number;
+    //returnValue: number;
     indexValue: number;
     ytd: number;
 

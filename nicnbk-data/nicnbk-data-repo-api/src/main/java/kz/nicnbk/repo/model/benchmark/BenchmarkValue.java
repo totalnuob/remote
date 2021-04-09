@@ -8,9 +8,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 import javax.persistence.*;
 import java.util.Date;
 
-/**
- * Created by magzumov on 05.01.2017.
- */
 
 @Entity
 @Audited
@@ -20,7 +17,7 @@ public class BenchmarkValue extends CreateUpdateBaseEntity {
     private Date date;
     private Double returnValue;
     private Double ytd;
-    //private Double indexValue;
+    private Double indexValue;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "benchmark_id", nullable = false)
@@ -53,14 +50,14 @@ public class BenchmarkValue extends CreateUpdateBaseEntity {
         this.returnValue = returnValue;
     }
 
-//    @Column (name = "index_value", nullable = false)
-//    public Double getIndexValue() {
-//        return indexValue;
-//    }
-//
-//    public void setIndexValue(Double indexValue) {
-//        this.indexValue = indexValue;
-//    }
+    @Column (name = "index_value"/*, nullable = false*/)
+    public Double getIndexValue() {
+        return indexValue;
+    }
+
+    public void setIndexValue(Double indexValue) {
+        this.indexValue = indexValue;
+    }
 
 
     public Double getYtd() {

@@ -92,7 +92,7 @@ public class BloombergCurrencyRatesLoaderTaskImpl {
             SecurityDataDto spxSecurityData = initializeDto(result);
             SecurityDataDto hfriSecurityData = initializeDto(result);
             SecurityDataDto tbillsSecurityData = initializeDto(result);
-            persist(result, spxSecurityData, hfriSecurityData, tbillsSecurityData);
+            //persist(result, spxSecurityData, hfriSecurityData, tbillsSecurityData);
         } catch (Exception e) {
             logger.error("Error parsing Currency Rate from Bloomberg (with exception" + e);
         }
@@ -112,59 +112,59 @@ public class BloombergCurrencyRatesLoaderTaskImpl {
         return null;
     }
 
-    private void persist(ResponseDto response, SecurityDataDto spxDto,
-                         SecurityDataDto hfriDto, SecurityDataDto tbillsDto) throws Exception{
-        BenchmarkValueDto spx = new BenchmarkValueDto();
-        BenchmarkValueDto hfri = new BenchmarkValueDto();
-        BenchmarkValueDto tbills = new BenchmarkValueDto();
-
-        String sDate = response.getSecurityDataDtoList().get(0).
-                getFieldDataDtoList().get(0).getDate();
-        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
-        Date date = formatter.parse(sDate);
-        spx.setDate(date);
-        hfri.setDate(date);
-        tbills.setDate(date);
-
-        for (int i = 0; i < response.getSecurityDataDtoList().size(); i++) {
-            switch (response.getSecurityDataDtoList().get(i).getSecurity()) {
-                case "SPX Index": {
-                    Double value = Double.valueOf(spxDto.getFieldDataDtoList().get(0).getValue());
-                    spx.setReturnValue(value);
-                    spx.setBenchmark(new BaseDictionaryDto(BenchmarkLookup.SNP_500_SPX.getCode(), null, null, null));
-                    EntitySaveResponseDto saveResponseDto = this.benchmarkService.save(spx, JOBNAME);
-                    if(saveResponseDto.getStatus().getCode().equalsIgnoreCase(ResponseStatusType.SUCCESS.getCode())){
-                        logger.info("Successfully saved SPX values (from Bloomberg): " + spx.getReturnValue());
-                    }else{
-                        logger.error("Error saving parsed SPX values (from Bloomberg)");
-                    }
-                    break;
-                }
-                case "HFRIFOF Index": {
-                    Double value = Double.valueOf(hfriDto.getFieldDataDtoList().get(0).getValue());
-                    hfri.setReturnValue(value);
-                    hfri.setBenchmark(new BaseDictionaryDto(BenchmarkLookup.HFRI.getCode(), null, null, null));
-                    EntitySaveResponseDto saveResponseDto = this.benchmarkService.save(hfri, JOBNAME);
-                    if(saveResponseDto.getStatus().getCode().equalsIgnoreCase(ResponseStatusType.SUCCESS.getCode())){
-                        logger.info("Successfully saved HFRI values (from Bloomberg): " + hfri.getReturnValue());
-                    }else{
-                        logger.error("Error saving parsed HFRI values (from Bloomberg)");
-                    }
-                    break;
-                }
-                case "T-Bills Index": {
-                    Double value = Double.valueOf(tbillsDto.getFieldDataDtoList().get(0).getValue());
-                    tbills.setReturnValue(value);
-                    tbills.setBenchmark(new BaseDictionaryDto(BenchmarkLookup.T_BILLS.getCode(), null, null, null));
-                    EntitySaveResponseDto saveResponseDto = this.benchmarkService.save(tbills, JOBNAME);
-                    if(saveResponseDto.getStatus().getCode().equalsIgnoreCase(ResponseStatusType.SUCCESS.getCode())){
-                        logger.info("Successfully saved T-Bills values (from Bloomberg): " + tbills.getReturnValue());
-                    }else{
-                        logger.error("Error saving parsed T-Bills values (from Bloomberg)");
-                    }
-                    break;
-                }
-            }
-        }
-    }
+//    private void persist(ResponseDto response, SecurityDataDto spxDto,
+//                         SecurityDataDto hfriDto, SecurityDataDto tbillsDto) throws Exception{
+//        BenchmarkValueDto spx = new BenchmarkValueDto();
+//        BenchmarkValueDto hfri = new BenchmarkValueDto();
+//        BenchmarkValueDto tbills = new BenchmarkValueDto();
+//
+//        String sDate = response.getSecurityDataDtoList().get(0).
+//                getFieldDataDtoList().get(0).getDate();
+//        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+//        Date date = formatter.parse(sDate);
+//        spx.setDate(date);
+//        hfri.setDate(date);
+//        tbills.setDate(date);
+//
+//        for (int i = 0; i < response.getSecurityDataDtoList().size(); i++) {
+//            switch (response.getSecurityDataDtoList().get(i).getSecurity()) {
+//                case "SPX Index": {
+//                    Double value = Double.valueOf(spxDto.getFieldDataDtoList().get(0).getValue());
+//                    spx.setReturnValue(value);
+//                    spx.setBenchmark(new BaseDictionaryDto(BenchmarkLookup.SNP_500_SPX.getCode(), null, null, null));
+//                    EntitySaveResponseDto saveResponseDto = this.benchmarkService.save(spx, JOBNAME);
+//                    if(saveResponseDto.getStatus().getCode().equalsIgnoreCase(ResponseStatusType.SUCCESS.getCode())){
+//                        logger.info("Successfully saved SPX values (from Bloomberg): " + spx.getReturnValue());
+//                    }else{
+//                        logger.error("Error saving parsed SPX values (from Bloomberg)");
+//                    }
+//                    break;
+//                }
+//                case "HFRIFOF Index": {
+//                    Double value = Double.valueOf(hfriDto.getFieldDataDtoList().get(0).getValue());
+//                    hfri.setReturnValue(value);
+//                    hfri.setBenchmark(new BaseDictionaryDto(BenchmarkLookup.HFRI.getCode(), null, null, null));
+//                    EntitySaveResponseDto saveResponseDto = this.benchmarkService.save(hfri, JOBNAME);
+//                    if(saveResponseDto.getStatus().getCode().equalsIgnoreCase(ResponseStatusType.SUCCESS.getCode())){
+//                        logger.info("Successfully saved HFRI values (from Bloomberg): " + hfri.getReturnValue());
+//                    }else{
+//                        logger.error("Error saving parsed HFRI values (from Bloomberg)");
+//                    }
+//                    break;
+//                }
+//                case "T-Bills Index": {
+//                    Double value = Double.valueOf(tbillsDto.getFieldDataDtoList().get(0).getValue());
+//                    tbills.setReturnValue(value);
+//                    tbills.setBenchmark(new BaseDictionaryDto(BenchmarkLookup.T_BILLS.getCode(), null, null, null));
+//                    EntitySaveResponseDto saveResponseDto = this.benchmarkService.save(tbills, JOBNAME);
+//                    if(saveResponseDto.getStatus().getCode().equalsIgnoreCase(ResponseStatusType.SUCCESS.getCode())){
+//                        logger.info("Successfully saved T-Bills values (from Bloomberg): " + tbills.getReturnValue());
+//                    }else{
+//                        logger.error("Error saving parsed T-Bills values (from Bloomberg)");
+//                    }
+//                    break;
+//                }
+//            }
+//        }
+//    }
 }

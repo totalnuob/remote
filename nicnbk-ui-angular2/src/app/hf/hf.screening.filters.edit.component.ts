@@ -1336,9 +1336,9 @@ export class HFScreeningFilteredResultsEditComponent extends GoogleChartComponen
                 this.returnUploadSuccessMessage = null;
                 return;
             }
-            var returnValue = row[1].replace(/,/g, '.');
-            returnValue = returnValue.replace('%', '');
-            fundReturns.push({"date": month + '.' + year, "value": parseFloat(Number(returnValue)/100).toFixed(12)});
+            var calculatedMonthReturn = row[1].replace(/,/g, '.');
+            calculatedMonthReturn = calculatedMonthReturn.replace('%', '');
+            fundReturns.push({"date": month + '.' + year, "value": parseFloat(Number(calculatedMonthReturn)/100).toFixed(12)});
         }
         ////console.log(fundReturns);
         var returns = [];

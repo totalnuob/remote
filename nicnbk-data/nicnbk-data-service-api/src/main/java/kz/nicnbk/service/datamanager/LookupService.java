@@ -39,6 +39,8 @@ public interface LookupService extends BaseService {
     List<BaseDictionaryDto> getGeographies();
     List<BaseDictionaryDto> getCurrencies();
     List<BaseDictionaryDto> getBenchmarkTypes();
+    List<BaseDictionaryDto> getBloombergStations();
+    List<BaseDictionaryDto> getBloombergStationsSimple();
     List<BaseDictionaryDto> getPortfolioVarTypes();
     List<BaseDictionaryDto> getHedgeFundStatuses();
     List<BaseDictionaryDto> getSubscriptionFrequencies();
@@ -58,7 +60,7 @@ public interface LookupService extends BaseService {
     List<TerraNICReportingChartOfAccountsDto> getAddableTerraNICReportingChartOfAccounts();
 
     List<BaseDictionaryDto> getReserveCalculationExpenseTypeLookup();
-    List<BaseDictionaryDto> getReserveCalculationEntityTypeLookup();
+    List<ReserveCalculationEntityTypeDto> getReserveCalculationEntityTypeLookup();
     List<BaseDictionaryDto> getReserveCalculationExportSignerTypeLookup();
     List<BaseDictionaryDto> getReserveCalculationExportDoerTypeLookup();
     List<BaseDictionaryDto> getReserveCalculationExportApproveListTypeLookup();

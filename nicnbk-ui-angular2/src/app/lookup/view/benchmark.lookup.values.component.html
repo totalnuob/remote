@@ -23,47 +23,74 @@
 
         <div class="row">
             <div class="col-md-12">
-                <div class="col-md-2 pull-right">
-                    <a class="btn btn-primary" id="openCurrencyModalButton" data-toggle="modal" data-target="#addNewModal" (click)="edit()" style="cursor: pointer">
-                        <!--<span class="glyphicon glyphicon-edit"></span>-->Add
+                <div class="col-md-3 col-md-offset-10">
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a class="btn-sm btn-primary" id="openCurrencyModalButton" data-toggle="modal" data-target="#addNewModal" (click)="edit()"
+                           style="cursor: pointer; margin-left: 26px">
+                            <!--<span class="glyphicon glyphicon-edit"></span>-->Add
+                        </a>
+                        <a class="btn-sm btn-primary" data-toggle="modal" data-target="#benchmarkUploadModal"
+                           style="cursor: pointer; margin-left: 5px">
+                            <!--<span class="glyphicon glyphicon-edit"></span>-->Paste from xlsx
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="col-md-offset-9">
+                    <a class="btn-sm btn-primary pull-right" data-toggle="modal" (click)="openBloombegUploadModal()" data-target="#bloombergModal"
+                       style="cursor: pointer">
+                        <!--<span class="glyphicon glyphicon-edit"></span>-->Download from Bloomberg
                     </a>
+                </div>
+            </div>
+        </div>
+        <br>
 
-                </div>
-            </div>
-        </div>
-        <br/>
-        <div class="row">
-            <div class="col-md-12">
-                <div class="col-md-2 pull-right">
-                    <a class="btn btn-primary" data-toggle="modal" data-target="#benchmarkUploadModal" style="cursor: pointer">
-                        <!--<span class="glyphicon glyphicon-edit"></span>-->Add multiple
-                    </a>
-                </div>
-            </div>
-        </div>
-        <br/>
-        <div class="row">
-            <div class="col-md-12">
-                <div class="col-md-2 pull-right">
-                    <a class="btn btn-primary" data-toggle="modal" data-target="#bloombergModal" style="cursor: pointer">
-                        <!--<span class="glyphicon glyphicon-edit"></span>-->Bloomberg
-                    </a>
-                </div>
-            </div>
-        </div>
-        <br/>
+<!--        <div class="row">-->
+<!--            <div class="col-md-12">-->
+<!--                <div class="col-md-2 pull-right">-->
+<!--                    <a class="btn-sm btn-primary" id="openCurrencyModalButton" data-toggle="modal" data-target="#addNewModal" (click)="edit()" style="cursor: pointer">-->
+<!--                        &lt;!&ndash;<span class="glyphicon glyphicon-edit"></span>&ndash;&gt;Add-->
+<!--                    </a>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--        <br/>-->
+<!--        <div class="row">-->
+<!--            <div class="col-md-12">-->
+<!--                <div class="col-md-2 pull-right">-->
+<!--                    <a class="btn-sm btn-primary" data-toggle="modal" data-target="#benchmarkUploadModal" style="cursor: pointer">-->
+<!--                        &lt;!&ndash;<span class="glyphicon glyphicon-edit"></span>&ndash;&gt;Paste-->
+<!--                    </a>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--        <br/>-->
+<!--        <div class="row">-->
+<!--            <div class="col-md-12">-->
+<!--                <div class="col-md-2 pull-right">-->
+<!--                    <a class="btn btn-primary" data-toggle="modal" data-target="#bloombergModal" style="cursor: pointer">-->
+<!--                        &lt;!&ndash;<span class="glyphicon glyphicon-edit"></span>&ndash;&gt;Bloomberg-->
+<!--                    </a>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
 
         <div class="jumbotron">
             <div class="row">
                 <div class="col-md-12">
-                    <div class="col-md-3">
+                    <div class="col-md-4">
                         <label for="benchmarkCodeParam">Type</label>
                         <select class="form-control" style="width: 100%" [(ngModel)]="searchParams.benchmarkCode" id="benchmarkCodeParam"
                                 [ngModelOptions]="{standalone: true}">
                             <option *ngFor="let type of benchmarkTypes" [value]="type.code">{{type.nameEn}}</option>
                         </select>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-4">
                         <label for="fromDateDTPickeer">From</label>
                         <div class='input-group date col-md-3' id='fromDateDTPickeer' style="width: 100%">
                             <input type='text' class="form-control" id="fromDate" [(ngModel)]="searchParams.fromDate"/>
@@ -72,7 +99,7 @@
                                         </span>
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-4">
                         <label for="untilDateDTPickeer">To</label>
                         <div class='input-group date col-md-3' id='untilDateDTPickeer' style="width: 100%">
                             <input type='text' class="form-control" id="toDate" [(ngModel)]="searchParams.toDate"/>
@@ -81,14 +108,16 @@
                                         </span>
                         </div>
                     </div>
+                    <div class="col-md-1">
+                        <button type="button"class="btn-xs btn-default pull-left" (click)="clearSearchForm()"
+                            style="margin-top: 5px">
+                            <!--<i class="glyphicon glyphicon-trash"></i>-->Reset
+                        </button>
+                    </div>
                 </div>
             </div>
             <br/>
-            <div class="row">
-                <button type="button"class="btn-xs btn-default pull-left" (click)="clearSearchForm()">
-                    <!--<i class="glyphicon glyphicon-trash"></i>-->Reset
-                </button>
-            </div>
+
             <div class="row">
                 <div class="col-md-12">
                     <button type="button" class="btn btn-success pull-right" (click)="search()">Search</button>
@@ -115,7 +144,8 @@
                 <tr>
                     <th>DATE</th>
                     <th>TYPE</th>
-                    <th>RETURN</th>
+                    <th>INDEX</th>
+                    <th>CALC. MONTH RETURN</th>
                     <th>YTD</th>
                     <!--<th>INDEX</th>-->
                     <!--<th>AVG VALUE</th>-->
@@ -127,9 +157,9 @@
                     <tr *ngFor="let item of searchResults?.benchmarks">
                         <td>{{item.date}}</td>
                         <td>{{item?.benchmark?.nameEn}}</td>
-                        <td>{{item.returnValue}}</td>
+                        <td>{{item.indexValue}}</td>
+                        <td>{{item.calculatedMonthReturn}}</td>
                         <td>{{item.ytd}}</td>
-                        <!--<td>{{item.indexValue}}</td>-->
                         <!--<td>{{item.averageValue}}</td>-->
                         <!--<td>{{item.averageValueYear}}</td>-->
                         <td>
@@ -193,7 +223,7 @@
                                         </span>
                                     </div>
                                 </div>
-                                <div class="col-md-2">
+                                <div class="col-md-3">
                                     <label>Benchmark</label>
                                     <select class="form-control" required style="width: 100%" [(ngModel)]="selectedBenchmark.benchmark.code"
                                             [ngModelOptions]="{standalone: true}">
@@ -201,16 +231,17 @@
                                     </select>
                                 </div>
                                 <div class="col-md-3">
-                                    <label>Return value</label>
-                                    <input type="number" required class="form-control" placeholder="Enter return value..." [(ngModel)]="selectedBenchmark.returnValue"/>
+                                    <label>Index value</label>
+                                    <input type="number" required class="form-control" placeholder="Enter index value..." [(ngModel)]="selectedBenchmark.indexValue"/>
                                 </div>
+<!--                                <div class="col-md-3">-->
+<!--                                    <label>Return value</label>-->
+<!--                                    <input type="number" required class="form-control" placeholder="Enter return value..." [(ngModel)]="selectedBenchmark.returnValue"/>-->
+<!--                                </div>-->
                                 <div class="col-md-3">
                                     <label>Return value YTD</label>
-                                    <input type="number" [disabled]="!checkYTD()" class="form-control" placeholder="Enter YTD value..." [(ngModel)]="selectedBenchmark.ytd"/>
+                                    <input type="number" [disabled]="true" class="form-control" placeholder="Enter YTD value..." [(ngModel)]="selectedBenchmark.ytd"/>
                                 </div>
-                                <!--<div class="col-md-2">-->
-                                    <!--<input type="number" required class="form-control" placeholder="Enter value..." [(ngModel)]="selectedBenchmark.indexValue"/>-->
-                                <!--</div>-->
                                 <!--<div class="col-md-2">-->
                                     <!--<input type="number" class="form-control" [disabled]="!checkAverageValue()" placeholder="KZT MON AVG..." [(ngModel)]="selectedBenchmark.averageValue"/>-->
                                 <!--</div>-->
@@ -236,7 +267,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <!--<h3 class="modal-title" >HEADER</h3>-->
+                        <h3 class="modal-title" >Paste multiple values of benchmark</h3>
                     </div>
                     <div class="modal-body">
                         <div class="alert alert-danger" *ngIf="benchmarkUploadModalErrorMessage != null"><span>{{benchmarkUploadModalErrorMessage}}</span></div>
@@ -250,7 +281,7 @@
                             </select>
                         </div>
                         <br/>
-                        <div>Format: <span style="font-weight: bold">date [tab] return </span></div>
+                        <div>Format: <span style="font-weight: bold">date [tab] index </span></div>
                         <div>
                             Date format: <span style="font-weight: bold">dd.mm.yyyy</span>
                         </div>
@@ -258,7 +289,7 @@
                             <!--Index format: <span style="font-weight: bold">xx.xxxx</span>-->
                         <!--</div>-->
                         <div>
-                            Return format: <span style="font-weight: bold">xx.xxxx</span>
+                            Index format: <span style="font-weight: bold">x.xxxx </span>
                         </div>
                     <textarea class="form-control" placeholder="Paste values here..."
                               name="uploadedValues" [(ngModel)]="uploadedValues"></textarea>
@@ -270,18 +301,19 @@
                 </div>
             </div>
         </div>
-
         <div class="modal fade" id="bloombergModal" role="dialog">
             <div class="modal-dialog" style="overflow-y: scroll; max-height:85%;  margin-top: 50px; margin-bottom:50px; width:65%;">
-                <div class="modal-content" style="min-height: 400px">
+                <div [ngBusy]="busy" class="modal-content" style="min-height: 600px">
                     <div class="modal-header">
-                        <h3 class="modal-title"  style="word-wrap: break-word">Get Benchmark from Bloomberg</h3>
+                        <h3 class="modal-title"  style="word-wrap: break-word">Download monthly benchmark index values from Bloomberg</h3>
                     </div>
                     <div class="modal-body">
 
                         <div class="row top-buffer" >
                             <div class="col-md-12">
                                 <div class="alert alert-danger" *ngIf="errorMessageSaveBenchmark != null"><span style="white-space: pre-wrap">{{errorMessageSaveBenchmark}}</span>
+                                </div>
+                                <div class="alert alert-warning" *ngIf="warningMessageSaveBenchmark != null"><span>{{warningMessageSaveBenchmark}}</span>
                                 </div>
                                 <div class="alert alert-info" *ngIf="successMessageSaveBenchmark != null"><span>{{successMessageSaveBenchmark}}</span>
                                 </div>
@@ -290,6 +322,13 @@
 
                         <div class="row">
                             <div class="col-md-12">
+                                <div class="col-md-3">
+                                    <label for="benchmarkCodeParam">Station</label>
+                                    <select class="form-control" style="width: 100%" [(ngModel)]="searchParams.stationCode" id="benchmarkStationCodeParamBB"
+                                            [ngModelOptions]="{standalone: true}">
+                                        <option *ngFor="let station of bloombergStations" [value]="station.code">{{station.nameEn}}</option>
+                                    </select>
+                                </div>
                                 <div class="col-md-3">
                                     <label for="benchmarkCodeParam">Type</label>
                                     <select class="form-control" style="width: 100%" [(ngModel)]="searchParams.benchmarkCode" id="benchmarkCodeParamBB"
@@ -315,23 +354,45 @@
                                         </span>
                                     </div>
                                 </div>
+                                <div class="col-md-1">
+                                    <button type="button" class="btn-xs btn-default" style="margin-top: 5px" (click)="clearSearchForm()">
+                                        <!--<i class="glyphicon glyphicon-trash"></i>-->Reset
+                                    </button>
+                                </div>
                             </div>
                         </div>
                         <br/>
-                        <div class="row">
-                            <button type="button"class="btn-xs btn-default pull-left" (click)="clearSearchForm()">
-                                <!--<i class="glyphicon glyphicon-trash"></i>-->Reset
-                            </button>
+                        <button type="button" class="btn btn-success pull-right" (click)="getBenchmarkBB()">Get Benchmark</button>
+                        <br/>
+                        <br/>
+                        <div class="row" *ngIf="benchmarksLoaded != null && benchmarksLoaded.length > 0">
+                            <table class="table table-hover">
+                                <thead>
+                                <tr>
+                                    <th>DATE</th>
+                                    <th>TYPE</th>
+                                    <th>INDEX VALUE</th>
+                                    <th>&nbsp;</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr *ngFor="let item of benchmarksLoaded">
+                                    <td>{{item.date}}</td>
+                                    <td>{{item?.benchmark?.code}}</td>
+                                    <td>{{item.indexValue}}</td>
+                                    <td>&nbsp;
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
                         </div>
-
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-success" (click)="getBenchmarkBB()">Get Benchmark</button>
-                    </div>
+                </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" (click)='closeBenchmarkEditModal()' data-dismiss="modal">Close</button>
                     </div>
-                </div>
             </div>
+
         </div>
     </div>
+</div>
 </div>

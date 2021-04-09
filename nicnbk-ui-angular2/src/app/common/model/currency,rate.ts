@@ -17,6 +17,8 @@ export class CurrencyRate{
     date: Date;
     value: number;
     valueUSD: number;
+    quoteCurrencyCode: string;
+    quoteCurrencyValue: number;
     averageValue: number;
     averageValueYear: number;
     editable: boolean;

@@ -11,6 +11,12 @@ INSERT INTO rep_reserve_calc_entity_type(id, code, name_en, name_ru, name_kz) VA
 INSERT INTO rep_reserve_calc_entity_type(id, code, name_en, name_ru, name_kz) VALUES(11, 'TERRA_A', null, 'Terra A', '');
 INSERT INTO rep_reserve_calc_entity_type(id, code, name_en, name_ru, name_kz) VALUES(12, 'TERRA_B', null, 'Terra B', '');
 INSERT INTO rep_reserve_calc_entity_type(id, code, name_en, name_ru, name_kz) VALUES(13, 'MAPLES', null, 'Maples and Calder', '');
+INSERT INTO rep_reserve_calc_entity_type(id, code, name_en, name_ru, name_kz) VALUES(14, 'TARR_A2', null, 'Tarragon A-2', '');
+INSERT INTO rep_reserve_calc_entity_type(id, code, name_en, name_ru, name_kz) VALUES(15, 'TARR_B2', null, 'Tarragon B-2', '');
+INSERT INTO rep_reserve_calc_entity_type(id, code, name_en, name_ru, name_kz) VALUES(16, 'TERRA', null, 'Terra', '');
+
+INSERT INTO rep_reserve_calc_entity_type(id, code, name_en, name_ru, name_kz) VALUES(17, 'BNP_PRBS', null, 'BNP Paribas', '');
+
 
 
 

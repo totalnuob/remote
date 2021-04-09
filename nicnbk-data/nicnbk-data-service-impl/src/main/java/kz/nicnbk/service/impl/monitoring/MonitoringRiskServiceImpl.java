@@ -180,7 +180,7 @@ public class MonitoringRiskServiceImpl implements MonitoringRiskService {
         if(hfrifof12M != null && !hfrifof12M.isEmpty()){
             List<DateDoubleValue> valuesHfriFoF = new ArrayList<>();
             for(BenchmarkValueDto dto: hfrifof12M){
-                DateDoubleValue value = new DateDoubleValue(DateUtils.getLastDayOfCurrentMonth(dto.getDate()), dto.getReturnValue());
+                DateDoubleValue value = new DateDoubleValue(DateUtils.getLastDayOfCurrentMonth(dto.getDate()), dto.getCalculatedMonthReturn());
                 valuesHfriFoF.add(value);
             }
 
@@ -189,7 +189,7 @@ public class MonitoringRiskServiceImpl implements MonitoringRiskService {
         if (hfriawc12M != null && !hfriawc12M.isEmpty()){
             List<DateDoubleValue> valuesHfriAWC = new ArrayList<>();
             for (BenchmarkValueDto dto : hfriawc12M) {
-                DateDoubleValue value = new DateDoubleValue(DateUtils.getLastDayOfCurrentMonth(dto.getDate()), dto.getReturnValue());
+                DateDoubleValue value = new DateDoubleValue(DateUtils.getLastDayOfCurrentMonth(dto.getDate()), dto.getCalculatedMonthReturn());
                 valuesHfriAWC.add(value);
             }
             performance12MResponseHfriAWC = getHedgeFundsPerformanceSummary(dateFrom12M, dateTo, valuesHfriAWC, true);
@@ -230,7 +230,7 @@ public class MonitoringRiskServiceImpl implements MonitoringRiskService {
         if(hfriFoFSI != null && !hfriFoFSI.isEmpty()){
             List<DateDoubleValue> valuesHfriFoF = new ArrayList<>();
             for(BenchmarkValueDto dto: hfriFoFSI){
-                DateDoubleValue value = new DateDoubleValue(DateUtils.getLastDayOfCurrentMonth(dto.getDate()), dto.getReturnValue());
+                DateDoubleValue value = new DateDoubleValue(DateUtils.getLastDayOfCurrentMonth(dto.getDate()), dto.getCalculatedMonthReturn());
                 valuesHfriFoF.add(value);
             }
 
@@ -239,7 +239,7 @@ public class MonitoringRiskServiceImpl implements MonitoringRiskService {
         if (hfriAWCSI != null && !hfriAWCSI.isEmpty()) {
             List<DateDoubleValue> valuesHfriAWC = new ArrayList<>();
             for (BenchmarkValueDto dto: hfriAWCSI){
-                DateDoubleValue value = new DateDoubleValue(DateUtils.getLastDayOfCurrentMonth(dto.getDate()), dto.getReturnValue());
+                DateDoubleValue value = new DateDoubleValue(DateUtils.getLastDayOfCurrentMonth(dto.getDate()), dto.getCalculatedMonthReturn());
             }
             performanceSIResponseHfriAWC = getHedgeFundsPerformanceSummary(dateFromSI, dateTo, valuesHfriAWC, true);
         }
@@ -520,15 +520,15 @@ public class MonitoringRiskServiceImpl implements MonitoringRiskService {
             i = 0;
             Collections.reverse(benchmarks);
             for(BenchmarkValueDto benchmark: benchmarks){
-                if(benchmark.getReturnValue() == null){
+                if(benchmark.getCalculatedMonthReturn() == null){
                     String errorMessage = "Failed to calculate market sensitivity: missing benchmark return for date '" + DateUtils.getDateFormatted(benchmark.getDate()) + "'. ";
                     logger.error(errorMessage);
                     responseDto.appendErrorMessageEn(errorMessage);
                     return responseDto;
                 }
                 Date benchmarkDate = DateUtils.getLastDayOfCurrentMonth(benchmark.getDate());
-                if(benchmark.getReturnValue().doubleValue() >= 0){
-                    positiveBenchmark.add(benchmark.getReturnValue());
+                if(benchmark.getCalculatedMonthReturn().doubleValue() >= 0){
+                    positiveBenchmark.add(benchmark.getCalculatedMonthReturn());
                     if(portfolioMap.get(benchmarkDate) != null) {
                         positivePortfolio.add(portfolioMap.get(benchmarkDate).getHedgeFundsMtd());
                     }else{
@@ -538,7 +538,7 @@ public class MonitoringRiskServiceImpl implements MonitoringRiskService {
                         return responseDto;
                     }
                 }else{
-                    negativeBenchmark.add(benchmark.getReturnValue());
+                    negativeBenchmark.add(benchmark.getCalculatedMonthReturn());
                     if(portfolioMap.get(benchmarkDate) != null) {
                         negativePortfolio.add(portfolioMap.get(benchmarkDate).getHedgeFundsMtd());
                     }else{
@@ -548,7 +548,7 @@ public class MonitoringRiskServiceImpl implements MonitoringRiskService {
                         return responseDto;
                     }
                 }
-                totalBenchmarks[i] = benchmark.getReturnValue();
+                totalBenchmarks[i] = benchmark.getCalculatedMonthReturn();
                 i++;
             }
             Double[] upPortfolio = new Double[positivePortfolio.size()];
@@ -997,8 +997,8 @@ public class MonitoringRiskServiceImpl implements MonitoringRiskService {
             Collections.reverse(records12M);
             for(int i = 0; i < monthDiff; i++){
                 data[i] = new double[2];
-                data[i][0] = MathUtils.subtract(18, benchmarks.get(i).getReturnValue(), tbills.get(i).getReturnValue());
-                data[i][1] = MathUtils.subtract(18, records12M.get(i).getHedgeFundsMtd(), tbills.get(i).getReturnValue());
+                data[i][0] = MathUtils.subtract(18, benchmarks.get(i).getCalculatedMonthReturn(), tbills.get(i).getCalculatedMonthReturn());
+                data[i][1] = MathUtils.subtract(18, records12M.get(i).getHedgeFundsMtd(), tbills.get(i).getCalculatedMonthReturn());
             }
             double value = MathUtils.calculateSlope(data, false);
             return MathUtils.add(0.0, value);
@@ -1081,13 +1081,13 @@ public class MonitoringRiskServiceImpl implements MonitoringRiskService {
             }
             double[] tbillsReturns = new double[tbills.size()];
             for(int i = tbillsReturns.length - 1; i >= 0; i--){
-                if(tbills.get(i).getReturnValue() == null){
+                if(tbills.get(i).getCalculatedMonthReturn() == null){
                     String errorMessage = "Missing T-bills return values for date " +
                             DateUtils.getDateFormatted(tbills.get(i).getDate());
                     logger.error(errorMessage);
                     return null;
                 }
-                tbillsReturns[i] = tbills.get(i).getReturnValue();
+                tbillsReturns[i] = tbills.get(i).getCalculatedMonthReturn();
             }
             // AnRoR
             Double annRoR = MathUtils.getAnnualizedReturn(returns, 18);

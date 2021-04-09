@@ -364,16 +364,16 @@
                                     </span>
                                 </a>
                                 <li class="navigation__item" *ngIf="getHomePageURLByType('invest') != null" >
-                                    <a [routerLink]="[getHomePageURLByType('invest')]" class="navigation__link" style="height: 25px; line-height: 25px"
-                                       [style.background-color]="activeBlock === 'invest' ? '#D9A158' : 'white'" (click)="activeBlock = 'invest'; activeMenu = 'NEWS'">INVEST</a>
+                                    <a [routerLink]="[getHomePageURLByType('invest')]" class="navigation__link" style="height: 25px; line-height: 25px" (click)="setActiveBlock('invest')"
+                                       [style.background-color]="activeBlock === 'invest' ? '#D9A158' : 'white'">INVEST</a>
                                 </li>
                                 <li class="navigation__item">
-                                    <a [routerLink]="[getHomePageURLByType('corp')]" class="navigation__link" style="height: 25px; line-height: 25px"
-                                       [style.background-color]="activeBlock === 'corp' ? '#D9A158' : 'white'" (click)="activeBlock = 'corp'; activeMenu = 'HR'">CORP</a>
+                                    <a [routerLink]="[getHomePageURLByType('corp')]" class="navigation__link" style="height: 25px; line-height: 25px" (click)="setActiveBlock('corp')"
+                                       [style.background-color]="activeBlock === 'corp' ? '#D9A158' : 'white'">CORP</a>
                                 </li>
                                 <li class="navigation__item">
-                                    <a [routerLink]="[getHomePageURLByType('admin')]" class="navigation__link" style="height: 25px; line-height: 25px"
-                                       [style.background-color]="activeBlock === 'admin' ? '#D9A158' : 'white'" (click)="activeBlock = 'admin'; activeMenu = 'ADMIN'" *ngIf="showAdmin()">ADMIN</a>
+                                    <a [routerLink]="[getHomePageURLByType('admin')]" class="navigation__link" style="height: 25px; line-height: 25px" (click)="setActiveBlock('admin')"
+                                       [style.background-color]="activeBlock === 'admin' ? '#D9A158' : 'white'" *ngIf="showAdmin()">ADMIN</a>
                                 </li>
                                 <a [routerLink]="['/profile/'  + getCurrentEmployeeId()]">
                                     <span class="glyphicon glyphicon-user" style="color: grey"></span>
@@ -396,96 +396,95 @@
                         </nav>
                     </div>
                     <div class="menu_header__row" style="min-height: 88px">
-                        <a [routerLink]="[getHomePageURLByType(activeBlock)]" title="NICNBK" class="menu_logo menu_header__logo -active" (click)="activeMenu = 'NEWS'">NICNBK</a>
+                        <a [routerLink]="[getHomePageURLByType(activeBlock)]" title="NICNBK" class="menu_logo menu_header__logo -active" (click)="setActiveMenu('NEWS')">NICNBK</a>
 <!--                        <img *ngIf="showSnow()" src="../../public/img/happy-new-year-2020.png" alt="Happy New Year" style="width:65px;height:88px;">-->
 <!--                        <img *ngIf="showSnow()" src="../../public/img/happy-new-year-2020.png" alt="Happy New Year" style="width:160px;height:88px;">-->
                         <nav class="menu_navigation">
                         <ul class="navigation__menu" style="background-color: white">
                             <li class="navigation__item dropdown">&nbsp;</li>
                             <li class="navigation__item dropdown" *ngIf="checkAvailable('HR')">
-                                <a class="navigation__link" style="font-family: IBM Plex Sans" [routerLink]="['/hr/employees']" (click)="activeMenu = 'HR'"
+                                <a class="navigation__link" style="font-family: IBM Plex Sans" [routerLink]="['/hr/employees']" (click)="setActiveMenu('HR')"
                                    [style.border-bottom-color]="activeMenu === 'HR' ? '#D9A158' : 'white'">Human Resources</a>
                                 <ul  class="dropdown-menu">
                                     <li><a [routerLink]="['/hr/employees']" class="navigation__sublink"
-                                           (click)="activeMenu = 'HR'">Employees</a></li>
+                                           (click)="setActiveMenu('HR')">Employees</a></li>
                                     <li><a [routerLink]="['/hr/docs']" class="navigation__sublink"
-                                           (click)="activeMenu = 'HR'">Docs</a></li>
+                                           (click)="setActiveMenu('HR')">Docs</a></li>
                                 </ul>
                             </li>
                             <li class="navigation__item dropdown" *ngIf="checkAvailable('MONITORING')">
-                                <a class="navigation__link" style="font-family: IBM Plex Sans" [routerLink]="['/monitoring/portfolio']" (click)="activeMenu = 'MONITORING'"
+                                <a class="navigation__link" style="font-family: IBM Plex Sans" [routerLink]="['/monitoring/portfolio']" (click)="setActiveMenu('MONITORING')"
                                    [style.border-bottom-color]="activeMenu === 'MONITORING' ? '#D9A158' : 'white'">Monitoring</a>
                                 <ul  class="dropdown-menu">
                                     <li><a [routerLink]="['/monitoring/portfolio']" class="navigation__sublink"
-                                           (click)="activeMenu = 'MONITORING'">NIC Portfolio</a></li>
+                                           (click)="setActiveMenu('MONITORING')">NIC Portfolio</a></li>
                                     <li><a [routerLink]="['/monitoring/liq']" class="navigation__sublink"
-                                           (click)="activeMenu = 'MONITORING'">Liquid Portfolio</a></li>
-                                    <li><a [routerLink]="['/monitoring/peFund']" class="navigation__sublink"
-                                           (click)="activeMenu = 'MONITORING'">Tarragon</a></li>
-                                    <li><a [routerLink]="['/monitoring/hf2']" class="navigation__sublink"
-                                           (click)="activeMenu = 'MONITORING'">Singularity</a></li>
+                                           (click)="setActiveMenu('MONITORING')">Liquid Portfolio</a></li>
+<!--                                    <li><a [routerLink]="['/monitoring/peFund']" class="navigation__sublink"-->
+<!--                                           (click)="setActiveMenu('MONITORING')">Tarragon</a></li>-->
+<!--                                    <li><a [routerLink]="['/monitoring/hf2']" class="navigation__sublink"-->
+<!--                                           (click)="setActiveMenu('MONITORING')">Singularity</a></li>-->
                                     <li><a [routerLink]="['/monitoring/hflist']" class="navigation__sublink"
-                                           (click)="activeMenu = 'MONITORING'">HF Portfolio Updates</a>
+                                           (click)="setActiveMenu('MONITORING')">HF Portfolio Updates</a>
                                     </li>
                                     <li role="separator" class="divider"></li>
                                     <li>
                                         <a [routerLink]="['/monitoring/risk/hf']" class="navigation__sublink"
-                                           (click)="activeMenu = 'MONITORING'">Monthly Risk (HF)</a>
+                                           (click)="setActiveMenu('MONITORING')">Monthly Risk (HF)</a>
                                     </li>
                                 </ul>
                             </li>
-                            <li class="navigation__item dropdown" *ngIf="checkAvailable('MACROMONITOR')">
-                                <a [routerLink]="['/macromonitor']" class="navigation__link" title="Macro Monitor"
-                                                                     [style.border-bottom-color]="activeMenu === 'MACROMONITOR' ? '#D9A158' : 'white'" (click)="activeMenu = 'MACROMONITOR'">MM</a></li>
+<!--                            <li class="navigation__item dropdown" *ngIf="checkAvailable('MACROMONITOR')">-->
+<!--                                <a [routerLink]="['/macromonitor']" class="navigation__link" title="Macro Monitor"-->
+<!--                                                                     [style.border-bottom-color]="activeMenu === 'MACROMONITOR' ? '#D9A158' : 'white'" (click)="setActiveMenu('MACROMONITOR')">MM</a></li>-->
                             <li class="navigation__item dropdown" *ngIf="checkAvailable('M2S2')">
-                                <a [routerLink]="['/m2s2']"  class="navigation__link" [style.border-bottom-color]="activeMenu === 'M2S2' ? '#D9A158' : 'white'" (click)="activeMenu = 'M2S2'">M2S2</a></li>
+                                <a [routerLink]="['/m2s2']"  class="navigation__link" [style.border-bottom-color]="activeMenu === 'M2S2' ? '#D9A158' : 'white'" (click)="setActiveMenu('M2S2')">M2S2</a></li>
                             <li class="navigation__item dropdown" *ngIf="checkAvailable('TRAININGS')">
-                                <a [routerLink]="['/bt']" class="navigation__link" [style.border-bottom-color]="activeMenu === 'TRAININGS' ? '#D9A158' : 'white'" (click)="activeMenu = 'TRAININGS'">Trainings</a></li>
+                                <a [routerLink]="['/bt']" class="navigation__link" [style.border-bottom-color]="activeMenu === 'TRAININGS' ? '#D9A158' : 'white'" (click)="setActiveMenu('TRAININGS')">Trainings</a></li>
                             <li class="navigation__item dropdown" *ngIf="checkAvailable('PRIVATE_EQUITY')">
-                                <a class="navigation__link" [routerLink]="['/pe/firmSearch']" [style.border-bottom-color]="activeMenu === 'PRIVATE_EQUITY' ? '#D9A158' : 'white'" (click)="activeMenu = 'PRIVATE_EQUITY'">Private Equity</a>
+                                <a class="navigation__link" [routerLink]="['/pe/firmSearch']" [style.border-bottom-color]="activeMenu === 'PRIVATE_EQUITY' ? '#D9A158' : 'white'" (click)="setActiveMenu('PRIVATE_EQUITY')">Private Equity</a>
                                 <ul  class="dropdown-menu">
-                                    <li><a [routerLink]="['/pe/firmSearch']" class="navigation__sublink" (click)="activeMenu = 'PRIVATE_EQUITY'">Firm Search</a></li>
-                                    <li><a [routerLink]="['/pe/firmProfile']" class="navigation__sublink" (click)="activeMenu = 'PRIVATE_EQUITY'">New Firm</a></li>
+                                    <li><a [routerLink]="['/pe/firmSearch']" class="navigation__sublink" (click)="setActiveMenu('PRIVATE_EQUITY')">Firm Search</a></li>
+                                    <li><a [routerLink]="['/pe/firmProfile']" class="navigation__sublink" (click)="setActiveMenu('PRIVATE_EQUITY')">New Firm</a></li>
                                 </ul>
                             </li>
                             <li class="navigation__item dropdown" *ngIf="checkAvailable('HEDGE_FUNDS')">
-                                <a class="navigation__link" [routerLink]="['/hf/fundSearch']" [style.border-bottom-color]="activeMenu === 'HEDGE_FUNDS' ? '#D9A158' : 'white'" (click)="activeMenu = 'HEDGE_FUNDS'">Hedge Funds</a>
+                                <a class="navigation__link" [routerLink]="['/hf/fundSearch']" [style.border-bottom-color]="activeMenu === 'HEDGE_FUNDS' ? '#D9A158' : 'white'" (click)="setActiveMenu('HEDGE_FUNDS')">Hedge Funds</a>
                                 <ul  class="dropdown-menu">
-                                    <li><a [routerLink]="['/hf/fundSearch']" class="navigation__sublink" (click)="activeMenu = 'HEDGE_FUNDS'">Fund Search</a></li>
-                                    <li><a [routerLink]="['/hf/managerSearch']" class="navigation__sublink" (click)="activeMenu = 'HEDGE_FUNDS'">Manager Search</a></li>
-                                    <li *ngIf="showHedgeFundsEditor()"><a [routerLink]="['/hf/managerProfile/0']" class="navigation__sublink" (click)="activeMenu = 'HEDGE_FUNDS'">New Manager</a></li>
+                                    <li><a [routerLink]="['/hf/fundSearch']" class="navigation__sublink" (click)="setActiveMenu('HEDGE_FUNDS')">Fund Search</a></li>
+                                    <li><a [routerLink]="['/hf/managerSearch']" class="navigation__sublink" (click)="setActiveMenu('HEDGE_FUNDS')">Manager Search</a></li>
+                                    <li *ngIf="showHedgeFundsEditor()"><a [routerLink]="['/hf/managerProfile/0']" class="navigation__sublink" (click)="setActiveMenu('HEDGE_FUNDS')">New Manager</a></li>
                                     <li role="separator" class="divider"></li>
-                                    <li *ngIf="showHedgeFunds()"><a [routerLink]="['/hf/screening/']" class="navigation__sublink" (click)="activeMenu = 'HEDGE_FUNDS'">Scoring </a></li>
-                                    <li *ngIf="showHedgeFundsEditor()"><a [routerLink]="['/hf/research']" class="navigation__sublink" (click)="activeMenu = 'HEDGE_FUNDS'">Research</a></li>
+                                    <li *ngIf="showHedgeFunds()"><a [routerLink]="['/hf/screening/']" class="navigation__sublink" (click)="setActiveMenu('HEDGE_FUNDS')">Scoring </a></li>
+                                    <li *ngIf="showHedgeFundsEditor()"><a [routerLink]="['/hf/research']" class="navigation__sublink" (click)="setActiveMenu('HEDGE_FUNDS')">Research</a></li>
                                 </ul>
                             </li>
                             <li class="navigation__item dropdown" *ngIf="checkAvailable('REPORTING')">
-                                <a class="navigation__link" [routerLink]="['/reporting/NBReporting']" [style.border-bottom-color]="activeMenu === 'REPORTING' ? '#D9A158' : 'white'" (click)="activeMenu = 'REPORTING'">Reporting</a>
+                                <a class="navigation__link" [routerLink]="['/reporting/NBReporting']" [style.border-bottom-color]="activeMenu === 'REPORTING' ? '#D9A158' : 'white'" (click)="setActiveMenu('REPORTING')">Reporting</a>
                                 <ul  class="dropdown-menu">
-                                    <li><a [routerLink]="['/reporting/NBReporting']" class="navigation__sublink" (click)="activeMenu = 'REPORTING'">NB Reports</a></li>
-                                    <li><a [routerLink]="['/reporting/NBReporting/reserveCalculation']" class="navigation__sublink" (click)="activeMenu = 'REPORTING'">Capital Calls</a></li>
-                                    <li><a [routerLink]="['/reporting/NBReporting/lookupValues']" class="navigation__sublink" (click)="activeMenu = 'REPORTING'">Lookup Values</a></li>
+                                    <li><a [routerLink]="['/reporting/NBReporting']" class="navigation__sublink" (click)="setActiveMenu('REPORTING')">NB Reports</a></li>
+                                    <li><a [routerLink]="['/reporting/NBReporting/reserveCalculation']" class="navigation__sublink" (click)="setActiveMenu('REPORTING')">Capital Calls</a></li>
+                                    <li><a [routerLink]="['/reporting/NBReporting/lookupValues']" class="navigation__sublink" (click)="setActiveMenu('REPORTING')">Lookup Values</a></li>
                                 </ul>
                             </li>
 
                             <li class="navigation__item dropdown" *ngIf="checkAvailable('CORP_MEETINGS')">
                                 <a [routerLink]="['/corpMeetings']" class="navigation__link"
-                                   [style.border-bottom-color]="activeMenu === 'CORP_MEETINGS' ? '#D9A158' : 'white'" (click)="activeMenu = 'CORP_MEETINGS'">Corp Meetings</a>
+                                   [style.border-bottom-color]="activeMenu === 'CORP_MEETINGS' ? '#D9A158' : 'white'" (click)="setActiveMenu('CORP_MEETINGS')">Corp Meetings</a>
                                 <ul  class="dropdown-menu">
-                                    <li><a [routerLink]="['/corpMeetings']" class="navigation__sublink" (click)="activeMenu = 'CORP_MEETINGS'">Invest Committee</a></li>
-                                   <li><a [routerLink]="['/corpMeetings/lookupValues']" class="navigation__sublink" (click)="activeMenu = 'CORP_MEETINGS'">Lookup Values</a></li>
+                                    <li><a [routerLink]="['/corpMeetings']" class="navigation__sublink" (click)="setActiveMenu('CORP_MEETINGS')">Invest Committee</a></li>
+                                   <li><a [routerLink]="['/corpMeetings/lookupValues']" class="navigation__sublink" (click)="setActiveMenu('CORP_MEETINGS')">Lookup Values</a></li>
                                 </ul>
                             </li>
                             <li class="navigation__item dropdown" *ngIf="checkAvailable('LOOKUPS')">
                                 <a [routerLink]="['/lookups']" class="navigation__link"
-                                   [style.border-bottom-color]="activeMenu === 'LOOKUPS' ? '#D9A158' : 'white'" (click)="activeMenu = 'LOOKUPS'">Lookups</a>
+                                   [style.border-bottom-color]="activeMenu === 'LOOKUPS' ? '#D9A158' : 'white'" (click)="setActiveMenu('LOOKUPS')">Lookups</a>
                             </li>
                             <li class="navigation__item dropdown" *ngIf="checkAvailable('ADMIN')">
                                 <a [routerLink]="['/admin/userManagement']" class="navigation__link"
-                                   [style.border-bottom-color]="activeMenu === 'ADMIN' ? '#D9A158' : 'white'" (click)="activeMenu = 'ADMIN'">User Management</a>
+                                   [style.border-bottom-color]="activeMenu === 'USER_MANAGEMENT' ? '#D9A158' : 'white'" (click)="setActiveMenu('USER_MANAGEMENT')">User Management</a>
                             </li>
                         </ul>
-
                             <!--<a [routerLink]="['/profile']">-->
                                 <!--<span class="glyphicon glyphicon-user" style="color: grey"></span>-->
                             <!--</a>&nbsp;&nbsp;&nbsp;-->
