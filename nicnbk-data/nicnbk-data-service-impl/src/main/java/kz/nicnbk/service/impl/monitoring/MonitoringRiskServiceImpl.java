@@ -2459,7 +2459,7 @@ public class MonitoringRiskServiceImpl implements MonitoringRiskService {
             if(report != null){
                 this.riskHFReturnRepository.deleteByReportIdAndPortfolioTypeCode(reportId, MonitoringRiskHFPortfolioTypeLookup.SINGULAR_CONS.getCode());
                 // delete file
-                this.fileService.safeDelete(report.getReturnsClassBFile().getId());
+                this.fileService.safeDelete(report.getReturnsConsFile().getId());
                 // delete file association
                 report.setReturnsConsFile(null);
                 this.riskReportRepository.save(report);
