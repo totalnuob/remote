@@ -3,7 +3,6 @@ package kz.nicnbk.service.datamanager;
 import kz.nicnbk.common.service.model.BaseDictionaryDto;
 import kz.nicnbk.common.service.util.PaginationUtils;
 import kz.nicnbk.common.service.util.StringUtils;
-import kz.nicnbk.repo.api.corpmeetings.ICMeetingVoteRepository;
 import kz.nicnbk.repo.api.lookup.*;
 import kz.nicnbk.repo.api.lookup.CurrencyRepository;
 import kz.nicnbk.repo.api.lookup.GeographyRepository;
@@ -262,6 +261,9 @@ public class LookupServiceImpl implements LookupService {
     @Autowired
     private PortfolioVarRepository portfolioTypeRepository;
 
+    @Autowired
+    private BloombergStationRepository bloombergStationRepository;
+
 
     @Override
     public <T extends BaseTypeEntity> T findByTypeAndCode(Class<T> clazz, String code) {
@@ -424,6 +426,39 @@ public class LookupServiceImpl implements LookupService {
             logger.error("Failed to load lookup: Benchmark", ex);
         }
         return null;
+    }
+
+    @Override
+    public List<BaseDictionaryDto> getBloombergStations() {
+        try {
+            List<BaseDictionaryDto> dtoList = new ArrayList<>();
+            Iterator<BloombergStation> iterator = this.bloombergStationRepository.findAll().iterator();
+            while (iterator.hasNext()) {
+                BloombergStation entity = iterator.next();
+                BaseDictionaryDto dto = disassemble(entity);
+                dtoList.add(dto);
+            }
+            return dtoList;
+        }catch (Exception ex){
+            logger.error("Failed to load lookup: Bloomberg Station", ex);
+        }
+        return null;
+    }
+
+    @Override
+    public List<BaseDictionaryDto> getBloombergStationsSimple() {
+        List<BaseDictionaryDto> stations = new ArrayList<>();
+        //BaseDictionaryDto stationHF = new BaseDictionaryDto("HF", "BloombergHF-778", "", "");
+        BaseDictionaryDto stationHF = new BaseDictionaryDto("HF", "Bloomberg HF", "", "");
+        //BaseDictionaryDto stationRISK = new BaseDictionaryDto("RISK", "BloombergRISK-790", "", "");
+        BaseDictionaryDto stationRISK = new BaseDictionaryDto("RISK", "Bloomberg RISKS", "", "");
+        //BaseDictionaryDto stationYAO = new BaseDictionaryDto("YAO", "BloombergYAO-788", "", "");
+        BaseDictionaryDto stationRA = new BaseDictionaryDto("RA", "Bloomberg RA", "", "");
+        stations.add(stationHF);
+        stations.add(stationRISK);
+        stations.add(stationRA);
+
+        return stations;
     }
 
     @Override
@@ -866,13 +901,15 @@ public class LookupServiceImpl implements LookupService {
     }
 
     @Override
-    public List<BaseDictionaryDto> getReserveCalculationEntityTypeLookup() {
-        List<BaseDictionaryDto> dtoList = new ArrayList<>();
+    public List<ReserveCalculationEntityTypeDto> getReserveCalculationEntityTypeLookup() {
+        List<ReserveCalculationEntityTypeDto> dtoList = new ArrayList<>();
         Iterator<ReserveCalculationEntityType>  iterator = this.reserveCalculationEntityTypeRepository.findAll().iterator();
         while (iterator.hasNext()) {
             ReserveCalculationEntityType entity = iterator.next();
             BaseDictionaryDto type = disassemble(entity);
-            dtoList.add(type);
+            ReserveCalculationEntityTypeDto dto = new ReserveCalculationEntityTypeDto(type);
+            dto.setDeleted(entity.isDeleted());
+            dtoList.add(dto);
         }
         return dtoList;
     }
@@ -892,7 +929,8 @@ public class LookupServiceImpl implements LookupService {
     @Override
     public List<BaseDictionaryDto> getReserveCalculationExportDoerTypeLookup() {
         List<BaseDictionaryDto> dtoList = new ArrayList<>();
-        Iterator<ReserveCalculationExportDoerType>  iterator = this.reserveCalculationExportDoerTypeRepository.findAll().iterator();
+        Iterator<ReserveCalculationExportDoerType>  iterator =
+                this.reserveCalculationExportDoerTypeRepository.findAll(new Sort(Sort.Direction.ASC, "id")).iterator();
         while (iterator.hasNext()) {
             ReserveCalculationExportDoerType entity = iterator.next();
             BaseDictionaryDto type = disassemble(entity);

@@ -17,6 +17,8 @@ import java.util.Locale;
  */
 public class DateUtils {
 
+    public static final Date DEFAULT_START = getDate("01.01.1970");
+
     // calculate months between two dates
     public static int getMonthsDifference(Date fromDate, Date toDate){
         if(fromDate == null || toDate == null){

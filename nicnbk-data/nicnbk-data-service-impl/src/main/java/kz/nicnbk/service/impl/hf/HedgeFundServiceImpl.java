@@ -224,7 +224,7 @@ public class HedgeFundServiceImpl implements HedgeFundService {
                 // beta
                 Date dateFrom = fundDto.getReturns().get(0).getFirstNotNullMonth();
                 Date dateTo = fundDto.getReturns().get(fundDto.getReturns().size() - 1).getLastNotNullMonth();
-                double[] SNPBenchmarkReturns = this.benchmarkService.getReturnValuesBetweenDatesAsArray(dateFrom, dateTo, BenchmarkLookup.SNP_500_SPTR.getCode());
+                double[] SNPBenchmarkReturns = this.benchmarkService.getMonthReturnValuesBetweenDatesAsArray(dateFrom, dateTo, BenchmarkLookup.SNP_500_SPTR.getCode());
                 if (fundReturnsArray == null) {
                     logger.error("HF fund calculations: returns missing for fund=" + fundDto.getId() + ". Beta - will not be calculated");
                 }else if(SNPBenchmarkReturns == null ){
@@ -247,7 +247,7 @@ public class HedgeFundServiceImpl implements HedgeFundService {
 
                 // fund annualized return
                 double fundAnnualizedReturn = MathUtils.getAnnualizedReturn(fundReturnsArray, 2);
-                double[] TBillsBenchmarkReturns = this.benchmarkService.getReturnValuesBetweenDatesAsArray(dateFrom, dateTo, BenchmarkLookup.T_BILLS.getCode());
+                double[] TBillsBenchmarkReturns = this.benchmarkService.getMonthReturnValuesBetweenDatesAsArray(dateFrom, dateTo, BenchmarkLookup.T_BILLS.getCode());
                 // check returns array sizes
                 if (fundReturnsArray.length != TBillsBenchmarkReturns.length) {
                     logger.error("HF fund calculations: fund returns and TBills returns array size different for fund=" + fundDto.getId() +
@@ -728,29 +728,29 @@ public class HedgeFundServiceImpl implements HedgeFundService {
         return getRoundedValue(calculated);
     }
 
-    @Deprecated
-    private List<ReturnDto> formatBenchmarkToReturns(List<BenchmarkValueDto> benchmarks){
-        // ASSUMED benchmarks are sorted by date
-        // TODO: check they are sorted or sort them
-        List<ReturnDto> returnDtos = new ArrayList<>();
-        if(benchmarks != null){
-            int currentYear = 0;
-            ReturnDto returnDto = new ReturnDto();
-            for(BenchmarkValueDto benchmark: benchmarks){
-                int year = DateUtils.getYear(benchmark.getDate());
-                int month = DateUtils.getMonth(benchmark.getDate()) + 1;
-                if(currentYear != 0 && currentYear != year) {
-                    returnDtos.add(returnDto);
-                    returnDto = new ReturnDto();
-                }
-                returnDto.setYear(year);
-                returnDto.setReturnByMonth(month, benchmark.getReturnValue());
-                currentYear = year;
-            }
-            returnDtos.add(returnDto);
-        }
-        return returnDtos;
-    }
+//    @Deprecated
+//    private List<ReturnDto> formatBenchmarkToReturns(List<BenchmarkValueDto> benchmarks){
+//        // ASSUMED benchmarks are sorted by date
+//        // TODO: check they are sorted or sort them
+//        List<ReturnDto> returnDtos = new ArrayList<>();
+//        if(benchmarks != null){
+//            int currentYear = 0;
+//            ReturnDto returnDto = new ReturnDto();
+//            for(BenchmarkValueDto benchmark: benchmarks){
+//                int year = DateUtils.getYear(benchmark.getDate());
+//                int month = DateUtils.getMonth(benchmark.getDate()) + 1;
+//                if(currentYear != 0 && currentYear != year) {
+//                    returnDtos.add(returnDto);
+//                    returnDto = new ReturnDto();
+//                }
+//                returnDto.setYear(year);
+//                returnDto.setReturnByMonth(month, benchmark.getReturnValue());
+//                currentYear = year;
+//            }
+//            returnDtos.add(returnDto);
+//        }
+//        return returnDtos;
+//    }
 
     @Override
     public List<HedgeFundDto> loadManagerFunds(Long managerId) {

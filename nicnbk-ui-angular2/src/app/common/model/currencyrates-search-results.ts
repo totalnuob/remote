@@ -7,4 +7,5 @@ export class CurrencyRatesSearchResults{
     currentPage: number;
     currencyRates: any[];
     searchParams: string;
+    isBaseQuote: boolean;
 }

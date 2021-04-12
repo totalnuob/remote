@@ -128,6 +128,20 @@ export class AppComponent implements OnInit{
     ngOnInit(){
         //setInterval(this.loadUserNotification(), 60000, "Load notifications every minute");
         setInterval(()=> { this.loadUserNotification() }, 60000);
+
+        // Active Block
+        var activeBlockSelected = localStorage.getItem("activeBlock");
+        if(activeBlockSelected){
+            this.activeBlock = activeBlockSelected;
+        }else{
+            this.activeBlock ='corp';
+        }
+
+        // Active Menu
+        var activeMenuSelected = localStorage.getItem("activeMenu");
+        if(activeMenuSelected){
+            this.activeMenu = activeMenuSelected;
+        }
     }
 
     initMenu(url){
@@ -220,6 +234,8 @@ export class AppComponent implements OnInit{
 
     logout() {
         console.log("logging out...");
+        localStorage.removeItem("activeBlock");
+        localStorage.removeItem("activeMenu");
         this.authenticationService.logout()
             .subscribe(
                 res => {
@@ -346,7 +362,22 @@ export class AppComponent implements OnInit{
         }else if(type === 'admin'){
             return "admin/main";
         }
-        return null;
+        return 'hr/news';
+    }
+    setActiveBlock(selected){
+        localStorage.setItem("activeBlock", selected);
+        this.activeBlock = selected;
+        if(this.activeBlock === 'invest'){
+            this.activeMenu = 'NEWS';
+        }else if(this.activeBlock === 'corp'){
+            this.activeMenu = 'HR_NEWS';
+        }else if(this.activeBlock === 'admin'){
+            this.activeMenu = 'USER_MANAGEMENT';
+        }
+    }
+    setActiveMenu(selected){
+        localStorage.setItem("activeMenu", selected);
+        this.activeMenu = selected;
     }
 
     showNotifications(){

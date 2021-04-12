@@ -1678,7 +1678,9 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
                 benchmarkDto.setBenchmark(new BaseDictionaryDto(benchmark.getBenchmark().getCode(), benchmark.getBenchmark().getNameEn(),
                         benchmark.getBenchmark().getNameRu(), benchmark.getBenchmark().getNameKz()));
                 benchmarkDto.setDate(benchmark.getDate());
-                benchmarkDto.setReturnValue(benchmark.getReturnValue());
+                //benchmarkDto.setReturnValue(benchmark.getReturnValue());
+                benchmarkDto.setIndexValue(benchmark.getIndexValue());
+                benchmark.setCalculatedMonthReturn(benchmark.getCalculatedMonthReturn());
                 benchmarkDto.setYtd(benchmark.getYtd());
                 benchmarks.add(benchmarkDto);
             }

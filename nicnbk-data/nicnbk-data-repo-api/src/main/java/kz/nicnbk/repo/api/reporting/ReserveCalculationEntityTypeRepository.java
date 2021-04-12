@@ -9,8 +9,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
  */
 public interface ReserveCalculationEntityTypeRepository extends PagingAndSortingRepository<ReserveCalculationEntityType, Long> {
 
-    @Override
-    Iterable<ReserveCalculationEntityType> findAll(Sort sort);
+    Iterable<ReserveCalculationEntityType> findByDeletedFalse();
 
     ReserveCalculationEntityType findByCode(String code);
 }

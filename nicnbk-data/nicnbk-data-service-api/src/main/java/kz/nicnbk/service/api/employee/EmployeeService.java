@@ -63,4 +63,6 @@ public interface EmployeeService extends BaseService {
     List<DepartmentDto> getAllDepartments();
 
     boolean registerMfa(String username, String secret, String otp);
+
+    EmployeeDto findAdmin();
 }

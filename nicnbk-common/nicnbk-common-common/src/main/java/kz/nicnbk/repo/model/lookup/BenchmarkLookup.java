@@ -1,8 +1,5 @@
 package kz.nicnbk.repo.model.lookup;
 
-/**
- * Created by magzumov on 18.07.2016.
- */
 public enum BenchmarkLookup {
 
     SNP_500_SPTR("SP500_SPTR"),
@@ -27,6 +24,9 @@ public enum BenchmarkLookup {
     HFRIAWC("HFRI_AWC");
 
     private String code;
+
+    // TODO: Bloomberg codes
+    private String codeBloomberg;
 
     BenchmarkLookup(String code) {
         this.code = code;

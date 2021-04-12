@@ -421,7 +421,7 @@ export class CorpMeetingICEditComponent extends CommonFormViewComponent implemen
     }
 
     exportBulletin(){
-        var fileName = "Бюллетнеь ИК №" + this.icMeeting.number + " от " + this.icMeeting.date;
+        var fileName = "Бюллетень ИК №" + this.icMeeting.number + " от " + this.icMeeting.date;
         //fileName = fileName.replace(".", ",");
         this.busy = this.corpMeetingService.makeFileRequest(DATA_APP_URL + `corpMeetings/ICMeeting/exportBulletin/${this.icMeeting.id}`,
             fileName, 'POST')

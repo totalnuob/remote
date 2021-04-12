@@ -8,6 +8,7 @@ package kz.nicnbk.service.dto.common;
 public enum ResponseStatusType {
 
     SUCCESS("SUCCESS"),
+    OK_WITH_ERRORS("OK_WITH_ERRORS"),
     FAIL("FAIL");
 
     ResponseStatusType(String code){

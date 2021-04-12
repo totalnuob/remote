@@ -179,7 +179,7 @@
 <!--                                                        </select>-->
 
                                                     <select [(ngModel)] = "topic.authenticatedUserVote" [ngModelOptions]="{standalone: true}">
-                                                        <option *ngFor="let item of voteTypes" [value]="item.code">{{item.nameEn}}</option>
+                                                        <option *ngFor="let item of voteTypes" [value]="item.code">{{item.nameRu}}</option>
                                                     </select>
                                                 </div>
                                             </div>
@@ -196,14 +196,22 @@
                                         <div class="row">
                                             <div class="col-md-12">
                                                 <div class="col-md-10">
-                                                    <span>
+                                                    <span *ngIf="topic.decision != null && topic.decisions == null">
                                                         <i>{{topic.decision}}</i>
                                                     </span>
+                                                    <div *ngIf="topic.decisions != null && topic.decisions.length > 0">
+                                                        <div class="row withpadding" *ngFor="let decision of topic.decisions; let i = index">
+                                                            <small>
+                                                                <span  *ngIf="i == 0">«</span>
+                                                                <i>{{i + 1}}. {{decision?.name}}</i>
+                                                                <span  *ngIf="i == topic.decisions.length - 1">»</span>
+                                                            </small>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="row">
-                                            &nbsp;
+                                        <div class="row">&nbsp;
                                         </div>
                                     </div>
                                 </div>
