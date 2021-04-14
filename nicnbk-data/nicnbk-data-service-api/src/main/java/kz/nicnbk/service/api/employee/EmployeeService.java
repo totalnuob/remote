@@ -40,7 +40,7 @@ public interface EmployeeService extends BaseService {
 
     EntitySaveResponseDto save(EmployeeFullDto employeeFullDto, String updater, Boolean isAdmin);
 
-    EntitySaveResponseDto saveAndChangePassword(EmployeeFullDto employeeFullDto, String password, String updater);
+    EntitySaveResponseDto saveAndChangePassword(EmployeeFullDto employeeFullDto, String password, Boolean emailCheckbox, String updater);
 
     EmployeeDto findActiveByUsernamePassword(String username, String password);
 

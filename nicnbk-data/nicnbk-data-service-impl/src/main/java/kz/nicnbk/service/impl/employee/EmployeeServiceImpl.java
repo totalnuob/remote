@@ -13,6 +13,7 @@ import kz.nicnbk.repo.model.employee.Employee;
 import kz.nicnbk.repo.model.employee.Position;
 import kz.nicnbk.repo.model.employee.Role;
 import kz.nicnbk.service.api.authentication.TokenService;
+import kz.nicnbk.service.api.email.EmailService;
 import kz.nicnbk.service.api.employee.EmployeeService;
 import kz.nicnbk.service.converter.employee.DepartmentEntityConverter;
 import kz.nicnbk.service.converter.employee.EmployeeEntityConverter;
@@ -71,6 +72,9 @@ public class EmployeeServiceImpl implements EmployeeService{
 
     @Autowired
     private TokenService tokenService;
+
+    @Autowired
+    private EmailService emailService;
 
     @Override
     public List<EmployeeDto> findAll(){
@@ -377,8 +381,11 @@ public class EmployeeServiceImpl implements EmployeeService{
     }
 
     @Override
-    public EntitySaveResponseDto saveAndChangePassword(EmployeeFullDto employeeFullDto, String password, String updater) {
+    public EntitySaveResponseDto saveAndChangePassword(EmployeeFullDto employeeFullDto, String password, Boolean emailCheckbox, String updater) {
         EntitySaveResponseDto saveResponseDto = this.save(employeeFullDto, updater, true);
+        if (emailCheckbox != null ? emailCheckbox : false) {
+            sendPasswordByEmail(employeeFullDto, password);
+        }
         if(saveResponseDto.getStatus() == null || saveResponseDto.getStatus().getCode().equalsIgnoreCase(ResponseStatusType.FAIL.getCode())) {
             return saveResponseDto;
         }
@@ -386,6 +393,12 @@ public class EmployeeServiceImpl implements EmployeeService{
             saveResponseDto.setErrorMessageEn("Employee profile was saved without the new password");
         }
         return saveResponseDto;
+    }
+
+    private void sendPasswordByEmail(EmployeeFullDto employeeFullDto, String password) {
+        emailService.sendMail(employeeFullDto.getEmail(), "UNIC – password reset",
+                "UNIC Password has been updated by system administrator.\n" +
+                        "New generated password: " + password + ".");
     }
 
     private EntitySaveResponseDto checkEmployeeProfile(EmployeeDto employeeDto){

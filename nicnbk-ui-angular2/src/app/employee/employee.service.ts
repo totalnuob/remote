@@ -153,8 +153,8 @@ export class EmployeeService extends CommonService{
             .catch(this.handleErrorResponse);
     }
 
-    saveAndChangePassword(profile, password): Observable<any> {
-        var body = JSON.stringify({"employeeFullDto": profile, "password": password});
+    saveAndChangePassword(profile, password, checkbox): Observable<any> {
+        var body = JSON.stringify({"employeeFullDto": profile, "password": password, "emailCheckbox": checkbox});
         // console.log(body);
         return this.http.post(this.EMPLOYEE_SAVE_AND_CHANGE_PASSWORD_URL, body, this.getOptionsWithCredentials())
             .map(this.extractData)

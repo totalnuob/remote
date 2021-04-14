@@ -7,13 +7,15 @@ public class EmployeePasswordDto {
 
     private EmployeeFullDto employeeFullDto;
     private String password;
+    private Boolean emailCheckbox;
 
     public EmployeePasswordDto() {
     }
 
-    public EmployeePasswordDto(EmployeeFullDto employeeFullDto, String password) {
+    public EmployeePasswordDto(EmployeeFullDto employeeFullDto, String password, Boolean emailCheckbox) {
         this.employeeFullDto = employeeFullDto;
         this.password = password;
+        this.emailCheckbox = emailCheckbox;
     }
 
     public EmployeeFullDto getEmployeeFullDto() {
@@ -30,5 +32,13 @@ public class EmployeePasswordDto {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public Boolean getEmailCheckbox() {
+        return emailCheckbox;
+    }
+
+    public void setEmailCheckbox(Boolean emailCheckbox) {
+        this.emailCheckbox = emailCheckbox;
     }
 }

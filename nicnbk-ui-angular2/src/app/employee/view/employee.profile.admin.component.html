@@ -116,17 +116,37 @@
         <div class="row form-group">
             <label class="control-label col-sm-2">Password:</label>
             <div class="col-sm-4">
-                <input type="password" class="form-control" [(ngModel)]="newPassword"/>
+                <div class="input-group">
+                    <input [type]="passwordFieldType ? 'text' : 'password'" class="form-control pwd" [(ngModel)]="newPassword"/>
+                    <span class="input-group-btn">
+                    <button class="btn btn-default reveal" type="button" (click)="togglePasswordTextType()"><i class="glyphicon glyphicon-eye-open"></i></button>
+                </span>
+                </div>
             </div>
+
             <label class="control-label col-sm-2">Confirm:</label>
             <div class="col-sm-4">
-                <input type="password" class="form-control" [(ngModel)]="newPasswordConfirm"/>
+                <div class="input-group">
+                    <input [type]="confirmPasswordFieldType ? 'text' : 'password'" class="form-control pwd" [(ngModel)]="newPasswordConfirm"/>
+                    <span class="input-group-btn">
+                    <button class="btn btn-default reveal" type="button" (click)="toggleConfirmPasswordTextType()"><i class="glyphicon glyphicon-eye-open"></i></button>
+                </span>
+                </div>
             </div>
         </div>
         <div class="row form-group">
             <label class="control-label col-sm-2"></label>
             <div class="col-sm-4">
-                <button class="btn btn-xs btn-default" (click)="newPassword = 'Qwerty123'; newPasswordConfirm = 'Qwerty123'">Use 'Qwerty123'</button>
+                <button class="btn btn-xs btn-default" (click)="generatePassword(8); newPassword = generatedPassword; newPasswordConfirm = generatedPassword">Generate Password</button>
+            </div>
+            <div class="col-sm-4" *ngIf="generatedPassword != ''">
+                <div class="form-check" *ngIf="employee.email != ''">
+                    <input class="form-check-input" type="checkbox" value="" id="sendToEmail" [checked]="emailCheckbox" (change)="emailCheckbox = !emailCheckbox" >
+                    <label class="form-check-label" for="sendToEmail">
+                        Send new password to email
+                    </label>
+                </div>
+                <h6 *ngIf="employee.email == ''" class="text-danger">Email is missing, new password will not be sent to user</h6>
             </div>
         </div>
         <div class="row form-group">

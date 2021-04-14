@@ -38,6 +38,10 @@ export class EmployeeProfileAdminComponent extends CommonFormViewComponent{
 
     newPassword = '';
     newPasswordConfirm = '';
+    generatedPassword = '';
+    passwordFieldType: boolean;
+    confirmPasswordFieldType: boolean;
+    emailCheckbox = true;
 
     constructor(
         private router: Router,
@@ -215,7 +219,7 @@ export class EmployeeProfileAdminComponent extends CommonFormViewComponent{
                         }
                     );
             } else if(this.checkPassword()) {
-                this.busy = this.employeeService.saveAndChangePassword(this.employee, this.newPassword)
+                this.busy = this.employeeService.saveAndChangePassword(this.employee, this.newPassword, this.emailCheckbox)
                     .subscribe(
                         response => {
                             this.employee.id = response.entityId;
@@ -236,6 +240,37 @@ export class EmployeeProfileAdminComponent extends CommonFormViewComponent{
         } else {
             this.postAction(null, "Passwords do not match");
         }
+    }
+
+    generatePassword(passwordLength) {
+        var numberChars = "0123456789";
+        var upperChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        var lowerChars = "abcdefghijklmnopqrstuvwxyz";
+        var allChars = numberChars + upperChars + lowerChars;
+        var randPasswordArray = Array(passwordLength);
+        randPasswordArray[0] = numberChars;
+        randPasswordArray[1] = upperChars;
+        randPasswordArray[2] = lowerChars;
+        randPasswordArray = randPasswordArray.fill(allChars, 3);
+        this.generatedPassword = this.shuffleArray(randPasswordArray.map(function(x) { return x[Math.floor(Math.random() * x.length)] })).join('');
+    }
+
+    shuffleArray(array) {
+        for (var i = array.length - 1; i > 0; i--) {
+            var j = Math.floor(Math.random() * (i + 1));
+            var temp = array[i];
+            array[i] = array[j];
+            array[j] = temp;
+        }
+        return array;
+    }
+
+    togglePasswordTextType() {
+        this.passwordFieldType = !this.passwordFieldType;
+    }
+
+    toggleConfirmPasswordTextType() {
+        this.confirmPasswordFieldType = !this.confirmPasswordFieldType;
     }
 
     public checkPassword(){
