@@ -11,6 +11,7 @@ import java.util.List;
 
 public class MonitoringRiskReportSearchParamsDto implements BaseDto {
     private Date date;
+    private Date previousDate;
 
     public Date getDate() {
         return date;
@@ -18,5 +19,13 @@ public class MonitoringRiskReportSearchParamsDto implements BaseDto {
 
     public void setDate(Date date) {
         this.date = date;
+    }
+
+    public Date getPreviousDate() {
+        return previousDate;
+    }
+
+    public void setPreviousDate(Date previousDate) {
+        this.previousDate = previousDate;
     }
 }

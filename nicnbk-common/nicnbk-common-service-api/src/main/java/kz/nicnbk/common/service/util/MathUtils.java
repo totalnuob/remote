@@ -503,19 +503,22 @@ public class MathUtils {
         double[] calculatedValues = new double[cumulativeReturns.length];
         if(cumulativeReturns != null && cumulativeReturns.length > 0) {
             Double worstDrawdown = null;
+            Double drawdownMin = null;
             int drowdownIndex = -1;
             for (int i = 0; i < cumulativeReturns.length; i++) {
                 Double minValue = null;
-                for (int j = i + 1; j < cumulativeReturns.length; j++) {
+                for (int j = i; j < cumulativeReturns.length; j++) {
                     if(minValue == null || cumulativeReturns[j] < minValue.doubleValue()){
                         minValue = cumulativeReturns[j];
                     }
                 }
-                if(minValue != null) {
-                    Double value = MathUtils.subtract(scale, MathUtils.divide(scale, minValue, cumulativeReturns[i]), 1.0);
+                if(minValue != null && i > 0) {
+                    Double value = MathUtils.subtract(scale, MathUtils.divide(scale, minValue, cumulativeReturns[i - 1]), 1.0);
                     calculatedValues[i] = value;
+                    //System.out.println(cumulativeReturns[i] + "," + minValue + "," + value);
                     if (worstDrawdown == null || value.doubleValue() < worstDrawdown.doubleValue()) {
                         worstDrawdown = value;
+                        drawdownMin = minValue;
                         drowdownIndex = i;
                     }
                 }else{
@@ -528,16 +531,31 @@ public class MathUtils {
                 Integer drawdownPeriod = null;
                 Double minValue = null;
                 int minValueIndex = -1;
-                for (int i = drowdownIndex + 1; i < cumulativeReturns.length; i++) {
+                for (int i = drowdownIndex; i < cumulativeReturns.length; i++) {
                     if (minValue == null || cumulativeReturns[i] < minValue.doubleValue()) {
                         minValue = cumulativeReturns[i];
                         minValueIndex = i;
                     }
                 }
                 if(minValueIndex >= 0){
-                    drawdownPeriod = minValueIndex - drowdownIndex;
+                    drawdownPeriod = minValueIndex - drowdownIndex + 1;
                 }
                 worstDDDto.setWorstDDPeriod(drawdownPeriod);
+            }
+            if(drawdownMin != null && drowdownIndex > 0){
+                int recoveryMonth = 0;
+                boolean startRecovery = false;
+                for(int i = 0; i < cumulativeReturns.length; i++){
+                    if(startRecovery){
+                        recoveryMonth++;
+                        if(cumulativeReturns[i] > cumulativeReturns[drowdownIndex - 1]){
+                            break;
+                        }
+                    }else if(cumulativeReturns[i] == drawdownMin.doubleValue()){
+                        startRecovery = true;
+                    }
+                }
+                worstDDDto.setRecoveryMonths(recoveryMonth);
             }
 
             return worstDDDto;
@@ -546,11 +564,11 @@ public class MathUtils {
         return null;
     }
 
-    public static Integer getRecoveryMonths(int scale, double[] returns){
-        if(returns != null && returns.length > 0) {
-        }
-        return null;
-    }
+//    public static Integer getRecoveryMonths(int scale, double[] returns){
+//        if(returns != null && returns.length > 0) {
+//        }
+//        return null;
+//    }
 
     public static Double abs(Double value){
         return value != null ? Math.abs(value) : null;

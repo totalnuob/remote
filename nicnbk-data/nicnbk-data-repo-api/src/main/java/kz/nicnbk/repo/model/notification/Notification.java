@@ -25,7 +25,7 @@ public class Notification extends HistoryBaseEntity {
         this.employee = employee;
     }
 
-    @Column(name="name", nullable = false)
+    @Column(name="name", nullable = false, columnDefinition="TEXT")
     public String getName() {
         return name;
     }

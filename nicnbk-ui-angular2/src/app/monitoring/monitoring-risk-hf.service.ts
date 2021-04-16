@@ -18,6 +18,16 @@ export class MonitoringRiskHedgeFundService extends CommonService {
     private MONITORING_RISK_TOP_PORTFOLIO_UPLOAD_URL = this.MONITORING_RISK_BASE_URL + "topPortfolio/upload/";
     private MONITORING_RISK_TOP_PORTFOLIO_EXPORT_URL = this.MONITORING_RISK_BASE_URL + "topPortfolio/export/";
     private MONITORING_RISK_TOP_PORTFOLIO_DELETE_URL = this.MONITORING_RISK_BASE_URL + "topPortfolio/delete/";
+    private MONITORING_RISK_MONTHLY_HF_SAVE_REPORT_URL = this.MONITORING_RISK_BASE_URL + "riskHFReport/save/";
+
+    private MONITORING_RISK_RETURNS_UPLOAD_URL = this.MONITORING_RISK_BASE_URL + "returns/upload/";
+    private MONITORING_RISK_RETURNS_CLASS_A_FILE_DELETE_URL = this.MONITORING_RISK_BASE_URL + "returns/classA/delete/";
+    private MONITORING_RISK_RETURNS_CLASS_B_FILE_DELETE_URL = this.MONITORING_RISK_BASE_URL + "returns/classB/delete/";
+    private MONITORING_RISK_RETURNS_CONS_FILE_DELETE_URL = this.MONITORING_RISK_BASE_URL + "returns/cons/delete/";
+
+    private MONITORING_RISK_ALLOCATIONS_UPLOAD_URL = this.MONITORING_RISK_BASE_URL + "allocations/upload/";
+    private MONITORING_RISK_ALLOCATIONS_CONS_FILE_DELETE_URL = this.MONITORING_RISK_BASE_URL + "allocations/cons/delete/";
+
 
     constructor(
         private uploadService: FileUploadService,
@@ -26,8 +36,15 @@ export class MonitoringRiskHedgeFundService extends CommonService {
         super();
     }
 
-    getMonthlyHFRiskReport(selectedDate) {
-        var body = JSON.stringify({"date": selectedDate});
+    saveReport(report) {
+        var body = JSON.stringify(report);
+        return this.http.post(this.MONITORING_RISK_MONTHLY_HF_SAVE_REPORT_URL, body, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+    getMonthlyHFRiskReport(selectedDate, prevDate) {
+        var body = JSON.stringify({"date": selectedDate, "previousDate": prevDate});
         return this.http.post(this.MONITORING_RISK_MONTHLY_HF_GET_URL, body, this.getOptionsWithCredentials())
             .map(this.extractData)
             .catch(this.handleErrorResponse);
@@ -45,6 +62,35 @@ export class MonitoringRiskHedgeFundService extends CommonService {
 
     postFilesTopPortfolio(files) {
         return this.uploadService.postFiles(this.MONITORING_RISK_TOP_PORTFOLIO_UPLOAD_URL, [], files, null);
+    }
+
+    uploadReturns(files, data) {
+        return this.uploadService.postFilesWithData(this.MONITORING_RISK_RETURNS_UPLOAD_URL, [], files, data);
+    }
+
+    uploadAllocations(files, data) {
+        return this.uploadService.postFilesWithData(this.MONITORING_RISK_ALLOCATIONS_UPLOAD_URL, [], files, data);
+    }
+
+    deleteReturnsClassAFile(reportId){
+        return this.http.get(this.MONITORING_RISK_RETURNS_CLASS_A_FILE_DELETE_URL + reportId, this.getOptionsWithCredentials())
+                    .map(this.extractData)
+                    .catch(this.handleErrorResponse);
+    }
+    deleteReturnsClassBFile(reportId){
+        return this.http.get(this.MONITORING_RISK_RETURNS_CLASS_B_FILE_DELETE_URL + reportId, this.getOptionsWithCredentials())
+                    .map(this.extractData)
+                    .catch(this.handleErrorResponse);
+    }
+    deleteReturnsConsFile(reportId){
+        return this.http.get(this.MONITORING_RISK_RETURNS_CONS_FILE_DELETE_URL + reportId, this.getOptionsWithCredentials())
+                    .map(this.extractData)
+                    .catch(this.handleErrorResponse);
+    }
+    deleteAllocationsConsFile(reportId){
+        return this.http.get(this.MONITORING_RISK_ALLOCATIONS_CONS_FILE_DELETE_URL + reportId, this.getOptionsWithCredentials())
+                    .map(this.extractData)
+                    .catch(this.handleErrorResponse);
     }
 
     deleteSubStrategy(selectedDate) {

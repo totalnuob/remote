@@ -62,7 +62,7 @@ export class FileAttachmentDownloaderComponent  extends CommonService{
             // If we get an HTTP status OK (200), save the file using fileSaver
             if(xhr.readyState === 4 && xhr.status === 200) {
                 var blob = new Blob([this.response], {type: this.response.type});
-                fileSaver.saveAs(blob, self.fileName);
+                fileSaver.saveAs(blob, self.fileName.trim().replace(/['"]+/g, ''));
             }
         };
 
