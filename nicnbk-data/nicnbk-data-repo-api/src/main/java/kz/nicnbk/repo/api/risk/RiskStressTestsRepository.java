@@ -1,7 +1,6 @@
 package kz.nicnbk.repo.api.risk;
 
-import com.sun.istack.internal.Nullable;
-import kz.nicnbk.repo.model.risk.PortfolioVarValue;
+
 import kz.nicnbk.repo.model.risk.RiskStressTests;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
