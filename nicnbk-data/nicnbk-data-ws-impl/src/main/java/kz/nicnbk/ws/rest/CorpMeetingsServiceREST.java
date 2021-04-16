@@ -744,7 +744,7 @@ public class CorpMeetingsServiceREST extends CommonServiceREST{
         return buildNonNullResponse(events);
     }
 
-    @PreAuthorize(IC_MEETING_TOPIC_VIEWER)
+    @PreAuthorize(IC_MEETING_ASSIGNMENT_VIEWER)
     @RequestMapping(value = "/assignment/search", method = RequestMethod.POST)
     public ResponseEntity<?> searchDepartmentAssignments(@RequestBody ICAssignmentSearchParamsDto searchParams) {
         String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
@@ -762,7 +762,7 @@ public class CorpMeetingsServiceREST extends CommonServiceREST{
         String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
         String username = this.tokenService.decode(token).getUsername();
 
-        ICMeetingTopicAssignmentDto dto = corpMeetingService.getICAssignment(id);
+        ICMeetingTopicAssignmentDto dto = corpMeetingService.getICAssignment(id,username);
 
         return buildNonNullResponse(dto);
     }

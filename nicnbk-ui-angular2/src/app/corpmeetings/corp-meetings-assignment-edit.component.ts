@@ -105,10 +105,13 @@ export class CorpMeetingAssignmentEditComponent extends CommonFormViewComponent 
     }
 
     public canEdit(){
+        if(this.moduleAccessChecker.checkAccessICMeetingAdmin()){
+            return true;
+        }
         if(this.assignment != null && this.assignment.departments != null && this.assignment.departments.length > 0){
             for(var i = 0; i < this.assignment.departments.length; i ++){
                 if(this.assignment.departments[i].id == this.userDepartmentId){
-                    return true
+                    return true;
                 }
             }
         }

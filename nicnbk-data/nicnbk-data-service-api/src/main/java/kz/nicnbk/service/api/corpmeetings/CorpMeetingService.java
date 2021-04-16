@@ -130,7 +130,7 @@ public interface CorpMeetingService extends BaseService {
     //List<ICMeetingTopicAssignmentDto> getDepartmentAssignments(int id);
     ICAssignmentPagedSearchResult searchICAssignments(ICAssignmentSearchParamsDto params, String username);
 
-    ICMeetingTopicAssignmentDto getICAssignment(Long id);
+    ICMeetingTopicAssignmentDto getICAssignment(Long id, String username);
     EntitySaveResponseDto saveICAssignment(ICMeetingTopicAssignmentDto dto, String username);
 
     List<ICMeetingTopicAssignmentDto> getICAssignmentsDueWithinWeek();

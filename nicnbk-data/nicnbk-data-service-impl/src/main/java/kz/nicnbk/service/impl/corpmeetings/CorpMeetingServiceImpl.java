@@ -4487,15 +4487,47 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
     }
 
     @Override
-    public ICMeetingTopicAssignmentDto getICAssignment(Long id){
+    public ICMeetingTopicAssignmentDto getICAssignment(Long id, String username){
         if(id != null) {
             ICMeetingTopicAssignment entity = this.icMeetingTopicAssignmentRepository.findOne(id);
             if (entity != null) {
                 ICMeetingTopicAssignmentDto dto = this.assignmentEntityConverter.disassemble(entity);
-                return dto;
+                boolean checked = hasAssignmentViewRole(username, dto);
+                if(checked){
+                    return dto;
+                }
             }
         }
         return null;
+    }
+
+    private boolean hasAssignmentViewRole(String username, ICMeetingTopicAssignmentDto dto){
+        return hasAssignmentEditRole(username, dto);
+    }
+    private boolean hasAssignmentEditRole(String username, ICMeetingTopicAssignmentDto dto){
+        EmployeeDto employeeDto = this.employeeService.findByUsername(username);
+        if(employeeDto != null && employeeDto.getPosition() != null && employeeDto.getPosition().getDepartment() != null &&
+                employeeDto.getPosition().getDepartment().getId() != null){
+            // check IC ADMIN
+            if(employeeDto.getRoles() != null){
+                for(BaseDictionaryDto role: employeeDto.getRoles()){
+                    if(role.getCode().equalsIgnoreCase(UserRoles.IC_ADMIN.getCode())){
+                        return true;
+                    }
+                }
+            }
+            // Check Department
+            if(dto.getDepartments() != null && !dto.getDepartments().isEmpty()){
+                for(DepartmentDto departmentDto: dto.getDepartments()){
+                    if(dto.getId() != null &&
+                            employeeDto.getPosition().getDepartment().getId().longValue() == departmentDto.getId().longValue()){
+                        return true;
+                    }
+                }
+            }
+
+        }
+        return false;
     }
 
     @Transactional
@@ -4505,25 +4537,7 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
         try {
             if (dto != null) {
                 // Check rights
-                boolean checked = false;
-                if(username != null){
-                    EmployeeDto employeeDto = this.employeeService.findByUsername(username);
-                    if(employeeDto != null && employeeDto.getPosition() != null && employeeDto.getPosition().getDepartment() != null &&
-                            employeeDto.getPosition().getDepartment().getId() != null){
-                        if(dto.getId() != null){
-                            ICMeetingTopicAssignmentDto assignmentDto = getICAssignment(dto.getId());
-                            if(assignmentDto.getDepartments() != null && !assignmentDto.getDepartments().isEmpty()){
-                                for(DepartmentDto departmentDto: assignmentDto.getDepartments()){
-                                    if(departmentDto.getId() != null &&
-                                            employeeDto.getPosition().getDepartment().getId().longValue() == departmentDto.getId().longValue()){
-                                        checked = true;
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+                boolean checked = username != null && dto.getId() != null && hasAssignmentEditRole(username, dto);//false;
                 if(!checked){
                     String errorMessage = "Failed to save IC Meeting Assignment: employee rights could not be validated";
                     logger.error(errorMessage);
