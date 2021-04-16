@@ -1,10 +1,9 @@
 package kz.nicnbk.repo.model.risk;
 
 import kz.nicnbk.repo.model.base.CreateUpdateBaseEntity;
+import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.Date;
 
 @Entity
@@ -32,6 +31,8 @@ public class RiskStressTests extends CreateUpdateBaseEntity{
         this.value = value;
     }
 
+    @Temporal(TemporalType.DATE)
+    @DateTimeFormat(pattern="dd-MM-yyyy")
     public Date getDate() {
         return date;
     }

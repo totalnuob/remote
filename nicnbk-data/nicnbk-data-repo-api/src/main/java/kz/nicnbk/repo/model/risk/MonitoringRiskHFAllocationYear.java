@@ -18,11 +18,12 @@ public class MonitoringRiskHFAllocationYear extends CreateUpdateBaseEntity {
     private String subStrategy;
     private Double ror;
     private Double ctr;
+    private Double contribToVar;
 
     public MonitoringRiskHFAllocationYear(){}
 
     public MonitoringRiskHFAllocationYear(MonitoringRiskHFMonthlyReport report, MonitoringRiskHFPortfolioType portfolioType, Date date, String fund,
-                                          String strategy, String subStrategy, Double ror, Double ctr){
+                                          String strategy, String subStrategy, Double ror, Double ctr, Double contribToVar){
         this.report = report;
         this.portfolioType = portfolioType;
         this.date = date;
@@ -31,6 +32,7 @@ public class MonitoringRiskHFAllocationYear extends CreateUpdateBaseEntity {
         this.subStrategy = subStrategy;
         this.ror = ror;
         this.ctr = ctr;
+        this.contribToVar = contribToVar;
     }
 
 
@@ -101,5 +103,13 @@ public class MonitoringRiskHFAllocationYear extends CreateUpdateBaseEntity {
 
     public void setCtr(Double ctr) {
         this.ctr = ctr;
+    }
+
+    public Double getContribToVar() {
+        return contribToVar;
+    }
+
+    public void setContribToVar(Double contribToVar) {
+        this.contribToVar = contribToVar;
     }
 }

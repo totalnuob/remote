@@ -27,7 +27,7 @@
                 </select>
             </div>
             <div class="col-md-2">
-                <button class="btn btn-sm btn-primary form-control" data-toggle="modal" data-target="#newReportModal">Create report</button>
+                <button class="btn btn-sm btn-primary form-control" data-toggle="modal" data-target="#newReportModal" (click)="openCreateReportModal()">Create report</button>
             </div>
         </div>
     </div>
@@ -40,11 +40,11 @@
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-md-12">
-                            <div class="alert alert-danger" *ngIf="errorMessage != null"><span>{{modalErrorMessage}}</span>
+                            <div class="alert alert-danger" *ngIf="modalErrorMessage != null"><span>{{modalErrorMessage}}</span>
                             </div>
                         </div>
                         <div class="col-md-12">
-                            <div class="alert alert-info" *ngIf="successMessage != null"><span>{{modalSuccessMessage}}</span>
+                            <div class="alert alert-info" *ngIf="modalSuccessMessage != null"><span>{{modalSuccessMessage}}</span>
                             </div>
                         </div>
                     </div>
@@ -243,14 +243,14 @@
                         <tbody>
                         <tr *ngFor="let performance of selectedDateMonitoringInfo?.performance12M">
                             <td>{{performance.name}}</td>
-                            <td>{{performance.portfolioValueTxt}}
+                            <td>{{performance.portfolioValueTxt}} {{performance.portfolioValueTxtPrev != null ? '(' + performance.portfolioValueTxtPrev + ')' : ''}}
                                 <!--                                <span data-toggle="tooltip">{{performance.portfolioValue | percent : '1.2'}}</span>-->
                             </td>
-                            <td>{{performance.benchmarkValueTxt}}</td>
-                            <td>{{performance.portfolioBValueTxt}}
+                            <td>{{performance.benchmarkValueTxt}} {{performance.benchmarkValueTxtPrev != null ? '(' + performance.benchmarkValueTxtPrev + ')' : ''}}</td>
+                            <td>{{performance.portfolioBValueTxt}} {{performance.portfolioBValueTxtPrev != null ? '(' + performance.portfolioBValueTxtPrev + ')' : ''}}
                                 <!--                                <span data-toggle="tooltip">{{performance.portfolioValue | percent : '1.2'}}</span>-->
                             </td>
-                            <td>{{performance.benchmarkAwcValueTxt}}</td>
+                            <td>{{performance.benchmarkAwcValueTxt}} {{performance.benchmarkAwcValueTxtPrev != null ? '(' + performance.benchmarkAwcValueTxtPrev + ')' : ''}}</td>
                         </tr>
                         </tbody>
                     </table>
@@ -268,13 +268,13 @@
                         </thead>
                         <tbody>
                         <tr *ngFor="let performance of selectedDateMonitoringInfo?.performanceSinceInception">
-                            <td>{{performance.name}}</td>
-                            <td>{{performance.portfolioValueTxt}}
+                            <td>{{performance.name}} </td>
+                            <td>{{performance.portfolioValueTxt}} {{performance.portfolioValueTxtPrev != null ? '(' + performance.portfolioValueTxtPrev + ')' : ''}}
                             </td>
-                            <td>{{performance.benchmarkValueTxt}}</td>
-                            <td>{{performance.portfolioBValueTxt}}
+                            <td>{{performance.benchmarkValueTxt}} {{performance.benchmarkValueTxtPrev != null ? '(' + performance.benchmarkValueTxtPrev + ')' : ''}}</td>
+                            <td>{{performance.portfolioBValueTxt}} {{performance.portfolioBValueTxtPrev != null ? '(' + performance.portfolioBValueTxtPrev + ')' : ''}}
                             </td>
-                            <td>{{performance.benchmarkAwcValueTxt}}</td>
+                            <td>{{performance.benchmarkAwcValueTxt}} {{performance.benchmarkAwcValueTxtPrev != null ? '(' + performance.benchmarkAwcValueTxtPrev + ')' : ''}}</td>
                         </tr>
                         </tbody>
                     </table>
@@ -416,12 +416,12 @@
                     </thead>
                     <tbody>
                     <tr *ngFor="let item of selectedDateMonitoringInfoStressTests; let i = index"
-                        [style.font-weight]="i % 3 == 0 ? 'bold' : ''" [style.text-align]="'center'">
-                        <td>{{item[0]}}</td>
-                        <td>{{item[1]}}</td>
-                        <td>{{item[2]}}</td>
-                        <td>{{item[3]}}</td>
-                        <td>{{item[4]}}</td>
+                        [style.font-weight]="i % 2 == 0 ? 'bold' : ''" [style.text-align]="'center'">
+                        <td>{{i % 2 == 0 ? item[0] : item[0] | percent : '1.2'}} </td>
+                        <td>{{i % 2 == 0 ? item[1] : item[1] | percent : '1.2'}} </td>
+                        <td>{{i % 2 == 0 ? item[2] : item[2] | percent : '1.2'}} </td>
+                        <td>{{i % 2 == 0 ? item[3] : item[3] | percent : '1.2'}} </td>
+                        <td>{{i % 2 == 0 ? item[4] : item[4] | percent : '1.2'}} </td>
                     </tr>
                     </tbody>
                 </table>

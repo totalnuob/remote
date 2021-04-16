@@ -66,6 +66,7 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
     departmentEmployeeList = [];
 
     icAdminEmployee;
+    legalHeadEmployee;
 
     tagOptions = {
         placeholder: "+ tag",
@@ -107,6 +108,7 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
                     data1.forEach(element => {
                         this.icList.push(element);
                     });
+                    console.log(data2);
                     data2.forEach(element => {
                         this.availableApproveList.push({id: element.id, text: element.firstName + " " + element.lastName,
                                                     firstName: element.firstName, lastName: element.lastName});
@@ -117,6 +119,9 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
                                     break;
                                 }
                             }
+                        }
+                        if(element.position != null && element.position.head && element.position.department != null && element.position.department.code === 'LEGAL'){
+                                this.legalHeadEmployee = element;
                         }
 
                     });
@@ -162,6 +167,11 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
                                 if(this.icAdminEmployee != null){
                                     this.icMeetingTopic.approveList.push({"employee": {"id": this.icAdminEmployee.id,
                                                         "fullName":  this.icAdminEmployee.firstName + " " + this.icAdminEmployee.lastName},
+                                                        "approved": false});
+                                }
+                                if(this.legalHeadEmployee != null){
+                                    this.icMeetingTopic.approveList.push({"employee": {"id": this.legalHeadEmployee.id,
+                                                        "fullName":  this.legalHeadEmployee.firstName + " " + this.legalHeadEmployee.lastName},
                                                         "approved": false});
                                 }
 
@@ -996,8 +1006,9 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
                 );
     }
     autoAddedApproveListMember(item){
-        return (this.icMeetingTopic.id == null || this.icMeetingTopic.id == 0) && this.icAdminEmployee != null &&
-                item.employee != null && item.employee.id == this.icAdminEmployee.id;
+        return (this.icMeetingTopic.id == null || this.icMeetingTopic.id == 0) &&
+                    ((this.icAdminEmployee != null && item.employee != null && item.employee.id == this.icAdminEmployee.id)
+                    || (this.legalHeadEmployee != null && item.employee != null && item.employee.id == this.legalHeadEmployee.id));
     }
 
     addDecision(){

@@ -31,4 +31,16 @@ public class BenchmarkValueEntityConverter extends BaseDozerEntityConverter<Benc
         }
         return entity;
     }
+
+    @Override
+    public BenchmarkValueDto disassemble(BenchmarkValue entity){
+        BenchmarkValueDto dto = super.disassemble(entity);
+        if(entity.getCreator() != null){
+            dto.setCreator(entity.getCreator().getUsername());
+        }
+        if(entity.getUpdater() != null){
+            dto.setUpdater(entity.getUpdater().getUsername());
+        }
+        return dto;
+    }
 }

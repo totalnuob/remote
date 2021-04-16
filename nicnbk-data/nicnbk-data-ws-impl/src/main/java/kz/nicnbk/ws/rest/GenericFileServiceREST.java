@@ -162,7 +162,9 @@ public class GenericFileServiceREST {
                     }
                 }
             }else if(filesDto.getType().equalsIgnoreCase(FileTypeLookup.MONITORING_HF_RISK_RETURNS_CLASS_A.getCode()) ||
-                    filesDto.getType().equalsIgnoreCase(FileTypeLookup.MONITORING_HF_RISK_RETURNS_CLASS_B.getCode())){
+                    filesDto.getType().equalsIgnoreCase(FileTypeLookup.MONITORING_HF_RISK_RETURNS_CLASS_B.getCode()) ||
+                    filesDto.getType().equalsIgnoreCase(FileTypeLookup.MONITORING_HF_RISK_RETURNS_CONS.getCode()) ||
+                    filesDto.getType().equalsIgnoreCase(FileTypeLookup.MONITORING_HF_RISK_ALLOCATIONS_CONS.getCode())){
                 //
                 return true;
             }else {

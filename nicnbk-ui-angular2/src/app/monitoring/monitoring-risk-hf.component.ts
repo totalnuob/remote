@@ -113,7 +113,7 @@ export class MonitoringRiskHedgeFundComponent extends GoogleChartComponent {
     }
 
     drawMarketSensitivitiesSinceInceptionMSCI(){
-        console.log("drawMarketSensitivitiesSinceInceptionMSCI");
+        //console.log("drawMarketSensitivitiesSinceInceptionMSCI");
         if(typeof google.charts === 'undefined'){
            console.log("google undefined");
            return;
@@ -133,7 +133,7 @@ export class MonitoringRiskHedgeFundComponent extends GoogleChartComponent {
                         Number((this.selectedDateMonitoringInfo.marketSensitivitesMSCI[i].benchmarkValue * 100).toFixed(2)),
                         'grey']);
         }
-        console.log(dataArr);
+        //console.log(dataArr);
 
         var data = google.visualization.arrayToDataTable(dataArr);
         var formatNumber = new google.visualization.NumberFormat({
@@ -230,7 +230,7 @@ export class MonitoringRiskHedgeFundComponent extends GoogleChartComponent {
                 Number((this.selectedDateMonitoringInfo.subStrategyAllocations[i].currentValue * 100).toFixed(2))
                 ]);
         }
-        console.log(dataArr);
+        //console.log(dataArr);
         var data = google.visualization.arrayToDataTable(dataArr);
         var formatNumber = new google.visualization.NumberFormat({
             pattern: '0.00'
@@ -307,45 +307,47 @@ export class MonitoringRiskHedgeFundComponent extends GoogleChartComponent {
         this.busy = this.monitoringRiskHFService.getMonthlyHFRiskReport(value, this.selectedPrevDate)
             .subscribe(
                 monitoringData => {
-                    console.log(monitoringData);
+                    //console.log(monitoringData);
                     this.selectedDateMonitoringInfo = monitoringData;
                     if(monitoringData.status != null && monitoringData.status === 'SUCCESS'){
                         this.selectedDateMonitoringInfo = monitoringData;
+                        //console.log(this.selectedDateMonitoringInfo);
                         if(this.selectedDateMonitoringInfo != null && this.selectedDateMonitoringInfo.stressTests != null){
                             var stressTestsNames = [];
-                            var stressTestsDates = [];
+                            //var stressTestsDates = [];
                             var stressTestsValues = [];
                             for(var i = 0; i < this.selectedDateMonitoringInfo.stressTests.length; i++){
                                 var stressTestsNameItem = [];
-                                var stressTestsDatesItem = [];
+                                //var stressTestsDatesItem = [];
                                 var stressTestsValueItem = [];
                                 if(stressTestsNames.length > 0){
                                     stressTestsNameItem = stressTestsNames[stressTestsNames.length - 1];
-                                    stressTestsDatesItem = stressTestsDates[stressTestsDates.length -1];
+                                    //stressTestsDatesItem = stressTestsDates[stressTestsDates.length -1];
                                     stressTestsValueItem = stressTestsValues[stressTestsValues.length - 1];
                                     if(stressTestsNameItem.length == 5){
                                         stressTestsNames.push([]);
-                                        stressTestsDates.push([]);
+                                       //stressTestsDates.push([]);
                                         stressTestsValues.push([]);
                                         stressTestsNameItem = stressTestsNames[stressTestsNames.length - 1];
-                                        stressTestsDatesItem = stressTestsDates[stressTestsDates.length - 1];
+                                        //stressTestsDatesItem = stressTestsDates[stressTestsDates.length - 1];
                                         stressTestsValueItem = stressTestsValues[stressTestsValues.length - 1]
                                     }
                                 }else{
                                     stressTestsNames.push(stressTestsNameItem);
-                                    stressTestsDates.push(stressTestsDatesItem);
+                                    //stressTestsDates.push(stressTestsDatesItem);
                                     stressTestsValues.push(stressTestsValueItem);
                                 }
                                 stressTestsNameItem.push(this.selectedDateMonitoringInfo.stressTests[i].name);
-                                stressTestsDatesItem.push(this.selectedDateMonitoringInfo.stressTests[i].date);
+                                //stressTestsDatesItem.push(this.selectedDateMonitoringInfo.stressTests[i].date);
                                 stressTestsValueItem.push(this.selectedDateMonitoringInfo.stressTests[i].value);
                             }
                             this.selectedDateMonitoringInfoStressTests = [];
                             for(var i = 0; i < stressTestsNames.length; i++){
                                 this.selectedDateMonitoringInfoStressTests.push(stressTestsNames[i]);
-                                this.selectedDateMonitoringInfoStressTests.push(stressTestsDates[i]);
+                                //this.selectedDateMonitoringInfoStressTests.push(stressTestsDates[i]);
                                 this.selectedDateMonitoringInfoStressTests.push(stressTestsValues[i]);
                             }
+                            //console.log(this.selectedDateMonitoringInfoStressTests);
                         }
                     }else{
                         if(monitoringData.message != null && monitoringData.message.nameEn != null && monitoringData.message.nameEn.trim() != ''){
@@ -427,7 +429,7 @@ export class MonitoringRiskHedgeFundComponent extends GoogleChartComponent {
 
     fileChangeTopPortfolio(files: any){
         this.myFilesTopPortfolio = files;
-        console.log(this.myFilesTopPortfolio);
+        //console.log(this.myFilesTopPortfolio);
     }
 
     private getDataByDate(tableDate){
@@ -443,10 +445,10 @@ export class MonitoringRiskHedgeFundComponent extends GoogleChartComponent {
         this.busy = this.monitoringRiskHFService.exportTopPortfolio(this.selectedDate).
             subscribe(
                 response => {
-                    console.log("ok");
+                    //console.log("ok");
                 },
                 error => {
-                    console.log(this.selectedDate)
+                    //console.log(this.selectedDate)
                     this.postAction(null, "Error exporting data");
                 }
         );
@@ -457,18 +459,18 @@ export class MonitoringRiskHedgeFundComponent extends GoogleChartComponent {
             this.busy = this.monitoringRiskHFService.deleteTopPortfolio(this.selectedDate).
             subscribe(
                 response => {
-                    console.log("ok");
+                    //console.log("ok");
 
                     this.postAction(response.messageEn, null);
                 },
                 error => {
-                    console.log(this.selectedDate)
+                    //console.log(this.selectedDate)
                     this.postAction(null, "Error deleting data");
                 }
             );
         } else {
             this.postAction(null, null);
-            console.log('Not deleted');
+            //console.log('Not deleted');
         }
     }
 
@@ -478,8 +480,8 @@ export class MonitoringRiskHedgeFundComponent extends GoogleChartComponent {
                 (response) => {
                     this.topPortfolioList = response.MonitoringRiskHedgeFundFundAllocationDtoList;
 
-                    console.log(response);
-                    console.log(response.message.nameEn);
+                    //console.log(response);
+                    //console.log(response.message.nameEn);
 
                     this.postAction(response.message.nameEn, null);
 
@@ -490,7 +492,7 @@ export class MonitoringRiskHedgeFundComponent extends GoogleChartComponent {
                         // this.drawNewlyCreatedAllocationChart(this.subStrategyList);
 
                         this.postAction(response.message.nameEn, null);
-                        console.log("topPortfolioList > 0");
+                        //console.log("topPortfolioList > 0");
 
                         this.myFilesTopPortfolio = [];
                         $("#fileuploadTopPortfolio").val(null);
@@ -499,8 +501,8 @@ export class MonitoringRiskHedgeFundComponent extends GoogleChartComponent {
                 error => {
                     // this.processErrorMessage(error);
                     this.postAction(null, JSON.parse(error).message.nameEn);
-                    console.log(error);
-                    console.log(JSON.parse(error).message.nameEn);
+                    //console.log(error);
+                    //console.log(JSON.parse(error).message.nameEn);
                 }
             )
     }
@@ -509,10 +511,10 @@ export class MonitoringRiskHedgeFundComponent extends GoogleChartComponent {
         this.busy = this.monitoringRiskHFService.exportSubStrategy(this.selectedDate).
         subscribe(
             response => {
-                console.log("ok");
+                //console.log("ok");
             },
             error => {
-                console.log(this.selectedDate)
+                //console.log(this.selectedDate)
                 this.postAction(null, "Error exporting data");
             }
         );
@@ -523,18 +525,18 @@ export class MonitoringRiskHedgeFundComponent extends GoogleChartComponent {
             this.busy = this.monitoringRiskHFService.deleteReturnsClassAFile(this.selectedDateMonitoringInfo.reportId).
             subscribe(
                 response => {
-                    console.log("ok");
+                    //console.log("ok");
                     this.postAction(response.messageEn, null);
                     this.selectDate(this.selectedDate);
                 },
                 error => {
-                    console.log(this.selectedDate)
+                    //console.log(this.selectedDate)
                     this.postAction(null, "Error deleting data");
                 }
             );
         } else {
             this.postAction(null, null);
-            console.log('Not deleted');
+            //console.log('Not deleted');
         }
     }
     deleteReturnsFileClassB(){
@@ -542,18 +544,18 @@ export class MonitoringRiskHedgeFundComponent extends GoogleChartComponent {
             this.busy = this.monitoringRiskHFService.deleteReturnsClassBFile(this.selectedDateMonitoringInfo.reportId).
             subscribe(
                 response => {
-                    console.log("ok");
+                    //console.log("ok");
                     this.postAction(response.messageEn, null);
                     this.selectDate(this.selectedDate);
                 },
                 error => {
-                    console.log(this.selectedDate)
+                    //console.log(this.selectedDate)
                     this.postAction(null, "Error deleting data");
                 }
             );
         } else {
             this.postAction(null, null);
-            console.log('Not deleted');
+            //console.log('Not deleted');
         }
     }
     deleteReturnsFileCons(){
@@ -561,18 +563,18 @@ export class MonitoringRiskHedgeFundComponent extends GoogleChartComponent {
             this.busy = this.monitoringRiskHFService.deleteReturnsConsFile(this.selectedDateMonitoringInfo.reportId).
             subscribe(
                 response => {
-                    console.log("ok");
+                    //console.log("ok");
                     this.postAction(response.messageEn, null);
                     this.selectDate(this.selectedDate);
                 },
                 error => {
-                    console.log(this.selectedDate)
+                    //console.log(this.selectedDate)
                     this.postAction(null, "Error deleting data");
                 }
             );
         } else {
             this.postAction(null, null);
-            console.log('Not deleted');
+            //console.log('Not deleted');
         }
     }
 
@@ -581,18 +583,18 @@ export class MonitoringRiskHedgeFundComponent extends GoogleChartComponent {
             this.busy = this.monitoringRiskHFService.deleteAllocationsConsFile(this.selectedDateMonitoringInfo.reportId).
             subscribe(
                 response => {
-                    console.log("ok");
+                    //console.log("ok");
                     this.postAction(response.messageEn, null);
                     this.selectDate(this.selectedDate);
                 },
                 error => {
-                    console.log(this.selectedDate)
+                    //console.log(this.selectedDate)
                     this.postAction(null, "Error deleting data");
                 }
             );
         } else {
             this.postAction(null, null);
-            console.log('Not deleted');
+            //console.log('Not deleted');
         }
     }
 
@@ -601,18 +603,18 @@ export class MonitoringRiskHedgeFundComponent extends GoogleChartComponent {
             this.busy = this.monitoringRiskHFService.deleteSubStrategy(this.selectedDate).
             subscribe(
                 response => {
-                    console.log("ok");
+                    //console.log("ok");
 
                     this.postAction(response.messageEn, null);
                 },
                 error => {
-                    console.log(this.selectedDate)
+                    //console.log(this.selectedDate)
                     this.postAction(null, "Error deleting data");
                 }
             );
         } else {
             this.postAction(null, null);
-            console.log('Not deleted');
+            //console.log('Not deleted');
         }
     }
 
@@ -622,8 +624,8 @@ export class MonitoringRiskHedgeFundComponent extends GoogleChartComponent {
                 (response) => {
                     this.subStrategyList = response.monitoringRiskHedgeFundAllocationSubStrategyDtoList;
 
-                    console.log(response);
-                    console.log(response.message.nameEn);
+                    //console.log(response);
+                    //console.log(response.message.nameEn);
 
                     this.postAction(response.message.nameEn, null);
 
@@ -638,8 +640,8 @@ export class MonitoringRiskHedgeFundComponent extends GoogleChartComponent {
                 error => {
                     // this.processErrorMessage(error);
                     this.postAction(null, JSON.parse(error).message.nameEn);
-                    console.log(error);
-                    console.log(JSON.parse(error).message.nameEn);
+                    //console.log(error);
+                    //console.log(JSON.parse(error).message.nameEn);
                 }
             )
     }
@@ -761,7 +763,9 @@ export class MonitoringRiskHedgeFundComponent extends GoogleChartComponent {
 
     public createNewReport(){
         var report = {"reportDate": null};
-        report.reportDate = '01-' + this.reportMonth + '-' + this.reportYear;
+        var reportDate = new Date(Number(this.reportYear), Number(this.reportMonth), 0); //'01-' + this.reportMonth + '-' + this.reportYear;
+        report.reportDate = reportDate.getDate() + "-" + (reportDate.getMonth() + 1 < 10 ? "0" + (reportDate.getMonth() + 1) : reportDate.getMonth() + 1) + "-" + reportDate.getFullYear();
+        //console.log(report);
         if(this.availableDates && this.availableDates.length > 0){
             for(var i = 0; i < this.availableDates.length; i++){
                 if(report.reportDate == this.availableDates[i]){
@@ -778,10 +782,18 @@ export class MonitoringRiskHedgeFundComponent extends GoogleChartComponent {
                     this.modalSuccessMessage = response.message != null && response.message.nameEn != null ?
                         response.message.nameEn : "Successfully saved report";
                     this.modalErrorMessage = null;
-                    this.reportMonth = null;
-                    this.reportYear = null;
-                    this.postAction(this.modalSuccessMessage, this.modalErrorMessage);
-                    this.selectDate(report.reportDate)
+                     this.busy = this.monitoringRiskHFService.getAvailableDates()
+                            .subscribe(
+                                response  => {
+                                    this.availableDates = response;
+                                    if(this.availableDates != null && this.availableDates.length > 0){
+                                        this.selectDate(this.availableDates[0]);
+                                    }
+                                },
+                                (error: ErrorResponse) => {
+                                    this.processErrorResponse(error);
+                                }
+                            )
                 },
                 (error) => {
                     this.processErrorResponse(error);
@@ -796,18 +808,13 @@ export class MonitoringRiskHedgeFundComponent extends GoogleChartComponent {
         this.reportYear = null;
         this.modalErrorMessage = null;
         this.modalSuccessMessage = null;
-        this.busy = this.monitoringRiskHFService.getAvailableDates()
-            .subscribe(
-                response  => {
-                    this.availableDates = response;
-                    if(this.availableDates != null && this.availableDates.length > 0){
-                        this.selectDate(this.availableDates[0]);
-                    }
-                },
-                (error: ErrorResponse) => {
-                    this.processErrorResponse(error);
-                }
-            )
 
+    }
+
+    openCreateReportModal(){
+        this.reportMonth = null;
+        this.reportYear = null;
+        this.modalErrorMessage = null;
+        this.modalSuccessMessage = null;
     }
 }

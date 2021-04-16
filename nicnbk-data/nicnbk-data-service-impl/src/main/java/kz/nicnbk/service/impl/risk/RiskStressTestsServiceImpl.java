@@ -85,6 +85,14 @@ public class RiskStressTestsServiceImpl implements RiskStressTestsService {
 
         RiskStressTestPagedSearchResult result = new RiskStressTestPagedSearchResult();
         int page = searchParams != null && searchParams.getPage() > 0 ? searchParams.getPage() - 1 : 0;
+        if(searchParams.getFromDate() == null) {
+            Date minDate = this.stressTestsRepository.getMinDate();
+            searchParams.setFromDate(minDate);
+        }
+        if(searchParams.getToDate() == null) {
+            Date maxDate = this.stressTestsRepository.getMaxDate();
+            searchParams.setToDate(maxDate);
+        }
         Page<RiskStressTests> entityPage = this.stressTestsRepository.getValuesBetweenDates(searchParams.getFromDate(), searchParams.getToDate(),
                 new PageRequest(page, searchParams.getPageSize(),
                         new Sort(Sort.Direction.DESC, "date", "id")));
@@ -127,7 +135,7 @@ public class RiskStressTestsServiceImpl implements RiskStressTestsService {
                 if(dto.getId() != null) {
                     // Check existing date
                     RiskStressTests existingRiskStressTest =
-                            this.stressTestsRepository.getRiskStressTestsByDate(dto.getDate());
+                            this.stressTestsRepository.findByDateAndName(dto.getDate(), dto.getName());
                     if (existingRiskStressTest != null && existingRiskStressTest.getId().longValue() != dto.getId().longValue()) {
                         String errorMessage = "Stress test record save failed: record already exists for date " + DateUtils.getDateFormatted(dto.getDate());
                         logger.error(errorMessage);
@@ -140,7 +148,7 @@ public class RiskStressTestsServiceImpl implements RiskStressTestsService {
                 }else {// New record
                     // Check existing date
                     RiskStressTests existingRiskStressTests =
-                            this.stressTestsRepository.getRiskStressTestsByDate(dto.getDate());
+                            this.stressTestsRepository.findByDateAndName(dto.getDate(), dto.getName());
 
                     if (existingRiskStressTests != null) {
                         String errorMessage = "Stress test record save failed: record already exists for date " + DateUtils.getDateFormatted(dto.getDate());

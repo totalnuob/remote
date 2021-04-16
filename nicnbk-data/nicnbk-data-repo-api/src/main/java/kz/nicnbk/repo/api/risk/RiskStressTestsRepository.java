@@ -1,5 +1,6 @@
 package kz.nicnbk.repo.api.risk;
 
+import com.sun.istack.internal.Nullable;
 import kz.nicnbk.repo.model.risk.PortfolioVarValue;
 import kz.nicnbk.repo.model.risk.RiskStressTests;
 import org.springframework.data.domain.Page;
@@ -18,6 +19,8 @@ public interface RiskStressTestsRepository extends PagingAndSortingRepository<Ri
 
     List<RiskStressTests> findByDate(Date date);
 
+    RiskStressTests findByDateAndName(Date date, String name);
+
     List<RiskStressTests> findAll();
 
     RiskStressTests getRiskStressTestsByDate(Date date);
@@ -25,10 +28,17 @@ public interface RiskStressTestsRepository extends PagingAndSortingRepository<Ri
     @Query("SELECT value FROM RiskStressTests value WHERE value.date >= :fromDate")
     Page<RiskStressTests> getValuesFromDate(@Param("fromDate") @Temporal(TemporalType.DATE) Date fromDate, Pageable pageable);
 
-    @Query("SELECT value FROM RiskStressTests value WHERE value.date >= :fromDate AND value.date <= :toDate")
+    @Query("SELECT value FROM RiskStressTests value WHERE (cast(:fromDate as date) is null OR value.date >= :fromDate)" +
+            " AND (cast(:toDate as date) is null OR value.date <= :toDate)")
     Page<RiskStressTests> getValuesBetweenDates(@Param("fromDate") @Temporal(TemporalType.DATE) Date fromDate,
                                                   @Param("toDate") @Temporal(TemporalType.DATE) Date toDate, Pageable pageable);
 
     @Query("SELECT entity FROM RiskStressTests entity WHERE entity.date = ?1")
     RiskStressTests getValuesForDate(@Param("date") @Temporal(TemporalType.DATE) Date date);
+
+    @Query("SELECT max(e.date) FROM RiskStressTests e")
+    Date getMaxDate();
+
+    @Query("SELECT min(e.date) FROM RiskStressTests e")
+    Date getMinDate();
 }

@@ -2,6 +2,7 @@ package kz.nicnbk.service.dto.benchmark;
 
 import kz.nicnbk.common.service.model.BaseDictionaryDto;
 import kz.nicnbk.common.service.model.BaseEntityDto;
+import kz.nicnbk.common.service.model.CreateUpdateBaseEntityDto;
 import kz.nicnbk.repo.model.benchmark.BenchmarkValue;
 
 import java.util.Date;
@@ -9,7 +10,7 @@ import java.util.Date;
 /**
  * Created by magzumov on 05.01.2017.
  */
-public class BenchmarkValueDto extends BaseEntityDto<BenchmarkValue> implements Comparable{
+public class BenchmarkValueDto extends CreateUpdateBaseEntityDto<BenchmarkValue> implements Comparable{
     private BaseDictionaryDto benchmark;
     private Date date;
     //private Double returnValue;

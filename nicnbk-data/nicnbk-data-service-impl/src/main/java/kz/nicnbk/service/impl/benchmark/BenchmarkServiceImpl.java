@@ -182,9 +182,6 @@ public class BenchmarkServiceImpl implements BenchmarkService {
         if(searchParams.getToDate() == null){
             searchParams.setToDate(new Date());
         }
-        // add 1 month before to calculate Return
-        Date prevMonthFromDate = DateUtils.getLastDayOfCurrentMonth(DateUtils.moveDateByMonths(searchParams.getFromDate(), -1));
-        BenchmarkValue prevMonthBenchmark = this.benchmarkValueRepository.getValuesForDateAndType(prevMonthFromDate, searchParams.getBenchmarkCode());
 
         Page<BenchmarkValue> entityPage = this.benchmarkValueRepository.getValuesBetweenDates(searchParams.getFromDate(), searchParams.getToDate(), searchParams.getBenchmarkCode(),
                 new PageRequest(page, searchParams.getPageSize(),
@@ -206,6 +203,8 @@ public class BenchmarkServiceImpl implements BenchmarkService {
             if(entityPage != null && entityPage.getContent() != null) {
                 List<BenchmarkValueDto> dtoList =this.benchmarkValueEntityConverter.disassembleList(entityPage.getContent());
                 if(dtoList != null && !dtoList.isEmpty()){
+                    Date prevMonthFromDate = DateUtils.getLastDayOfCurrentMonth(DateUtils.moveDateByMonths(DateUtils.getLastDayOfCurrentMonth(dtoList.get(dtoList.size() - 1).getDate()), -1));
+                    BenchmarkValue prevMonthBenchmark = this.benchmarkValueRepository.getValuesForDateAndType(prevMonthFromDate, searchParams.getBenchmarkCode());
                     if(prevMonthBenchmark != null) {
                         BenchmarkValueDto prevMonthBenchmarkDto = this.benchmarkValueEntityConverter.disassemble(prevMonthBenchmark);
                         dtoList.add(prevMonthBenchmarkDto);
@@ -449,60 +448,70 @@ public class BenchmarkServiceImpl implements BenchmarkService {
         return "http://" + base_url + ":8080/bloomberg/benchmark";
     }
 
-    private String convertToBloombergCode(String benchmarkCode) {
-        switch (benchmarkCode) {
-            case "HFRI_FOF":
-                return "HFRIFOF Index";
-            case "HFRI_AWC":
-                return "HFRIAWC Index";
-            case "MSCI_WRLD":
-                return "MXWO Index";
-            case "MSCIACWIIM":
-                return "MXWDIM Index";
-            case "MSCI_EM":
-                return "MXEF Index";
-            case "US_HIGHYLD":
-                return "H0A0 Index";
-            case "SP500_SPX":
-                return "SPX Index";
-            case "SP500_SPTR":
-                return "SPTR Index";
-            case "GLOBAL_FI":
-                return "LEGATRUH Index";
-            case "T_BILLS":
-                return "G0O1 Index";
-            default:
-                return null;
+    private String convertToBloombergCode(String unicCode) {
+        for(BenchmarkLookup lookup: BenchmarkLookup.values()){
+            if(lookup.getCode().equalsIgnoreCase(unicCode)){
+                return lookup.getCodeBloomberg() != null ? lookup.getCodeBloomberg() + " Index" : null;
+            }
         }
-
+        return null;
+//        switch (benchmarkCode) {
+//            case "HFRI_FOF":
+//                return  BenchmarkLookup.HFRIFOF.getCode();//"HFRIFOF Index";
+//            case "HFRI_AWC":
+//                return "HFRIAWC Index";
+//            case "MSCI_WRLD":
+//                return "MXWO Index";
+//            case "MSCIACWIIM":
+//                return "MXWDIM Index";
+//            case "MSCI_EM":
+//                return "MXEF Index";
+//            case "US_HIGHYLD":
+//                return "H0A0 Index";
+//            case "SP500_SPX":
+//                return "SPX Index";
+//            case "SP500_SPTR":
+//                return "SPTR Index";
+//            case "GLOBAL_FI":
+//                return "LEGATRUH Index";
+//            case "T_BILLS":
+//                return "G0O1 Index";
+//            default:
+//                return null;
+//        }
     }
 
-    private String convertToUNIICCode(String benchmarkCode) {
-        switch (benchmarkCode) {
-            case "HFRIFOF Index":
-                return BenchmarkLookup.HFRIFOF.getCode();
-            case "HFRIAWC Index":
-                return BenchmarkLookup.HFRIAWC.getCode();
-            case "MXWO Index":
-                return BenchmarkLookup.MSCI_WORLD.getCode();
-            case "MXWDIM Index":
-                return BenchmarkLookup.MSCI_ACWI_IMI.getCode();
-            case "MXEF Index":
-                return BenchmarkLookup.MSCI_EM.getCode();
-            case "H0A0 Index":
-                return BenchmarkLookup.US_HIGH_YIELDS.getCode();
-            case "SPX Index":
-                return BenchmarkLookup.SNP_500_SPX.getCode();
-            case "LEGATRUH Index":
-                return BenchmarkLookup.GLOBAL_FI.getCode();
-            case "G0O1 Index":
-                return BenchmarkLookup.T_BILLS.getCode();
-            case "SPTR Index":
-                return BenchmarkLookup.SNP_500_SPTR.getCode();
-            default:
-                return null;
+    private String convertToUNIICCode(String bloombergCode) {
+        for(BenchmarkLookup lookup: BenchmarkLookup.values()){
+            if((lookup.getCodeBloomberg() + " Index").equalsIgnoreCase(bloombergCode)){
+                return lookup.getCode();
+            }
         }
-
+        return null;
+//        switch (benchmarkCode) {
+//            case "HFRIFOF Index":
+//                return BenchmarkLookup.HFRIFOF.getCode();
+//            case "HFRIAWC Index":
+//                return BenchmarkLookup.HFRIAWC.getCode();
+//            case "MXWO Index":
+//                return BenchmarkLookup.MSCI_WORLD.getCode();
+//            case "MXWDIM Index":
+//                return BenchmarkLookup.MSCI_ACWI_IMI.getCode();
+//            case "MXEF Index":
+//                return BenchmarkLookup.MSCI_EM.getCode();
+//            case "H0A0 Index":
+//                return BenchmarkLookup.US_HIGH_YIELDS.getCode();
+//            case "SPX Index":
+//                return BenchmarkLookup.SNP_500_SPX.getCode();
+//            case "LEGATRUH Index":
+//                return BenchmarkLookup.LEGATRUH.getCode();
+//            case "G0O1 Index":
+//                return BenchmarkLookup.T_BILLS.getCode();
+//            case "SPTR Index":
+//                return BenchmarkLookup.SNP_500_SPTR.getCode();
+//            default:
+//                return null;
+//        }
     }
 
     private ListResponseDto loadBenchmarksBB(BenchmarkSearchParams searchParams) throws ConnectException, Exception {
@@ -521,6 +530,11 @@ public class BenchmarkServiceImpl implements BenchmarkService {
         }
         ResponseEntity<String> responseEntity = (new RestTemplate()).postForEntity(url, searchParams, String.class);
         String response = responseEntity.getBody();
+        if(response == null){
+            logger.error("Failed to load data: please check Bloomberg is launched.");
+            responseDto.setErrorMessageEn("Failed to load data: please check Bloomberg is launched.");
+            return responseDto;
+        }
         ObjectMapper mapper = new ObjectMapper();
         ResponseDto result = mapper.readValue(response, new TypeReference<ResponseDto>() {});
 
