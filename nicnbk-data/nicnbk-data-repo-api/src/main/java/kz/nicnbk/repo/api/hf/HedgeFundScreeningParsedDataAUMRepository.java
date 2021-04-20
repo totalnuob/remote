@@ -25,6 +25,10 @@ public interface HedgeFundScreeningParsedDataAUMRepository extends PagingAndSort
             " e.date >= ?2 AND e.date <= ?3 ")
     List<HedgeFundScreeningParsedDataAUM> findByScreeningIdAndDateRange(Long screeningId, Date dateFrom, Date dateTo, Sort sort);
 
+    @Query("SELECT e FROM HedgeFundScreeningParsedDataAUM e WHERE e.screening.id=?1 AND " +
+            " e.fundId=?2 ")
+    List<HedgeFundScreeningParsedDataAUM> findByScreeningIdAndFundIdSorted(Long screeningId, Long fundId, Sort sort);
+
     @Query("SELECT max(e.date) FROM HedgeFundScreeningParsedDataAUM e WHERE e.screening.id=?1")
     Date getMaxDate(Long screeningId);
 

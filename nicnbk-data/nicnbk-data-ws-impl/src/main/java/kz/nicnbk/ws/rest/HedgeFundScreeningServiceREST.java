@@ -44,14 +44,14 @@ public class HedgeFundScreeningServiceREST extends CommonServiceREST{
     @PreAuthorize("hasRole('ROLE_HEDGE_FUND_VIEWER') OR hasRole('ROLE_HEDGE_FUND_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/get/{id}", method = RequestMethod.GET)
     public ResponseEntity get(@PathVariable long id){
-        HedgeFundScreeningDto dto = this.screeningService.get(id);
+        HedgeFundScreeningDto dto = this.screeningService.getScreening(id);
         return buildNonNullResponse(dto);
     }
 
     @PreAuthorize("hasRole('ROLE_HEDGE_FUND_VIEWER') OR hasRole('ROLE_HEDGE_FUND_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/getAll", method = RequestMethod.GET)
     public ResponseEntity getAll(){
-        List<HedgeFundScreeningDto> dto = this.screeningService.getAll();
+        List<HedgeFundScreeningDto> dto = this.screeningService.getAllScreenings();
         return buildNonNullResponse(dto);
     }
 
@@ -74,7 +74,7 @@ public class HedgeFundScreeningServiceREST extends CommonServiceREST{
         String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
         String username = this.tokenService.decode(token).getUsername();
 
-        HedgeFundScreeningDto dto = screeningService.get(screeningId);
+        HedgeFundScreeningDto dto = screeningService.getScreening(screeningId);
         // TODO: Check roles and permissions!
 
         if(files == null || files.length != 1){
@@ -99,7 +99,7 @@ public class HedgeFundScreeningServiceREST extends CommonServiceREST{
         String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
         String username = this.tokenService.decode(token).getUsername();
 
-        HedgeFundScreeningDto dto = screeningService.get(screeningId);
+        HedgeFundScreeningDto dto = screeningService.getScreening(screeningId);
         // TODO: Check roles and permissions!
 
         if(files == null || files.length != 1){
@@ -121,7 +121,7 @@ public class HedgeFundScreeningServiceREST extends CommonServiceREST{
     @PreAuthorize("hasRole('ROLE_HEDGE_FUND_VIEWER') OR hasRole('ROLE_HEDGE_FUND_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/search", method = RequestMethod.POST)
     public ResponseEntity search(@RequestBody HedgeFundScreeningSearchParams searchParams){
-        HedgeFundScreeningPagedSearchResult searchResult = this.screeningService.search(searchParams);
+        HedgeFundScreeningPagedSearchResult searchResult = this.screeningService.searchScreenings(searchParams);
         return buildNonNullResponse(searchResult);
     }
 
@@ -191,7 +191,7 @@ public class HedgeFundScreeningServiceREST extends CommonServiceREST{
         String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
         String username = this.tokenService.decode(token).getUsername();
 
-        Long id = this.screeningService.saveFilteredResult(filteredResultDto, username);
+        Long id = this.screeningService.saveFilters(filteredResultDto, username);
 
         return buildEntitySaveResponse(id);
     }

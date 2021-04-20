@@ -249,7 +249,7 @@ export class HFScreeningFilteredResultsEditComponent extends GoogleChartComponen
             var excludedCount = 0;
             for(var i = 0; i < unqualifiedFunds.length; i++){
                 var fund = unqualifiedFunds[i];
-                if(!fund.strategyAUMCheck){
+                if(!fund.fundAUMCheck){
                     fundAUMCount++;
                 }
                 if(!fund.managerAUMCheck){
@@ -539,8 +539,8 @@ export class HFScreeningFilteredResultsEditComponent extends GoogleChartComponen
             var fundAUM = fund.fundAUM != null ? Number(fund.fundAUM.toString().replace(/,/g, '')) : 0;
             return Number(fund.managerAUM.toString().replace(/,/g, '')) >= Number(this.filteredResult.managerAUM.toString().replace(/,/g, '')) &&
                 Number(fund.managerAUM.toString().replace(/,/g, '')) >= fundAUM;
-        }else if(fund.strategyAUM != null){
-            return Number(fund.strategyAUM.toString().replace(/,/g, '')) >= Number(this.filteredResult.managerAUM.toString().replace(/,/g, ''))
+//        }else if(fund.strategyAUM != null){
+//            return Number(fund.strategyAUM.toString().replace(/,/g, '')) >= Number(this.filteredResult.managerAUM.toString().replace(/,/g, ''))
         }else if(fund.fundAUM != null){
             return Number(fund.fundAUM.toString().replace(/,/g, '')) >= Number(this.filteredResult.managerAUM.toString().replace(/,/g, ''))
         }else{

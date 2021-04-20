@@ -60,7 +60,8 @@ public class HedgeFundScreeningSavedResultFundsEntityConverter extends BaseDozer
         entity.setCfVar(fundDto.getCfVar());
         entity.setTotalScore(fundDto.getTotalScore());
 
-        entity.setStrategyAUMCheck(fundDto.getStrategyAUMCheck());
+        //entity.setStrategyAUMCheck(fundDto.getStrategyAUMCheck());
+        entity.setFundAUMCheck(fundDto.getFundAUMCheck());
         entity.setManagerAUMCheck(fundDto.getManagerAUMCheck());
         entity.setTrackRecordCheck(fundDto.getTrackRecordCheck());
         entity.setExcluded(fundDto.isExcluded());

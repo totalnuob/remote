@@ -39,7 +39,8 @@ public class HedgeFundScreeningSavedResultFundsDto extends CreateUpdateBaseEntit
     private Date recentFundAUMDate;
     private Date recentTrackRecordDate;
 
-    private Boolean strategyAUMCheck;
+    //private Boolean strategyAUMCheck;
+    private Boolean fundAUMCheck;
     private Boolean managerAUMCheck;
     private Boolean trackRecordCheck;
     private Boolean excluded;
@@ -254,13 +255,13 @@ public class HedgeFundScreeningSavedResultFundsDto extends CreateUpdateBaseEntit
         this.totalScore = totalScore;
     }
 
-    public Boolean getStrategyAUMCheck() {
-        return strategyAUMCheck;
-    }
-
-    public void setStrategyAUMCheck(Boolean strategyAUMCheck) {
-        this.strategyAUMCheck = strategyAUMCheck;
-    }
+//    public Boolean getStrategyAUMCheck() {
+//        return strategyAUMCheck;
+//    }
+//
+//    public void setStrategyAUMCheck(Boolean strategyAUMCheck) {
+//        this.strategyAUMCheck = strategyAUMCheck;
+//    }
 
     public Boolean getManagerAUMCheck() {
         return managerAUMCheck;
@@ -292,6 +293,14 @@ public class HedgeFundScreeningSavedResultFundsDto extends CreateUpdateBaseEntit
 
     public void setAdded(Boolean added) {
         this.added = added;
+    }
+
+    public Boolean getFundAUMCheck() {
+        return fundAUMCheck;
+    }
+
+    public void setFundAUMCheck(Boolean fundAUMCheck) {
+        this.fundAUMCheck = fundAUMCheck;
     }
 
     public Double getActualStrategyAUM(){

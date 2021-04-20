@@ -46,7 +46,8 @@ public class HedgeFundScreeningSavedResultFunds extends BaseEntity {
     private Date recentFundAUMDate;
     private Date recentTrackRecordDate;
 
-    private Boolean strategyAUMCheck;
+    //private Boolean strategyAUMCheck;
+    private Boolean fundAUMCheck;
     private Boolean managerAUMCheck;
     private Boolean trackRecordCheck;
     private Boolean excluded;
@@ -289,14 +290,14 @@ public class HedgeFundScreeningSavedResultFunds extends BaseEntity {
         this.totalScore = totalScore;
     }
 
-    @Column(name="strategy_aum_check")
-    public Boolean getStrategyAUMCheck() {
-        return strategyAUMCheck;
-    }
-
-    public void setStrategyAUMCheck(Boolean strategyAUMCheck) {
-        this.strategyAUMCheck = strategyAUMCheck;
-    }
+//    @Column(name="strategy_aum_check")
+//    public Boolean getStrategyAUMCheck() {
+//        return strategyAUMCheck;
+//    }
+//
+//    public void setStrategyAUMCheck(Boolean strategyAUMCheck) {
+//        this.strategyAUMCheck = strategyAUMCheck;
+//    }
 
     @Column(name="manager_aum_check")
     public Boolean getManagerAUMCheck() {
@@ -330,5 +331,14 @@ public class HedgeFundScreeningSavedResultFunds extends BaseEntity {
 
     public void setAdded(Boolean added) {
         this.added = added;
+    }
+
+    @Column(name="fund_aum_check")
+    public Boolean getFundAUMCheck() {
+        return fundAUMCheck;
+    }
+
+    public void setFundAUMCheck(Boolean fundAUMCheck) {
+        this.fundAUMCheck = fundAUMCheck;
     }
 }

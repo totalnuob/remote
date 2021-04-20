@@ -39,7 +39,8 @@ export class HedgeFundScreeningFilteredResultFund {
 
     returns;
 
-    strategyAUMCheck: boolean;
+    //strategyAUMCheck: boolean;
+    fundAUMCheck: boolean;
     managerAUMCheck: boolean;
     trackRecordCheck: boolean;
 

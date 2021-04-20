@@ -56,7 +56,8 @@ public class HedgeFundScreeningParsedDataDto extends BaseEntityDto implements Co
 
     private List<HedgeFundScreeningFundReturnDto> returns;
 
-    private Boolean strategyAUMCheck;
+    //private Boolean strategyAUMCheck;
+    private Boolean fundAUMCheck;
     private Boolean managerAUMCheck;
     private Boolean trackRecordCheck;
 
@@ -371,12 +372,21 @@ public class HedgeFundScreeningParsedDataDto extends BaseEntityDto implements Co
         this.excludeFromStrategyAUM = excludeFromStrategyAUM;
     }
 
-    public Boolean getStrategyAUMCheck() {
-        return strategyAUMCheck;
+//    public Boolean getStrategyAUMCheck() {
+//        return strategyAUMCheck;
+//    }
+//
+//    public void setStrategyAUMCheck(Boolean strategyAUMCheck) {
+//        this.strategyAUMCheck = strategyAUMCheck;
+//    }
+
+
+    public Boolean getFundAUMCheck() {
+        return fundAUMCheck;
     }
 
-    public void setStrategyAUMCheck(Boolean strategyAUMCheck) {
-        this.strategyAUMCheck = strategyAUMCheck;
+    public void setFundAUMCheck(Boolean fundAUMCheck) {
+        this.fundAUMCheck = fundAUMCheck;
     }
 
     public Boolean getManagerAUMCheck() {

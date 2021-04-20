@@ -58,7 +58,7 @@
                 <h4>Screening Parameters</h4>
                 <div class="row withpadding">
                     <div class="col-md-6">
-                        <span class="col-md-4" style="font-weight: bold;">Strategy AUM</span>
+                        <span class="col-md-4" style="font-weight: bold;">Fund AUM</span>
                         <span class="col-md-2">{{getAmountShort(filteredResult?.fundAUM)}}</span>
 
                     </div>
@@ -180,7 +180,7 @@
                                     <th>Omega</th>
                                     <th>TOTAL</th>
                                     <th>Fund AUM</th>
-                                    <th>Strategy AUM</th>
+<!--                                    <th>Fund AUM</th>-->
                                     <th>Manager AUM</th>
                                 </tr>
                                 </thead>
@@ -199,7 +199,7 @@
                                     <td>{{fund.omega| number:'1.2-2'}}</td>
                                     <td style="background-color: #f9eaea;">{{fund.totalScore| number:'1.2-2'}}</td>
                                     <td>{{getAmountShort(fund.fundAUM)}}</td>
-                                    <td>{{getAmountShort(fund.strategyAUM)}}</td>
+<!--                                    <td>{{getAmountShort(fund.strategyAUM)}}</td>-->
                                     <td>{{getAmountShort(fund.managerAUM)}}</td>
                                 </tr>
                                 <tr>
@@ -240,7 +240,7 @@
                                     <th>Omega</th>
                                     <th>TOTAL</th>
                                     <th>Fund AUM</th>
-                                    <th>Strategy AUM</th>
+<!--                                    <th>Strategy AUM</th>-->
                                     <th>Manager AUM</th>
                                 </tr>
                                 </thead>
@@ -259,7 +259,7 @@
                                     <td>{{fund.omega| number:'1.2-2'}}</td>
                                     <td style="background-color: #f9eaea">{{fund.totalScore| number:'1.2-2'}}</td>
                                     <td>{{getAmountShort(fund.fundAUM)}}</td>
-                                    <td>{{getAmountShort(fund.strategyAUM)}}</td>
+<!--                                    <td>{{getAmountShort(fund.strategyAUM)}}</td>-->
                                     <td>{{getAmountShort(fund.managerAUM)}}</td>
                                 </tr>
                                 </tbody>
@@ -288,7 +288,7 @@
                                     <th>Investment Manager</th>
                                     <th>Main Strategy</th>
                                     <th>Fund AUM</th>
-                                    <th>Strategy AUM</th>
+<!--                                    <th>Strategy AUM</th>-->
                                     <th>Manager AUM</th>
                                     <th>Track record</th>
                                 </tr>
@@ -329,22 +329,22 @@
                                               data-toggle="tooltip" data-placement="top" title="{{fund.fundAUMDate}}">
                                             </span>
                                     </td>
-                                    <td>
-                                        <!--                                            {{getAmountShort(fund.strategyAUM)}}-->
-                                        <span style="color:green" *ngIf="fund.strategyAUMCheck" class="glyphicon glyphicon-ok"></span>
-                                        <span style="color:red" *ngIf="!fund.strategyAUMCheck" class="glyphicon glyphicon-remove"></span>
-                                        &nbsp;&nbsp;
-                                        <span *ngIf="fund?.strategyAUM != null">
-                                                {{getAmountShort(fund.strategyAUM)}}
-                                            </span>
-                                        <span *ngIf="fund.strategyAUM == null && fund.recentStrategyAUM != null">
-                                                {{getAmountShort(fund.recentStrategyAUM)}} {{fund.recentStrategyAUMDate != null ? getReportDateShortFormatted(fund.recentStrategyAUMDate) : ''}}
-                                            </span>
-                                        <span class="glyphicon glyphicon-exclamation-sign"
-                                              *ngIf="fund.strategyAUMWithMissingCurrency"
-                                              data-toggle="tooltip" data-placement="top" title="Currency rates missing for some of the Manager funds">
-                                            </span>
-                                    </td>
+<!--                                    <td>-->
+<!--                                        &lt;!&ndash;                                            {{getAmountShort(fund.strategyAUM)}}&ndash;&gt;-->
+<!--                                        <span style="color:green" *ngIf="fund.fundAUMCheck" class="glyphicon glyphicon-ok"></span>-->
+<!--                                        <span style="color:red" *ngIf="!fund.fundAUMCheck" class="glyphicon glyphicon-remove"></span>-->
+<!--                                        &nbsp;&nbsp;-->
+<!--                                        <span *ngIf="fund?.strategyAUM != null">-->
+<!--                                                {{getAmountShort(fund.strategyAUM)}}-->
+<!--                                            </span>-->
+<!--                                        <span *ngIf="fund.strategyAUM == null && fund.recentStrategyAUM != null">-->
+<!--                                                {{getAmountShort(fund.recentStrategyAUM)}} {{fund.recentStrategyAUMDate != null ? getReportDateShortFormatted(fund.recentStrategyAUMDate) : ''}}-->
+<!--                                            </span>-->
+<!--                                        <span class="glyphicon glyphicon-exclamation-sign"-->
+<!--                                              *ngIf="fund.strategyAUMWithMissingCurrency"-->
+<!--                                              data-toggle="tooltip" data-placement="top" title="Currency rates missing for some of the Manager funds">-->
+<!--                                            </span>-->
+<!--                                    </td>-->
                                     <td>
                                         <!--                                            {{getAmountShort(fund.managerAUM)}}-->
                                         <span style="color:green" *ngIf="fund.managerAUMCheck" class="glyphicon glyphicon-ok"></span>
@@ -385,7 +385,7 @@
                                     <th>Investment Manager</th>
                                     <th>Main Strategy</th>
                                     <th>Fund AUM</th>
-                                    <th>Strategy AUM</th>
+<!--                                    <th>Strategy AUM</th>-->
                                     <th>Manager AUM</th>
                                 </tr>
                                 </thead>
@@ -397,7 +397,7 @@
                                     <td>{{fund.investmentManager}}</td>
                                     <td>{{fund.mainStrategy}}</td>
                                     <td>{{getAmountShort(fund.fundAUM)}}</td>
-                                    <td>{{getAmountShort(fund.strategyAUM)}}</td>
+<!--                                    <td>{{getAmountShort(fund.strategyAUM)}}</td>-->
                                     <td>{{getAmountShort(fund.managerAUM)}}</td>
                                 </tr>
                                 </tbody>
@@ -552,7 +552,7 @@
                         <div class="col-md-6">
                             <table class="table table-hover">
                                 <tr>
-                                    <td>Strategy AUM,$</td>
+                                    <td>Fund AUM,$</td>
                                     <td><input class="form-control"  required type="text" name="fundAUM" [(ngModel)]="filteredResult.fundAUM"
                                                [disabled]="!filteredResult?.editable"
                                                (keyup)="onNumberChangeFundAUM()"/></td>
@@ -746,7 +746,7 @@
                                         <td>{{fund.editedFundAUMComment}}</td>
                                         <td>{{getAmountShort(fund.managerAUM)}}</td>
                                         <td>
-                                            <span *ngIf="filteredResult.editable" (click)="edit(fund)">
+                                            <span *ngIf="filteredResult.editable" (click)="editFund(fund)" data-toggle="modal" data-target="#fundEditModal"s>
                                                     <span class="glyphicon glyphicon-pencil"></span>
                                             </span>
                                         </td>
@@ -782,10 +782,10 @@
                                         <!--                                <td>{{fund.mainStrategy}}</td>-->
                                         <td>{{fund.fundStatus}}</td>
                                         <td>
-                                    <span [style.text-decoration]="fund.excludeFromStrategyAUM ? 'line-through' : ''"
-                                          data-toggle="tooltip" data-placement="top" title="{{fund.excludeFromStrategyAUM ? 'Excluded from Strategy AUM calculation' : 'Included into Strategy AUM calculation'}}">
-                                        {{getAmountShort(fund.fundAUM)}}
-                                    </span>
+<!--                                    <span [style.text-decoration]="fund.excludeFromStrategyAUM ? 'line-through' : ''"-->
+<!--                                          data-toggle="tooltip" data-placement="top" title="{{fund.excludeFromStrategyAUM ? 'Excluded from Strategy AUM calculation' : 'Included into Strategy AUM calculation'}}">-->
+<!--                                        {{getAmountShort(fund.fundAUM)}}-->
+<!--                                    </span>-->
                                         </td>
                                         <td>{{getAmountShort(fund.managerAUM)}}</td>
                                         <td>{{fund.excludeComment}}</td>
@@ -927,7 +927,7 @@
                 <h4>Screening Parameters</h4>
                 <div class="row withpadding">
                     <div class="col-md-6">
-                        <span class="col-md-4" style="font-weight: bold;">Strategy AUM</span>
+                        <span class="col-md-4" style="font-weight: bold;">Fund AUM</span>
                         <span class="col-md-2">{{getAmountShort(selectedArchivedResult?.fundAUM)}}</span>
                     </div>
                     <div class="col-md-6">
@@ -1028,7 +1028,7 @@
                                     <th>Omega</th>
                                     <th>TOTAL</th>
                                     <th>Fund AUM</th>
-                                    <th>Strategy AUM</th>
+<!--                                    <th>Strategy AUM</th>-->
                                     <th>Manager AUM</th>
                                 </tr>
                                 </thead>
@@ -1047,7 +1047,7 @@
                                     <td>{{fund.omega| number:'1.2-2'}}</td>
                                     <td style="background-color: #f9eaea;">{{fund.totalScore| number:'1.2-2'}}</td>
                                     <td>{{getAmountShort(fund.fundAUM)}}</td>
-                                    <td>{{getAmountShort(fund.strategyAUM)}}</td>
+<!--                                    <td>{{getAmountShort(fund.strategyAUM)}}</td>-->
                                     <td>{{getAmountShort(fund.managerAUM)}}</td>
                                 </tr>
                                 <tr>
@@ -1086,7 +1086,7 @@
                                     <th>Omega</th>
                                     <th>TOTAL</th>
                                     <th>Fund AUM</th>
-                                    <th>Strategy AUM</th>
+<!--                                    <th>Strategy AUM</th>-->
                                     <th>Manager AUM</th>
                                 </tr>
                                 </thead>
@@ -1106,7 +1106,7 @@
                                     <td>{{fund.omega| number:'1.2-2'}}</td>
                                     <td style="background-color: #f9eaea">{{fund.totalScore| number:'1.2-2'}}</td>
                                     <td>{{getAmountShort(fund.fundAUM)}}</td>
-                                    <td>{{getAmountShort(fund.strategyAUM)}}</td>
+<!--                                    <td>{{getAmountShort(fund.strategyAUM)}}</td>-->
                                     <td>{{getAmountShort(fund.managerAUM)}}</td>
                                 </tr>
                                 </tbody>
@@ -1134,7 +1134,7 @@
                                     <th>Investment Manager</th>
                                     <th>Main Strategy</th>
                                     <th>Fund AUM</th>
-                                    <th>Strategy AUM</th>
+<!--                                    <th>Strategy AUM</th>-->
                                     <th>Manager AUM</th>
                                     <th>Track record</th>
                                 </tr>
@@ -1175,22 +1175,22 @@
                                               data-toggle="tooltip" data-placement="top" title="{{fund.fundAUMDate}}">
                                             </span>
                                     </td>
-                                    <td>
-                                        <!--                                            {{getAmountShort(fund.strategyAUM)}}-->
-                                        <span style="color:green" *ngIf="fund.strategyAUMCheck" class="glyphicon glyphicon-ok"></span>
-                                        <span style="color:red" *ngIf="!fund.strategyAUMCheck" class="glyphicon glyphicon-remove"></span>
-                                        &nbsp;&nbsp;
-                                        <span *ngIf="fund?.strategyAUM != null">
-                                                {{getAmountShort(fund.strategyAUM)}}
-                                            </span>
-                                        <span *ngIf="fund.strategyAUM == null && fund.recentStrategyAUM != null">
-                                                {{getAmountShort(fund.recentStrategyAUM)}} {{fund.recentStrategyAUMDate != null ? getReportDateShortFormatted(fund.recentStrategyAUMDate) : ''}}
-                                            </span>
-                                        <span class="glyphicon glyphicon-exclamation-sign"
-                                              *ngIf="fund.strategyAUMWithMissingCurrency"
-                                              data-toggle="tooltip" data-placement="top" title="Currency rates missing for some of the Manager funds">
-                                            </span>
-                                    </td>
+<!--                                    <td>-->
+<!--                                        &lt;!&ndash;                                            {{getAmountShort(fund.strategyAUM)}}&ndash;&gt;-->
+<!--                                        <span style="color:green" *ngIf="fund.fundAUMCheck" class="glyphicon glyphicon-ok"></span>-->
+<!--                                        <span style="color:red" *ngIf="!fund.fundAUMCheck" class="glyphicon glyphicon-remove"></span>-->
+<!--                                        &nbsp;&nbsp;-->
+<!--                                        <span *ngIf="fund?.strategyAUM != null">-->
+<!--                                                {{getAmountShort(fund.strategyAUM)}}-->
+<!--                                            </span>-->
+<!--                                        <span *ngIf="fund.strategyAUM == null && fund.recentStrategyAUM != null">-->
+<!--                                                {{getAmountShort(fund.recentStrategyAUM)}} {{fund.recentStrategyAUMDate != null ? getReportDateShortFormatted(fund.recentStrategyAUMDate) : ''}}-->
+<!--                                            </span>-->
+<!--                                        <span class="glyphicon glyphicon-exclamation-sign"-->
+<!--                                              *ngIf="fund.strategyAUMWithMissingCurrency"-->
+<!--                                              data-toggle="tooltip" data-placement="top" title="Currency rates missing for some of the Manager funds">-->
+<!--                                            </span>-->
+<!--                                    </td>-->
                                     <td>
                                         <!--                                            {{getAmountShort(fund.managerAUM)}}-->
                                         <span style="color:green" *ngIf="fund.managerAUMCheck" class="glyphicon glyphicon-ok"></span>
@@ -1231,7 +1231,7 @@
                                     <th>Investment Manager</th>
                                     <th>Main Strategy</th>
                                     <th>Fund AUM</th>
-                                    <th>Strategy AUM</th>
+<!--                                    <th>Strategy AUM</th>-->
                                     <th>Manager AUM</th>
                                 </tr>
                                 </thead>
@@ -1243,7 +1243,7 @@
                                     <td>{{fund.investmentManager}}</td>
                                     <td>{{fund.mainStrategy}}</td>
                                     <td>{{getAmountShort(fund.fundAUM)}}</td>
-                                    <td>{{getAmountShort(fund.strategyAUM)}}</td>
+<!--                                    <td>{{getAmountShort(fund.strategyAUM)}}</td>-->
                                     <td>{{getAmountShort(fund.managerAUM)}}</td>
                                 </tr>
                                 </tbody>
@@ -1451,7 +1451,7 @@
                                     <th  *ngIf="fundListType == 1" style="background-color: #f9eaea">Total</th>
                                     <th colspan="2">FUND AUM</th>
                                     <!--<th>CURRENCY/AUM</th>-->
-                                    <th>STRATEGY AUM,$</th>
+<!--                                    <th>STRATEGY AUM,$</th>-->
                                     <th>MANAGER AUM,$</th>
                                     <th *ngIf="isUnqualifiedFundList">TRACK RECORD</th>
                                     <th>&nbsp;</th>
@@ -1525,29 +1525,29 @@
                                             <span class="glyphicon glyphicon-plus-sign"></span>
                                         </a>
                                     </td>
-                                    <td align="center">
-                                        <!--<div *ngIf="fund?.differentManagerCurrencies == null || !fund?.differentManagerCurrencies">-->
-                                        <span style="color:green" *ngIf="fund.strategyAUMCheck" class="glyphicon glyphicon-ok"></span>
-                                        <span style="color:red" *ngIf="!fund.strategyAUMCheck" class="glyphicon glyphicon-remove"></span>
-                                        &nbsp;&nbsp;
-                                            <span *ngIf="fund?.strategyAUM != null">
-                                                {{getAmountShort(fund.strategyAUM)}}
-                                            </span>
-                                            <span *ngIf="fund.strategyAUM == null && fund.recentStrategyAUM != null">
-                                                {{getAmountShort(fund.recentStrategyAUM)}} {{fund.recentStrategyAUMDate != null ? getReportDateShortFormatted(fund.recentStrategyAUMDate) : ''}}
-                                            </span>
-                                            <span class="glyphicon glyphicon-exclamation-sign"
-                                                  *ngIf="fund.strategyAUMWithMissingCurrency"
-                                                  data-toggle="tooltip" data-placement="top" title="Currency rates missing for some of the Manager funds">
-                                            </span>
-                                            <!--<a data-toggle="modal" data-target="#infoModal" style="cursor: pointer">-->
-                                                <!--<span class="glyphicon glyphicon-exclamation-sign"></span>-->
-                                            <!--</a>-->
-                                        <!--</div>-->
-                                        <!--<div *ngIf="fund?.differentManagerCurrencies">-->
-                                            <!--<span style="color: red">Different currency funds for manager</span>-->
-                                        <!--</div>-->
-                                    </td>
+<!--                                    <td align="center">-->
+<!--                                        &lt;!&ndash;<div *ngIf="fund?.differentManagerCurrencies == null || !fund?.differentManagerCurrencies">&ndash;&gt;-->
+<!--                                        <span style="color:green" *ngIf="fund.fundAUMCheck" class="glyphicon glyphicon-ok"></span>-->
+<!--                                        <span style="color:red" *ngIf="!fund.fundAUMCheck" class="glyphicon glyphicon-remove"></span>-->
+<!--                                        &nbsp;&nbsp;-->
+<!--                                            <span *ngIf="fund?.strategyAUM != null">-->
+<!--                                                {{getAmountShort(fund.strategyAUM)}}-->
+<!--                                            </span>-->
+<!--                                            <span *ngIf="fund.strategyAUM == null && fund.recentStrategyAUM != null">-->
+<!--                                                {{getAmountShort(fund.recentStrategyAUM)}} {{fund.recentStrategyAUMDate != null ? getReportDateShortFormatted(fund.recentStrategyAUMDate) : ''}}-->
+<!--                                            </span>-->
+<!--                                            <span class="glyphicon glyphicon-exclamation-sign"-->
+<!--                                                  *ngIf="fund.strategyAUMWithMissingCurrency"-->
+<!--                                                  data-toggle="tooltip" data-placement="top" title="Currency rates missing for some of the Manager funds">-->
+<!--                                            </span>-->
+<!--                                            &lt;!&ndash;<a data-toggle="modal" data-target="#infoModal" style="cursor: pointer">&ndash;&gt;-->
+<!--                                                &lt;!&ndash;<span class="glyphicon glyphicon-exclamation-sign"></span>&ndash;&gt;-->
+<!--                                            &lt;!&ndash;</a>&ndash;&gt;-->
+<!--                                        &lt;!&ndash;</div>&ndash;&gt;-->
+<!--                                        &lt;!&ndash;<div *ngIf="fund?.differentManagerCurrencies">&ndash;&gt;-->
+<!--                                            &lt;!&ndash;<span style="color: red">Different currency funds for manager</span>&ndash;&gt;-->
+<!--                                        &lt;!&ndash;</div>&ndash;&gt;-->
+<!--                                    </td>-->
                                     <td *ngIf="!fund.editing">
                                         <span style="color:green" *ngIf="fund.managerAUMCheck" class="glyphicon glyphicon-ok"></span>
                                         <span style="color:red" *ngIf="!fund.managerAUMCheck" class="glyphicon glyphicon-remove"></span>
@@ -1685,7 +1685,7 @@
                                 <th width="20%">INVESTMENT MANAGER</th>
 <!--                                <th width="20%">MAIN STRATEGY</th>-->
                                 <th width="20%">FUND STATUS</th>
-                                <th width="15%">FUND AUM,$</th>
+                                <th width="15%">FUND AUM</th>
                                 <th width="15%">MANAGER AUM,$</th>
                             </tr>
                             </thead>
@@ -1700,6 +1700,7 @@
                                     <input [readonly]="!selectedFund.added" class="form-control"  required type="text" name="fundAUM" [(ngModel)]="selectedFund.fundAUM"
                                            [style.text-decoration]="selectedFund.editedFundAUM != null && selectedFund.editedFundAUM != '' ? 'line-through' : ''"
                                            (keyup)="onNumberChangeSelectedFundAUM()"/>
+                                    {{selectedFund.currency}}
                                 </td>
                                 <td>
                                     <input class="form-control"  type="text" name="fundAUM" [(ngModel)]="selectedFund.managerAUM"
