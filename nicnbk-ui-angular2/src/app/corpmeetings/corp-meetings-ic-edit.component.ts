@@ -698,4 +698,20 @@ export class CorpMeetingICEditComponent extends CommonFormViewComponent implemen
                 );
         }
     }
+
+    exportMaterials(){
+        if(this.icMeeting.id != null){
+            var fileName = 'ИК№' + this.icMeeting.number + ' - Материалы';
+            this.busy = this.corpMeetingService.makeFileRequest(DATA_APP_URL + `corpMeetings/icMeeting/exportMaterials/${this.icMeeting.id}/`, fileName)
+                .subscribe(
+                    response  => {
+                        //console.log("ok");
+                    },
+                    error => {
+                        //console.log("fails")
+                        this.postAction(null, "Error exporting data");
+                    }
+                );
+        }
+    }
 }

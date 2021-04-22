@@ -838,4 +838,96 @@ public class CorpMeetingsServiceREST extends CommonServiceREST{
 //        boolean deleted = this.corpMeetingService.safeDeleteICMeetingProtocolAttachment(meetingId, fileId, username);
 //        return buildDeleteResponseEntity(deleted);
 //    }
+
+    @PreAuthorize(IC_MEETING_VIEWER)
+    @RequestMapping(value="/icMeetingTopic/exportMaterials/{id}", method= RequestMethod.GET)
+    @ResponseBody
+    public void exportICTopicMaterialsZIP(@PathVariable(value="id") Long icTopicId, HttpServletResponse response) {
+
+        // TODO: control file download by user role
+        // TODO: Check rights
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
+
+        FilesDto filesDto = null;
+        try{
+            filesDto = this.corpMeetingService.getExportICTopicMaterialsFileStream(icTopicId,username);
+        }catch (IllegalStateException ex){
+            filesDto = null;
+        }
+
+        if(filesDto == null || filesDto.getInputStream() == null){
+            try {
+                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                return;
+            } catch (IOException e) {
+                return;
+            }
+        }
+
+        response.setContentType("application/zip");
+        try {
+            response.setHeader("Content-disposition", "attachment;");
+            org.apache.commons.io.IOUtils.copy(filesDto.getInputStream(), response.getOutputStream());
+            response.flushBuffer();
+        } catch (UnsupportedEncodingException e) {
+            logger.error("(IC Meeting Topic  materials) File export request failed: unsupported encoding", e);
+        } catch (IOException e) {
+            logger.error("(IC Meeting Topic materials) File export request failed: io exception", e);
+        } catch (Exception e){
+            logger.error("(IC Meeting Topic materials) File export request failed", e);
+        }
+        try {
+            filesDto.getInputStream().close();
+            new File(filesDto.getFileName()).delete();
+        } catch (IOException e) {
+            logger.error("(IC Meeting Topic materials) File export: failed to close input stream", e);
+        }
+    }
+
+    @PreAuthorize(IC_MEETING_VIEWER)
+    @RequestMapping(value="/icMeeting/exportMaterials/{id}", method= RequestMethod.GET)
+    @ResponseBody
+    public void exportICMaterialsZIP(@PathVariable(value="id") Long icTopicId, HttpServletResponse response) {
+
+        // TODO: control file download by user role
+        // TODO: Check rights
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
+
+        FilesDto filesDto = null;
+        try{
+            filesDto = this.corpMeetingService.getExportICMaterialsFileStream(icTopicId,username);
+        }catch (IllegalStateException ex){
+            filesDto = null;
+        }
+
+        if(filesDto == null || filesDto.getInputStream() == null){
+            try {
+                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                return;
+            } catch (IOException e) {
+                return;
+            }
+        }
+
+        response.setContentType("application/zip");
+        try {
+            response.setHeader("Content-disposition", "attachment;");
+            org.apache.commons.io.IOUtils.copy(filesDto.getInputStream(), response.getOutputStream());
+            response.flushBuffer();
+        } catch (UnsupportedEncodingException e) {
+            logger.error("(IC Meeting materials) File export request failed: unsupported encoding", e);
+        } catch (IOException e) {
+            logger.error("(IC Meeting materials) File export request failed: io exception", e);
+        } catch (Exception e){
+            logger.error("(IC Meeting materials) File export request failed", e);
+        }
+        try {
+            filesDto.getInputStream().close();
+            new File(filesDto.getFileName()).delete();
+        } catch (IOException e) {
+            logger.error("(IC Meeting materials) File export: failed to close input stream", e);
+        }
+    }
 }

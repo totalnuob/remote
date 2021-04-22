@@ -91,7 +91,6 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
         var userPosition = JSON.parse(localStorage.getItem("authenticatedUserPosition"));
         var departmentId = userPosition != null && userPosition.department != null ? userPosition.department.id : 0;
 
-
         this.icMeetingTopic = new ICMeetingTopic();
         Observable.forkJoin(
             // Load lookups
@@ -1084,4 +1083,23 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
                 );
         }
     }
+
+    exportMaterials(){
+        if(this.icMeetingTopic.id != null && this.icMeetingTopic.name != null){
+            var fileName = (this.icMeetingTopic.icMeeting != null ? 'ИК№' + this.icMeetingTopic.icMeeting.number + ' - ' : '') +
+                this.icMeetingTopic.icOrder + ')' + (this.icMeetingTopic.name.length <= 55 ? this.icMeetingTopic.name : this.icMeetingTopic.name.substring(0, 55) + '_');
+            console.log(fileName);
+            this.busy = this.corpMeetingService.makeFileRequest(DATA_APP_URL + `corpMeetings/icMeetingTopic/exportMaterials/${this.icMeetingTopic.id}/`, fileName)
+                .subscribe(
+                    response  => {
+                        //console.log("ok");
+                    },
+                    error => {
+                        //console.log("fails")
+                        this.postAction(null, "Error exporting data");
+                    }
+                );
+        }
+    }
+
 }

@@ -138,4 +138,7 @@ public interface CorpMeetingService extends BaseService {
     boolean shareICMeetingTopic(Long id, String username);
     boolean stopShareICMeetingTopic(Long id, String username);
 
+    FilesDto getExportICTopicMaterialsFileStream(Long topicId, String username);
+    FilesDto getExportICMaterialsFileStream(Long icId, String username);
+
 }

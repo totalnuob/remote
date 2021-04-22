@@ -25,6 +25,7 @@
                 <div class="alert alert-info" *ngIf="successMessage != null"><span>{{successMessage}}</span>
                 </div>
             </div>
+
             <div>
                 <form #corpMeetingForm="ngForm" class="well span">
                     <div class="row" *ngIf="icMeetingTopic.status != null">
@@ -253,8 +254,11 @@
                                         &nbsp;
                                         <input type="file" id="attachmentFile" (change)="onFileChangeMaterials($event)" name="file" multiple style="display:none;"/>Upload
                                     </label>
+                                    &nbsp;
+                                    <span (click)="exportMaterials()" class="btn-xs btn-success pull-right" style="cursor: pointer">
+                                        <i class="glyphicon glyphicon-download-alt"></i> &nbsp;Export materials ZIP
+                                    </span>
                                 </div>
-
                                 <div class="row">
                                     <table style="width: 100%; table-layout: fixed;" >
                                         <tr *ngFor="let newFile of uploadMaterialsFiles; let j = index" [attr.data-index]="j">
@@ -372,7 +376,6 @@
                         <button class="btn btn-success pull-right" (click)="approve()" *ngIf="canApprove()">Approve</button>
                         <button class="btn btn-danger pull-right" (click)="cancelApprove()" *ngIf="canCancelApprove()">Dis-approve</button>
                     </div>
-
                 </form>
             </div>
 <!--            <div *ngIf="showUpdateBlock()" class="jumbotron col-md-12" style="padding-top: 5px; padding-bottom: 5px;">-->

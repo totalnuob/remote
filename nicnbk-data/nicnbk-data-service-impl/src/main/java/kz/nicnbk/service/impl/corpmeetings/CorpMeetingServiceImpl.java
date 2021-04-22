@@ -28,6 +28,8 @@ import kz.nicnbk.service.dto.employee.EmployeeDto;
 import kz.nicnbk.service.dto.files.FilesDto;
 import kz.nicnbk.service.dto.files.NamedFilesDto;
 import kz.nicnbk.service.dto.notification.NotificationDto;
+import kz.nicnbk.service.impl.files.FilePathResolver;
+import org.apache.commons.io.IOUtils;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -50,6 +52,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.*;
 import java.math.BigInteger;
 import java.util.*;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 
 @Service
@@ -127,6 +131,9 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
 
     @Autowired
     private ICMeetingInviteesRepository icMeetingInviteesRepository;
+
+    @Autowired
+    private FilePathResolver filePathResolver;
 
     //@Autowired
     //private ICMeetingTopicTagsRepository topicTagsRepository;
@@ -4405,12 +4412,12 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
                 event.setAlertType("INFO"); // TODO: refactor
                 events.add(event);
 
-                Date deadlineDate = DateUtils.moveDateByDays(icMeetingDto.getDate(), -CorpMeetingService.IC_MEETING_DEADLINE_DAYS,true);
-                CorpMeetingUpcomingEventDto eventDeadline = new CorpMeetingUpcomingEventDto("Deadline for IC # " + icMeetingDto.getNumber(), "");
-                eventDeadline.setDescription("Deadline for submission - IC # " + icMeetingDto.getNumber() + "(" + DateUtils.getDateFormatted(icMeetingDto.getDate()) + ")");
-                eventDeadline.setDate(deadlineDate);
-                eventDeadline.setAlertType("WARNING");// TODO: refactor
-                events.add(eventDeadline);
+//                Date deadlineDate = DateUtils.moveDateByDays(icMeetingDto.getDate(), -CorpMeetingService.IC_MEETING_DEADLINE_DAYS,true);
+//                CorpMeetingUpcomingEventDto eventDeadline = new CorpMeetingUpcomingEventDto("Deadline for IC # " + icMeetingDto.getNumber(), "");
+//                eventDeadline.setDescription("Deadline for submission - IC # " + icMeetingDto.getNumber() + "(" + DateUtils.getDateFormatted(icMeetingDto.getDate()) + ")");
+//                eventDeadline.setDate(deadlineDate);
+//                eventDeadline.setAlertType("WARNING");// TODO: refactor
+//                events.add(eventDeadline);
             }
         }
 
@@ -4631,5 +4638,121 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
             logger.error("Error stopping share IC Meeting topic with id=" + (id != null ? id.longValue(): null), ex);
         }
         return false;
+    }
+
+    @Override
+    public FilesDto getExportICTopicMaterialsFileStream(Long topicId, String username) {
+        FilesDto filesDto = new FilesDto();
+        String fileName = null;
+        try {
+            ICMeetingTopicDto icMeetingTopicDto = getICMeetingTopic(topicId, username);
+            if(icMeetingTopicDto == null){
+                logger.error("IC Meeting Topic materials export failed: ic topic not found by id=" + (topicId != null ? topicId.longValue(): null));
+                return null;
+            }
+            String folderName = this.rootDirectory + "/tmp/ic_meeting/";
+            if(!new File(folderName).exists()){
+                new File(folderName).mkdir();
+            }
+            fileName = folderName + HashUtils.hashMD5String(new Date().getTime() + "") + ".zip";
+            ZipOutputStream out = new ZipOutputStream(new FileOutputStream(fileName));
+
+            if(icMeetingTopicDto.getMaterials() != null && !icMeetingTopicDto.getMaterials().isEmpty()){
+                for(NamedFilesDto material: icMeetingTopicDto.getMaterials()){
+                    //material.getFile();
+                    String absolutePath = filePathResolver.resolveAbsoluteFilePath(material.getFile().getId(), FileTypeLookup.IC_MATERIALS.getCatalog());
+                    InputStream inputStream = new FileInputStream(absolutePath);
+                    filesDto.setInputStream(inputStream);
+                    filesDto.setFileName(absolutePath);
+                    setExportZipContent(material.getFile().getFileName(), out, filesDto);
+                }
+            }
+
+            out.close();
+
+            filesDto.setInputStream(new FileInputStream(fileName));
+            filesDto.setFileName(fileName);
+
+            return filesDto;
+        } catch (UnsupportedEncodingException e) {
+            logger.error("(PeriodicReport) File export (all kzt reports) request failed: unsupported encoding", e);
+        } catch (IOException e) {
+            logger.error("(PeriodicReport) File export (all kzt reports) request failed: io exception", e);
+        } catch (Exception e){
+            logger.error("(PeriodicReport) File export (all kzt reports) request failed", e);
+        }
+
+        return null;
+    }
+
+    @Override
+    public FilesDto getExportICMaterialsFileStream(Long icId, String username) {
+        FilesDto filesDto = new FilesDto();
+        String fileName = null;
+        try {
+            ICMeetingDto icMeetingDto = getICMeeting(icId);
+            if(icMeetingDto == null){
+                logger.error("IC Meeting materials export failed: ic not found by id=" + (icId != null ? icId.longValue(): null));
+                return null;
+            }
+            String folderName = this.rootDirectory + "/tmp/ic_meeting/";
+            if(!new File(folderName).exists()){
+                new File(folderName).mkdir();
+            }
+            fileName = folderName + HashUtils.hashMD5String(new Date().getTime() + "") + ".zip";
+            ZipOutputStream out = new ZipOutputStream(new FileOutputStream(fileName));
+            if(icMeetingDto.getTopics() != null) {
+                Collections.sort(icMeetingDto.getTopics());
+                for(int i = 0; i < icMeetingDto.getTopics().size();i++) {
+                    ICMeetingTopicDto icMeetingTopic = icMeetingDto.getTopics().get(i);
+                    // create folder
+                    String topicNameFolder = icMeetingTopic.getName() != null && icMeetingTopic.getName().length() > 0 ?
+                            (i + 1) + "." + (icMeetingTopic.getName().length() <= 80 ? icMeetingTopic.getName() : icMeetingTopic.getName().substring(0, 80) + "_") :
+                            (i + 1) + ".Вопрос";
+                    out.putNextEntry(new ZipEntry(topicNameFolder + "/"));
+                    if (icMeetingTopic.getMaterials() != null && !icMeetingTopic.getMaterials().isEmpty()) {
+                        ICMeetingTopicDto icMeetingTopicDto = getICMeetingTopic(icMeetingTopic.getId(), username);
+                        for (NamedFilesDto material : icMeetingTopicDto.getMaterials()) {
+                            //material.getFile();
+                            String absolutePath = filePathResolver.resolveAbsoluteFilePath(material.getFile().getId(), FileTypeLookup.IC_MATERIALS.getCatalog());
+                            InputStream inputStream = new FileInputStream(absolutePath);
+                            filesDto.setInputStream(inputStream);
+                            filesDto.setFileName(absolutePath);
+                            String shortFileName = material.getFile().getFileName().length() <= 80 ? material.getFile().getFileName() :
+                                    material.getFile().getFileName().substring(0, 80) + "_";
+                            setExportZipContent(topicNameFolder + "/" + shortFileName, out, filesDto);
+                        }
+                    }
+                }
+            }
+
+            out.close();
+
+            filesDto.setInputStream(new FileInputStream(fileName));
+            filesDto.setFileName(fileName);
+
+            return filesDto;
+        } catch (UnsupportedEncodingException e) {
+            logger.error("(PeriodicReport) File export (all kzt reports) request failed: unsupported encoding", e);
+        } catch (IOException e) {
+            logger.error("(PeriodicReport) File export (all kzt reports) request failed: io exception", e);
+        } catch (Exception e){
+            logger.error("(PeriodicReport) File export (all kzt reports) request failed", e);
+        }
+
+        return null;
+    }
+
+    private void setExportZipContent(String fileName,ZipOutputStream out, FilesDto filesDto){
+        try {
+            ZipEntry e = new ZipEntry(fileName);
+            out.putNextEntry(e);
+            byte[] data = IOUtils.toByteArray(filesDto.getInputStream());
+            out.write(data, 0, data.length);
+            out.closeEntry();
+            filesDto.getInputStream().close();
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
     }
 }
