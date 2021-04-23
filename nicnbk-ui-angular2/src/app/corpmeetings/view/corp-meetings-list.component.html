@@ -342,7 +342,7 @@ f<style>
                             <td width="10%">{{topic?.icMeeting?.date}}</td>
 <!--                            <td width="10%">{{topic?.type}}</td>-->
                             <td width="40%">{{topic.name}}</td>
-                            <td width="10%">{{topic.department?.code}}</td>
+                            <td width="10%">{{topic.department.shortNameRu}}</td>
                             <td width="10%">
                                 <label [ngClass]="getTopicClassByStatus(topic)">{{topic.status}}
                                     <span *ngIf="topic?.closed" class="glyphicon glyphicon-lock"></span>
