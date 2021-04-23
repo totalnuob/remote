@@ -31,6 +31,8 @@ public class EmployeeDto extends BaseEntityDto<Employee> {
 
     private Boolean mfaEnabled;
 
+    public EmployeeDto(){}
+
     public String getLastName() {
         return lastName;
     }

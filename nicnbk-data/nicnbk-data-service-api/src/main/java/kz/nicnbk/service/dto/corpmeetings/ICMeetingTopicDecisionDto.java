@@ -2,6 +2,7 @@ package kz.nicnbk.service.dto.corpmeetings;
 
 import kz.nicnbk.common.service.model.BaseDto;
 import kz.nicnbk.service.dto.employee.DepartmentDto;
+import kz.nicnbk.service.dto.employee.EmployeeDto;
 
 import java.util.List;
 
@@ -12,6 +13,7 @@ public class ICMeetingTopicDecisionDto implements BaseDto, Comparable {
     private String name;
     private String type;
     private List<DepartmentDto> departments;
+    private List<EmployeeDto> employees;
 
     public int getOrder() {
         return order;
@@ -54,6 +56,14 @@ public class ICMeetingTopicDecisionDto implements BaseDto, Comparable {
     public boolean isAssignment(){
         // TODO: refactor to enum
         return this.type != null && this.type.equalsIgnoreCase("ASSIGN");
+    }
+
+    public List<EmployeeDto> getEmployees() {
+        return employees;
+    }
+
+    public void setEmployees(List<EmployeeDto> employees) {
+        this.employees = employees;
     }
 }
 

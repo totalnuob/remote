@@ -182,4 +182,13 @@ export class CorpMeetingAssignmentEditComponent extends CommonFormViewComponent 
         }
         return departments;
     }
+    listEmployees(){
+        var employees = "";
+        if(this.assignment != null && this.assignment.employees != null){
+            for(var i = 0; i < this.assignment.employees.length; i++){
+                employees += (employees.length > 0 ? ', ': '') + this.assignment.employees[i].firstName + ' ' +  this.assignment.employees[i].lastName;
+            }
+        }
+        return employees;
+    }
 }

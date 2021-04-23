@@ -343,8 +343,21 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
         this.busy = this.corpMeetingService.searchICAssignments(this.assignmentsSearchParams)
             .subscribe(
                 (searchResult: ICAssignmentSearchResults)  => {
-                    this.assignments = searchResult.assignments;
                     this.assignmentsSearchResult = searchResult;
+                    this.assignments = searchResult.assignments;
+                    if(this.assignments != null && this.assignments.length > 0){
+                        for(var i = 0; i < this.assignments.length; i++){
+                            if(this.assignments[i].employees != null && this.assignments[i].employees.length > 0){
+                                this.assignments[i].employeesText = '';
+                                for(var j = 0; j < this.assignments[i].employees.length; j++){
+                                    if(this.assignments[i].employeesText.length > 0){
+                                        this.assignments[i].employeesText += ', ';
+                                    }
+                                    this.assignments[i].employeesText += this.assignments[i].employees[j].lastName;
+                                }
+                            }
+                        }
+                    }
                 },
                 (error: ErrorResponse) => {
                     this.errorMessage = "Error searching IC assignments";

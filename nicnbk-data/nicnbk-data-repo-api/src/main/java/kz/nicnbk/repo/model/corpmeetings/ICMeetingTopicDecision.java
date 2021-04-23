@@ -21,6 +21,7 @@ public class ICMeetingTopicDecision extends BaseEntity {
     private int order;
 
     private List<Department> departments;
+    private List<Employee> employees;
 
     public ICMeetingTopicDecision(){}
 
@@ -82,5 +83,21 @@ public class ICMeetingTopicDecision extends BaseEntity {
 
     public void setDepartments(List<Department> departments) {
         this.departments = departments;
+    }
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name="ic_meeting_topic_decision_employees",
+            joinColumns=
+            @JoinColumn(name="decision_id", referencedColumnName="ID"),
+            inverseJoinColumns=
+            @JoinColumn(name="employee_id", referencedColumnName="ID")
+    )
+    public List<Employee> getEmployees() {
+        return employees;
+    }
+
+    public void setEmployees(List<Employee> employees) {
+        this.employees = employees;
     }
 }

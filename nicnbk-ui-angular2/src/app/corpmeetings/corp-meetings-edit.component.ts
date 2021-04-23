@@ -78,6 +78,7 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
     availableTags = [];
 
     public departmentList = [];
+    public assignmentEmployeeList = [];
 
     constructor(
         private employeeService: EmployeeService,
@@ -123,10 +124,13 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
                                 this.legalHeadEmployee = element;
                         }
 
+                        if(element.position != null && element.position.code != null && element.position.code === 'DEP_CEO'){
+                            this.assignmentEmployeeList.push({id: element.id, text: element.firstName + " " + element.lastName,
+                                                            firstName: element.firstName, lastName: element.lastName});
+                        }
                     });
                     data3.forEach(element => {
-                        this.departmentEmployeeList.push({"id": element.id, "text": element.firstName + " " + element.lastName,
-                                                    "firstName": element.firstName, "lastName": element.lastName, "active": element.active});
+                        this.departmentEmployeeList.push({id: element.id, text: element.firstName + " " + element.lastName});
                     });
 
                     data4.forEach(element => {
@@ -257,6 +261,16 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
                                 }
                             }
                          }
+                         if(this.icMeetingTopic.decisions != null){
+                             for(var i = 0; i < this.icMeetingTopic.decisions.length; i++){
+                                 if(this.icMeetingTopic.decisions[i].employees != null){
+                                     for(var j = 0; j < this.icMeetingTopic.decisions[i].employees.length; j++){
+                                         this.icMeetingTopic.decisions[i].employees[j].text =
+                                         this.icMeetingTopic.decisions[i].employees[j].firstName + ' ' + this.icMeetingTopic.decisions[i].employees[j].lastName;
+                                     }
+                                 }
+                             }
+                          }
 
                         this.postAction(successMessage, errorMessage);
                     },
@@ -441,10 +455,12 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
                          return false;
                      }else if(this.icMeetingTopic.decisions[i].type != null && this.icMeetingTopic.decisions[i].type === 'ASSIGN'){
                         // Assignment
-                        if(this.icMeetingTopic.decisions[i].departments == null || this.icMeetingTopic.decisions[i].departments.length == 0){
-                            this.postAction(null, 'Decision responsible department required (decision #' + (i+1));
+                        if((this.icMeetingTopic.decisions[i].departments == null || this.icMeetingTopic.decisions[i].departments.length == 0) &&
+                                (this.icMeetingTopic.decisions[i].employees == null || this.icMeetingTopic.decisions[i].employees.length == 0)){
+                            this.postAction(null, 'Decision responsible department or employee required (decision #' + (i+1));
                             return false;
                         }
+
                     }
                 }
             }
@@ -1024,11 +1040,14 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
     }
 
     public selectedDecisionDepartment(value:any):void {
-        //console.log('Selected value is: ', value);
+    }
+    public selectedDecisionEmployee(value:any):void {
     }
 
     public removedDecisionDepartment(value:any):void {
-        //console.log('Removed value is: ', value);
+    }
+
+    public removedDecisionEmployee(value:any):void {
     }
 
     public refreshDecisionDepartments(value:any, decision):void {
@@ -1036,6 +1055,11 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
         //console.log(decision);
         decision.departments = decision.departments == null ? []: decision.departments;
         decision.departments = value;
+    }
+
+    public refreshDecisionEmployees(value:any, decision):void {
+        decision.employees = decision.employees == null ? []: decision.employees;
+        decision.employees = value;
     }
 
     canEditShare(){

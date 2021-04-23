@@ -2,6 +2,7 @@ package kz.nicnbk.repo.model.corpmeetings;
 
 import kz.nicnbk.repo.model.base.BaseEntity;
 import kz.nicnbk.repo.model.employee.Department;
+import kz.nicnbk.repo.model.employee.Employee;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -22,6 +23,7 @@ public class ICMeetingTopicAssignment extends BaseEntity {
     private boolean closed;
 
     private List<Department> departments;
+    private List<Employee> employees;
 
     public ICMeetingTopicAssignment(){}
 
@@ -93,5 +95,21 @@ public class ICMeetingTopicAssignment extends BaseEntity {
 
     public void setDepartments(List<Department> departments) {
         this.departments = departments;
+    }
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name="ic_meeting_topic_assignment_employees",
+            joinColumns=
+            @JoinColumn(name="assignment_id", referencedColumnName="ID"),
+            inverseJoinColumns=
+            @JoinColumn(name="employee_id", referencedColumnName="ID")
+    )
+    public List<Employee> getEmployees() {
+        return employees;
+    }
+
+    public void setEmployees(List<Employee> employees) {
+        this.employees = employees;
     }
 }

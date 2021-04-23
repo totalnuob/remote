@@ -623,8 +623,9 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
                         saveResponseDto.setErrorMessageEn(errorMessage);
                         return saveResponseDto;
                     }else if(decisionDto.getType().equalsIgnoreCase("ASSIGN") &&
-                            (decisionDto.getDepartments() == null || decisionDto.getDepartments().isEmpty())){
-                        String errorMessage = "Error saving IC meeting topic: failed to save decisions, decision department required";
+                            (decisionDto.getDepartments() == null || decisionDto.getDepartments().isEmpty()) &&
+                            (decisionDto.getEmployees() == null || decisionDto.getEmployees().isEmpty())){
+                        String errorMessage = "Error saving IC meeting topic: failed to save decisions, decision department or employee required";
                         logger.error(errorMessage);
                         saveResponseDto = new EntitySaveResponseDto();
                         saveResponseDto.setErrorMessageEn(errorMessage);
@@ -638,6 +639,15 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
                         for(DepartmentDto departmentDto: decisionDto.getDepartments()){
                             if(departmentDto.getId() != null){
                                 decision.getDepartments().add(new Department(departmentDto.getId()));
+                            }
+                        }
+                    }
+                    decision.setEmployees(new ArrayList<>());
+                    if(decisionDto.getEmployees() != null && !decisionDto.getEmployees().isEmpty() &&
+                            decisionDto.getType().equalsIgnoreCase("ASSIGN")){
+                        for(EmployeeDto employeeDto: decisionDto.getEmployees()){
+                            if(employeeDto.getId() != null){
+                                decision.getEmployees().add(new Employee(employeeDto.getId()));
                             }
                         }
                     }
@@ -972,6 +982,16 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
                         decisionDto.setDepartments(new ArrayList<>());
                         for(Department department: aDecision.getDepartments()) {
                             decisionDto.getDepartments().add(new DepartmentDto(department));
+                        }
+                    }
+                    if(aDecision.getEmployees() != null && !aDecision.getEmployees().isEmpty()){
+                        decisionDto.setEmployees(new ArrayList<>());
+                        for(Employee employee: aDecision.getEmployees()) {
+                            EmployeeDto employeeDto = new EmployeeDto();
+                            employeeDto.setId(employee.getId());
+                            employeeDto.setLastName(employee.getLastName());
+                            employeeDto.setFirstName(employee.getFirstName());
+                            decisionDto.getEmployees().add(employeeDto);
                         }
                     }
                     decisionList.add(decisionDto);
@@ -1660,6 +1680,16 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
                                 dto.setDepartments(new ArrayList<>());
                                 for(Department department: decision.getDepartments()){
                                     dto.getDepartments().add(new DepartmentDto(department));
+                                }
+                            }
+                            if(decision.getEmployees() != null){
+                                dto.setEmployees(new ArrayList<>());
+                                for(Employee employee: decision.getEmployees()){
+                                    EmployeeDto employeeDto = new EmployeeDto();
+                                    employeeDto.setId(employee.getId());
+                                    employeeDto.setLastName(employee.getLastName());
+                                    employeeDto.setFirstName(employee.getFirstName());
+                                    dto.getEmployees().add(employeeDto);
                                 }
                             }
                             decisionDtos.add(dto);
@@ -2767,6 +2797,13 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
                         for(DepartmentDto departmentDto: assignmentDto.getDepartments()){
                             if(departmentDto.getShortNameRu() != null){
                                 departments += (departments.length() > 0 ? ", " : "") + departmentDto.getShortNameRu();
+                            }
+                        }
+                    }
+                    if(assignmentDto.getEmployees() != null){
+                        for(EmployeeDto employeeDto: assignmentDto.getEmployees()){
+                            if(employeeDto.getLastNameRu() != null){
+                                departments += (departments.length() > 0 ? ", " : "") + employeeDto.getFullNameInitialsRu();
                             }
                         }
                     }
@@ -4357,6 +4394,12 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
                                 assignment.setDepartments(new ArrayList<>());
                                 for(DepartmentDto departmentDto: decisionDto.getDepartments()){
                                     assignment.getDepartments().add(new Department(departmentDto.getId()));
+                                }
+                            }
+                            if(decisionDto.getEmployees() != null && !decisionDto.getEmployees().isEmpty()){
+                                assignment.setEmployees(new ArrayList<>());
+                                for(EmployeeDto employeeDto: decisionDto.getEmployees()){
+                                    assignment.getEmployees().add(new Employee(employeeDto.getId()));
                                 }
                             }
                             assignments.add(assignment);

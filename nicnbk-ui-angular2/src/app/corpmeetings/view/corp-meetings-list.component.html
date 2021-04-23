@@ -450,6 +450,7 @@ f<style>
 <!--                            <th width="30%">NAME</th>-->
                             <th width="40%">ASSIGNMENT</th>
                             <th width="10%">DEPT</th>
+                            <th width="10%">EMPLOYEES</th>
                             <th width="15%">DUE DATE</th>
                             <th width="25%">STATUS</th>
                         </tr>
@@ -460,6 +461,7 @@ f<style>
 <!--                            <td width="30%">{{assignment?.icMeetingTopic?.name}}</td>-->
                             <td width="40%">{{assignment?.name}}</td>
                             <td width="10%">{{assignment?.departmentsText}}</td>
+                            <td width="10%">{{assignment?.employeesText}}</td>
                             <td width="15%">{{assignment?.dateDue}}</td>
                             <td width="25%">{{assignment?.status | slice:0:55 }}{{assignment?.status?.length > 55 ? '...': ''}}</td>
                         </tr>

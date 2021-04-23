@@ -109,10 +109,15 @@
                             <div class="col-md-12">
                                 <div class="row top-buffer">
                                     <div class="form-group form-horizontal">
-                                        <label class="control-label col-md-2" for="status">Departments:</label>
-                                        <div class="col-md-5">
+                                        <label class="control-label col-md-2" for="departments">Departments:</label>
+                                        <div class="col-md-4">
                                             <textarea fz-elastic type="text" id="departments" class="form-control" disabled
                                                       maxlength="500" name="departments">{{listDepartments()}}</textarea>
+                                        </div>
+                                        <label class="control-label col-md-2" for="employees">Employees:</label>
+                                        <div class="col-md-4">
+                                            <textarea fz-elastic type="text" id="employees" class="form-control" disabled
+                                                      maxlength="500" name="employees">{{listEmployees()}}</textarea>
                                         </div>
                                     </div>
                                 </div>

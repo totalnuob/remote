@@ -195,7 +195,7 @@
                                                 &nbsp;
                                             </div>
 
-                                            <div class="col-md-3" *ngIf="decision.type === 'ASSIGN' && departmentList?.length > 0">
+                                            <div class="col-md-2" *ngIf="decision.type === 'ASSIGN' && departmentList?.length > 0">
                                                 <ng-select [active]="decision.departments"
                                                            [multiple]="true"
                                                            [items]="departmentList"
@@ -204,9 +204,18 @@
                                                            (removed)="removedDecisionDepartment($event)"
                                                            placeholder="No dept selected"></ng-select>
                                             </div>
-                                            <div class="col-md-1">
-                                                &nbsp;
+                                            <div class="col-md-2" *ngIf="decision.type === 'ASSIGN' && assignmentEmployeeList?.length > 0">
+                                                <ng-select [active]="decision.employees"
+                                                           [multiple]="true"
+                                                           [items]="assignmentEmployeeList"
+                                                           (data)="refreshDecisionEmployees($event, decision)"
+                                                           (selected)="selectedDecisionDepartment($event)"
+                                                           (removed)="removedDecisionDepartment($event)"
+                                                           placeholder="No employee selected"></ng-select>
                                             </div>
+<!--                                            <div class="col-md-1">-->
+<!--                                                &nbsp;-->
+<!--                                            </div>-->
                                         </div>
                                     </div>
                                 </div>
