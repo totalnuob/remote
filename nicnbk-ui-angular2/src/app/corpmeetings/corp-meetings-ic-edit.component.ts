@@ -319,25 +319,32 @@ export class CorpMeetingICEditComponent extends CommonFormViewComponent implemen
 
         // attendees
         this.icMeeting.attendees = [];
+        var ceoAbsent = false;
         for(var i = 0; this.attendeesList != null && i < this.attendeesList.length; i++){
             if($('#checkbox_' + i).prop("checked")){
                 this.icMeeting.attendees.push({"employee": {"id": this.attendeesList[i].employee.id}, "present": true});
             }else{
                 var absentTypeCode = $('#select_' + i).val();
-                console.log(absentTypeCode);
                 if(absentTypeCode == null){
                     this.postAction(null, "Reason cannot be empty for absent attendee");
                     return;
                 }
 
                 this.icMeeting.attendees.push({"employee": {"id": this.attendeesList[i].employee.id}, "present": false, "absenceType": absentTypeCode});
-                if(this.attendeesList[i].employee.isCeo && (this.icMeeting.ceoSubEmployee == null || this.icMeeting.ceoSubEmployee.id == null)){
-                    this.postAction(null, "CEO is absent, sub must be specified.");
-                    return;
+
+                if(this.attendeesList[i].employee.isCeo){
+                    if(this.icMeeting.ceoSubEmployee == null || this.icMeeting.ceoSubEmployee.id == null){
+                        this.postAction(null, "CEO is absent, sub must be specified.");
+                        return;
+                    }else{
+                        ceoAbsent = true;
+                    }
                 }
             }
         }
-
+        if(!ceoAbsent){
+            this.icMeeting.ceoSubEmployee = {};
+        }
         //console.log(this.icMeeting);
         this.busy = this.corpMeetingService.saveICMeeting(this.icMeeting,
                                       (this.uploadAgendaFile != null && this.uploadAgendaFile.length > 0 ? this.uploadAgendaFile[0]: null),

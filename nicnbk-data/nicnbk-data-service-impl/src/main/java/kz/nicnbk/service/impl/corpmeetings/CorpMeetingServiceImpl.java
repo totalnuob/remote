@@ -1977,6 +1977,16 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
             if(icMeetingDto.getCeoSubEmployee() != null && icMeetingDto.getCeoSubEmployee().getId() == null){
                 icMeetingDto.setCeoSubEmployee(null);
             }
+            if(icMeetingDto.getAttendees() != null){
+                for(ICMeetingAttendeesDto attendeesDto: icMeetingDto.getAttendees()){
+                    EmployeeDto employeeDto = this.employeeService.getEmployeeById(attendeesDto.getEmployee().getId());
+                    if(employeeDto.getPosition() != null && employeeDto.getPosition().getCode().equalsIgnoreCase("CEO")){
+                        if(attendeesDto.isPresent()){
+                            icMeetingDto.setCeoSubEmployee(null);
+                        }
+                    }
+                }
+            }
             ICMeeting entity = icMeetingsEntityConverter.assemble(icMeetingDto);
             if(icMeetingDto.getId() == null){ // CREATE
                 EmployeeDto employee = this.employeeService.findByUsername(updater);
