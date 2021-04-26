@@ -130,7 +130,8 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
                         }
                     });
                     data3.forEach(element => {
-                        this.departmentEmployeeList.push({id: element.id, text: element.firstName + " " + element.lastName});
+                        this.departmentEmployeeList.push({id: element.id, text: element.firstName + " " + element.lastName, active: element.active,
+                                        firstName: element.firstName, lastName: element.lastName});
                     });
 
                     data4.forEach(element => {
