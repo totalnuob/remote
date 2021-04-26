@@ -37,6 +37,8 @@ public class ICMeeting extends CreateUpdateBaseEntity{
     private Files protocol;
     private Files bulletin;
 
+    private Employee ceoSubEmployee;
+
     public ICMeeting(){}
 
     public ICMeeting(Long id){
@@ -133,5 +135,15 @@ public class ICMeeting extends CreateUpdateBaseEntity{
 
     public void setUnlockedForFinalize(Boolean unlockedForFinalize) {
         this.unlockedForFinalize = unlockedForFinalize;
+    }
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ceo_sub_employee_id")
+    public Employee getCeoSubEmployee() {
+        return ceoSubEmployee;
+    }
+
+    public void setCeoSubEmployee(Employee ceoSubEmployee) {
+        this.ceoSubEmployee = ceoSubEmployee;
     }
 }

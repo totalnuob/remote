@@ -3,6 +3,7 @@ package kz.nicnbk.service.dto.corpmeetings;
 import kz.nicnbk.common.service.model.CreateUpdateBaseEntityDto;
 import kz.nicnbk.common.service.util.DateUtils;
 import kz.nicnbk.repo.model.corpmeetings.ICMeeting;
+import kz.nicnbk.repo.model.employee.Employee;
 import kz.nicnbk.service.api.corpmeetings.CorpMeetingService;
 import kz.nicnbk.service.dto.employee.EmployeeDto;
 import kz.nicnbk.service.dto.files.FilesDto;
@@ -33,6 +34,7 @@ public class ICMeetingDto extends CreateUpdateBaseEntityDto<ICMeeting> implement
     private String place;
 
     private List<ICMeetingAttendeesDto> attendees;
+    private EmployeeDto ceoSubEmployee;
     private List<EmployeeDto> invitees;
     private List<ICMeetingTopicDto> topics;
     private FilesDto agenda;
@@ -250,6 +252,14 @@ public class ICMeetingDto extends CreateUpdateBaseEntityDto<ICMeeting> implement
 
     public void setCloseable(boolean closeable) {
         this.closeable = closeable;
+    }
+
+    public EmployeeDto getCeoSubEmployee() {
+        return ceoSubEmployee;
+    }
+
+    public void setCeoSubEmployee(EmployeeDto ceoSubEmployee) {
+        this.ceoSubEmployee = ceoSubEmployee;
     }
 }
 

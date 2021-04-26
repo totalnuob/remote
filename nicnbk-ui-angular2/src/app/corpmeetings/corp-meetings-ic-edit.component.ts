@@ -41,6 +41,7 @@ export class CorpMeetingICEditComponent extends CommonFormViewComponent implemen
     icMeeting: ICMeeting;
 
     public attendeesList = [];
+    ceoSubList = [];
 
     @ViewChild('inviteesSelect')
     private inviteesSelect;
@@ -95,12 +96,15 @@ export class CorpMeetingICEditComponent extends CommonFormViewComponent implemen
                         this.absenceTypes.push(element);
                     });
                     data2.forEach(element => {
-
-
-                        // TODO: ???
-
-
+                        if(element.position != null && element.position.code != null && element.position.code === 'CEO'){
+                            element.isCeo = true;
+                        }
                         this.attendeesList.push({"employee" : element, present: true});
+
+                        if(element.position != null && element.position.code != null && element.position.code === 'DEP_CEO'){
+                            this.ceoSubList.push({id: element.id, text: element.firstName + " " + element.lastName,
+                                                            firstName: element.firstName, lastName: element.lastName});
+                        }
                     });
                     data3.forEach(element => {
                         this.inviteesList.push({id: element.id, text: element.firstName + " " + element.lastName});
@@ -123,7 +127,8 @@ export class CorpMeetingICEditComponent extends CommonFormViewComponent implemen
                             if(this.icMeeting.id > 0) {
                                this.getICMeeting(this.icMeeting.id, null, null);
                             }else{
-                                this.icMeeting.id = null;// Set type
+                                this.icMeeting.id = null;
+                                this.icMeeting.ceoSubEmployee = {};
                             }
                         });
                 });
@@ -154,7 +159,7 @@ export class CorpMeetingICEditComponent extends CommonFormViewComponent implemen
                             }
                         }
 
-                        // TODO: add IC members missing from this.attendeesList, but present in this.icMeeting.attendees
+                        // add IC members missing from this.attendeesList, but present in this.icMeeting.attendees
                         for(var i = 0; i < this.icMeeting.attendees.length; i++){
                             var missing = true;
                             for(var j = 0; j < this.attendeesList.length; j++){
@@ -168,6 +173,23 @@ export class CorpMeetingICEditComponent extends CommonFormViewComponent implemen
                                 this.attendeesList.push(this.icMeeting.attendees[i]);
                             }
                         }
+
+                        //
+                        if(this.icMeeting.ceoSubEmployee != null && this.icMeeting.ceoSubEmployee.id != null){
+                            var missing = true;
+                            for(var i = 0; i < this.ceoSubList.length; i++){
+                                if(this.ceoSubList[i].id == this.icMeeting.ceoSubEmployee.id){
+                                    missing = false;
+                                }
+                            }
+                            if(missing){
+                                this.ceoSubList.push(this.icMeeting.ceoSubEmployee);
+                            }
+                        }else{
+                            if(this.icMeeting.ceoSubEmployee == null){
+                                this.icMeeting.ceoSubEmployee = {};
+                            }
+                        }
                     }
 
                     // preselect invitees
@@ -176,7 +198,6 @@ export class CorpMeetingICEditComponent extends CommonFormViewComponent implemen
                            this.icMeeting.invitees[i].text = this.icMeeting.invitees[i].firstName + " " + this.icMeeting.invitees[i].lastName;
                         }
                     }
-
                     /*this.inviteesSelect.active = [];
                     if(this.icMeeting.invitees) {
                         this.icMeeting.invitees.forEach(element => {
@@ -284,6 +305,7 @@ export class CorpMeetingICEditComponent extends CommonFormViewComponent implemen
         if(this.icMeeting.date == null || this.icMeeting.date.trim() === ''){
             this.errorMessage = "Date required";
             this.successMessage = null;
+            this.postAction(this.successMessage, this.errorMessage);
             return;
         }
         this.icMeeting.time = $('#icTimeValue').val();
@@ -291,6 +313,7 @@ export class CorpMeetingICEditComponent extends CommonFormViewComponent implemen
             console.log(this.icMeeting);
             this.errorMessage = "Number required";
             this.successMessage = null;
+             this.postAction(this.successMessage, this.errorMessage);
             return;
         }
 
@@ -301,15 +324,21 @@ export class CorpMeetingICEditComponent extends CommonFormViewComponent implemen
                 this.icMeeting.attendees.push({"employee": {"id": this.attendeesList[i].employee.id}, "present": true});
             }else{
                 var absentTypeCode = $('#select_' + i).val();
-                if(absentTypeCode === "NONE"){
+                console.log(absentTypeCode);
+                if(absentTypeCode == null){
                     this.postAction(null, "Reason cannot be empty for absent attendee");
                     return;
                 }
+
                 this.icMeeting.attendees.push({"employee": {"id": this.attendeesList[i].employee.id}, "present": false, "absenceType": absentTypeCode});
+                if(this.attendeesList[i].employee.isCeo && (this.icMeeting.ceoSubEmployee == null || this.icMeeting.ceoSubEmployee.id == null)){
+                    this.postAction(null, "CEO is absent, sub must be specified.");
+                    return;
+                }
             }
         }
 
-        //console.log(this.uploadAgendaFile);
+        //console.log(this.icMeeting);
         this.busy = this.corpMeetingService.saveICMeeting(this.icMeeting,
                                       (this.uploadAgendaFile != null && this.uploadAgendaFile.length > 0 ? this.uploadAgendaFile[0]: null),
                                       (this.uploadProtocolFile != null && this.uploadProtocolFile.length > 0 ? this.uploadProtocolFile[0]: null),

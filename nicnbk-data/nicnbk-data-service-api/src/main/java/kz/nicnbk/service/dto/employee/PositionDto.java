@@ -10,6 +10,8 @@ public class PositionDto extends BaseDictionaryDto {
     private DepartmentDto department;
     private Boolean head;
 
+    private String nameRuPossessive;
+
     public PositionDto(){}
 
     public PositionDto(Integer id, String code, String nameRu, String nameEn, String nameKz, DepartmentDto department){
@@ -35,5 +37,13 @@ public class PositionDto extends BaseDictionaryDto {
 
     public void setHead(Boolean head) {
         this.head = head;
+    }
+
+    public String getNameRuPossessive() {
+        return nameRuPossessive;
+    }
+
+    public void setNameRuPossessive(String nameRuPossessive) {
+        this.nameRuPossessive = nameRuPossessive;
     }
 }

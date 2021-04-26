@@ -405,6 +405,14 @@
             <a>place</a>
             <b>place</b>
         </field-exclude>
+        <field-exclude>
+            <a>place</a>
+            <b>place</b>
+        </field-exclude>
+<!--        <field-exclude>-->
+<!--            <a>ceoSubEmployee</a>-->
+<!--            <b>ceoSubEmployee</b>-->
+<!--        </field-exclude>-->
     </mapping>
 
     <mapping>

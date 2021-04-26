@@ -1974,6 +1974,9 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
                                                FilesDto bulletinFile, String updater) {
         EntitySaveResponseDto saveResponseDto = new EntitySaveResponseDto();
         try {
+            if(icMeetingDto.getCeoSubEmployee() != null && icMeetingDto.getCeoSubEmployee().getId() == null){
+                icMeetingDto.setCeoSubEmployee(null);
+            }
             ICMeeting entity = icMeetingsEntityConverter.assemble(icMeetingDto);
             if(icMeetingDto.getId() == null){ // CREATE
                 EmployeeDto employee = this.employeeService.findByUsername(updater);
@@ -2944,6 +2947,30 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
                                     text = text.replace("ICPLACE", "");
                                 }
                                 r.setText(text, 0);
+                            }else if (text != null && text.contains("HEAD")) {
+                                if(icMeeting.getCeoSubEmployee() != null) {
+                                    text = text.replace("HEAD", "Заместитель Председателя Комитета");
+                                }else{
+                                    text = text.replace("HEAD", "Председатель Комитета");
+                                }
+                                r.setText(text, 0);
+                            }else if (text != null && text.contains("NAME")) {
+                                if(icMeeting.getCeoSubEmployee() != null) {
+                                    text = text.replace("NAME", icMeeting.getCeoSubEmployee().getFullNameInitialsRu() != null ?
+                                            icMeeting.getCeoSubEmployee().getFullNameInitialsRu() : "");
+                                }else{
+                                    String ceoName = "";
+                                    if(icMeeting.getAttendees() != null){
+                                        for(ICMeetingAttendeesDto attendeesDto: icMeeting.getAttendees()){
+                                            if(attendeesDto.getEmployee().getPosition() != null && attendeesDto.getEmployee().getPosition().getCode().equalsIgnoreCase("CEO")){
+                                                ceoName =  attendeesDto.getEmployee().getFullNameInitialsRu();
+                                                break;
+                                            }
+                                        }
+                                    }
+                                    text = text.replace("NAME", ceoName);
+                                }
+                                r.setText(text, 0);
                             }
                         }
                     }
@@ -3777,6 +3804,71 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
                             text = text.replace("NUMIC", icMeeting.getNumber());
                         }else{
                             text = text.replace("NUMIC", "");
+                        }
+                        r.setText(text, 0);
+                    }else if (text != null && text.contains("HEAD")) {
+                        if(icMeeting.getCeoSubEmployee() != null) {
+                            text = text.replace("HEAD", "Заместитель Председателя Комитета");
+                        }else{
+                            text = text.replace("HEAD", "Председатель Комитета");
+                        }
+                        r.setText(text, 0);
+                    }else if (text != null && text.contains("NAME")) {
+                        if(icMeeting.getCeoSubEmployee() != null) {
+                            text = text.replace("NAME", icMeeting.getCeoSubEmployee().getFullNameInitialsRu() != null ?
+                                    icMeeting.getCeoSubEmployee().getFullNameInitialsRu() : "");
+                        }else{
+                            String ceoName = "";
+                            if(icMeeting.getAttendees() != null){
+                                for(ICMeetingAttendeesDto attendeesDto: icMeeting.getAttendees()){
+                                    if(attendeesDto.getEmployee().getPosition() != null && attendeesDto.getEmployee().getPosition().getCode().equalsIgnoreCase("CEO")){
+                                        ceoName =  attendeesDto.getEmployee().getFullNameInitialsRu();
+                                        break;
+                                    }
+                                }
+                            }
+                            text = text.replace("NAME", ceoName);
+                        }
+                        r.setText(text, 0);
+                    }else if (text != null && text.contains("DEP")) {
+                        if(icMeeting.getCeoSubEmployee() != null) {
+                            text = text.replace("DEP", icMeeting.getCeoSubEmployee().getFullNameInitialsRu() != null ?
+                                    icMeeting.getCeoSubEmployee().getFullNameInitialsRu() : "");
+                        }else{
+                            text = text.replace("DEP", "");
+                        }
+                        r.setText(text, 0);
+                    }else if(text != null && text.contains("CEO")){
+                        if(icMeeting.getCeoSubEmployee() == null) {
+                            String ceoName = "";
+                            if (icMeeting.getAttendees() != null) {
+                                for (ICMeetingAttendeesDto attendeesDto : icMeeting.getAttendees()) {
+                                    if (attendeesDto.getEmployee().getPosition() != null && attendeesDto.getEmployee().getPosition().getCode().equalsIgnoreCase("CEO")) {
+                                        ceoName = attendeesDto.getEmployee().getFullNameInitialsRu();
+                                        text = text.replace("CEO", ceoName);
+                                        break;
+                                    }
+                                }
+                            }
+                        }else{
+                            text = text.replace("CEO", "");
+                        }
+                        r.setText(text, 0);
+                    }else if(text != null && text.contains("SUB")){
+                        if(icMeeting.getCeoSubEmployee() != null && icMeeting.getAttendees() != null){
+                            for(ICMeetingAttendeesDto attendeesDto: icMeeting.getAttendees()){
+                                if(attendeesDto.getEmployee().getPosition() != null && attendeesDto.getEmployee().getPosition().getCode().equalsIgnoreCase("CEO")){
+                                    String ceoName =  attendeesDto.getEmployee().getFullNamePossessiveInitialsRu();
+                                    String ceoSubPosition = icMeeting.getCeoSubEmployee().getPosition() != null ? icMeeting.getCeoSubEmployee().getPosition().getNameRuPossessive() : "";
+
+                                    text = text.replace("SUB", "В связи с нахождением Председателя Комитета " + ceoName /*Таджиякова Г.Б. "*/ +
+                                            " в ежегодном трудовом отпуске, членами Комитета Корпорации было единогласно принято решение " +
+                                            "избрать Заместителем Председателя Комитета " + ceoSubPosition + " " + icMeeting.getCeoSubEmployee().getFullNamePossessiveInitialsRu());
+                                    break;
+                                }
+                            }
+                        }else{
+                            text = text.replace("SUB", "");
                         }
                         r.setText(text, 0);
                     }else if (text != null && text.contains(IC_PROTOCOL_ICADMIN_PLACEHOLDER)) {

@@ -108,7 +108,6 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
                     data1.forEach(element => {
                         this.icList.push(element);
                     });
-                    console.log(data2);
                     data2.forEach(element => {
                         this.availableApproveList.push({id: element.id, text: element.firstName + " " + element.lastName,
                                                     firstName: element.firstName, lastName: element.lastName});

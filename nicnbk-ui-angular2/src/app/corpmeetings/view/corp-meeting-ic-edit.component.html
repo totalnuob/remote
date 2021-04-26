@@ -65,7 +65,7 @@
                         </div>
 
                         <div class="row top-buffer withpadding">
-                            <div class="col-md-4">
+                            <div class="col-md-6">
                                 <label class="control-label">Attendees (IC Members):</label>
                                 <table class="condensed-table small" *ngIf="attendeesList != null">
                                     <tbody>
@@ -75,22 +75,28 @@
                                                        [checked]="attendee.present" [attr.id]="'checkbox_' + i"/>
                                             </td>
                                             <td style="text-align: right;">{{i+1}}. &nbsp;</td>
-                                            <td>{{attendee.employee.firstName + ' ' + attendee.employee.lastName}}</td>
+                                            <td>{{attendee.employee.firstName + ' ' + attendee.employee.lastName}} {{attendee.employee.isCeo ? ' (CEO)' : ''}}</td>
                                             <td>
                                                 <select class="small" [disabled]="attendee.present" style="display:inline; font-size: smaller" name="absenceReason"
                                                         [attr.id]="'select_' + i" [(ngModel)]="attendee.absenceType" [ngModelOptions]="{standalone: true}">
                                                     <option *ngFor="let item of absenceTypes" [value]="item.code">{{item.nameEn}}</option>
-<!--                                                    <option value="SICK_LEAVE">Sick Leave</option>-->
-<!--                                                    <option value="VACATION">Vacation</option>-->
-<!--                                                    <option value="BIZ_TRIP">Business Trip</option>-->
-<!--                                                    <option value="OTHER">Other</option>-->
+
+                                                </select>
+                                            </td>
+                                            <td *ngIf="!attendee.present && attendee.employee.isCeo">
+                                                &nbsp;Sub: &nbsp;
+                                            </td>
+                                            <td *ngIf="!attendee.present && attendee.employee.isCeo">
+                                                <select class="small" [disabled]="attendee.present" style="display:inline; font-size: smaller" name="ceoSub"
+                                                        [(ngModel)]="icMeeting.ceoSubEmployee.id" [ngModelOptions]="{standalone: true}">
+                                                    <option *ngFor="let sub of ceoSubList" [ngValue]="sub.id">{{sub.lastName}} {{sub.firstName}}</option>
                                                 </select>
                                             </td>
                                         </tr>
                                     </tbody>
                                 </table>
                             </div>
-                            <div class="col-md-8">
+                            <div class="col-md-6">
                                 <label class="control-label col-md-2">Invitees:</label>
                                 <div class="col-md-6" *ngIf="icMeeting != null && inviteesList?.length > 0">
                                     <ng-select #inviteesSelect [active]="icMeeting.invitees"
