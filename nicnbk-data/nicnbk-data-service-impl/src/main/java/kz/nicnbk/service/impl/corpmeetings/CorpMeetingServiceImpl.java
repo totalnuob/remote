@@ -4803,14 +4803,24 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
             ZipOutputStream out = new ZipOutputStream(new FileOutputStream(fileName));
 
             if(icMeetingTopicDto.getMaterials() != null && !icMeetingTopicDto.getMaterials().isEmpty()){
+                int i = 1;
                 for(NamedFilesDto material: icMeetingTopicDto.getMaterials()){
                     //material.getFile();
                     String absolutePath = filePathResolver.resolveAbsoluteFilePath(material.getFile().getId(), FileTypeLookup.IC_MATERIALS.getCatalog());
                     InputStream inputStream = new FileInputStream(absolutePath);
                     filesDto.setInputStream(inputStream);
                     filesDto.setFileName(absolutePath);
-                    setExportZipContent(material.getFile().getFileName(), out, filesDto);
+                    setExportZipContent(i + "." + material.getFile().getFileName(), out, filesDto);
+                    i++;
                 }
+            }
+            if(icMeetingTopicDto.getExplanatoryNote() != null){
+                String absolutePath = filePathResolver.resolveAbsoluteFilePath(icMeetingTopicDto.getExplanatoryNote().getId(),
+                        FileTypeLookup.IC_EXPLANATORY_NOTE.getCatalog());
+                InputStream inputStream = new FileInputStream(absolutePath);
+                filesDto.setInputStream(inputStream);
+                filesDto.setFileName(absolutePath);
+                setExportZipContent("0." + icMeetingTopicDto.getExplanatoryNote().getFileName(), out, filesDto);
             }
 
             out.close();
@@ -4857,6 +4867,7 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
                     out.putNextEntry(new ZipEntry(topicNameFolder + "/"));
                     if (icMeetingTopic.getMaterials() != null && !icMeetingTopic.getMaterials().isEmpty()) {
                         ICMeetingTopicDto icMeetingTopicDto = getICMeetingTopic(icMeetingTopic.getId(), username);
+                        int j = 1;
                         for (NamedFilesDto material : icMeetingTopicDto.getMaterials()) {
                             //material.getFile();
                             String absolutePath = filePathResolver.resolveAbsoluteFilePath(material.getFile().getId(), FileTypeLookup.IC_MATERIALS.getCatalog());
@@ -4870,7 +4881,24 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
                             }
                             String shortFileName = material.getFile().getFileName().length() <= 54 ? material.getFile().getFileName() : // extension - 4 symbols
                                     material.getFile().getFileName().substring(0, 50) + "..."  + ext;
-                            setExportZipContent(topicNameFolder + "/" + shortFileName, out, filesDto);
+                            setExportZipContent(topicNameFolder + "/" + j + "." + shortFileName, out, filesDto);
+                            j++;
+                        }
+                        if(icMeetingTopicDto.getExplanatoryNote() != null){
+                            String[] dottedName = icMeetingTopicDto.getExplanatoryNote().getFileName().split("\\.");
+                            String ext = "";
+                            if(dottedName != null && dottedName.length > 1){
+                                ext = "." + dottedName[dottedName.length - 1];
+                            }
+                            String shortFileName = icMeetingTopicDto.getExplanatoryNote().getFileName().length() <= 54 ?
+                                    icMeetingTopicDto.getExplanatoryNote().getFileName() : // extension - 4 symbols
+                                    icMeetingTopicDto.getExplanatoryNote().getFileName().substring(0, 50) + "..."  + ext;
+                            String absolutePath = filePathResolver.resolveAbsoluteFilePath(icMeetingTopicDto.getExplanatoryNote().getId(),
+                                    FileTypeLookup.IC_EXPLANATORY_NOTE.getCatalog());
+                            InputStream inputStream = new FileInputStream(absolutePath);
+                            filesDto.setInputStream(inputStream);
+                            filesDto.setFileName(absolutePath);
+                            setExportZipContent(topicNameFolder + "/" +  "0." + shortFileName, out, filesDto);
                         }
                     }
                 }
