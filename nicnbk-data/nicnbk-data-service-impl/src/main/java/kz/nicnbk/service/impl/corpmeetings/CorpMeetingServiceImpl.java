@@ -4852,7 +4852,7 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
                     ICMeetingTopicDto icMeetingTopic = icMeetingDto.getTopics().get(i);
                     // create folder
                     String topicNameFolder = icMeetingTopic.getName() != null && icMeetingTopic.getName().length() > 0 ?
-                            (i + 1) + "." + (icMeetingTopic.getName().length() <= 80 ? icMeetingTopic.getName() : icMeetingTopic.getName().substring(0, 80) + "_") :
+                            (i + 1) + "." + (icMeetingTopic.getName().length() <= 50 ? icMeetingTopic.getName() : icMeetingTopic.getName().substring(0, 50) + "_" ) :
                             (i + 1) + ".Вопрос";
                     out.putNextEntry(new ZipEntry(topicNameFolder + "/"));
                     if (icMeetingTopic.getMaterials() != null && !icMeetingTopic.getMaterials().isEmpty()) {
@@ -4863,8 +4863,13 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
                             InputStream inputStream = new FileInputStream(absolutePath);
                             filesDto.setInputStream(inputStream);
                             filesDto.setFileName(absolutePath);
-                            String shortFileName = material.getFile().getFileName().length() <= 80 ? material.getFile().getFileName() :
-                                    material.getFile().getFileName().substring(0, 80) + "_";
+                            String[] dottedName = material.getFile().getFileName().split("\\.");
+                            String ext = "";
+                            if(dottedName != null && dottedName.length > 1){
+                                ext = "." + dottedName[dottedName.length - 1];
+                            }
+                            String shortFileName = material.getFile().getFileName().length() <= 54 ? material.getFile().getFileName() : // extension - 4 symbols
+                                    material.getFile().getFileName().substring(0, 50) + "..."  + ext;
                             setExportZipContent(topicNameFolder + "/" + shortFileName, out, filesDto);
                         }
                     }
