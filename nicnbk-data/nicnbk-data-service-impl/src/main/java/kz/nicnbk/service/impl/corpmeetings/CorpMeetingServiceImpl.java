@@ -4814,7 +4814,7 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
                     i++;
                 }
             }
-            if(icMeetingTopicDto.getExplanatoryNote() != null){
+            if(icMeetingTopicDto.getExplanatoryNote() != null && icMeetingTopicDto.getExplanatoryNote().getId() != null){
                 String absolutePath = filePathResolver.resolveAbsoluteFilePath(icMeetingTopicDto.getExplanatoryNote().getId(),
                         FileTypeLookup.IC_EXPLANATORY_NOTE.getCatalog());
                 InputStream inputStream = new FileInputStream(absolutePath);
@@ -4884,7 +4884,7 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
                             setExportZipContent(topicNameFolder + "/" + j + "." + shortFileName, out, filesDto);
                             j++;
                         }
-                        if(icMeetingTopicDto.getExplanatoryNote() != null){
+                        if(icMeetingTopicDto.getExplanatoryNote() != null && icMeetingTopicDto.getExplanatoryNote().getId() != null){
                             String[] dottedName = icMeetingTopicDto.getExplanatoryNote().getFileName().split("\\.");
                             String ext = "";
                             if(dottedName != null && dottedName.length > 1){
