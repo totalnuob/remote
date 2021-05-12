@@ -1146,6 +1146,17 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
                         }
                     }
                 }
+                // check invitees
+                if(entity.getIcMeeting() != null && entity.getIcMeeting().getId() != null){
+                    List<EmployeeDto> invitees = getICMeetingInvitees(entity.getIcMeeting().getId());
+                    if(invitees != null && invitees.isEmpty()){
+                        for(EmployeeDto invitee: invitees){
+                            if(invitee.getId() != null && invitee.getId().longValue() == editor.getId().longValue()){
+                                return true;
+                            }
+                        }
+                    }
+                }
                 //check shares
                 if(entity.getSharedDepartments() != null){
                     for(ICMeetingTopicShare share: entity.getSharedDepartments()){
