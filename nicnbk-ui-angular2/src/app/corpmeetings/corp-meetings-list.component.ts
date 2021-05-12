@@ -228,11 +228,11 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
                 while(diff > 1){
                     date.setDate(date.getDate() - (diff - 1));
                     var pushDate = new Date(date);
-                    daysOfWeek.push({date: pushDate, day: pushDate.getDate(), isToday: (pushDate.getDate() == todayDate), isCurrentMonth: false, isWeekend: (dayOfWeek > 5), events: []});
+                    daysOfWeek.push({date: pushDate, day: pushDate.getDate(), isToday: (pushDate.getDate() == todayDate), isCurrentMonth: false, isWeekend: (date.getDay() == 6 || date.getDay() == 0), events: []});
                     diff--;
+                    date = new Date(d);
                 }
             }
-
             daysOfWeek.push({date: new Date(d), day: d.getDate(), isToday: (d.getDate() == todayDate), isCurrentMonth: true, isWeekend: (dayOfWeek > 5), events: []});
              if(dayOfWeek == 7){
                 daysOfMonth.push(daysOfWeek);
