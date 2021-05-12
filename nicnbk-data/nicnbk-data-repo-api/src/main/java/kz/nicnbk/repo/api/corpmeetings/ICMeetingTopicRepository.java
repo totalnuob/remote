@@ -43,14 +43,16 @@ public interface ICMeetingTopicRepository extends PagingAndSortingRepository<ICM
                                           @Param("searchText") String searchText, @Param("icNumber")String icNumber, Pageable pageable);
 
 
-    @Query("SELECT DISTINCT e FROM ICMeetingTopic e LEFT JOIN e.approveList b " +
+    @Query("SELECT DISTINCT e FROM ICMeetingTopic e  LEFT JOIN e.icMeeting ic LEFT JOIN ic.invitees inv LEFT JOIN e.approveList b " +
             " LEFT JOIN b.employee emp LEFT JOIN b.employee.position pos LEFT JOIN b.employee.position.department dep " +
             " LEFT JOIN e.sharedDepartments shares WHERE " +
-            " (:departmentId IS NULL OR e.department.id=:departmentId OR (:viewICTopicAll=true AND e.published=true) OR " +
+            " (:departmentId IS NULL OR e.department.id=:departmentId OR :employeeId IS NULL OR inv.id=:employeeId OR " +
+            " (:viewICTopicAll=true AND e.published=true) OR " +
             " (e.published=true AND e.id=b.icMeetingTopic.id AND b.employee.position.department.id=:departmentId) OR " +
             " (shares.icMeetingTopic.id=e.id AND shares.department.id=:departmentId)) " +
             " AND (e.deleted is null OR e.deleted=false) ")
     Page<ICMeetingTopic> searchAllByDepartmentAndUserNonDeleted(@Param("departmentId") Integer departmentId,
+                                                                @Param("employeeId") Long employeeId,
                                                                 @Param("viewICTopicAll") Boolean viewICTopicAll,
                                                                 Pageable pageable);
 

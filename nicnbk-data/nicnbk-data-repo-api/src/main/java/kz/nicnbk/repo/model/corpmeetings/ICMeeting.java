@@ -39,6 +39,8 @@ public class ICMeeting extends CreateUpdateBaseEntity{
 
     private Employee ceoSubEmployee;
 
+    private List<Employee> invitees;
+
     public ICMeeting(){}
 
     public ICMeeting(Long id){
@@ -145,5 +147,22 @@ public class ICMeeting extends CreateUpdateBaseEntity{
 
     public void setCeoSubEmployee(Employee ceoSubEmployee) {
         this.ceoSubEmployee = ceoSubEmployee;
+    }
+
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name="ic_meeting_invitees",
+            joinColumns=
+            @JoinColumn(name="ic_meeting_id", referencedColumnName="ID"),
+            inverseJoinColumns=
+            @JoinColumn(name="employee_id", referencedColumnName="ID")
+    )
+    public List<Employee> getInvitees() {
+        return invitees;
+    }
+
+    public void setInvitees(List<Employee> invitees) {
+        this.invitees = invitees;
     }
 }

@@ -129,8 +129,8 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
     @Autowired
     private ICMeetingAttendeesRepository icMeetingAttendeesRepository;
 
-    @Autowired
-    private ICMeetingInviteesRepository icMeetingInviteesRepository;
+    //@Autowired
+    //private ICMeetingInviteesRepository icMeetingInviteesRepository;
 
     @Autowired
     private FilePathResolver filePathResolver;
@@ -1148,9 +1148,9 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
                 }
                 // check invitees
                 if(entity.getIcMeeting() != null && entity.getIcMeeting().getId() != null){
-                    List<EmployeeDto> invitees = getICMeetingInvitees(entity.getIcMeeting().getId());
-                    if(invitees != null && invitees.isEmpty()){
-                        for(EmployeeDto invitee: invitees){
+                    List<Employee> invitees = entity.getIcMeeting().getInvitees();
+                    if(invitees != null && !invitees.isEmpty()){
+                        for(Employee invitee: invitees){
                             if(invitee.getId() != null && invitee.getId().longValue() == editor.getId().longValue()){
                                 return true;
                             }
@@ -1470,10 +1470,13 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
                 }
             }
 
+            // check IC invitees
+
             if (searchParams == null || searchParams.isEmpty()) {
                 int pageSize = searchParams != null && searchParams.getPageSize() > 0 ? searchParams.getPageSize() : DEFAULT_PAGE_SIZE;
                 page = searchParams != null && searchParams.getPage() > 0 ? searchParams.getPage() - 1 : 0;
-                entitiesPage = icMeetingTopicRepository.searchAllByDepartmentAndUserNonDeleted(departmentId, viewICTopicAll, new PageRequest(page, pageSize, new Sort(Sort.Direction.DESC, "id")));
+                entitiesPage = icMeetingTopicRepository.searchAllByDepartmentAndUserNonDeleted(departmentId, employee.getId(),
+                        viewICTopicAll, new PageRequest(page, pageSize, new Sort(Sort.Direction.DESC, "id")));
             } else {
                 page = searchParams.getPage() > 0 ? searchParams.getPage() - 1 : 0;
 
@@ -2095,7 +2098,7 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
 
 
             // save invitees
-            saveICMeetingInvitees(icMeetingDto.getInvitees(), entity.getId());
+            //saveICMeetingInvitees(icMeetingDto.getInvitees(), entity.getId());
 
             // Update ic topics order
             updateICMeetingTopicsOrder(icMeetingDto.getTopics());
@@ -2131,25 +2134,25 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
         }
     }
 
-    private void saveICMeetingInvitees(List<EmployeeDto> invitees, Long icMeetingId){
-        if(invitees != null && !invitees.isEmpty()){
-            List<ICMeetingInvitees> entities = new ArrayList<>();
-            for(EmployeeDto employeeDto: invitees){
-                if(employeeDto.getId() != null) {
-                    ICMeetingInvitees entity = new ICMeetingInvitees();
-                    entity.setIcMeeting(new ICMeeting(icMeetingId));
-                    entity.setEmployee(new Employee(employeeDto.getId()));
-                    entities.add(entity);
-                }
-            }
-            this.icMeetingInviteesRepository.deleteByICMeetingId(icMeetingId);
-            this.icMeetingInviteesRepository.save(entities);
-        }else{
-            // clear all existing
-            this.icMeetingInviteesRepository.deleteByICMeetingId(icMeetingId);
-        }
-
-    }
+//    private void saveICMeetingInvitees(List<EmployeeDto> invitees, Long icMeetingId){
+//        if(invitees != null && !invitees.isEmpty()){
+//            List<ICMeetingInvitees> entities = new ArrayList<>();
+//            for(EmployeeDto employeeDto: invitees){
+//                if(employeeDto.getId() != null) {
+//                    ICMeetingInvitees entity = new ICMeetingInvitees();
+//                    entity.setIcMeeting(new ICMeeting(icMeetingId));
+//                    entity.setEmployee(new Employee(employeeDto.getId()));
+//                    entities.add(entity);
+//                }
+//            }
+//            this.icMeetingInviteesRepository.deleteByICMeetingId(icMeetingId);
+//            this.icMeetingInviteesRepository.save(entities);
+//        }else{
+//            // clear all existing
+//            this.icMeetingInviteesRepository.deleteByICMeetingId(icMeetingId);
+//        }
+//
+//    }
 
     private EntitySaveResponseDto saveICMeetingAttendees(List<ICMeetingAttendeesDto> attendees, Long icMeetingId){
         EntitySaveResponseDto saveResponseDto = new EntitySaveResponseDto();
@@ -2350,8 +2353,8 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
             //Collections.sort(dto.getAttendees());
 
             // invitees
-            List<EmployeeDto> invitees = getICMeetingInvitees(id);
-            dto.setInvitees(invitees);
+            //List<EmployeeDto> invitees = getICMeetingInvitees(id);
+            //dto.setInvitees(invitees);
 
             // questions
             dto.setTopics(getLimitedICMeetingTopicsByMeetingId(id));
@@ -2406,17 +2409,17 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
         return attendees;
     }
 
-    private List<EmployeeDto> getICMeetingInvitees(Long icMeetingId){
-        List<EmployeeDto> invitees = new ArrayList<>();
-        List<ICMeetingInvitees> entities = this.icMeetingInviteesRepository.findByIcMeetingId(icMeetingId);
-        if(entities != null){
-            for(ICMeetingInvitees entity: entities){
-                EmployeeDto employeeDto = this.employeeService.getEmployeeById(entity.getEmployee().getId());
-                invitees.add(employeeDto);
-            }
-        }
-        return invitees;
-    }
+//    private List<EmployeeDto> getICMeetingInvitees(Long icMeetingId){
+//        List<EmployeeDto> invitees = new ArrayList<>();
+//        List<ICMeetingInvitees> entities = this.icMeetingInviteesRepository.findByIcMeetingId(icMeetingId);
+//        if(entities != null){
+//            for(ICMeetingInvitees entity: entities){
+//                EmployeeDto employeeDto = this.employeeService.getEmployeeById(entity.getEmployee().getId());
+//                invitees.add(employeeDto);
+//            }
+//        }
+//        return invitees;
+//    }
 
     @Override
     public Set<FilesDto> getICMeetingAttachments(Long id){
