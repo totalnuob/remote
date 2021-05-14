@@ -237,10 +237,12 @@ public class HedgeFundScoringServiceImpl implements HedgeFundScoringService {
                     Double annualizedTbills = MathUtils.getAnnualizedReturn(tbillsReturns, scale);
                     if(fund.getAnnualizedReturn() != null && annualizedTbills != null) {
                         fund.setSortino(MathUtils.getSortinoRatio(fund.getAnnualizedReturn(), annualizedTbills, returns, scale));
+                        //fund.setSortino(MathUtils.getSortinoRatio2(returns, tbillsReturns, scale));
                     }
 
                     // Beta
                     Double beta = MathUtils.getBeta(returns, snpReturns, scale);
+                    //Double beta = MathUtils.getBeta2(returns, snpReturns, tbillsReturns, scale);
                     if(beta != null){
                         double newValue = (new BigDecimal(beta).setScale(1, RoundingMode.HALF_UP)).doubleValue();
                         if(newValue == 0.0){
@@ -252,6 +254,7 @@ public class HedgeFundScoringServiceImpl implements HedgeFundScoringService {
                     // Alpha
                     if(fund.getBeta() != null) {
                         fund.setAlpha(MathUtils.getAlpha(scale, returns, tbillsReturns, snpReturns, beta));
+                        //fund.setAlpha(MathUtils.getAlpha2(scale, returns, tbillsReturns, snpReturns, beta));
                     }
 
                     // Omega
@@ -259,6 +262,7 @@ public class HedgeFundScoringServiceImpl implements HedgeFundScoringService {
 
                     // CFVar
                     fund.setCfVar(MathUtils.getCFVar(scale, returns, MathUtils.Z_SCORE_99_PERCENT));
+                    //fund.setCfVar(MathUtils.getCFVar2(scale, returns, MathUtils.Z_SCORE_99_PERCENT));
 
                 }else{
                 }

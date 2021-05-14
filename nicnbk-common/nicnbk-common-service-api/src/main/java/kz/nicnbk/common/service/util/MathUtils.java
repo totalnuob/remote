@@ -205,6 +205,26 @@ public class MathUtils {
         return (new BigDecimal(value).setScale(scale, RoundingMode.HALF_UP)).doubleValue();
     }
 
+    public static Double getSortinoRatio2(double[] returns, double[] riskFreeReturns, int scale){
+        if(returns == null || returns.length == 0 || riskFreeReturns == null || riskFreeReturns.length == 0) {
+            return null;
+        }
+
+        Double meanReturn = getMean(returns);
+        Double meanRiskFree = getMean(riskFreeReturns);
+
+        Double sum = 0.0;
+        for(int i = 0; i < returns.length; i++){
+            Double diff = subtract(scale, returns[i], riskFreeReturns[i]);
+            if(diff < 0){
+                sum =  add(scale, sum, positivePower(scale, diff, 2));
+            }
+        }
+        Double divider = Math.sqrt(divide(scale, sum, returns.length + 0.0));
+        Double value = divide(scale, subtract(scale, meanReturn, meanRiskFree), divider);
+        return (new BigDecimal(value).setScale(scale, RoundingMode.HALF_UP)).doubleValue();
+    }
+
     public static Double getSortinoRatioAvgReturns(Double benchmarkAnnualizedReturn, double[] returns, int scale){
         if(returns == null || returns.length == 0 || benchmarkAnnualizedReturn == null) {
             return null;
@@ -259,6 +279,30 @@ public class MathUtils {
 //        return newValue;
     }
 
+    public static Double getBeta2(double[] fundReturns, double[] benchmarkReturns, double[] riskFreeReturns, int scale){
+
+        if(fundReturns == null  || fundReturns.length == 0 || benchmarkReturns == null || benchmarkReturns.length == 0  ||
+                riskFreeReturns == null || riskFreeReturns.length == 0){
+            return null;
+        }
+
+        // TODO: handle - check benchmarks array size no less than returns size
+        if(fundReturns.length != benchmarkReturns.length || fundReturns.length != riskFreeReturns.length){
+            return null;
+        }
+
+        // prepare data
+        double[][] data = new double[fundReturns.length][2];
+        for(int i = 0; i < fundReturns.length; i++){
+            data[i][1] = subtract(scale, fundReturns[i], riskFreeReturns[i]);
+            data[i][0] = subtract(scale, benchmarkReturns[i], riskFreeReturns[i]);
+        }
+
+        // call slope function
+        double value = MathUtils.calculateSlope(data);
+        return value;
+    }
+
     public static Double getAlpha(int scale, double[] returns, double[] riskfree, double[] indices, double beta){
         if(returns == null || riskfree == null || indices == null || returns.length == 0
                 || returns.length == 0 || riskfree.length == 0 || indices.length == 0
@@ -292,6 +336,27 @@ public class MathUtils {
         double b = multiply(scale, beta, subtract(scale, meanIndices, meanRiskfree));
         double result = subtract(scale, a, b);
         result = subtract(scale, positivePower(scale, result, 12), 1.0);
+        return result;
+    }
+
+    public static Double getAlpha2(int scale, double[] returns, double[] riskfree, double[] indices, double beta){
+        if(returns == null || riskfree == null || indices == null || returns.length == 0
+                || returns.length == 0 || riskfree.length == 0 || indices.length == 0
+                || returns.length != riskfree.length ||  indices.length != riskfree.length){
+            return null;
+        }
+
+        double meanReturn = getMean(returns);
+        double meanRiskfree = getMean(riskfree);
+        double meanIndices = getMean(indices);
+
+        meanReturn = new BigDecimal(meanReturn).setScale(scale, RoundingMode.HALF_UP).doubleValue();
+        meanRiskfree = new BigDecimal(meanRiskfree).setScale(scale, RoundingMode.HALF_UP).doubleValue();
+        meanIndices = new BigDecimal(meanIndices).setScale(scale, RoundingMode.HALF_UP).doubleValue();
+
+        double a = subtract(scale, meanReturn, meanRiskfree);
+        double b = multiply(scale, beta, subtract(scale, meanIndices, meanRiskfree));
+        double result = multiply(scale, subtract(scale, a, b), 12.0);
         return result;
     }
 
@@ -353,6 +418,33 @@ public class MathUtils {
         Double cfScore = add(scale, part1, part2, part3, zScore);
 
         return add(scale, meanReturn, multiply(scale, cfScore, multiply(scale, std, sqrt(new BigDecimal(12.0), scale).doubleValue())));
+    }
+
+    public static Double getCFVar2(int scale, double[] returns, Double zScore){
+        Double meanReturn = getMean(returns);
+        Double std = getStandardDeviation(returns);
+        Double skew = getSkew(returns);
+        Double kurtosis = getKurtosis(returns);
+
+        if(skew == null){
+            return null;
+        }
+        if(kurtosis == null){
+            return null;
+        }
+
+        meanReturn = new BigDecimal(meanReturn).setScale(scale, RoundingMode.HALF_UP).doubleValue();
+        std = new BigDecimal(std).setScale(scale, RoundingMode.HALF_UP).doubleValue();
+        skew = new BigDecimal(skew).setScale(scale, RoundingMode.HALF_UP).doubleValue();
+        kurtosis = new BigDecimal(kurtosis).setScale(scale, RoundingMode.HALF_UP).doubleValue();
+
+
+        Double part1 = divide(scale, multiply(scale, subtract(scale, Math.pow(zScore, 2), 1.0), skew), 6.0);
+        Double part2 = divide(scale, multiply(scale, subtract(scale, Math.pow(zScore, 3), multiply(scale, 3.0, zScore)), kurtosis), 24.0);
+        Double part3 = divide(scale, multiply(scale, subtract(scale, multiply(2.0, Math.pow(zScore, 3)), multiply(scale, 5.0, zScore)), Math.pow(skew, 2)), -36.0);
+        Double cfScore = add(scale, part1, part2, part3, zScore);
+
+        return subtract(scale, meanReturn, multiply(scale, cfScore, std));
     }
 
     public static Double getSkew(double[] values){
