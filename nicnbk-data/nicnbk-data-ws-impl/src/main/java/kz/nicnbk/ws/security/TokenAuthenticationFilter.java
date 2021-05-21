@@ -31,7 +31,10 @@ public class TokenAuthenticationFilter extends AbstractAuthenticationProcessingF
     public void doFilter(ServletRequest req, ServletResponse res, final FilterChain chain) throws IOException, ServletException {
 
         if((((HttpServletRequest)req).getRequestURI().equals("/authenticate") && ((HttpServletRequest)req).getMethod().equalsIgnoreCase("POST"))
-                || ((HttpServletRequest)req).getMethod().equalsIgnoreCase("OPTIONS")) {
+                || ((HttpServletRequest)req).getMethod().equalsIgnoreCase("OPTIONS")
+                || (((HttpServletRequest)req).getRequestURI().equals("/requestReset") && ((HttpServletRequest)req).getMethod().equalsIgnoreCase("POST"))
+                || (((HttpServletRequest)req).getRequestURI().equals("/confirmReset") && ((HttpServletRequest)req).getMethod().equalsIgnoreCase("GET"))
+                || (((HttpServletRequest)req).getRequestURI().equals("/confirmReset") && ((HttpServletRequest)req).getMethod().equalsIgnoreCase("POST"))) {
             chain.doFilter(req, res);
             return;
         }

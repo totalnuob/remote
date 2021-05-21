@@ -5,7 +5,7 @@ import {AuthenticationService} from "./authentication/authentication.service";
 @Injectable()
 
 
-export class AuthGuard implements CanActivate {
+export class AuthGuardReset implements CanActivate {
 
     constructor(
         private authenticationService: AuthenticationService
@@ -14,12 +14,7 @@ export class AuthGuard implements CanActivate {
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot){
         // authentication
         // this.authenticationService.checkCredentials(state.url);
-        // this.authenticationService.checkResetToken(state.root.params)
-        // if (this.authenticationService.isValid(state.url)) {
-        //     this.authenticationService.checkResetToken(state.root.params.username)
-        //     return true;
-        // }
-        this.authenticationService.checkCredentials(state.url);
+        this.authenticationService.validateResetToken(this.authenticationService.isValid(state.url));
         return true;
     }
 

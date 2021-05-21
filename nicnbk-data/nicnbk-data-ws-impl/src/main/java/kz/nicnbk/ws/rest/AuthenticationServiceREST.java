@@ -2,22 +2,23 @@ package kz.nicnbk.ws.rest;
 
 import kz.nicnbk.service.api.authentication.AuthenticationService;
 import kz.nicnbk.service.api.authentication.TokenService;
+import kz.nicnbk.service.api.employee.EmployeeService;
 import kz.nicnbk.service.dto.authentication.AuthenticatedUserDto;
 import kz.nicnbk.service.dto.authentication.TokenUserInfo;
 import kz.nicnbk.service.dto.authentication.UserCredentialsDto;
 import kz.nicnbk.ws.model.Response;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 /**
  * Created by magzumov on 21.02.2017.
@@ -26,8 +27,13 @@ import javax.servlet.http.HttpServletResponse;
 @RestController
 public class AuthenticationServiceREST {
 
+    private static final Logger logger = LoggerFactory.getLogger(AuthenticationServiceREST.class);
+
     @Autowired
     private AuthenticationService authenticationService;
+
+    @Autowired
+    private EmployeeService employeeService;
 
     @Autowired
     private TokenService tokenService;
@@ -53,6 +59,37 @@ public class AuthenticationServiceREST {
     public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response){
         response.addCookie(getClearTokenCookie());
         return new ResponseEntity<>(new Response(true, null), null, HttpStatus.OK);
+    }
+
+    @RequestMapping(value="/requestReset", method = RequestMethod.POST)
+    public ResponseEntity<?> reset(@RequestBody String emailAddress, HttpServletRequest request, HttpServletResponse response){
+        String email = emailAddress.substring(1, emailAddress.length()-1);
+        // verify
+        AuthenticatedUserDto userDto = authenticationService.verifyForReset(email);
+        if(userDto == null){
+            // invalid credentials
+            response.addCookie(getClearTokenCookie());
+            return new ResponseEntity<>(null, null, HttpStatus.UNAUTHORIZED);
+        }
+
+        // create token
+        String token = this.tokenService.create(userDto);
+        response.addCookie(getTokenCookie(token));
+        employeeService.setResetToken(userDto.getUsername(), token);
+        authenticationService.sendResetLink(email, userDto.getUsername());
+        return new ResponseEntity<>(userDto, null, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/confirmReset", method = RequestMethod.GET)
+    public ResponseEntity<?> confirmReset(@RequestBody String url, HttpServletRequest request, HttpServletResponse response) {
+        String username = url.replace("http://localhost:8080/confirmReset/", "");
+        logger.info(username);
+        boolean isValid = this.employeeService.checkResetToken(username);
+        if(isValid){
+            return new ResponseEntity<>(true, null, HttpStatus.OK);
+        }else{
+            return new ResponseEntity<>(false, null, HttpStatus.OK);
+        }
     }
 
 

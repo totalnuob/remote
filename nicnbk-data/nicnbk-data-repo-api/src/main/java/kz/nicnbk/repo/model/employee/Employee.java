@@ -38,6 +38,8 @@ public class Employee extends BaseEntity {
     private String secret;
     private String email;
 
+    private ResetToken passwordResetToken;
+
     public Employee(){}
 
     public Employee(Long id){
@@ -217,5 +219,15 @@ public class Employee extends BaseEntity {
 
     public void setLastNameRuPossessive(String lastNameRuPossessive) {
         this.lastNameRuPossessive = lastNameRuPossessive;
+    }
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "reset_token_id")
+    public ResetToken getPasswordResetToken(){
+        return passwordResetToken;
+    }
+
+    public void setPasswordResetToken(ResetToken passwordResetToken) {
+        this.passwordResetToken = passwordResetToken;
     }
 }

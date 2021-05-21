@@ -1,24 +1,16 @@
 package kz.nicnbk.service.impl.employee;
 
 import kz.nicnbk.common.service.model.BaseDictionaryDto;
+import kz.nicnbk.common.service.util.DateUtils;
 import kz.nicnbk.common.service.util.HashUtils;
 import kz.nicnbk.common.service.util.PaginationUtils;
 import kz.nicnbk.common.service.util.StringUtils;
-import kz.nicnbk.repo.api.employee.DepartmentRepository;
-import kz.nicnbk.repo.api.employee.EmployeeRepository;
-import kz.nicnbk.repo.api.employee.PositionRepository;
-import kz.nicnbk.repo.api.employee.RoleRepository;
-import kz.nicnbk.repo.model.employee.Department;
-import kz.nicnbk.repo.model.employee.Employee;
-import kz.nicnbk.repo.model.employee.Position;
-import kz.nicnbk.repo.model.employee.Role;
+import kz.nicnbk.repo.api.employee.*;
+import kz.nicnbk.repo.model.employee.*;
 import kz.nicnbk.service.api.authentication.TokenService;
 import kz.nicnbk.service.api.email.EmailService;
 import kz.nicnbk.service.api.employee.EmployeeService;
-import kz.nicnbk.service.converter.employee.DepartmentEntityConverter;
-import kz.nicnbk.service.converter.employee.EmployeeEntityConverter;
-import kz.nicnbk.service.converter.employee.EmployeeFullEntityConverter;
-import kz.nicnbk.service.converter.employee.RoleEntityConverter;
+import kz.nicnbk.service.converter.employee.*;
 import kz.nicnbk.service.dto.authentication.UserRoles;
 import kz.nicnbk.service.dto.common.EntitySaveResponseDto;
 import kz.nicnbk.service.dto.common.ResponseStatusType;
@@ -32,6 +24,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.*;
 
 /**
@@ -62,6 +55,9 @@ public class EmployeeServiceImpl implements EmployeeService{
     private RoleRepository roleRepository;
 
     @Autowired
+    private ResetTokenRepository resetTokenRepository;
+
+    @Autowired
     private RoleEntityConverter roleEntityConverter;
 
     @Autowired
@@ -69,6 +65,9 @@ public class EmployeeServiceImpl implements EmployeeService{
 
     @Autowired
     private DepartmentEntityConverter departmentEntityConverter;
+
+    @Autowired
+    private ResetTokenEntityConverter resetTokenEntityConverter;
 
     @Autowired
     private TokenService tokenService;
@@ -104,6 +103,22 @@ public class EmployeeServiceImpl implements EmployeeService{
             return dtoList;
         }catch (Exception ex){
             logger.error("Failed to load full employee list", ex);
+        }
+        return null;
+    }
+
+    @Override
+    public List<EmployeeDto> findEligibleForReset() {
+        try {
+            List<EmployeeDto> dtoList = new ArrayList<>();
+            List<Employee> entities = this.employeeRepository.findActiveAndNoFailedLoginAttempts();
+            for (Employee employee : entities) {
+                EmployeeDto employeeDto = this.employeeEntityConverter.disassemble(employee);
+                dtoList.add(employeeDto);
+            }
+            return dtoList;
+        } catch (Exception ex) {
+            logger.error("Failed to load active and no failed login attempts employee list", ex);
         }
         return null;
     }
@@ -258,6 +273,19 @@ public class EmployeeServiceImpl implements EmployeeService{
             Employee employee = this.employeeRepository.findByUsername(username);
             if (employee != null) {
                 return this.employeeFullEntityConverter.disassemble(employee);
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public EmployeeDto getEmployeeByEmail(String email) {
+        if (email != null) {
+            Employee employee = this.employeeRepository.findByEmail(email);
+            if (employee != null) {
+                if (employee.getActive() && employee.getFailedLoginAttempts() < 3) {
+                    return this.employeeEntityConverter.disassemble(employee);
+                }
             }
         }
         return null;
@@ -695,6 +723,63 @@ public class EmployeeServiceImpl implements EmployeeService{
         }
 
         return false;
+    }
+
+    @Override
+    public boolean setResetToken(String username, String token) {
+        if (StringUtils.isEmpty(username)) {
+            return false;
+        }
+        try {
+            Employee employee = this.employeeRepository.findByUsername(username);
+            if (employee == null) {
+                return false;
+            }
+            ResetTokenDto resetTokenDto = new ResetTokenDto();
+            resetTokenDto.setToken(token);
+            resetTokenDto.setExpiryDate(DateUtils.getNext5Min());
+            ResetToken resetTokenEntity = new ResetToken();
+            resetTokenEntity = this.resetTokenEntityConverter.assemble(resetTokenDto);
+            this.resetTokenRepository.save(resetTokenEntity);
+            employee.setPasswordResetToken(resetTokenEntity);
+            this.employeeRepository.save(employee);
+            logger.info("Successfully added reset token= " + employee.getPasswordResetToken().getToken() +
+                    " with expiry date= " + employee.getPasswordResetToken().getExpiryDate() +
+                    " for username= " + employee.getUsername());
+            return true;
+        } catch (Exception ex) {
+            logger.error("Failed to add token.", ex);
+        }
+        return false;
+    }
+
+    @Override
+    public boolean checkResetToken(String username) {
+        if (StringUtils.isEmpty(username)) {
+            return false;
+        }
+        try {
+            Employee employee = this.employeeRepository.findByUsername(username);
+            if (employee == null) {
+                return false;
+            }
+            if (employee.getPasswordResetToken().getToken() == null ||
+                    !isExpired(employee.getPasswordResetToken().getExpiryDate())) {
+                return false;
+            }
+            boolean isValid = this.tokenService.verify(employee.getPasswordResetToken().getToken());
+            if (!isExpired(employee.getPasswordResetToken().getExpiryDate())) {
+                return isValid;
+            }
+        } catch (Exception ex) {
+            logger.error("Failed to vertify token", ex);
+        }
+        return false;
+    }
+
+    private boolean isExpired(Date expiryDate) {
+        Instant tokenExpires = expiryDate.toInstant();
+        return !Instant.now().isBefore(tokenExpires);
     }
 
     private String generateSalt(){

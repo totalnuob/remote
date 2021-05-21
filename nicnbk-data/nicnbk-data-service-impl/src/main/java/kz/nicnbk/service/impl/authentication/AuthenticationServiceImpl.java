@@ -2,9 +2,13 @@ package kz.nicnbk.service.impl.authentication;
 
 import kz.nicnbk.common.service.model.BaseDictionaryDto;
 import kz.nicnbk.common.service.util.StringUtils;
+import kz.nicnbk.repo.model.employee.Employee;
 import kz.nicnbk.service.api.authentication.AuthenticationService;
+import kz.nicnbk.service.api.email.EmailService;
 import kz.nicnbk.service.api.employee.EmployeeService;
 import kz.nicnbk.service.dto.authentication.AuthenticatedUserDto;
+import kz.nicnbk.service.dto.common.ResponseDto;
+import kz.nicnbk.service.dto.common.ResponseStatusType;
 import kz.nicnbk.service.dto.employee.EmployeeDto;
 import org.apache.poi.util.StringUtil;
 import org.slf4j.Logger;
@@ -12,7 +16,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -26,6 +32,62 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Autowired
     private EmployeeService employeeService;
+
+    @Autowired
+    private EmailService emailService;
+
+    @Override
+    public ResponseDto reset(String emailAddress, List<EmployeeDto> employeeDtos) {
+        ResponseDto responseDto = new ResponseDto();
+        for (EmployeeDto employeeDto : employeeDtos) {
+            if (employeeDto.getEmail().equalsIgnoreCase(emailAddress)) {
+                responseDto.setStatus(ResponseStatusType.SUCCESS);
+                responseDto.setMessageEn("Email with a link to reset your password has been sent to your email");
+            } else {
+                responseDto.setStatus(ResponseStatusType.FAIL);
+                responseDto.setErrorMessageEn("No matching email");
+            }
+        }
+        return responseDto;
+    }
+
+    @Override
+    public AuthenticatedUserDto verifyForReset(String emailAddress) {
+        try {
+            EmployeeDto employeeDto = employeeService.getEmployeeByEmail(emailAddress);
+            if (employeeDto == null) {
+                logger.error("Failed to find email: " + emailAddress);
+                return null;
+            } else {
+                AuthenticatedUserDto authenticatedUserDto = new AuthenticatedUserDto();
+                authenticatedUserDto.setUsername(employeeDto.getUsername());
+                if (employeeDto.getRoles() != null) {
+                    Set<String> roles = new HashSet<>();
+                    for (BaseDictionaryDto role : employeeDto.getRoles()) {
+                        String roleOutput = convertToOutputRoleName(role.getCode());
+                        if(StringUtils.isNotEmpty(roleOutput)) {
+                            roles.add(roleOutput);
+                        }
+                    }
+                    authenticatedUserDto.setRoles(roles);
+                }
+                authenticatedUserDto.setPosition(employeeDto.getPosition());
+                logger.info("Successfully verified by email = " + emailAddress);
+                return authenticatedUserDto;
+            }
+        } catch (Exception ex){
+            logger.error("Verification error: email=" + emailAddress, ex);
+        }
+        return null;
+    }
+
+    @Override
+    public void sendResetLink(String email, String username) {
+        emailService.sendMail(email, "UNIC – password reset (auto-generated)",
+                "Password change has been requested for the specified email address: " + email + ". " +
+                        "In order to change your password, please click the confirmation link below. " +
+                        "http://localhost:8080/confirmReset/" + username);
+    }
 
     @Override
     public AuthenticatedUserDto authenticate(String username, String password, String otp) {
