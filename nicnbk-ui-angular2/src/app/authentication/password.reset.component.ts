@@ -19,10 +19,12 @@ export class PasswordResetComponent extends CommonFormViewComponent {
     busy: Subscription;
     private sub: any;
 
-    emailAddress = '';
-    successMessageResetPassword: String;
-    errorMessageResetPassword: String;
+    textInput: String;
+    successMessageIsRequested: String;
+    errorMessageIsRequested: String;
+    errorMessageIsValidEmail: String;
     isRequested: boolean;
+    isValidEmail: boolean;
 
     constructor(
         private router : Router,
@@ -33,24 +35,39 @@ export class PasswordResetComponent extends CommonFormViewComponent {
     }
 
     reset() {
-        this.authenticationService.reset(this.emailAddress)
-            .subscribe(
-                response => {
-                    if (response == true){
-                        this.isRequested = true;
-                        this.successMessageResetPassword = "Request to reset password was send successfully. Please, check your email for password reset link"
-                    }else{
-                        if (response == null) {
-                            this.isRequested = false;
-                            this.errorMessageResetPassword = "Request to reset password failed, unauthorized attempt or no such user exists in the system"
+        this.isValidEmail = this.validateEmail(this.fullEmail(this.textInput));
+        if (this.isValidEmail) {
+            this.authenticationService.reset(this.fullEmail(this.textInput))
+                .subscribe(
+                    response => {
+                        if (response == true){
+                            this.isRequested = true;
+                            this.successMessageIsRequested = "Request to reset password was send successfully. Please, check your email for password reset link"
+                        }else{
+                            if (response == null) {
+                                this.isRequested = false;
+                                this.errorMessageIsRequested = "Request to reset password failed, unauthorized attempt or no such user exists in the system"
+                            }
                         }
+                    },
+                    (error: ErrorResponse) => {
+                        this.isRequested = false;
+                        this.errorMessageIsRequested = "Request to reset password failed, unauthorized attempt or no such user exists in the system"
                     }
-                },
-                (error: ErrorResponse) => {
-                    this.isRequested = false;
-                    this.errorMessageResetPassword = "Request to reset password failed, unauthorized attempt or no such user exists in the system"
-                }
-            );
+                );
+        } else {
+            this.isValidEmail = false;
+            this.errorMessageIsValidEmail = "Given email is not valid"
+        }
+    }
+
+    validateEmail(email) {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) && email.endsWith("@nicnbk.kz");
+    }
+
+    fullEmail(email) {
+        email = email.concat("@nicnbk.kz")
+        return email;
     }
 
 }
