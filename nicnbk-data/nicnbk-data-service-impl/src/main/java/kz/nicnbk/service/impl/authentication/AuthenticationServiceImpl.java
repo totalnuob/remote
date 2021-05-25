@@ -58,6 +58,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             if (employeeDto == null) {
                 logger.error("Failed to find email: " + emailAddress);
                 return null;
+            } else if (!employeeDto.getActive() || employeeDto.getFailedLoginAttempts() > 2) {
+                logger.error("Given user is not eligible for password reset due to inactivity or failed attempts.");
+                return null;
             } else {
                 AuthenticatedUserDto authenticatedUserDto = new AuthenticatedUserDto();
                 authenticatedUserDto.setUsername(employeeDto.getUsername());
