@@ -6,6 +6,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
+import kz.nicnbk.common.service.util.DateUtils;
 import kz.nicnbk.common.service.util.HashUtils;
 import kz.nicnbk.service.api.authentication.TokenService;
 import kz.nicnbk.service.dto.authentication.AuthenticatedUserDto;
@@ -115,6 +116,29 @@ public class JWTTokenServiceImpl implements TokenService {
                     .withIssuedAt(new Date())
                     .withClaim("username", authenticatedUserDto.getUsername())
                     .withArrayClaim("roles", authenticatedUserDto.getRolesAsArray())
+                    .sign(Algorithm.HMAC256(getKey()));
+            return token;
+        } catch (JWTCreationException exception){
+            //Invalid Signing configuration / Couldn't convert Claims.
+            logger.error("Token creation failed - JWT versification exception: " + authenticatedUserDto.getUsername());
+        } catch (UnsupportedEncodingException e) {
+            logger.error("Token creation failed - unsupported encoding exception: " + authenticatedUserDto.getUsername());
+        } catch (Exception ex){
+            logger.error("Failed to create token with error: username=" + (authenticatedUserDto != null ? authenticatedUserDto.getUsername() : null), ex);
+        }
+        return null;
+    }
+
+    @Override
+    public String createForReset(AuthenticatedUserDto authenticatedUserDto) {
+        try {
+            Date issuedAt = new Date();
+            Date expiryDate = DateUtils.getNext5Min();
+            String token = JWT.create()
+                    .withIssuer("NICAuth")
+                    .withIssuedAt(issuedAt)
+                    .withClaim("username", authenticatedUserDto.getUsername())
+                    .withExpiresAt(expiryDate)
                     .sign(Algorithm.HMAC256(getKey()));
             return token;
         } catch (JWTCreationException exception){

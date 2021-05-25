@@ -11,6 +11,12 @@ export class User {
         public otp: string) { }
 }
 
+export class UserToken {
+    constructor(
+        public  username: string,
+        public token: string) {}
+}
+
 @Injectable()
 export class AuthenticationService extends CommonService{
 
@@ -49,8 +55,8 @@ export class AuthenticationService extends CommonService{
             .catch(this.handleError);
     }
 
-    validateToken(username) {
-        let body = JSON.stringify(username);
+    validateToken(userToken) {
+        let body = JSON.stringify(userToken);
         return this.http.post(this.CONFIRM_RESET_URL, body, this.getOptionsWithCredentials())
             .map(this.extractData)
             .catch(this.handleError);

@@ -73,5 +73,5 @@ public interface EmployeeService extends BaseService {
 
     boolean setResetToken(String username, String token);
 
-    boolean checkResetToken(String username);
+    boolean checkResetToken(String username, String token);
 }

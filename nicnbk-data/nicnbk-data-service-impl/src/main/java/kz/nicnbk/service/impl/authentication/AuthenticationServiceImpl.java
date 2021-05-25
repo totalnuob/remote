@@ -82,11 +82,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public void sendResetLink(String email, String username) {
+    public void sendResetLink(String email, String username, String token) {
         emailService.sendMail(email, "UNIC – password reset (auto-generated)",
                 "Password change has been requested for the specified email address: " + email + ". " +
                         "In order to change your password, please click the confirmation link below. " +
-                        "http://localhost:8080/confirmReset/" + username);
+                        "http://localhost:8080/#/confirmReset/" + username + "/" + token);
     }
 
     @Override

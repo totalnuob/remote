@@ -38,6 +38,7 @@ export class PasswordResetComponent extends CommonFormViewComponent {
                     if (response.status === 'SUCCESS'){
                         this.successMessageResetPassword = response.message.nameEn;
                         this.errorMessageResetPassword = null;
+                        // localStorage.setItem("passwordResetUser", JSON.stringify(response.username));
                     }else{
                         if(response.message != null){
                             var message = response.message.nameEn != null ? response.message.nameEn :

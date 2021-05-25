@@ -754,7 +754,7 @@ public class EmployeeServiceImpl implements EmployeeService{
     }
 
     @Override
-    public boolean checkResetToken(String username) {
+    public boolean checkResetToken(String username, String token) {
         if (StringUtils.isEmpty(username)) {
             return false;
         }
@@ -764,22 +764,22 @@ public class EmployeeServiceImpl implements EmployeeService{
                 return false;
             }
             if (employee.getPasswordResetToken().getToken() == null ||
-                    !isExpired(employee.getPasswordResetToken().getExpiryDate())) {
+                    isExpired(employee.getPasswordResetToken().getExpiryDate())) {
                 return false;
             }
-            boolean isValid = this.tokenService.verify(employee.getPasswordResetToken().getToken());
+            boolean isValid = this.tokenService.verify(token);
             if (!isExpired(employee.getPasswordResetToken().getExpiryDate())) {
                 return isValid;
             }
         } catch (Exception ex) {
-            logger.error("Failed to vertify token", ex);
+            logger.error("Failed to verify token", ex);
         }
         return false;
     }
 
     private boolean isExpired(Date expiryDate) {
         Instant tokenExpires = expiryDate.toInstant();
-        return !Instant.now().isBefore(tokenExpires);
+        return Instant.now().isAfter(tokenExpires);
     }
 
     private String generateSalt(){

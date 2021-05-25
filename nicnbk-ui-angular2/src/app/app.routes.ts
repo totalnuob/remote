@@ -144,9 +144,8 @@ const routes: Routes  = [
         component: PasswordResetComponent
     },
     {
-        path: 'confirmReset',
-        component: PasswordResetConfirmComponent
-        // canActivate: [AuthGuardReset]
+        path: 'confirmReset/:username/:token',
+        component: PasswordResetConfirmComponent,
     },
     // {
     //     path: "confirmReset/**",
