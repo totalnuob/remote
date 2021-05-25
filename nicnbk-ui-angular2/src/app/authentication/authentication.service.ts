@@ -17,6 +17,12 @@ export class UserToken {
         public token: string) {}
 }
 
+export class UserPassword {
+    constructor(
+        public username: string,
+        public newPassword: string) {}
+}
+
 @Injectable()
 export class AuthenticationService extends CommonService{
 
@@ -29,6 +35,7 @@ export class AuthenticationService extends CommonService{
     private LOGIN_URL = DATA_APP_URL + "authenticate";
     private LOGOUT_URL = DATA_APP_URL + "signout";
     private RESET_URL = DATA_APP_URL + "requestReset";
+    private CHANGE_PASSWORD_URL = DATA_APP_URL + "changePassword";
     private CONFIRM_RESET_URL = DATA_APP_URL + "confirmReset";
     //private CHECK_TOKEN_URL = DATA_APP_URL + "checkToken";
 
@@ -62,9 +69,9 @@ export class AuthenticationService extends CommonService{
             .catch(this.handleError);
     }
 
-    newPassword(password) {
-        let body = JSON.stringify(password);
-        return this.http.post(this.RESET_URL + "/saveNewPassword", body, this.getOptionsWithCredentials())
+    changePassword(userPassword) {
+        let body = JSON.stringify(userPassword);
+        return this.http.post(this.CHANGE_PASSWORD_URL, body, this.getOptionsWithCredentials())
             .map(this.extractData)
             .catch(this.handleError);
     }

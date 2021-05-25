@@ -19,4 +19,6 @@ public interface AuthenticationService extends BaseService {
     AuthenticatedUserDto verifyForReset(String email);
 
     void sendResetLink(String email, String username, String token);
+
+    void sendHtmlResetLink(String email, String username, String token);
 }

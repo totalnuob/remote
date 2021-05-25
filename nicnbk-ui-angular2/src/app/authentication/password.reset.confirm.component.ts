@@ -1,12 +1,12 @@
 import {Component, OnInit} from "@angular/core";
-import {AuthenticationService, UserToken} from "./authentication.service";
+import {AuthenticationService, UserPassword, UserToken} from "./authentication.service";
 import {RuntimeCompiler} from "@angular/compiler";
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import {CommonFormViewComponent} from "../common/common.component";
-import {Subscription} from "rxjs";
-import {ModuleAccessCheckerService} from "./module.access.checker.service";
 import {ErrorResponse} from "../common/error-response";
 import {Router, ActivatedRoute} from '@angular/router';
+import {async} from "rxjs/scheduler/async";
+
+const delay = require('core-js/core/delay');
 
 @Component({
     selector: 'password-reset-confirm',
@@ -15,22 +15,26 @@ import {Router, ActivatedRoute} from '@angular/router';
     styleUrls: ['../../../public/css/footer.css']
 })
 
+
 export class PasswordResetConfirmComponent implements OnInit{
-    ResponseResetForm: FormGroup;
     errorMessage: string;
     successMessage: string;
     token: string;
     username: string;
     isValid: boolean;
+    isReset: boolean;
+    passwordNotConfirmed: boolean;
+    passwordNotValid: boolean;
 
-    newPassword = '';
     confirmNewPassword = '';
     passwordFieldType: boolean;
     confirmPasswordFieldType: boolean;
     successMessageResetPassword: String;
     errorMessageResetPassword: String;
+    errorNotValidPassword: String;
 
     public userToken = new UserToken('', '');
+    public userPassword = new UserPassword('', '');
 
     constructor(
         private authenticationService: AuthenticationService,
@@ -54,6 +58,7 @@ export class PasswordResetConfirmComponent implements OnInit{
                 console.log(response);
                 if (response == true) {
                     this.isValid = true;
+                    this.userPassword.username = this.userToken.username;
                     console.log(this.isValid);
                 } else {
                     this.isValid = false;
@@ -66,21 +71,42 @@ export class PasswordResetConfirmComponent implements OnInit{
         );
     }
 
-    resetConfirm() {
-        this.authenticationService.reset(this.newPassword)
-            .subscribe(
-                response => {
-                    if (response.status === 'SUCCESS'){
-                        this.successMessageResetPassword = response.message.nameEn;
-                        this.errorMessageResetPassword = null;
-                    }
-                },
-                (error: ErrorResponse) => {
-                    this.successMessageResetPassword = null;
-                    this.errorMessageResetPassword = error && error.message ? error.message : "Error resetting password";
-                    //this.processErrorMessage(error);
-                }
-            );
+    resetPassword() {
+        if (this.isPasswordValid()) {
+            this.passwordNotValid = false;
+            if (this.isNewPasswordConfirmed()) {
+                this.passwordNotConfirmed = false;
+                this.authenticationService.changePassword(this.userPassword)
+                    .subscribe(
+                        response => {
+                            (async () => {
+                                if (response == true){
+                                    this.isReset = true;
+                                    this.successMessageResetPassword = "Successfully reset password. Redirecting to login page."
+                                    console.log(this.isReset);
+                                } else {
+                                    this.isReset = false;
+                                    this.errorMessageResetPassword = "Failed to reset password. "
+                                    console.log(this.isReset);
+                                }
+                                await delay(5000);
+                                this.router.navigate(['/login']);
+                            })();
+                        },
+                        (error: ErrorResponse) => {
+                            this.isValid = false;
+                        }
+                    );
+            } else {
+                this.passwordNotConfirmed = true;
+            }
+        } else {
+            this.passwordNotValid = true;
+        }
+    }
+
+    isNewPasswordConfirmed(): boolean {
+        return this.userPassword.newPassword == this.confirmNewPassword;
     }
 
     togglePasswordTextType() {
@@ -89,6 +115,30 @@ export class PasswordResetConfirmComponent implements OnInit{
 
     toggleConfirmPasswordTextType() {
         this.confirmPasswordFieldType = !this.confirmPasswordFieldType;
+    }
+
+    delay(ms: number) {
+        return new Promise( resolve => setTimeout(resolve, ms) );
+    }
+
+    isPasswordValid(): boolean {
+        if (this.userPassword.newPassword.length < 8) {
+            this.errorNotValidPassword = "Password too short (min 8)";
+            return false;
+        } else if (this.userPassword.newPassword.length > 50) {
+            this.errorNotValidPassword = "Password too long (max 50)";
+            return false;
+        } else if (this.userPassword.newPassword.search(/\d/) == -1) {
+            this.errorNotValidPassword = "Password must contain at least 1 digit";
+            return false;
+        } else if (this.userPassword.newPassword.search(/[a-zA-Z]/) == -1) {
+            this.errorNotValidPassword = "Password must contain at least 1 character";
+            return false;
+        } else if (this.userPassword.newPassword.search(/[A-Z]/) == -1) {
+            this.errorNotValidPassword = "Password must contain at least 1 capital letter";
+            return false;
+        }
+        return true;
     }
 
 }

@@ -55,9 +55,6 @@ public class EmployeeServiceImpl implements EmployeeService{
     private RoleRepository roleRepository;
 
     @Autowired
-    private ResetTokenRepository resetTokenRepository;
-
-    @Autowired
     private RoleEntityConverter roleEntityConverter;
 
     @Autowired
@@ -65,9 +62,6 @@ public class EmployeeServiceImpl implements EmployeeService{
 
     @Autowired
     private DepartmentEntityConverter departmentEntityConverter;
-
-    @Autowired
-    private ResetTokenEntityConverter resetTokenEntityConverter;
 
     @Autowired
     private TokenService tokenService;
@@ -726,34 +720,6 @@ public class EmployeeServiceImpl implements EmployeeService{
     }
 
     @Override
-    public boolean setResetToken(String username, String token) {
-        if (StringUtils.isEmpty(username)) {
-            return false;
-        }
-        try {
-            Employee employee = this.employeeRepository.findByUsername(username);
-            if (employee == null) {
-                return false;
-            }
-            ResetTokenDto resetTokenDto = new ResetTokenDto();
-            resetTokenDto.setToken(token);
-            resetTokenDto.setExpiryDate(DateUtils.getNext5Min());
-            ResetToken resetTokenEntity = new ResetToken();
-            resetTokenEntity = this.resetTokenEntityConverter.assemble(resetTokenDto);
-            this.resetTokenRepository.save(resetTokenEntity);
-            employee.setPasswordResetToken(resetTokenEntity);
-            this.employeeRepository.save(employee);
-            logger.info("Successfully added reset token= " + employee.getPasswordResetToken().getToken() +
-                    " with expiry date= " + employee.getPasswordResetToken().getExpiryDate() +
-                    " for username= " + employee.getUsername());
-            return true;
-        } catch (Exception ex) {
-            logger.error("Failed to add token.", ex);
-        }
-        return false;
-    }
-
-    @Override
     public boolean checkResetToken(String username, String token) {
         if (StringUtils.isEmpty(username)) {
             return false;
@@ -763,23 +729,11 @@ public class EmployeeServiceImpl implements EmployeeService{
             if (employee == null) {
                 return false;
             }
-            if (employee.getPasswordResetToken().getToken() == null ||
-                    isExpired(employee.getPasswordResetToken().getExpiryDate())) {
-                return false;
-            }
-            boolean isValid = this.tokenService.verify(token);
-            if (!isExpired(employee.getPasswordResetToken().getExpiryDate())) {
-                return isValid;
-            }
+            return this.tokenService.verify(token);
         } catch (Exception ex) {
             logger.error("Failed to verify token", ex);
         }
         return false;
-    }
-
-    private boolean isExpired(Date expiryDate) {
-        Instant tokenExpires = expiryDate.toInstant();
-        return Instant.now().isAfter(tokenExpires);
     }
 
     private String generateSalt(){

@@ -14,7 +14,11 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
+import javax.mail.Message;
 import javax.mail.MessagingException;
+import javax.mail.Transport;
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.io.File;
 import java.util.ArrayList;
@@ -48,6 +52,42 @@ public class EmailServiceImpl implements EmailService {
             emailSender.send(message);
         } catch (MailException exception) {
             logger.error("Mail exception occured while sending simple email");
+        }
+    }
+
+    @Override
+    public void sendHtmlMail(String to, String subject, String message) {
+//        try {
+//            Message result = emailSender.createMimeMessage();
+//            result.setFrom(new InternetAddress(FROM_ADDRESS));
+//            InternetAddress[] toAddresses = {new InternetAddress(to)};
+//            result.setRecipients(Message.RecipientType.TO, toAddresses);
+//            result.setSubject(subject);
+//            result.setContent(message, "text/html");
+//            Transport.send(result);
+//        } catch (MessagingException e) {
+//            logger.error("Mail exception occured while sending html email");
+//        }
+
+        try {
+            InternetAddress[] parsed = {};
+            try {
+                parsed = InternetAddress.parse(to);
+            } catch (AddressException e) {
+                logger.error("Not valid email: " + to, e);
+            }
+
+            MimeMessage mailMessage = emailSender.createMimeMessage();
+            mailMessage.setSubject(subject, "UTF-8");
+
+            MimeMessageHelper helper = new MimeMessageHelper(mailMessage, true, "UTF-8");
+            helper.setFrom(FROM_ADDRESS);
+            helper.setTo(parsed);
+            helper.setText(message, true);
+
+            emailSender.send(mailMessage);
+        } catch (MessagingException ex) {
+            logger.error("Mail exception occured while sending html email");
         }
     }
 

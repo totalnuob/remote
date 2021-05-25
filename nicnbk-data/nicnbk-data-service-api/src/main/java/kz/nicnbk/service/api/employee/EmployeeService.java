@@ -71,7 +71,5 @@ public interface EmployeeService extends BaseService {
 
     EmployeeDto findAdmin();
 
-    boolean setResetToken(String username, String token);
-
     boolean checkResetToken(String username, String token);
 }

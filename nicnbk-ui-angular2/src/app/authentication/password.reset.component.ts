@@ -22,6 +22,7 @@ export class PasswordResetComponent extends CommonFormViewComponent {
     emailAddress = '';
     successMessageResetPassword: String;
     errorMessageResetPassword: String;
+    isRequested: boolean;
 
     constructor(
         private router : Router,
@@ -35,26 +36,19 @@ export class PasswordResetComponent extends CommonFormViewComponent {
         this.authenticationService.reset(this.emailAddress)
             .subscribe(
                 response => {
-                    if (response.status === 'SUCCESS'){
-                        this.successMessageResetPassword = response.message.nameEn;
-                        this.errorMessageResetPassword = null;
-                        // localStorage.setItem("passwordResetUser", JSON.stringify(response.username));
+                    if (response == true){
+                        this.isRequested = true;
+                        this.successMessageResetPassword = "Request to reset password was send successfully. Please, check your email for password reset link"
                     }else{
-                        if(response.message != null){
-                            var message = response.message.nameEn != null ? response.message.nameEn :
-                                response.message.nameRu != null ? response.message.nameRu : response.message.nameKz;
-                            if(message != null && message != ''){
-                                this.postAction(null, message);
-                            }else{
-                                this.postAction(null, "Error resetting password");
-                            }
+                        if (response == null) {
+                            this.isRequested = false;
+                            this.errorMessageResetPassword = "Request to reset password failed, unauthorized attempt or no such user exists in the system"
                         }
                     }
                 },
                 (error: ErrorResponse) => {
-                    this.successMessageResetPassword = null;
-                    this.errorMessageResetPassword = error && error.message ? error.message : "Error resetting password";
-                    //this.processErrorMessage(error);
+                    this.isRequested = false;
+                    this.errorMessageResetPassword = "Request to reset password failed, unauthorized attempt or no such user exists in the system"
                 }
             );
     }

@@ -34,7 +34,8 @@ public class TokenAuthenticationFilter extends AbstractAuthenticationProcessingF
                 || ((HttpServletRequest)req).getMethod().equalsIgnoreCase("OPTIONS")
                 || (((HttpServletRequest)req).getRequestURI().equals("/requestReset") && ((HttpServletRequest)req).getMethod().equalsIgnoreCase("POST"))
                 || (((HttpServletRequest)req).getRequestURI().equals("/confirmReset") && ((HttpServletRequest)req).getMethod().equalsIgnoreCase("GET"))
-                || (((HttpServletRequest)req).getRequestURI().equals("/confirmReset") && ((HttpServletRequest)req).getMethod().equalsIgnoreCase("POST"))) {
+                || (((HttpServletRequest)req).getRequestURI().equals("/confirmReset") && ((HttpServletRequest)req).getMethod().equalsIgnoreCase("POST"))
+                || (((HttpServletRequest)req).getRequestURI().equals("/changePassword") && ((HttpServletRequest)req).getMethod().equalsIgnoreCase("POST"))) {
             chain.doFilter(req, res);
             return;
         }

@@ -6,6 +6,8 @@ public interface EmailService extends BaseService {
 
     void sendMail(String to, String subject, String text);
 
+    void sendHtmlMail(String to, String subject, String message);
+
     void sendMailMultipleRecipients(String[] to, String subject, String text);
 
     void sendMailWithAttachments(String to, String subject, String text, String pathToAttachment);

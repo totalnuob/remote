@@ -54,6 +54,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     antMatchers(HttpMethod.POST, "/requestReset").permitAll().
                     antMatchers(HttpMethod.GET, "/confirmReset").permitAll().
                     antMatchers(HttpMethod.POST, "/confirmReset").permitAll().
+                    antMatchers(HttpMethod.POST, "/changePassword").permitAll().
                     antMatchers(HttpMethod.OPTIONS, "/**").permitAll().
                     anyRequest().authenticated();
         http.

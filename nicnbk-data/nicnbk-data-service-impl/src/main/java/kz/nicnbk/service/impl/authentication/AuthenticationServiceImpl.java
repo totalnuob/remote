@@ -90,6 +90,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
+    public void sendHtmlResetLink(String email, String username, String token) {
+        emailService.sendHtmlMail(email, "UNIC – password reset (auto-generated)",
+                "<p>Password change has been requested for the specified email address: " + email + ". " +
+                "In order to change your password, please click the reset link below.</p>" + " <a href=\"" +
+                        "http://localhost:8080/#/confirmReset/" + username + "/" + token + "\">" + "link" + "</a>");
+    }
+
+    @Override
     public AuthenticatedUserDto authenticate(String username, String password, String otp) {
         try {
             EmployeeDto employeeDto = employeeService.findActiveByUsernamePasswordCode(username, password, otp);

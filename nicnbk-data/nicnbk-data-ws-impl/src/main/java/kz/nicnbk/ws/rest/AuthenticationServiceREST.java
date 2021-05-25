@@ -6,6 +6,7 @@ import kz.nicnbk.service.api.employee.EmployeeService;
 import kz.nicnbk.service.dto.authentication.AuthenticatedUserDto;
 import kz.nicnbk.service.dto.authentication.TokenUserInfo;
 import kz.nicnbk.service.dto.authentication.UserCredentialsDto;
+import kz.nicnbk.service.dto.employee.UserPasswordDto;
 import kz.nicnbk.service.dto.employee.UserTokenDto;
 import kz.nicnbk.ws.model.Response;
 import org.slf4j.Logger;
@@ -76,9 +77,8 @@ public class AuthenticationServiceREST {
         // create token
         String token = this.tokenService.createForReset(userDto);
         response.addCookie(getTokenCookie(token));
-        employeeService.setResetToken(userDto.getUsername(), token);
-        authenticationService.sendResetLink(email, userDto.getUsername(), token);
-        return new ResponseEntity<>(userDto, null, HttpStatus.OK);
+        authenticationService.sendHtmlResetLink(email, userDto.getUsername(), token);
+        return new ResponseEntity<>(true, null, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/confirmReset", method = RequestMethod.POST)
@@ -88,15 +88,13 @@ public class AuthenticationServiceREST {
         logger.info(userTokenDto.getToken());
         boolean isValid = this.employeeService.checkResetToken(userTokenDto.getUsername(), userTokenDto.getToken());
         return new ResponseEntity<>(isValid, null, HttpStatus.OK);
-//        if(isValid){
-//            return new ResponseEntity<>(true, null, HttpStatus.OK);
-//        }else{
-//            return new ResponseEntity<>(false, null, HttpStatus.UNAUTHORIZED);
-//        }
     }
 
-//    @RequestMapping(value = "/changePassword", method = RequestMethod.POST)
-//    public ResponseEntity<> changePassword()
+    @RequestMapping(value = "/changePassword", method = RequestMethod.POST)
+    public ResponseEntity<?> changePassword(@RequestBody UserPasswordDto userPasswordDto, HttpServletRequest request, HttpServletResponse response) {
+        boolean isReset = this.employeeService.setPassword(userPasswordDto.getUsername(), userPasswordDto.getNewPassword(), userPasswordDto.getUsername());
+        return new ResponseEntity<>(isReset, null, HttpStatus.OK);
+    }
 
 
     @RequestMapping(value="/checkToken", method = RequestMethod.POST)

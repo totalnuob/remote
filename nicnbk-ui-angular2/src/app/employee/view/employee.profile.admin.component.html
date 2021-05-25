@@ -140,13 +140,13 @@
                 <button class="btn btn-xs btn-default" (click)="generatePassword(8); newPassword = generatedPassword; newPasswordConfirm = generatedPassword">Generate Password</button>
             </div>
             <div class="col-sm-4" *ngIf="generatedPassword != ''">
-                <div class="form-check" *ngIf="employee.email != ''">
+                <div class="form-check" *ngIf="employee.email != '' && employee.email != null">
                     <input class="form-check-input" type="checkbox" value="" id="sendToEmail" [checked]="emailCheckbox" (change)="emailCheckbox = !emailCheckbox" >
                     <label class="form-check-label" for="sendToEmail">
                         Send new password to email
                     </label>
                 </div>
-                <h6 *ngIf="employee.email == ''" class="text-danger">Email is missing, new password will not be sent to user</h6>
+                <h6 *ngIf="employee.email == '' || employee.email == null" class="text-danger">Email is missing, new password will not be sent to user</h6>
             </div>
         </div>
         <div class="row form-group">
