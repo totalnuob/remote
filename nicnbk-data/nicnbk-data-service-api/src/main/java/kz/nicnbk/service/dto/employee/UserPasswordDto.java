@@ -4,6 +4,7 @@ public class UserPasswordDto {
 
     private String username;
     private String newPassword;
+    private String token;
 
     public String getUsername() {
         return username;
@@ -19,5 +20,13 @@ public class UserPasswordDto {
 
     public void setNewPassword(String newPassword) {
         this.newPassword = newPassword;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 }

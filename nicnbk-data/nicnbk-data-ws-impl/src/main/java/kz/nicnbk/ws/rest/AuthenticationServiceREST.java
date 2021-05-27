@@ -92,7 +92,11 @@ public class AuthenticationServiceREST {
 
     @RequestMapping(value = "/changePassword", method = RequestMethod.POST)
     public ResponseEntity<?> changePassword(@RequestBody UserPasswordDto userPasswordDto, HttpServletRequest request, HttpServletResponse response) {
-        boolean isReset = this.employeeService.setPassword(userPasswordDto.getUsername(), userPasswordDto.getNewPassword(), userPasswordDto.getUsername());
+        boolean isValid = this.employeeService.checkResetToken(userPasswordDto.getUsername(), userPasswordDto.getToken());
+        boolean isReset = false;
+        if (isValid) {
+            isReset = this.employeeService.setPassword(userPasswordDto.getUsername(), userPasswordDto.getNewPassword(), userPasswordDto.getUsername());
+        }
         return new ResponseEntity<>(isReset, null, HttpStatus.OK);
     }
 

@@ -20,7 +20,8 @@ export class UserToken {
 export class UserPassword {
     constructor(
         public username: string,
-        public newPassword: string) {}
+        public newPassword: string,
+        public token: string) {}
 }
 
 @Injectable()
@@ -37,7 +38,6 @@ export class AuthenticationService extends CommonService{
     private RESET_URL = DATA_APP_URL + "requestReset";
     private CHANGE_PASSWORD_URL = DATA_APP_URL + "changePassword";
     private CONFIRM_RESET_URL = DATA_APP_URL + "confirmReset";
-    //private CHECK_TOKEN_URL = DATA_APP_URL + "checkToken";
 
     login(user){
 
@@ -85,36 +85,10 @@ export class AuthenticationService extends CommonService{
     //
     // }
 
-    //checkToken(){
-    //    return this.http.post(this.CHECK_TOKEN_URL, null, this.getOptionsWithCredentials())
-    //        .map(this.extractData)
-    //        .catch(this.handleError);
-    //
-    //}
-
-    // checkCredentials(state){
-    //     if (state.toString().)
-    // }
-
     checkCredentials(state){
         if (localStorage.getItem("authenticatedUser") === null){
             console.log("Check credentials: forward to login");
             this.router.navigate(['/login']);
-        }
-    }
-
-    checkResetToken(username){
-        let match = this.http.post(this.CONFIRM_RESET_URL, username, this.getOptionsWithCredentials())
-            .map(this.extractData)
-            .catch(this.handleError);
-        console.log(username.toString())
-        console.log(match)
-        if (match != null) {
-            this.router.navigate(['/confirmReset?username=tleugabylov'])
-            return true;
-        } else {
-            console.log("Access denied")
-            this.router.navigate(['/accessDenied']);
         }
     }
 

@@ -34,7 +34,7 @@ export class PasswordResetConfirmComponent implements OnInit{
     errorNotValidPassword: String;
 
     public userToken = new UserToken('', '');
-    public userPassword = new UserPassword('', '');
+    public userPassword = new UserPassword('', '', '');
 
     constructor(
         private authenticationService: AuthenticationService,
@@ -48,6 +48,7 @@ export class PasswordResetConfirmComponent implements OnInit{
             console.log(JSON.stringify(params))
             this.userToken.username = params['username'];
             this.userToken.token = params['token'];
+            this.userPassword.token = params['token'];
         });
         this.verifyToken();
     }
@@ -82,15 +83,16 @@ export class PasswordResetConfirmComponent implements OnInit{
                             (async () => {
                                 if (response == true){
                                     this.isReset = true;
-                                    this.successMessageResetPassword = "Successfully reset password. Redirecting to login page."
+                                    this.successMessageResetPassword = "Successfully reset password. Redirecting to login page.";
                                     console.log(this.isReset);
+                                    await delay(5000);
+                                    this.router.navigate(['/login']);
                                 } else {
                                     this.isReset = false;
-                                    this.errorMessageResetPassword = "Failed to reset password. "
+                                    this.errorMessageResetPassword = "Failed to reset password. Token has expired, please" +
+                                        " contact system administrator or request new password reset link";
                                     console.log(this.isReset);
                                 }
-                                await delay(5000);
-                                this.router.navigate(['/login']);
                             })();
                         },
                         (error: ErrorResponse) => {
