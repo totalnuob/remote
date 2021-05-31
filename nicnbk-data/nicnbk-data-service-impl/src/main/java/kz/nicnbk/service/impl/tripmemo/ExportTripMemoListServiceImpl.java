@@ -2,6 +2,7 @@ package kz.nicnbk.service.impl.tripmemo;
 
 import kz.nicnbk.service.api.base.BaseService;
 import kz.nicnbk.service.api.employee.EmployeeService;
+import kz.nicnbk.service.api.tripmemo.ExportTripMemoListService;
 import kz.nicnbk.service.dto.tripmemo.TripMemoDto;
 import kz.nicnbk.service.impl.m2s2.ExportMemoListServiceImpl;
 import org.apache.poi.ss.usermodel.*;
@@ -17,7 +18,7 @@ import java.io.IOException;
 import java.util.List;
 
 @Service
-public class ExportTripMemoListServiceImpl implements BaseService {
+public class ExportTripMemoListServiceImpl implements ExportTripMemoListService {
 
     private static final Logger logger = LoggerFactory.getLogger(ExportMemoListServiceImpl.class);
 
