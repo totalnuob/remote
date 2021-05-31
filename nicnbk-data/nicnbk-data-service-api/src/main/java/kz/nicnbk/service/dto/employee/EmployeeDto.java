@@ -176,4 +176,8 @@ public class EmployeeDto extends BaseEntityDto<Employee> {
         }
         return null;
     }
+
+    public String toString() {
+        return this.firstName + " " + this.lastName;
+    }
 }

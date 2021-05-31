@@ -15,6 +15,7 @@ import {ROLE_ADMIN} from "../authentication/roles.constants";
 import {ROLE_PE_EDIT} from "../authentication/roles.constants";
 import {ROLE_HF_EDIT} from "../authentication/roles.constants";
 import {ROLE_RE_EDIT} from "../authentication/roles.constants";
+import {DATA_APP_URL} from "../common/common.service.constants";
 
 declare var $:any
 
@@ -181,6 +182,25 @@ export class MemoListComponent  extends CommonFormViewComponent implements OnIni
                 }
             );
 
+    }
+
+    export(){
+        this.searchParams.pageSize = 20;
+
+        this.searchParams.fromDate = $('#fromDate').val();
+        this.searchParams.toDate = $('#toDate').val();
+
+        this.busy = this.memoService.export(this.searchParams)
+            .subscribe(
+                response  => {
+                    //console.log("ok");
+                },
+                error => {
+                    //console.log("fails")
+                    console.log(this.searchParams)
+                    this.postAction(null, "Error exporting data");
+                }
+            );
     }
 
     navigate(memoType, memoId){
