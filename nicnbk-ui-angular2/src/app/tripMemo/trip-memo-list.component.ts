@@ -133,4 +133,23 @@ export class TripMemoListComponent extends CommonFormViewComponent implements On
         return true;
         //return !this.moduleAccessChecker.checkAccessMemoRestricted();
     }
+
+    export(){
+        this.searchParams.pageSize = 20;
+
+        this.searchParams.fromDate = $('#fromDate').val();
+        this.searchParams.toDate = $('#toDate').val();
+
+        this.busy = this.tripMemoService.export(this.searchParams)
+            .subscribe(
+                response  => {
+                    //console.log("ok");
+                },
+                error => {
+                    //console.log("fails")
+                    console.log(this.searchParams)
+                    this.postAction(null, "Error exporting data");
+                }
+            );
+    }
 }

@@ -123,6 +123,14 @@
                     <li><a *ngIf="tripMemoSearchResult.showPageTo < tripMemoSearchResult.totalPages" (click)="search(tripMemoSearchResult.showPageTo + 1)">&raquo;</a></li>
                 </ul>
             </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="btn-toolbar pull-right">
+                        <button type="button" class="btn btn-primary" (click)="export()">Export xlsx</button>
+                    </div>
+                </div>
+            </div>
             <table [ngBusy]="busy"  class = "table table-hover">
             <thead>
             <tr>
