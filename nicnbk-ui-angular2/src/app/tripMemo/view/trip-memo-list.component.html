@@ -123,6 +123,14 @@
                     <li><a *ngIf="tripMemoSearchResult.showPageTo < tripMemoSearchResult.totalPages" (click)="search(tripMemoSearchResult.showPageTo + 1)">&raquo;</a></li>
                 </ul>
             </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="btn-toolbar pull-right">
+                        <button type="button" class="btn btn-primary" (click)="export()">Export xlsx</button>
+                    </div>
+                </div>
+            </div>
             <table [ngBusy]="busy"  class = "table table-hover">
             <thead>
             <tr>
@@ -161,13 +169,6 @@
             </tr>
             </tbody>
         </table>
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="btn-toolbar pull-right">
-                        <button type="button" class="btn btn-primary" (click)="export()">Export into excel</button>
-                    </div>
-                </div>
-            </div>
             <div class="row pull-right">
                 <ul class="pagination" *ngIf="tripMemoSearchResult?.showPageFrom > 0">
                     <li><a *ngIf="tripMemoSearchResult?.showPageFrom > 1" (click)="search(tripMemoSearchResult.showPageFrom - 1)">&laquo;</a></li>
