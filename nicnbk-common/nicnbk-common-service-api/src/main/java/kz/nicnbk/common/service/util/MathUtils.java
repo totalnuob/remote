@@ -215,9 +215,9 @@ public class MathUtils {
 
         Double sum = 0.0;
         for(int i = 0; i < returns.length; i++){
-            Double diff = subtract(scale, returns[i], riskFreeReturns[i]);
-            if(diff < 0){
-                sum =  add(scale, sum, positivePower(scale, diff, 2));
+            //Double diff = subtract(scale, returns[i], riskFreeReturns[i]);
+            if(returns[i] < 0){
+                sum =  add(scale, sum, positivePower(scale, returns[i], 2));
             }
         }
         Double divider = Math.sqrt(divide(scale, sum, returns.length + 0.0));
@@ -356,7 +356,8 @@ public class MathUtils {
 
         double a = subtract(scale, meanReturn, meanRiskfree);
         double b = multiply(scale, beta, subtract(scale, meanIndices, meanRiskfree));
-        double result = multiply(scale, subtract(scale, a, b), 12.0);
+//        double result = multiply(scale, subtract(scale, a, b), 12.0);
+        double result = subtract(scale, a, b);
         return result;
     }
 
