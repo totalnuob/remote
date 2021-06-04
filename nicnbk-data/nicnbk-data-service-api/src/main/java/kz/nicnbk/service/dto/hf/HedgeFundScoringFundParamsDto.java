@@ -8,6 +8,7 @@ import kz.nicnbk.repo.model.hf.HedgeFundScreeningFilteredResult;
  */
 public class HedgeFundScoringFundParamsDto extends CreateUpdateBaseEntityDto<HedgeFundScreeningFilteredResult> {
 
+    private Long screeningId;
     private Long filteredResultId;
     private Integer lookbackAUM;
     private Integer lookbackReturn;
@@ -34,6 +35,14 @@ public class HedgeFundScoringFundParamsDto extends CreateUpdateBaseEntityDto<Hed
 
     public void setLookbackReturn(Integer lookbackReturn) {
         this.lookbackReturn = lookbackReturn;
+    }
+
+    public Long getScreeningId() {
+        return screeningId;
+    }
+
+    public void setScreeningId(Long screeningId) {
+        this.screeningId = screeningId;
     }
 }
 

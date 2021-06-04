@@ -2,7 +2,6 @@ package kz.nicnbk.service.dto.hf;
 
 import kz.nicnbk.common.service.model.CreateUpdateBaseEntityDto;
 import kz.nicnbk.repo.model.hf.HedgeFundScreening;
-import kz.nicnbk.service.dto.files.FilesDto;
 
 import java.util.Date;
 import java.util.List;
@@ -24,9 +23,12 @@ public class HedgeFundScreeningDto extends CreateUpdateBaseEntityDto<HedgeFundSc
     private Long ucitsFileId;
     private String ucitsFileName;
 
-    private List<HedgeFundScreeningParsedDataDto> parsedData;
+    private Long paramsFileId;
+    private String paramsFileName;
 
+    private List<HedgeFundScreeningParsedDataDto> parsedData;
     private List<HedgeFundScreeningParsedDataDto> parsedUcitsData;
+    private List<HedgeFundScreeningFundParamDataDto> parsedFundParamData;
 
     private boolean editable;
 
@@ -140,6 +142,30 @@ public class HedgeFundScreeningDto extends CreateUpdateBaseEntityDto<HedgeFundSc
 
     public void setExistingFilteredResults(int existingFilteredResults) {
         this.existingFilteredResults = existingFilteredResults;
+    }
+
+    public List<HedgeFundScreeningFundParamDataDto> getParsedFundParamData() {
+        return parsedFundParamData;
+    }
+
+    public void setParsedFundParamData(List<HedgeFundScreeningFundParamDataDto> parsedFundParamData) {
+        this.parsedFundParamData = parsedFundParamData;
+    }
+
+    public Long getParamsFileId() {
+        return paramsFileId;
+    }
+
+    public void setParamsFileId(Long paramsFileId) {
+        this.paramsFileId = paramsFileId;
+    }
+
+    public String getParamsFileName() {
+        return paramsFileName;
+    }
+
+    public void setParamsFileName(String paramsFileName) {
+        this.paramsFileName = paramsFileName;
     }
 }
 

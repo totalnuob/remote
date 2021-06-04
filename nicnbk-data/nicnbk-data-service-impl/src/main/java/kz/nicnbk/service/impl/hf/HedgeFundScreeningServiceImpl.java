@@ -71,10 +71,16 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
     private HedgeFundScreeningParsedDataEntityConverter parsedDataEntityConverter;
 
     @Autowired
+    private HedgeFundScreeningParsedFundParamsDataEntityConverter parsedFundParamsEntityConverter;
+
+    @Autowired
     private HedgeFundScreeningParsedUcitsDataEntityConverter parsedUcitsDataEntityConverter;
 
     @Autowired
     private HedgeFundScreeningParsedDataRepository parsedDataRepository;
+
+    @Autowired
+    private HedgeFundScreeningParsedParamDataRepository parsedFundParamDataRepository;
 
     @Autowired
     private HedgeFundScreeningEditedFundRepository editedFundRepository;
@@ -208,6 +214,10 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
                     dto.setUcitsFileId(entity.getUcitsFile().getId());
                     dto.setUcitsFileName(entity.getUcitsFile().getFileName());
                 }
+                if(entity.getParamsFile() != null){
+                    dto.setParamsFileId(entity.getParamsFile().getId());
+                    dto.setParamsFileName(entity.getParamsFile().getFileName());
+                }
 
                 // parsed data
                 List<HedgeFundScreeningParsedDataDto> parsedData = getParsedDataFundInfo(id);
@@ -219,6 +229,12 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
                 List<HedgeFundScreeningParsedDataDto> parsedUcitsData = getParsedUcitsData(id);
                 if(parsedUcitsData != null && !parsedUcitsData.isEmpty()){
                     dto.setParsedUcitsData(parsedUcitsData);
+                }
+
+                // Fund params data
+                List<HedgeFundScreeningFundParamDataDto> fundParamData = getParsedFundParamData(id);
+                if(fundParamData != null && !fundParamData.isEmpty()){
+                    dto.setParsedFundParamData(fundParamData);
                 }
 
                 dto.setEditable(checkScreeningEditable(id));
@@ -641,6 +657,51 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
     }
 
     @Override
+    public FileUploadResultDto saveFundParamsFile(Long screeningId, FilesDto filesDto, String username) {
+        try {
+
+            // TODO: check permissions? editable screening?
+
+            FileUploadResultDto fileUploadResultDto = new FileUploadResultDto();
+
+            if (filesDto != null && filesDto.getId() == null) {
+                Long fileId = fileService.save(filesDto, FileTypeLookup.HF_SCREENING_PARAMS_FILE.getCatalog()); // CATALOG IS ONE
+                if(fileId == null){
+                    logger.error("Saved HF Screening Params file: file save return null for file id");
+                    return null;
+                }
+                logger.info("Saved HF Screening Params file: file id=" + fileId);
+
+                HedgeFundScreening entity = this.screeningRepository.findOne(screeningId);
+                entity.setParamsFile(new Files(fileId));
+                this.screeningRepository.save(entity);
+
+                logger.info("Saved HF Screening Params file information to DB: file id=" + fileId + " [user]=" + username);
+
+                // Parse file
+                fileUploadResultDto = parseFundParamsFile(filesDto, screeningId);
+
+                if(fileUploadResultDto.getStatus() == ResponseStatusType.SUCCESS){
+                    fileUploadResultDto.setFileId(fileId);
+                    fileUploadResultDto.setFileName(filesDto.getFileName());
+                }else{
+                    // delete file
+                    boolean deleted = fileService.delete(fileId);
+                    if (!deleted) {
+                        String errorMessage = "Error occurred when parsing file. When cancelling file upload, failed to delete file.";
+                        logger.error(errorMessage);
+                        fileUploadResultDto.setErrorMessageEn(fileUploadResultDto.getMessage().getNameEn() + " " + errorMessage);
+                    }
+                }
+            }
+            return fileUploadResultDto;
+        }catch (Exception ex){
+            logger.error("Error saving HF Screening Fund params file", ex);
+        }
+        return null;
+    }
+
+    @Override
     public List<HedgeFundScreeningFilteredResultDto> getFilteredResultsByScreeningId(Long screeningId) {
         List<HedgeFundScreeningFilteredResult> entities = filteredResultRepository.findByScreeningId(screeningId);
         if(entities != null){
@@ -835,6 +896,95 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
         return resultDtoSheet1;
     }
 
+    private FileUploadResultDto parseFundParamsFile(FilesDto filesDto, Long screeningId){
+        FileUploadResultDto resultDto = new FileUploadResultDto();
+        List<HedgeFundScreeningFundParamDataDto> records = new ArrayList<>();
+        Iterator<Row> rowIterator = null;
+        try {
+            rowIterator = ExcelUtils.getRowIterator(filesDto.getBytes(), filesDto.getFileName(), 0);
+        }catch (ExcelFileParseException ex){
+            String errorMessage = "Error parsing params file." + ex.getMessage();
+            logger.error(errorMessage, ex);
+            resultDto.setErrorMessageEn(errorMessage);
+        }
+        if(rowIterator != null) {
+            int rowNum = 0;
+            Map<String, Integer> headers = new HashMap<>();
+            while (rowIterator.hasNext()) { // each row
+                Row row = rowIterator.next();
+                if(rowNum == 0){
+                    // First row
+                    Iterator<Cell> cellIterator = row.cellIterator();
+                    while(cellIterator != null && cellIterator.hasNext()){
+                        Cell cell = cellIterator.next();
+                        headers.put(cell.getStringCellValue(), cell.getColumnIndex());
+                    }
+                }else{
+                    HedgeFundScreeningFundParamDataDto record = new HedgeFundScreeningFundParamDataDto();
+                    record.setScreening(new HedgeFundScreeningDto(screeningId));
+
+                    if(headers.get("Fund Name") != null){
+                        String value = ExcelUtils.getStringValueFromCell(row.getCell(headers.get("Fund Name").intValue()));
+                        record.setFundName(value);
+                    }
+                    if(headers.get("Omega") != null){
+                        Double value = ExcelUtils.getDoubleValueFromCell(row.getCell(headers.get("Omega").intValue()));
+                        record.setOmega(value);
+                    }
+                    if(headers.get("AnnR") != null){
+                        Double value = ExcelUtils.getDoubleValueFromCell(row.getCell(headers.get("AnnR").intValue()));
+                        record.setAnnualizedReturn(value);
+                    }
+                    if(headers.get("Alpha") != null){
+                        Double value = ExcelUtils.getDoubleValueFromCell(row.getCell(headers.get("Alpha").intValue()));
+                        record.setAlpha(value);
+                    }
+                    if(headers.get("Beta") != null){
+                        Double value = ExcelUtils.getDoubleValueFromCell(row.getCell(headers.get("Beta").intValue()));
+                        record.setBeta(value);
+                    }
+                    if(headers.get("Sortino") != null){
+                        Double value = ExcelUtils.getDoubleValueFromCell(row.getCell(headers.get("Sortino").intValue()));
+                        record.setSortino(value);
+                    }
+                    if(headers.get("cfVar") != null){
+                        Double value = ExcelUtils.getDoubleValueFromCell(row.getCell(headers.get("cfVar").intValue()));
+                        record.setCfVar(value);
+                    }
+                    if(!record.isEmpty()){
+                        records.add(record);
+                    }
+                }
+                rowNum++;
+            }
+
+        }
+
+        if(!records.isEmpty()){
+            if(filesDto.getType() != null && filesDto.getType().equalsIgnoreCase(FileTypeLookup.HF_SCREENING_PARAMS_FILE.getCode())) {
+                List<HedgeFundScreeningParsedParamData> entities = this.parsedFundParamsEntityConverter.assembleList(records);
+                if (entities != null && !entities.isEmpty()) {
+                    try {
+                        //TODO: check parsed data?????
+
+                        // delete parsed data
+                        deleteParsedFundParamsData(screeningId);
+
+                        this.parsedFundParamDataRepository.save(entities);
+                        resultDto.setStatus(ResponseStatusType.SUCCESS);
+                        logger.info("Successfully saved parsed HF Screening fund params data (sheet 1) to database: screening id= " + screeningId);
+                    } catch (Exception ex) {
+                        String errorMessage = "Error saving HF Screening fund params data sheet 1) to database: screening id=" + screeningId;
+                        logger.error(errorMessage, ex);
+                        resultDto.setErrorMessageEn(errorMessage);
+                    }
+                }
+            }
+        }
+
+        return resultDto;
+    }
+
     private FileUploadResultDto deleteFileAndAssociation(Long fileId, Long screeningId, String fileType){
         FileUploadResultDto resultDtoSheet = new FileUploadResultDto();
         try{
@@ -843,7 +993,10 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
                 entity.setDataFile(null);
             }else if(fileType.equalsIgnoreCase(FileTypeLookup.HF_SCREENING_UCITS_FILE.getCode())) {
                 entity.setUcitsFile(null);
+            }else if(fileType.equalsIgnoreCase(FileTypeLookup.HF_SCREENING_PARAMS_FILE.getCode())) {
+                entity.setParamsFile(null);
             }
+
             this.screeningRepository.save(entity);
         }catch (Exception ex){
             String errorMessage = resultDtoSheet.getMessage().getMessageText() + " " +
@@ -879,6 +1032,16 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
         List<HedgeFundScreeningParsedUcitsData> entities = this.parsedUcitsDataRepository.findByScreeningId(screeningId, new Sort(Sort.Direction.ASC, "fundId"));
         if(entities != null){
             return parsedUcitsDataEntityConverter.disassembleList(entities);
+        }
+        return null;
+    }
+
+    private List<HedgeFundScreeningFundParamDataDto> getParsedFundParamData(Long screeningId){
+        List<HedgeFundScreeningFundParamDataDto> records = new ArrayList<>();
+        List<HedgeFundScreeningParsedParamData> entities = this.parsedFundParamDataRepository.findByScreeningId(screeningId, new Sort(Sort.Direction.ASC, "fundName"));
+        if(entities != null){
+            records = this.parsedFundParamsEntityConverter.disassembleList(entities);
+            return records;
         }
         return null;
     }
@@ -1281,6 +1444,16 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
         return false;
     }
 
+    private boolean deleteParsedFundParamsData(Long screeningId){
+        try {
+            this.parsedFundParamDataRepository.deleteByScreeningId(screeningId);
+            return true;
+        }catch (Exception ex){
+            logger.error("Error deleting fund params data for HF Screening with id=" + screeningId + "(with exception)", ex);
+        }
+        return false;
+    }
+
     private boolean deleteParsedDataSheet2(Long screeningId){
         try {
             parsedDataReturnRepository.deleteByScreeningId(screeningId);
@@ -1396,6 +1569,41 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
 //            logger.error("Error deleting filters: screening id=" + screeningId + " (with exception)", ex);
 //            return false;
 //        }
+        return true;
+    }
+
+    @Override
+    public boolean removeFundParamsFileAndData(Long fileId, Long screeningId, String username){
+        if(!checkScreeningEditable(screeningId)){
+            logger.error("Error removing fund params file for HF Screening: screening is not editable [user]=" + username);
+            return false;
+        }
+        HedgeFundScreening entity = this.screeningRepository.findOne(screeningId);
+
+        if(fileId == null || entity.getParamsFile() == null || entity.getParamsFile().getId().longValue() != fileId.longValue()) {
+            return false;
+        }
+        FileUploadResultDto result = deleteFileAndAssociation(entity.getParamsFile().getId(), screeningId, FileTypeLookup.HF_SCREENING_PARAMS_FILE.getCode());
+        if(result.getStatus() == ResponseStatusType.FAIL){
+            String errorMessage = "Failed to delete HF Screening fund params data: file id=" + entity.getParamsFile().getId() + ", screening id=" + screeningId;
+            logger.error(errorMessage);
+            return false;
+        }
+
+        EmployeeDto updater = this.employeeService.findByUsername(username);
+        if (updater != null) {
+            entity.setUpdateDate(new Date());
+            entity.setUpdater(new Employee(updater.getId()));
+            this.screeningRepository.save(entity);
+        }
+
+        boolean deletedSheet1 = deleteParsedFundParamsData(screeningId);
+        if(!deletedSheet1){
+            logger.error("Failed to delete HF Screening Fund params data (sheet 1): file id=" + entity.getDataFile().getId() +
+                    ", screening id=" + screeningId + " [user]=" + username);
+            return false;
+        }
+        logger.info("Successfully deleted HF Screening Fund params file and parsed data: screening id=" + screeningId + " [user]=" + username);
         return true;
     }
 
@@ -1800,6 +2008,7 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
 
             // SCORING
             HedgeFundScoringFundParamsDto scoringParams = new HedgeFundScoringFundParamsDto();
+            scoringParams.setScreeningId(params.getScreeningId());
             scoringParams.setFilteredResultId(params.getId());
             scoringParams.setLookbackReturn(params.getLookbackReturns().intValue());
             scoringParams.setLookbackAUM(params.getLookbackAUM().intValue());
@@ -2730,7 +2939,7 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
             for(HedgeFundScreeningParsedDataReturn fundReturn: fundReturns){
                 Double value = null;
                 if(fundReturn.getReturnsCurrency() != null && !fundReturn.getReturnsCurrency().equalsIgnoreCase(CurrencyLookup.USD.getCode())){
-                    // non-ISD
+                    // non-USD
                     Date currencyDate = DateUtils.getLastDayOfCurrentMonth(fundReturn.getDate());
                     CurrencyRatesDto currencyRatesDto = this.currencyRatesService.getLstRateForMonthDateAndCurrencyBackwards(currencyDate, fundReturn.getReturnsCurrency());
                     if(currencyRatesDto != null && currencyRatesDto.getValueUSD() != null){

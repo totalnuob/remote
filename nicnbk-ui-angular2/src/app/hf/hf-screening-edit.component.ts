@@ -31,6 +31,7 @@ export class HFScreeningEditComponent extends CommonFormViewComponent implements
     private sub: any;
     private screeningId: number;
     busy: Subscription;
+    busyFundParamsEdit: Subscription;
     screening = new HedgeFundScreening;
 
     parsedDataReturns: HedgeFundScreeningParsedDataDateValue[];
@@ -38,6 +39,8 @@ export class HFScreeningEditComponent extends CommonFormViewComponent implements
 
     public uploadFile: any;
     public ucitsUploadFile: any;
+    public uploadedFundParamsFile: any;
+
     private breadcrumbParams: string;
     private searchParams = new HedgeFundScreeningSearchParams();
 
@@ -48,7 +51,6 @@ export class HFScreeningEditComponent extends CommonFormViewComponent implements
     parsedDataUcitsAUM: HedgeFundScreeningParsedDataDateValue[];
 
     private moduleAccessChecker: ModuleAccessCheckerService;
-
 
     constructor(
         private route: ActivatedRoute,
@@ -94,6 +96,11 @@ export class HFScreeningEditComponent extends CommonFormViewComponent implements
         $('#screeningDateDiv').datetimepicker({
             defaultDate: new Date(),
             format: 'DD-MM-YYYY'
+        });
+
+        $('#fundParamsDataModal').on('hidden.bs.modal', function () {
+            //$('#modalMessagesDiv').css("background-color", "white");
+            $('#fundParamsEditModalBtn').click();
         });
     }
 
@@ -376,6 +383,94 @@ export class HFScreeningEditComponent extends CommonFormViewComponent implements
             this.ucitsUploadFile = null;
             console.log($('#attachmentUcitsFile').val());
             $('#attachmentUcitsFile').val("");
+        }
+    }
+
+    editFundParams(){
+        //alert("editFundParams");
+    }
+
+    closeFundParamsEditModal(){
+        //alert('closeFundParamsEditModal');
+    }
+
+    onFileChangeFundParams(event) {
+        var target = event.target || event.srcElement;
+        var files = target.files;
+        this.uploadedFundParamsFile = files[0];
+    }
+
+    deleteUnsavedFundParamsFile(){
+        this.uploadedFundParamsFile = null;
+        $('#fundParamsFile').val("");
+    }
+
+    uploadFundParamsFile(){
+        this.busyFundParamsEdit = this.screeningService.postFundParamsFile(this.screening.id, [this.uploadedFundParamsFile])
+            .subscribe(
+                res => {
+                    // clear upload files list on view
+                    this.uploadedFundParamsFile = null;
+
+                    // update files list with new files
+                    this.screening.omegaFileId = res.fileId;
+                    this.screening.omegaFileName = res.fileName;
+
+                    this.busy = this.screeningService.get(this.screening.id)
+                        .subscribe(
+                            entity => {
+                                this.screening = entity;
+
+                                this.fundParamsDataErrorMessage = null;
+                                this.fundParamsDataSuccessMessage = "Successfully uploaded fund params data file.";
+                                 $('html, body').animate({ scrollTop: 0 }, 'fast');
+                            },
+                            (error: ErrorResponse) => {
+                                this.fundParamsDataErrorMessage = "Error re-loading screening after omega file upload";
+                                 this.fundParamsDataSuccessMessage = null;
+                                if(error && !error.isEmpty()){
+                                    this.processErrorMessage(error);
+                                }
+                                 $('html, body').animate({ scrollTop: 0 }, 'fast');
+                            }
+                        );
+
+                },
+                error => {
+                    var result = JSON.parse(error);
+                    var message = result != null && result.message != null && result.message.nameEn != null ? result.message.nameEn : null;
+                    this.uploadedFundParamsFile = null;
+                    this.postAction(null, message != null && message != null ? message : "Error uploading fund params file");
+                });
+    }
+
+    deleteFundParamsFile(fileId) {
+        var confirmed = window.confirm("Are you sure want to delete");
+        if(confirmed) {
+            this.busyFundParamsEdit = this.screeningService.removeFundParamsFile(this.screeningId, fileId)
+                .subscribe(
+                    entity => {
+                        this.screening.paramsFileId = null;
+                        this.screening.paramsFileName = null;
+                        this.screening.parsedFundParamData = null;
+                        //this.screening.parsedData = null;
+                        //this.parsedDataAUM = null;
+                        //this.parsedDataReturns = null;
+
+                        this.fundParamsDataErrorMessage = null;
+                        this.fundParamsDataSuccessMessage ="Fund params file deleted.";
+                         $('html, body').animate({ scrollTop: 0 }, 'fast');
+                    },
+                    (error:ErrorResponse) => {
+                        this.errorMessage = "Failed to delete fund params file";
+                        if (error && !error.isEmpty()) {
+                            this.processErrorMessage(error);
+                        }
+                        this.fundParamsDataErrorMessage = this.errorMessage;
+                        this.fundParamsDataSuccessMessage =null;
+                        $('html, body').animate({ scrollTop: 0 }, 'fast');
+                    }
+                );
         }
     }
 

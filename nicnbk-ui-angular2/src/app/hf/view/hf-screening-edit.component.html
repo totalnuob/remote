@@ -184,6 +184,14 @@
 <!--                        </div>-->
 <!--                    </div>-->
                 </div>
+
+                <br/>
+                <div class="row withpadding">
+                    <span *ngIf="canEdit()" class="btn btn-sm btn-primary pull-left" (click)="editFundParams()" data-toggle="modal" data-target="#fundParamsDataModal">Fund Params
+                        <span class="glyphicon glyphicon-pencil"></span>
+                    </span>
+                </div>
+                <br/>
             </div>
 
             <br/>
@@ -498,6 +506,104 @@
 <!--                            </div>-->
 <!--                        </div>-->
 <!--                    </div>-->
+                </div>
+            </div>
+
+            <div class="modal fade" id="fundParamsDataModal" role="dialog" tabindex="-1">
+                <!--<div class="modal-dialog" style="overflow-y: scroll; min-height: 100px; margin-top: 20%; width:75%;">-->
+                <div class="modal-dialog" style=" min-height: 100px; max-height:85%;  margin-top: 100px; margin-bottom:50px; width:75%;">
+                    <div class="modal-content">
+                        <div [ngBusy]="busyFundParamsEdit"  class="modal-body">
+                            <div class="row">
+                                <div class="row top-buffer" >
+                                    <div class="col-md-12">
+                                        <div class="alert alert-info" *ngIf="fundParamsDataSuccessMessage != null"><span>{{fundParamsDataSuccessMessage}}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row top-buffer" >
+                                    <div class="col-md-12">
+                                        <div class="alert alert-danger" *ngIf="fundParamsDataErrorMessage != null"><span>{{fundParamsDataErrorMessage}}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row withpadding" *ngIf="screening?.paramsFileId == null">
+                                <label class="btn btn-primary col-md-1"  for="fundParamsFile">
+                                    <input type="file" id="fundParamsFile"(change)="onFileChangeFundParams($event)" name="file" style="display:none;" [disabled] = "false"/>Add
+                                </label>
+
+                                <div class="col-md-6">
+                                    <div class="row" *ngIf="uploadedFundParamsFile != null" style="display: table;">
+                                        <span  class="label label-info" >
+                                            {{uploadedFundParamsFile.name}}&nbsp;
+                                        </span>
+                                        <a (click)="deleteUnsavedFundParamsFile()" *ngIf="true">
+                                            <i class="glyphicon glyphicon-trash"></i>
+                                        </a>
+                                        <button class="btn btn-xs btn-success" (click)="uploadFundParamsFile()" >
+                                            UPLOAD <span class="glyphicon glyphicon-circle-arrow-right"></span>
+                                        </button>
+                                    </div>
+
+                                </div>
+                            </div>
+
+
+                            <div class="row withpadding form-inline" *ngIf="screening?.paramsFileId != null">
+                                <a (click)="deleteFundParamsFile(screening.paramsFileId)" *ngIf="canEdit()" class="pull-right">
+                                    <i class="glyphicon glyphicon-trash"></i>
+                                </a>&nbsp;
+                                &nbsp;
+                                &nbsp;
+                                <file-attachment-downloader fileId="{{screening?.paramsFileId}}"
+                                                            fileName="{{screening?.paramsFileName}}"
+                                                            fileType="HFSCRNPRMS">
+                                </file-attachment-downloader>
+                            </div>
+
+                            <div class="row withpadding">
+                                <table [ngBusy]="busyFundParamsEdit" class="table table-hover">
+                                    <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Fund Name</th>
+                                        <th>Omega</th>
+                                        <th>Ann Return</th>
+                                        <th>Alpha</th>
+                                        <th>Beta</th>
+                                        <th>Sortino</th>
+                                        <th>cfVar</th>
+                                    </tr>
+                                    </thead>
+
+                                    <tbody>
+                                    <tr *ngFor = "let data of screening.parsedFundParamData; let i=index" >
+                                        <td>{{i + 1}}</td>
+                                        <td>{{data.fundName}}</td>
+                                        <td>{{data.omega}}</td>
+                                        <td>{{data.annualizedReturn}}</td>
+                                        <td>{{data.alpha}}</td>
+                                        <td>{{data.beta}}</td>
+                                        <td>{{data.sortino}}</td>
+                                        <td>{{data.cfVar}}</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="col-md-9">
+                                        <button class="btn btn-default pull-left" style="display:none;" id="fundParamsEditModalBtn" (click)="closeFundParamsEditModal()" data-dismiss="modal">CLOSE</button>
+                                    </div>
+<!--                                    <div class="col-md-3">-->
+<!--                                        <button class="btn btn-success pull-right" (click)="saveOmega()">SAVE</button>-->
+<!--                                    </div>-->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 

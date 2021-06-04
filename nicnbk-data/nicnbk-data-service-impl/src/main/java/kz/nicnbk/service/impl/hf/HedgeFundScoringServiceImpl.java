@@ -27,9 +27,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by magzumov on 27.05.2019.
@@ -205,6 +203,27 @@ public class HedgeFundScoringServiceImpl implements HedgeFundScoringService {
 //                }
 //            }
 
+            HedgeFundScreeningDto screeningDto = this.screeningService.getScreening(scoringParams.getScreeningId());
+            List<HedgeFundScreeningFundParamDataDto> fundParams = screeningDto.getParsedFundParamData();
+            Map<String, HedgeFundScreeningFundParamDataDto> fundParamsMap = new HashMap<>();
+            if(fundParams != null && !fundParams.isEmpty()){
+                for(HedgeFundScreeningFundParamDataDto dataDto: fundParams){
+                    fundParamsMap.put(dataDto.getFundName(), dataDto);
+                }
+            }
+
+            int annualizedReturnUploadDataCount = 0;
+            int alphaUploadDataCount = 0;
+            int betaUploadDataCount = 0;
+            int omegaUploadDataCount = 0;
+            int sortinoUploadDataCount = 0;
+            int cfVarUploadDataCount = 0;
+            int annualizedReturnCalcCount = 0;
+            int alphaCalcCount = 0;
+            int betaCalcCount = 0;
+            int omegaCalcCount = 0;
+            int sortinoCalcCount = 0;
+            int cfVarCalcCount = 0;
             for(HedgeFundScreeningParsedDataDto fund: screeningList){
                 // Fund returns
                 double[] returns = null;
@@ -231,39 +250,77 @@ public class HedgeFundScoringServiceImpl implements HedgeFundScoringService {
                 int scale = 16;
                 if(returns != null && returns.length == filteredResultDto.getTrackRecord().intValue()) {
                     // Annualized return
-                    fund.setAnnualizedReturn(MathUtils.getAnnualizedReturn(returns, scale));
+                    if(fundParamsMap.get(fund.getFundName()) != null && fundParamsMap.get(fund.getFundName()).getAnnualizedReturn() != null){
+                        fund.setAnnualizedReturn(fundParamsMap.get(fund.getFundName()).getAnnualizedReturn());
+                        annualizedReturnUploadDataCount++;
+                    }else {
+                        fund.setAnnualizedReturn(MathUtils.getAnnualizedReturn(returns, scale));
+                        annualizedReturnCalcCount++;
+                    }
 
                     // Sortino
                     Double annualizedTbills = MathUtils.getAnnualizedReturn(tbillsReturns, scale);
                     if(fund.getAnnualizedReturn() != null && annualizedTbills != null) {
-                        fund.setSortino(MathUtils.getSortinoRatio(fund.getAnnualizedReturn(), annualizedTbills, returns, scale));
-                        //fund.setSortino(MathUtils.getSortinoRatio2(returns, tbillsReturns, scale));
+                        if(fundParamsMap.get(fund.getFundName()) != null && fundParamsMap.get(fund.getFundName()).getSortino() != null){
+                            fund.setSortino(fundParamsMap.get(fund.getFundName()).getSortino());
+                            sortinoUploadDataCount++;
+                        }else {
+                            //fund.setSortino(MathUtils.getSortinoRatio(fund.getAnnualizedReturn(), annualizedTbills, returns, scale));
+                            fund.setSortino(MathUtils.getSortinoRatio2(returns, tbillsReturns, scale));
+                            sortinoCalcCount++;
+                        }
+
                     }
 
                     // Beta
-                    Double beta = MathUtils.getBeta(returns, snpReturns, scale);
-                    //Double beta = MathUtils.getBeta2(returns, snpReturns, tbillsReturns, scale);
-                    if(beta != null){
-                        double newValue = (new BigDecimal(beta).setScale(1, RoundingMode.HALF_UP)).doubleValue();
+                    if(fundParamsMap.get(fund.getFundName()) != null && fundParamsMap.get(fund.getFundName()).getBeta() != null){
+                        fund.setBeta(fundParamsMap.get(fund.getFundName()).getBeta());
+                        betaUploadDataCount++;
+                    }else {
+                        //Double beta = MathUtils.getBeta(returns, snpReturns, scale);
+                        fund.setBeta(MathUtils.getBeta2(returns, snpReturns, tbillsReturns, scale));
+                        betaCalcCount++;
+                    }
+
+                    if(fund.getBeta() != null){
+                        double newValue = (new BigDecimal(fund.getBeta() ).setScale(1, RoundingMode.HALF_UP)).doubleValue();
                         if(newValue == 0.0){
-                            newValue = beta > 0 ? 0.1 : -0.1;
+                            newValue = fund.getBeta() > 0 ? 0.1 : -0.1;
                         }
                         fund.setBeta(newValue);
                     }
 
                     // Alpha
                     if(fund.getBeta() != null) {
-                        fund.setAlpha(MathUtils.getAlpha(scale, returns, tbillsReturns, snpReturns, beta));
-                        //fund.setAlpha(MathUtils.getAlpha2(scale, returns, tbillsReturns, snpReturns, beta));
+                        if(fundParamsMap.get(fund.getFundName()) != null && fundParamsMap.get(fund.getFundName()).getAlpha() != null){
+                            fund.setAlpha(fundParamsMap.get(fund.getFundName()).getAlpha());
+                            alphaUploadDataCount++;
+                        }else {
+                            //fund.setAlpha(MathUtils.getAlpha(scale, returns, tbillsReturns, snpReturns, beta));
+                            fund.setAlpha(MathUtils.getAlpha2(scale, returns, tbillsReturns, snpReturns, fund.getBeta()));
+                            alphaCalcCount++;
+                        }
                     }
 
                     // Omega
-                    fund.setOmega(MathUtils.getOmega(scale, returns));
+                    if(fundParamsMap.get(fund.getFundName()) != null && fundParamsMap.get(fund.getFundName()).getOmega() != null){
+                        fund.setOmega(fundParamsMap.get(fund.getFundName()).getOmega());
+                        omegaUploadDataCount++;
+                    }else {
+                        fund.setOmega(MathUtils.getOmega(scale, returns));
+                        omegaCalcCount++;
+                    }
+
 
                     // CFVar
-                    fund.setCfVar(MathUtils.getCFVar(scale, returns, MathUtils.Z_SCORE_99_PERCENT));
-                    //fund.setCfVar(MathUtils.getCFVar2(scale, returns, MathUtils.Z_SCORE_99_PERCENT));
-
+                    if(fundParamsMap.get(fund.getFundName()) != null && fundParamsMap.get(fund.getFundName()).getCfVar() != null){
+                        fund.setCfVar(fundParamsMap.get(fund.getFundName()).getCfVar());
+                        cfVarUploadDataCount++;
+                    }else {
+                        //fund.setCfVar(MathUtils.getCFVar(scale, returns, MathUtils.Z_SCORE_99_PERCENT));
+                        fund.setCfVar(MathUtils.getCFVar2(scale, returns, MathUtils.Z_SCORE_99_PERCENT));
+                        cfVarCalcCount++;
+                    }
                 }else{
                 }
             }
@@ -280,8 +337,29 @@ public class HedgeFundScoringServiceImpl implements HedgeFundScoringService {
 //                System.out.print(fund.getOmega() + "\t");
 //                System.out.println(fund.getTotalScore());
 //            }
+
+            if(annualizedReturnUploadDataCount > 0 && annualizedReturnCalcCount > 0){
+                responseDto.appendErrorMessageEn(" 'Ann Return' calculation used both calculated and uploaded values.");
+            }
+            if(sortinoUploadDataCount > 0 && sortinoCalcCount > 0){
+                responseDto.appendErrorMessageEn(" 'Sortino' calculation used both calculated and uploaded values.");
+            }
+            if(betaUploadDataCount > 0  && betaCalcCount > 0){
+                responseDto.appendErrorMessageEn(" 'Beta' calculation used both calculated and uploaded values.");
+            }
+            if(alphaUploadDataCount > 0 && alphaCalcCount > 0){
+                responseDto.appendErrorMessageEn(" 'Alpha' calculation used both calculated and uploaded values.");
+            }
+            if(omegaUploadDataCount > 0 && omegaCalcCount > 0){
+                responseDto.appendErrorMessageEn(" 'Omega' calculation used both calculated and uploaded values.");
+            }
+            if(cfVarUploadDataCount > 0 && cfVarCalcCount > 0){
+                responseDto.appendErrorMessageEn(" 'cfVar' calculation used both calculated and uploaded values.");
+            }
         }
-        responseDto.setStatus(ResponseStatusType.SUCCESS);
+        if(responseDto.getStatus() == null) {
+            responseDto.setStatus(ResponseStatusType.SUCCESS);
+        }
         responseDto.setRecords(screeningList);
         return responseDto;
     }

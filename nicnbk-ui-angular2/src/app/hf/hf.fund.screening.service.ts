@@ -26,9 +26,12 @@ export class HedgeFundScreeningService extends CommonService{
 
     private HF_SCREENING_DATA_FILE_UPLOAD_URL = this.HF_BASE_URL + "file/upload/";
     private HF_SCREENING_UCITS_FILE_UPLOAD_URL = this.HF_BASE_URL + "file/ucits/upload/";
+    private HF_SCREENING_FUND_PARAMS_FILE_UPLOAD_URL = this.HF_BASE_URL + "file/fundParams/upload/";
+
 
     private HF_SCREENING_DATA_FILE_DELETE_URL = this.HF_BASE_URL + "file/delete/";
     private HF_SCREENING_UCITS_FILE_DELETE_URL = this.HF_BASE_URL + "file/ucits/delete/";
+    private HF_SCREENING_FUND_PARAMS_FILE_DELETE_URL = this.HF_BASE_URL + "file/fundParams/delete/";
 
     private HF_SCREENING_RETURN_SEARCH_URL = this.HF_BASE_URL + "return/search/";
     private HF_SCREENING_AUM_SEARCH_URL = this.HF_BASE_URL + "aum/search/";
@@ -110,6 +113,10 @@ export class HedgeFundScreeningService extends CommonService{
         return this.uploadService.postFiles(this.HF_SCREENING_UCITS_FILE_UPLOAD_URL + screeningId, [], files, null);
     }
 
+    postFundParamsFile(screeningId, files){
+        return this.uploadService.postFiles(this.HF_SCREENING_FUND_PARAMS_FILE_UPLOAD_URL + screeningId, [], files, null);
+    }
+
 
     removeFile(screeningId, fileId) {
         return this.http.delete(this.HF_SCREENING_DATA_FILE_DELETE_URL + screeningId + "/" + fileId, this.getOptionsWithCredentials())
@@ -119,6 +126,12 @@ export class HedgeFundScreeningService extends CommonService{
 
     removeUcitsFile(screeningId, fileId) {
         return this.http.delete(this.HF_SCREENING_UCITS_FILE_DELETE_URL + screeningId + "/" + fileId, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+    removeFundParamsFile(screeningId, fileId) {
+        return this.http.delete(this.HF_SCREENING_FUND_PARAMS_FILE_DELETE_URL + screeningId + "/" + fileId, this.getOptionsWithCredentials())
             .map(this.extractData)
             .catch(this.handleErrorResponse);
     }

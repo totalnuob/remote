@@ -118,6 +118,31 @@ public class HedgeFundScreeningServiceREST extends CommonServiceREST{
     }
 
 
+    @RequestMapping(method = RequestMethod.POST, value = "/file/fundParams/upload/{screeningId}")
+    public ResponseEntity<?> handleFundParamsFileUpload(@PathVariable("screeningId") Long screeningId,
+                                              @RequestParam(value = "file", required = false)MultipartFile[] files) {
+
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
+
+        HedgeFundScreeningDto dto = screeningService.getScreening(screeningId);
+        // TODO: Check roles and permissions!
+
+        if(files == null || files.length != 1){
+            return new ResponseEntity<>(null, null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        FilesDto filesDto = buildFilesDtoFromMultipart(files[0], FileTypeLookup.HF_SCREENING_PARAMS_FILE.getCode());
+        if (filesDto != null) {
+            FileUploadResultDto result = this.screeningService.saveFundParamsFile(screeningId, filesDto, username);
+            if (result != null && result.getStatus() == ResponseStatusType.SUCCESS) {
+                return new ResponseEntity<>(result, null, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(result, null, HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }
+        return new ResponseEntity<>(null, null, HttpStatus.OK);
+    }
+
     @PreAuthorize("hasRole('ROLE_HEDGE_FUND_VIEWER') OR hasRole('ROLE_HEDGE_FUND_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/search", method = RequestMethod.POST)
     public ResponseEntity search(@RequestBody HedgeFundScreeningSearchParams searchParams){
@@ -146,6 +171,18 @@ public class HedgeFundScreeningServiceREST extends CommonServiceREST{
         // TODO: CHECK USER ROLES
 
         boolean deleted = this.screeningService.removeUcitsFileAndData(fileId, screeningId, username);
+        return buildDeleteResponseEntity(deleted);
+    }
+
+    @ResponseBody
+    @RequestMapping(value="/file/fundParams/delete/{screeningId}/{fileId}", method=RequestMethod.DELETE)
+    public ResponseEntity<?> deleteFundParamsFile(@PathVariable(value="screeningId") Long screeningId, @PathVariable(value="fileId") Long fileId){
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
+
+        // TODO: CHECK USER ROLES
+
+        boolean deleted = this.screeningService.removeFundParamsFileAndData(fileId, screeningId, username);
         return buildDeleteResponseEntity(deleted);
     }
 

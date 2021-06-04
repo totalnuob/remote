@@ -38,9 +38,13 @@ public interface HedgeFundScreeningService extends BaseService {
 
     FileUploadResultDto saveAttachmentUcitsFile(Long screeningId, FilesDto filesDto, String username);
 
+    FileUploadResultDto saveFundParamsFile(Long screeningId, FilesDto filesDto, String username);
+
     boolean removeFileAndData(Long fileId, Long screeningId, String username);
 
     boolean removeUcitsFileAndData(Long fileId, Long screeningId, String username);
+
+    boolean removeFundParamsFileAndData(Long fileId, Long screeningId, String username);
 
     List<HedgeFundScreeningFilteredResultDto> getFilteredResultsByScreeningId(Long screeningId);
 
