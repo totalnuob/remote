@@ -446,7 +446,7 @@ public class MathUtils {
         Double cfScore = add(scale, part1, part2, part3, zScore);
 
         //return subtract(scale, meanReturn, multiply(scale, cfScore, std));
-        return subtract(scale, 0.0, add(scale, meanReturn, multiply(scale, cfScore, std)));
+        return add(scale, meanReturn, multiply(scale, cfScore, std));
     }
 
     public static Double getSkew(double[] values){
