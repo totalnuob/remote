@@ -282,6 +282,7 @@ public class HedgeFundScoringServiceImpl implements HedgeFundScoringService {
                         betaCalcCount++;
                     }
 
+                    double betaValue = fund.getBeta() != null ? fund.getBeta().doubleValue() : 0;
                     if(fund.getBeta() != null){
                         double newValue = (new BigDecimal(fund.getBeta() ).setScale(1, RoundingMode.HALF_UP)).doubleValue();
                         if(newValue == 0.0){
@@ -297,7 +298,7 @@ public class HedgeFundScoringServiceImpl implements HedgeFundScoringService {
                             alphaUploadDataCount++;
                         }else {
                             //fund.setAlpha(MathUtils.getAlpha(scale, returns, tbillsReturns, snpReturns, beta));
-                            fund.setAlpha(MathUtils.getAlpha2(scale, returns, tbillsReturns, snpReturns, fund.getBeta()));
+                            fund.setAlpha(MathUtils.getAlpha2(scale, returns, tbillsReturns, snpReturns, betaValue));
                             alphaCalcCount++;
                         }
                     }
