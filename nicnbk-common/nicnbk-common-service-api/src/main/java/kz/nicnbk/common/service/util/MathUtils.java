@@ -445,7 +445,8 @@ public class MathUtils {
         Double part3 = divide(scale, multiply(scale, subtract(scale, multiply(2.0, Math.pow(zScore, 3)), multiply(scale, 5.0, zScore)), Math.pow(skew, 2)), -36.0);
         Double cfScore = add(scale, part1, part2, part3, zScore);
 
-        return subtract(scale, meanReturn, multiply(scale, cfScore, std));
+        //return subtract(scale, meanReturn, multiply(scale, cfScore, std));
+        return subtract(scale, 0.0, add(scale, meanReturn, multiply(scale, cfScore, std)));
     }
 
     public static Double getSkew(double[] values){
