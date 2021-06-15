@@ -51,7 +51,7 @@ public class PeriodicDataServiceImpl implements PeriodicDataService {
     public PeriodicDataDto get(Date date, String type) {
         PeriodicData entity = this.periodicDataRepository.getByDateAndType(date, type);
         if(entity != null){
-            PeriodicDataDto dto = new PeriodicDataDto(entity.getDate(), entity.getType().getCode(), entity.getValue());
+            PeriodicDataDto dto = new PeriodicDataDto(entity.getDate(), entity.getType().getCode(), entity.getValue(), entity.getCorrection());
             dto.setEditable(true);
             return dto;
         }

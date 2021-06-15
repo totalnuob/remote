@@ -19,13 +19,23 @@ public class PeriodicDataDto extends BaseEntityDto {
 
     public PeriodicDataDto(){}
 
-    public PeriodicDataDto(Date date, String type, Double value){
+//    public PeriodicDataDto(Date date, String type, Double value){
+//        this.date = date;
+//        if(this.type == null){
+//            this.type = new BaseDictionaryDto();
+//        }
+//        this.type.setCode(type);
+//        this.value = value;
+//    }
+
+    public PeriodicDataDto(Date date, String type, Double value, Double correction){
         this.date = date;
         if(this.type == null){
             this.type = new BaseDictionaryDto();
         }
         this.type.setCode(type);
         this.value = value;
+        this.correction = correction;
     }
 
     public PeriodicDataDto(Long id, Date date, String type, Double value){
