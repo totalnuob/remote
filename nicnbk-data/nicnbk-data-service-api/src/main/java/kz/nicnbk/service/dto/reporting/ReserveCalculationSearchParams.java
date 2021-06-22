@@ -83,7 +83,8 @@ public class ReserveCalculationSearchParams implements BaseParams {
         return dateFrom != null ? dateFrom : DateUtils.DEFAULT_START;
     }
     public Date getDateToNonEmpty() {
-        return dateTo != null ? dateTo : DateUtils.moveDateByDays(new Date(), 1, false);
+        // TODO: fix temp solution (existing max date?)
+        return dateTo != null ? dateTo : DateUtils.moveDateByMonths(new Date(), 120);
     }
 
     public String getSearchParamsAsString(){
