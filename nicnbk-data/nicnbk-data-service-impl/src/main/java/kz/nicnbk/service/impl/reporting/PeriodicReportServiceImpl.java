@@ -6397,7 +6397,7 @@ public class PeriodicReportServiceImpl implements PeriodicReportService {
                         record.setCurrentAccountBalance(MathUtils.add(sums.get(14), sums.get(27)));
                         sums.put(28, record.getCurrentAccountBalance());
                     } else if (record.getLineNumber() == 37) {
-                        record.setCurrentAccountBalance(MathUtils.add(sums.get(30), sums.get(31), sums.get(32),
+                        record.setCurrentAccountBalance(MathUtils.add(sums.get(29), sums.get(30), sums.get(31), sums.get(32),
                                 sums.get(33), sums.get(34), sums.get(35), sums.get(36)));
                         sums.put(37, record.getCurrentAccountBalance());
                     } else if (record.getLineNumber() == 45) {
