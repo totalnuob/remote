@@ -41,7 +41,7 @@ export class EmployeeProfileAdminComponent extends CommonFormViewComponent{
     generatedPassword = '';
     passwordFieldType: boolean;
     confirmPasswordFieldType: boolean;
-    emailCheckbox = true;
+    emailCheckbox = false;
 
     constructor(
         private router: Router,
@@ -253,6 +253,7 @@ export class EmployeeProfileAdminComponent extends CommonFormViewComponent{
         randPasswordArray[2] = lowerChars;
         randPasswordArray = randPasswordArray.fill(allChars, 3);
         this.generatedPassword = this.shuffleArray(randPasswordArray.map(function(x) { return x[Math.floor(Math.random() * x.length)] })).join('');
+        this.emailCheckbox = true;
     }
 
     shuffleArray(array) {
