@@ -405,14 +405,15 @@ public class EmployeeServiceImpl implements EmployeeService{
     @Override
     public EntitySaveResponseDto saveAndChangePassword(EmployeeFullDto employeeFullDto, String password, Boolean emailCheckbox, String updater) {
         EntitySaveResponseDto saveResponseDto = this.save(employeeFullDto, updater, true);
-        if (emailCheckbox != null ? emailCheckbox : false) {
-            sendPasswordByEmail(employeeFullDto, password);
-        }
         if(saveResponseDto.getStatus() == null || saveResponseDto.getStatus().getCode().equalsIgnoreCase(ResponseStatusType.FAIL.getCode())) {
             return saveResponseDto;
         }
         if(employeeFullDto == null || !this.setPassword(employeeFullDto.getUsername(), password, updater)) {
             saveResponseDto.setErrorMessageEn("Employee profile was saved without the new password");
+            return saveResponseDto;
+        }
+        if (emailCheckbox != null ? emailCheckbox : false) {
+            sendPasswordByEmail(employeeFullDto, password);
         }
         return saveResponseDto;
     }
