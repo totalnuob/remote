@@ -2702,6 +2702,10 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
             if(icMeetings != null && !icMeetings.isEmpty()){
                 sheet.shiftRows(templateRowIndex + 1, sheet.getLastRowNum(), icMeetings.size() - 1);
                 for(ICMeetingDto ic: icMeetings) {
+                    if(ic.getStatus() == null || !ic.getStatus().equalsIgnoreCase("CLOSED")){
+                        // skip non-CLOSED ic
+                        continue;
+                    }
                     Row newRow = sheet.createRow(templateRowIndex + 1 + added);
                     added++;
 
