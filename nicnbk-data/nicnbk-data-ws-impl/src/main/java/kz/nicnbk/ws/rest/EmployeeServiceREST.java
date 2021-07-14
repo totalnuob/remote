@@ -210,6 +210,7 @@ public class EmployeeServiceREST extends CommonServiceREST{
 
         EmployeeFullDto employeeFullDto = employeePasswordDto.getEmployeeFullDto();
         String password = employeePasswordDto.getPassword();
+        Boolean emailCheckbox = employeePasswordDto.getEmailCheckbox();
 
         if(StringUtils.isEmpty(password)) {
             return new ResponseEntity<>(null, null, HttpStatus.BAD_REQUEST);
@@ -218,7 +219,7 @@ public class EmployeeServiceREST extends CommonServiceREST{
         String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
         String username = this.tokenService.decode(token).getUsername();
 
-        EntitySaveResponseDto saveResponseDto = this.employeeService.saveAndChangePassword(employeeFullDto, password, username);
+        EntitySaveResponseDto saveResponseDto = this.employeeService.saveAndChangePassword(employeeFullDto, password, emailCheckbox, username);
         return buildEntitySaveResponse(saveResponseDto);
     }
 

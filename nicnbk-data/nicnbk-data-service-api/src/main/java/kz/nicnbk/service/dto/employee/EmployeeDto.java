@@ -30,6 +30,7 @@ public class EmployeeDto extends BaseEntityDto<Employee> {
     private Set<BaseDictionaryDto> roles;
 
     private Boolean mfaEnabled;
+    private Integer failedLoginAttempts;
 
     public EmployeeDto(){}
 
@@ -144,6 +145,14 @@ public class EmployeeDto extends BaseEntityDto<Employee> {
 
     public void setLastNameRuPossessive(String lastNameRuPossessive) {
         this.lastNameRuPossessive = lastNameRuPossessive;
+    }
+
+    public Integer getFailedLoginAttempts() {
+        return failedLoginAttempts;
+    }
+
+    public void setFailedLoginAttempts(Integer failedLoginAttempts) {
+        this.failedLoginAttempts = failedLoginAttempts;
     }
 
     public String getFullNamePossessiveInitialsRu(){

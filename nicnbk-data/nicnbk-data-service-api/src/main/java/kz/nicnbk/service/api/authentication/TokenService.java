@@ -15,6 +15,8 @@ public interface TokenService extends BaseService {
 
     String create(AuthenticatedUserDto authenticatedUserDto);
 
+    String createForReset(AuthenticatedUserDto authenticatedUserDto);
+
     TokenUserInfo decode(String token);
 
     Date checkRevocationUsername(String username);

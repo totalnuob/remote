@@ -16,6 +16,8 @@ public interface EmployeeRepository extends PagingAndSortingRepository<Employee,
 
     Employee findByUsername(String username);
 
+    Employee findByEmail(String email);
+
     @Query("SELECT e FROM Employee e WHERE" +
             " (:status is null OR e.active=:status)" +
             " AND (:firstName is null OR ((e.firstName is null OR e.firstName='') AND :firstName='') OR LOWER(e.firstName) LIKE LOWER(CONCAT('%', :firstName,'%')))" +
@@ -29,6 +31,9 @@ public interface EmployeeRepository extends PagingAndSortingRepository<Employee,
 
     @Query("SELECT e FROM  Employee e WHERE e.active=true" )
     List<Employee> findActiveAll();
+
+    @Query("SELECT e FROM  Employee e WHERE e.active=true AND e.failedLoginAttempts<=?3")
+    List<Employee> findActiveAndNoFailedLoginAttempts();
 
     @Query("SELECT e FROM Employee e JOIN FETCH e.position WHERE e.position.department.id=?1 AND (?2 IS NULL OR e.active=?2)")
     List<Employee> findByPositionDepartmentIdAndActive(int departmentId, Boolean active);

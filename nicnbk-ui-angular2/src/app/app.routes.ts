@@ -24,8 +24,11 @@ import {MonitoringMacroMonitorComponent} from "./monitoring/monitoring-macro-mon
 import {RiskManagementAxiomaReportingComponent} from "./riskmanagement/riskmanagement-axioma-reporting.component";
 
 import {LoginComponent} from "./authentication/login.component";
+import {PasswordResetComponent} from "./authentication/password.reset.component"
+import {PasswordResetConfirmComponent} from "./authentication/password.reset.confirm.component";
 
 import {AuthGuard} from "./auth.guard.service";
+import {AuthGuardReset} from "./auth.guard.reset.service";
 import {HFDashboardComponent} from "./hf/hf.dashboard.component";
 import {HFFundSearchComponent} from "./hf/hf.fund-search.component";
 import {HFFundSelectionComponent} from "./hf/hf.fund-selection.component";
@@ -134,8 +137,21 @@ const routes: Routes  = [
     /* LOGIN ***************************************/
     {
         path: 'login',
-        component: LoginComponent
+        component: LoginComponent,
     },
+    {
+        path: 'requestReset',
+        component: PasswordResetComponent
+    },
+    {
+        path: 'confirmReset/:username/:token',
+        component: PasswordResetConfirmComponent,
+    },
+    // {
+    //     path: "confirmReset/**",
+    //     redirectTo: "/confirmReset"
+    // },
+
     /* USER PROFILE ***************************************/
     {
         path: 'profile/:username',

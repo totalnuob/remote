@@ -1,23 +1,16 @@
 package kz.nicnbk.service.impl.employee;
 
 import kz.nicnbk.common.service.model.BaseDictionaryDto;
+import kz.nicnbk.common.service.util.DateUtils;
 import kz.nicnbk.common.service.util.HashUtils;
 import kz.nicnbk.common.service.util.PaginationUtils;
 import kz.nicnbk.common.service.util.StringUtils;
-import kz.nicnbk.repo.api.employee.DepartmentRepository;
-import kz.nicnbk.repo.api.employee.EmployeeRepository;
-import kz.nicnbk.repo.api.employee.PositionRepository;
-import kz.nicnbk.repo.api.employee.RoleRepository;
-import kz.nicnbk.repo.model.employee.Department;
-import kz.nicnbk.repo.model.employee.Employee;
-import kz.nicnbk.repo.model.employee.Position;
-import kz.nicnbk.repo.model.employee.Role;
+import kz.nicnbk.repo.api.employee.*;
+import kz.nicnbk.repo.model.employee.*;
 import kz.nicnbk.service.api.authentication.TokenService;
+import kz.nicnbk.service.api.email.EmailService;
 import kz.nicnbk.service.api.employee.EmployeeService;
-import kz.nicnbk.service.converter.employee.DepartmentEntityConverter;
-import kz.nicnbk.service.converter.employee.EmployeeEntityConverter;
-import kz.nicnbk.service.converter.employee.EmployeeFullEntityConverter;
-import kz.nicnbk.service.converter.employee.RoleEntityConverter;
+import kz.nicnbk.service.converter.employee.*;
 import kz.nicnbk.service.dto.authentication.UserRoles;
 import kz.nicnbk.service.dto.common.EntitySaveResponseDto;
 import kz.nicnbk.service.dto.common.ResponseStatusType;
@@ -31,6 +24,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.*;
 
 /**
@@ -72,6 +66,9 @@ public class EmployeeServiceImpl implements EmployeeService{
     @Autowired
     private TokenService tokenService;
 
+    @Autowired
+    private EmailService emailService;
+
     @Override
     public List<EmployeeDto> findAll(){
         try {
@@ -100,6 +97,22 @@ public class EmployeeServiceImpl implements EmployeeService{
             return dtoList;
         }catch (Exception ex){
             logger.error("Failed to load full employee list", ex);
+        }
+        return null;
+    }
+
+    @Override
+    public List<EmployeeDto> findEligibleForReset() {
+        try {
+            List<EmployeeDto> dtoList = new ArrayList<>();
+            List<Employee> entities = this.employeeRepository.findActiveAndNoFailedLoginAttempts();
+            for (Employee employee : entities) {
+                EmployeeDto employeeDto = this.employeeEntityConverter.disassemble(employee);
+                dtoList.add(employeeDto);
+            }
+            return dtoList;
+        } catch (Exception ex) {
+            logger.error("Failed to load active and no failed login attempts employee list", ex);
         }
         return null;
     }
@@ -260,6 +273,19 @@ public class EmployeeServiceImpl implements EmployeeService{
     }
 
     @Override
+    public EmployeeDto getEmployeeByEmail(String email) {
+        if (email != null) {
+            Employee employee = this.employeeRepository.findByEmail(email);
+            if (employee != null) {
+                if (employee.getActive() && employee.getFailedLoginAttempts() < 3) {
+                    return this.employeeEntityConverter.disassemble(employee);
+                }
+            }
+        }
+        return null;
+    }
+
+    @Override
     public EmployeePagedSearchResult search(EmployeeSearchParamsDto searchParams) {
         try {
             Page<Employee> entityPage = null;
@@ -377,15 +403,25 @@ public class EmployeeServiceImpl implements EmployeeService{
     }
 
     @Override
-    public EntitySaveResponseDto saveAndChangePassword(EmployeeFullDto employeeFullDto, String password, String updater) {
+    public EntitySaveResponseDto saveAndChangePassword(EmployeeFullDto employeeFullDto, String password, Boolean emailCheckbox, String updater) {
         EntitySaveResponseDto saveResponseDto = this.save(employeeFullDto, updater, true);
         if(saveResponseDto.getStatus() == null || saveResponseDto.getStatus().getCode().equalsIgnoreCase(ResponseStatusType.FAIL.getCode())) {
             return saveResponseDto;
         }
         if(employeeFullDto == null || !this.setPassword(employeeFullDto.getUsername(), password, updater)) {
             saveResponseDto.setErrorMessageEn("Employee profile was saved without the new password");
+            return saveResponseDto;
+        }
+        if (emailCheckbox != null ? emailCheckbox : false) {
+            sendPasswordByEmail(employeeFullDto, password);
         }
         return saveResponseDto;
+    }
+
+    private void sendPasswordByEmail(EmployeeFullDto employeeFullDto, String password) {
+        emailService.sendMail(employeeFullDto.getEmail(), "UNIC – password reset",
+                "UNIC Password has been updated by system administrator.\n" +
+                        "New generated password: " + password + ".");
     }
 
     private EntitySaveResponseDto checkEmployeeProfile(EmployeeDto employeeDto){
@@ -681,6 +717,23 @@ public class EmployeeServiceImpl implements EmployeeService{
             logger.error("Failed to register MFA.", ex);
         }
 
+        return false;
+    }
+
+    @Override
+    public boolean checkResetToken(String username, String token) {
+        if (StringUtils.isEmpty(username)) {
+            return false;
+        }
+        try {
+            Employee employee = this.employeeRepository.findByUsername(username);
+            if (employee == null) {
+                return false;
+            }
+            return this.tokenService.verify(token);
+        } catch (Exception ex) {
+            logger.error("Failed to verify token", ex);
+        }
         return false;
     }
 

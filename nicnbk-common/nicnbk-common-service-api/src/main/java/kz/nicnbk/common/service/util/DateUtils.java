@@ -299,6 +299,12 @@ public class DateUtils {
         return cal.getTime();
     }
 
+    public static Date getNext5Min() {
+        Calendar date = Calendar.getInstance();
+        long timeInSecs = date.getTimeInMillis();
+        return new Date(timeInSecs + (5 * 60 * 1000));
+    }
+
     public static Date getDateOnly(Date date){
         return getDate(getDateFormatted(date));
     }

@@ -13,10 +13,13 @@ import {RouterModule} from '@angular/router';
 
 import { appRouterProviders } from './app.routes';
 import {AuthGuard} from "./auth.guard.service";
+import {AuthGuardReset} from "./auth.guard.reset.service";
 import {AuthenticationService} from "./authentication/authentication.service";
 
 import { AppComponent } from './app.component';
 import {LoginComponent} from "./authentication/login.component";
+import {PasswordResetComponent} from "./authentication/password.reset.component";
+import {PasswordResetConfirmComponent} from "./authentication/password.reset.confirm.component";
 import {NewsListComponent} from "./news/news-list.component";
 import {NewsEditComponent} from "./news/news-edit.component";
 import {NewsViewComponent} from "./news/news-view.component";
@@ -155,12 +158,13 @@ import {StressTestLookupValuesComponent} from "./lookup/stress.test.lookup.value
     providers: [
         {provide: LocationStrategy, useClass: HashLocationStrategy}, // make pages available by URL on apache
         AuthGuard,
+        AuthGuardReset,
         AuthenticationService,
         COMPILER_PROVIDERS
         ],
     declarations: [
         AppComponent,
-        LoginComponent, EmployeeProfileComponent,EmployeeProfileEditComponent, EmployeeProfileAdminComponent,
+        LoginComponent, PasswordResetComponent, PasswordResetConfirmComponent, EmployeeProfileComponent,EmployeeProfileEditComponent, EmployeeProfileAdminComponent,
         NewsListComponent, NewsEditComponent, NewsViewComponent,
         MemoListComponent,
         MemoAttachmentDownloaderComponent, FileAttachmentDownloaderComponent,

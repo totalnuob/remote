@@ -6,6 +6,7 @@ import kz.nicnbk.service.dto.authentication.UserRoles;
 import kz.nicnbk.service.dto.common.EntitySaveResponseDto;
 import kz.nicnbk.service.dto.employee.*;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -16,6 +17,8 @@ public interface EmployeeService extends BaseService {
     List<EmployeeDto> findAll();
 
     List<EmployeeDto> findActiveAll();
+
+    List<EmployeeDto> findEligibleForReset();
 
     List<EmployeeDto> findICMembers();
 
@@ -36,11 +39,13 @@ public interface EmployeeService extends BaseService {
 
     EmployeeFullDto getFullEmployeeByUsername(String username);
 
+    EmployeeDto getEmployeeByEmail(String email);
+
     EmployeePagedSearchResult search(EmployeeSearchParamsDto searchParams);
 
     EntitySaveResponseDto save(EmployeeFullDto employeeFullDto, String updater, Boolean isAdmin);
 
-    EntitySaveResponseDto saveAndChangePassword(EmployeeFullDto employeeFullDto, String password, String updater);
+    EntitySaveResponseDto saveAndChangePassword(EmployeeFullDto employeeFullDto, String password, Boolean emailCheckbox, String updater);
 
     EmployeeDto findActiveByUsernamePassword(String username, String password);
 
@@ -65,4 +70,6 @@ public interface EmployeeService extends BaseService {
     boolean registerMfa(String username, String secret, String otp);
 
     EmployeeDto findAdmin();
+
+    boolean checkResetToken(String username, String token);
 }
