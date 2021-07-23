@@ -3,8 +3,10 @@ package kz.nicnbk.service.api.reporting.realestate;
 
 import kz.nicnbk.repo.model.reporting.realestate.ReportingREGeneralLedgerBalance;
 import kz.nicnbk.service.api.base.BaseService;
+import kz.nicnbk.service.dto.common.EntitySaveResponseDto;
 import kz.nicnbk.service.dto.reporting.ConsolidatedReportRecordHolderDto;
 import kz.nicnbk.service.dto.reporting.SingularityGeneralLedgerBalanceRecordDto;
+import kz.nicnbk.service.dto.reporting.UpdateTerraInvestmentDto;
 import kz.nicnbk.service.dto.reporting.realestate.TerraGeneralLedgerBalanceRecordDto;
 
 import java.util.List;
@@ -25,6 +27,8 @@ public interface REGeneralLedgerBalanceService extends BaseService {
     boolean deleteByReportId(Long reportId);
 
     List<TerraGeneralLedgerBalanceRecordDto> getRecordsByReportId(Long reportId);
+
+    EntitySaveResponseDto updateFundAccountBalance(UpdateTerraInvestmentDto updateDto);
 
     boolean excludeIncludeRecord(Long recordId);
     boolean excludeRecord(Long recordId);

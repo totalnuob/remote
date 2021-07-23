@@ -1,28 +1,25 @@
 package kz.nicnbk.service.impl.reporting.realestate;
 
-import kz.nicnbk.common.service.util.StringUtils;
 import kz.nicnbk.repo.api.lookup.HFFinancialStatementTypeRepository;
 import kz.nicnbk.repo.api.lookup.REChartOfAccountsTypeRepository;
 import kz.nicnbk.repo.api.lookup.RETrancheTypeRepository;
 import kz.nicnbk.repo.api.reporting.realestate.ReportingREGeneralLedgerBalanceRepository;
-import kz.nicnbk.repo.model.common.Currency;
+import kz.nicnbk.repo.model.lookup.reporting.TerraNICChartAccountsLookup;
 import kz.nicnbk.repo.model.reporting.PeriodicReport;
 import kz.nicnbk.repo.model.reporting.hedgefunds.FinancialStatementCategory;
-import kz.nicnbk.repo.model.reporting.realestate.REChartOfAccountsType;
 import kz.nicnbk.repo.model.reporting.realestate.RETrancheType;
 import kz.nicnbk.repo.model.reporting.realestate.ReportingREGeneralLedgerBalance;
 import kz.nicnbk.service.api.reporting.PeriodicReportService;
 import kz.nicnbk.service.api.reporting.realestate.REGeneralLedgerBalanceService;
 import kz.nicnbk.service.converter.reporting.PeriodicReportConverter;
 import kz.nicnbk.service.datamanager.LookupService;
+import kz.nicnbk.service.dto.common.EntitySaveResponseDto;
 import kz.nicnbk.service.dto.reporting.*;
 import kz.nicnbk.common.service.exception.ExcelFileParseException;
 import kz.nicnbk.service.dto.reporting.realestate.TerraGeneralLedgerBalanceRecordDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -172,6 +169,7 @@ public class REGeneralLedgerBalanceServiceImpl implements REGeneralLedgerBalance
             dto.setAccountBalanceNICKMF(entity.getAccountBalanceNICKMF());
             dto.setAccountBalanceGrandTotal(entity.getAccountBalanceGrandTotal());
             dto.setExcludeFromTerraCalculation(entity.getExcludeFromTerraCalculation());
+            dto.setGlAccountBalanceEdited(entity.getGlAccountBalanceEdited());
             return dto;
         }
         return null;
@@ -199,6 +197,35 @@ public class REGeneralLedgerBalanceServiceImpl implements REGeneralLedgerBalance
             return disassembleList(entities);
         }
         return null;
+    }
+
+    @Override
+    public EntitySaveResponseDto updateFundAccountBalance(UpdateTerraInvestmentDto updateDto) {
+        EntitySaveResponseDto entitySaveResponseDto = new EntitySaveResponseDto();
+        try {
+            ReportingREGeneralLedgerBalance entity =
+                    this.generalLedgerBalanceRepository.getEntity(updateDto.getReportId(), updateDto.getTrancheTypeNameEn(), updateDto.getFundName(), TerraNICChartAccountsLookup.SECURITY.getNameEn());
+            if (entity != null) {
+                if (entity.getReport().getStatus().getCode().equalsIgnoreCase("SUBMITTED")) {
+                    Long reportId = entity.getReport() != null ? entity.getReport().getId() : null;
+                    logger.error("Cannot edit report with status 'SUBMITTED': report id " + reportId);
+                    entitySaveResponseDto.setErrorMessageEn("Cannot edit report with status 'SUBMITTED': report id ");
+                    return entitySaveResponseDto;
+                }
+                entity.setGlAccountBalanceEdited(updateDto.getAccountBalance());
+                this.generalLedgerBalanceRepository.save(entity);
+                entitySaveResponseDto.setSuccessMessageEn("Successfully saved terra fund investment record");
+                return entitySaveResponseDto;
+            }else{
+                logger.error("Failed to update terra fund investment record: No record found to update: fund name = " + updateDto.getFundName());
+                entitySaveResponseDto.setErrorMessageEn("Failed to update terra fund investment record - no record found to update: fund name = " + updateDto.getFundName());
+                return entitySaveResponseDto;
+            }
+        }catch (Exception ex){
+            logger.error("Error updating terra fund investment record: fund name = " + updateDto.getFundName(), ex);
+            entitySaveResponseDto.setErrorMessageEn("Error updating terra fund investment record: fund name = " + updateDto.getFundName());
+            return entitySaveResponseDto;
+        }
     }
 
     @Override

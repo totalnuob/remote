@@ -94,6 +94,8 @@ export class PeriodicReportService extends CommonService{
     private PERIODIC_REPORT_PE_GENERAL_LEDGER_FORM_DATA_DELETE_RECORD_URL = this.PERIODIC_REPORT_BASE_URL + "PEGeneralLedgerFormData/delete/";
     private PERIODIC_REPORT_REAL_ESTATE_GENERAL_LEDGER_FORM_DATA_DELETE_RECORD_URL = this.PERIODIC_REPORT_BASE_URL + "RealEstateGeneralLedgerFormData/delete/";
     private PERIODIC_REPORT_UPDATE_TARRAGON_INVESTMENT_URL = this.PERIODIC_REPORT_BASE_URL + "updatedTarragonInvestment/";
+    private PERIODIC_REPORT_UPDATE_TERRA_INVESTMENT_URL = this.PERIODIC_REPORT_BASE_URL + "updateTerraInvestment/";
+
 
 
     private PERIODIC_REPORT_UPLOAD_URL = this.PERIODIC_REPORT_BASE_URL + "upload/";
@@ -553,6 +555,14 @@ export class PeriodicReportService extends CommonService{
         let body = JSON.stringify(data);
         //console.log(body);
         return this.http.post(this.PERIODIC_REPORT_UPDATE_TARRAGON_INVESTMENT_URL, body, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+    updateTerraInvestment(data){
+        let body = JSON.stringify(data);
+        //console.log(body);
+        return this.http.post(this.PERIODIC_REPORT_UPDATE_TERRA_INVESTMENT_URL, body, this.getOptionsWithCredentials())
             .map(this.extractData)
             .catch(this.handleErrorResponse);
     }

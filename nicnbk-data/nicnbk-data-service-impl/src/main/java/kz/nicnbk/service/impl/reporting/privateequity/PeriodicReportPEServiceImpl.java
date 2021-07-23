@@ -513,6 +513,14 @@ public class PeriodicReportPEServiceImpl implements PeriodicReportPEService {
             updatedRecords = setNICChartOfAccounts(updatedRecords);
             Collections.sort(updatedRecords);
 
+            // make editable
+            for(TarragonGeneratedGeneralLedgerFormDto record: updatedRecords){
+                if(record.getNbAccountNumber() != null && record.getNbAccountNumber().equalsIgnoreCase(PeriodicReportConstants.ACC_NUM_1123_010)
+                        && record.getGLAccountBalance() != null && record.getGLAccountBalance().doubleValue() != 0.0 ){
+                    record.setEditable(true);
+                    break;
+                }
+            }
 
             // Check Net Realized Gains Losses
             // UPDATE: "Net realized gain on investments" record added from Statement of Operations, no need to add Net realized records
@@ -720,8 +728,12 @@ public class PeriodicReportPEServiceImpl implements PeriodicReportPEService {
                     continue;
                 }
                 if(balanceRecord.getType() != null && balanceRecord.getType().getCode().equalsIgnoreCase("FAIR_VAL")){
-                    // skip 'Investments at fair value'
-                    continue;
+                    if(balanceRecord.getName() != null && balanceRecord.getName().equalsIgnoreCase("Marketable Securities")){
+                        // include 'Marketable Securities'
+                    }else {
+                        // skip 'Investments at fair value'
+                        continue;
+                    }
                 }
                 TarragonGeneratedGeneralLedgerFormDto record = new TarragonGeneratedGeneralLedgerFormDto();
                 if(isAssets(balanceRecord)){
@@ -801,13 +813,13 @@ public class PeriodicReportPEServiceImpl implements PeriodicReportPEService {
                     record.setGLAccountBalance(investment.getEditedFairValue() != null ? investment.getEditedFairValue() : accountBalance);
 
 
-                    if(!madeEditable && investment.getTrancheType() != null && record.getGLAccountBalance() != null &&
-                            record.getGLAccountBalance().doubleValue() != 0.0 &&
-                            (investment.getTrancheType().getCode().equalsIgnoreCase(PETrancheTypeLookup.TARRAGON_A.getCode()) ||
-                            investment.getTrancheType().getCode().equalsIgnoreCase(PETrancheTypeLookup.TARRAGON_A2.getCode()))){
-                        record.setEditable(true);
-                        madeEditable = true;
-                    }
+//                    if(!madeEditable && investment.getTrancheType() != null && record.getGLAccountBalance() != null &&
+//                            record.getGLAccountBalance().doubleValue() != 0.0 &&
+//                            (investment.getTrancheType().getCode().equalsIgnoreCase(PETrancheTypeLookup.TARRAGON_A.getCode()) ||
+//                            investment.getTrancheType().getCode().equalsIgnoreCase(PETrancheTypeLookup.TARRAGON_A2.getCode()))){
+//                        record.setEditable(true);
+//                        madeEditable = true;
+//                    }
 
                     if(record.getGLAccountBalance() != null && record.getGLAccountBalance() < 0){
                         //record.setGLAccountBalance(MathUtils.multiply(record.getGLAccountBalance(), -1.0));

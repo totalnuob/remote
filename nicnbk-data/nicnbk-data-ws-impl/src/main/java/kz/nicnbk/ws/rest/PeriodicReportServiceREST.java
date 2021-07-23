@@ -363,6 +363,8 @@ public class PeriodicReportServiceREST extends CommonServiceREST{
         return buildEntitySaveResponse(entitySaveResponseDto);
     }
 
+
+
     @PreAuthorize(EDITOR_ROLE)
     @RequestMapping(value="/PEGeneralLedgerFormData/delete/{recordId}", method=RequestMethod.GET)
     @ResponseBody
@@ -456,6 +458,23 @@ public class PeriodicReportServiceREST extends CommonServiceREST{
 
         boolean changed = this.realEstateService.excludeIncludeTerraRecord(excludeTerraRecordDto, username);
         return buildDeleteResponseEntity(changed);
+    }
+
+    @PreAuthorize(EDITOR_ROLE)
+    @RequestMapping(method = RequestMethod.POST, value = "/updateTerraInvestment")
+    public ResponseEntity<?> saveUpdatedTerraInvestment(@RequestBody UpdateTerraInvestmentDto updateDto){
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        String username = this.tokenService.decode(token).getUsername();
+
+        EntitySaveResponseDto entitySaveResponseDto  = this.realEstateGeneralLedgerBalanceService.updateFundAccountBalance(updateDto);
+
+        if(entitySaveResponseDto.getStatus() == ResponseStatusType.FAIL){
+            logger.error("Error updating Terra Fund Investment: '" + updateDto.getFundName() + "' [user " + username + "]");
+        }else{
+            logger.info("Successfully updated Terra Fund Investment: '" + updateDto.getFundName() + "' [user " + username + "]");
+        }
+
+        return buildEntitySaveResponse(entitySaveResponseDto);
     }
 
     /* ****************************************************************************************************************/

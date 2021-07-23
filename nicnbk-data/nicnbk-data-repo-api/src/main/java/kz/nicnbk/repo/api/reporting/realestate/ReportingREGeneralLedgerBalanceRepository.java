@@ -22,4 +22,7 @@ public interface ReportingREGeneralLedgerBalanceRepository extends PagingAndSort
     @Query("DELETE from ReportingREGeneralLedgerBalance e where e.report.id=?1")
     void deleteByReportId(long reportId);
 
+    @Query("SELECT e from ReportingREGeneralLedgerBalance e where e.report.id=?1 and e.trancheType.nameEn=?2 and e.portfolioFund=?3 and e.glSubclass=?4")
+    ReportingREGeneralLedgerBalance getEntity(Long reportId, String trancheNameEn, String portfolioFund, String glSubclass);
+
 }

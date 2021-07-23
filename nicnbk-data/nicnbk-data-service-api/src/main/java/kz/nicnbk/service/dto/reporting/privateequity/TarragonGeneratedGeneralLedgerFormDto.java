@@ -35,4 +35,49 @@ public class TarragonGeneratedGeneralLedgerFormDto extends GeneratedGeneralLedge
     public void setType(String type) {
         this.type = type;
     }
+
+    @Override
+    public int compareTo(Object o) {
+        if(getSortingScore(this) < getSortingScore((GeneratedGeneralLedgerFormDto)o)){
+            return -1;
+        }else if(getSortingScore(this) > getSortingScore((GeneratedGeneralLedgerFormDto)o)){
+            return 1;
+        }else {
+            if(this.getNbAccountNumber() == null){
+                if(((GeneratedGeneralLedgerFormDto) o).getNbAccountNumber() == null){
+                    return 0;
+                }
+                return 1;
+            }
+            if(((GeneratedGeneralLedgerFormDto) o).getNbAccountNumber() == null){
+                return -1;
+            }
+            if(this.getNbAccountNumber().equalsIgnoreCase(((GeneratedGeneralLedgerFormDto) o).getNbAccountNumber())){
+                // compare fund name
+                if(this.getChartAccountsLongDescription() != null && ((GeneratedGeneralLedgerFormDto) o).getChartAccountsLongDescription() != null) {
+                    return this.getChartAccountsLongDescription().compareTo(((GeneratedGeneralLedgerFormDto) o).getChartAccountsLongDescription());
+                }
+            }
+            return this.getNbAccountNumber().compareTo(((GeneratedGeneralLedgerFormDto) o).getNbAccountNumber());
+        }
+    }
+
+    private int getSortingScore(GeneratedGeneralLedgerFormDto dto){
+        int result = 10;//dto.getAcronym() != null && dto.getAcronym().endsWith(" B") ? 1000 : 10;
+        if(dto.getFinancialStatementCategory() == null){
+            return result;
+        }else if(dto.getFinancialStatementCategory().equalsIgnoreCase("A")){
+            result += 1;
+        }else if(dto.getFinancialStatementCategory().equalsIgnoreCase("L")){
+            result += 2;
+        }else if(dto.getFinancialStatementCategory().equalsIgnoreCase("E")){
+            result += 3;
+        }if(dto.getFinancialStatementCategory().equalsIgnoreCase("I")){
+            result += 4;
+        }if(dto.getFinancialStatementCategory().equalsIgnoreCase("X")){
+            result += 5;
+        }
+
+        return result;
+    }
 }
