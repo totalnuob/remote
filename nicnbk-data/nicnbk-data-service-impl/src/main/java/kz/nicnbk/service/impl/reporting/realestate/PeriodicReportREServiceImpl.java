@@ -318,6 +318,7 @@ public class PeriodicReportREServiceImpl implements PeriodicReportREService {
         }
     }
 
+    @Deprecated
     @Override
     public List<TerraBalanceSheetRecordDto> getBalanceSheetRecords(Long reportId) {
         List<ReportingREBalanceSheet> entities =
@@ -326,6 +327,7 @@ public class PeriodicReportREServiceImpl implements PeriodicReportREService {
         return dtoList;
     }
 
+    @Deprecated
     @Override
     public List<TerraProfitLossRecordDto> getProfitLossRecords(Long reportId) {
         List<ReportingREProfitLoss> entities =
@@ -334,6 +336,7 @@ public class PeriodicReportREServiceImpl implements PeriodicReportREService {
         return dtoList;
     }
 
+    @Deprecated
     @Override
     public List<TerraSecuritiesCostRecordDto> getSecuritiesCostRecords(Long reportId) {
         List<ReportingRESecuritiesCost> entities =
@@ -508,6 +511,14 @@ public class PeriodicReportREServiceImpl implements PeriodicReportREService {
             //setTerraNICChartOfAccounts(records);
             Collections.sort(records);
 
+            for(TerraGeneratedGeneralLedgerFormDto record: records){
+                if(record.getChartAccountsLongDescription() != null &&
+                        record.getChartAccountsLongDescription().equalsIgnoreCase(TerraNICChartAccountsLookup.SECURITY.getNameEn())){
+                    record.setEditable(true);
+                    break;
+                }
+            }
+
 
             responseDto.setRecords(records);
             responseDto.setStatus(ResponseStatusType.SUCCESS);
@@ -585,12 +596,21 @@ public class PeriodicReportREServiceImpl implements PeriodicReportREService {
                     records.add(record);
                 }
             }
+            //boolean madeEditable = false;
             for(TerraGeneratedGeneralLedgerFormDto record: records){
                 if(record.getChartAccountsLongDescription() != null &&
                         record.getChartAccountsLongDescription().equalsIgnoreCase(TerraNICChartAccountsLookup.SECURITY.getNameEn())){
-                    if(unrealizedGainMap.get(record.getShortName()) != null){
-                        record.setGLAccountBalance(MathUtils.add(record.getGLAccountBalance(), unrealizedGainMap.get(record.getShortName())));
+                    if(record.getGlAccountBalanceEdited() != null){
+                        record.setGLAccountBalance(record.getGlAccountBalanceEdited());
+                    }else {
+                        if (unrealizedGainMap.get(record.getShortName()) != null) {
+                            record.setGLAccountBalance(MathUtils.add(record.getGLAccountBalance(), unrealizedGainMap.get(record.getShortName())));
+                        }
                     }
+//                    if(!madeEditable){
+//                        record.setEditable(true);
+//                        madeEditable = true;
+//                    }
                 }
             }
         }

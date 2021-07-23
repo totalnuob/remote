@@ -552,4 +552,30 @@ export class TerraGeneratedFormNBReportingComponent extends CommonNBReportingCom
     isRecordExcluded(record){
         return record.excludeFromTerraCalculation;
     }
+
+    saveEditAccountBalance(record){
+        let updateDto = {"reportId": this.reportId,"fundName": (record.shortName != null ? record.shortName : record.subscriptionRedemptionEntity),
+            "trancheTypeNameEn": record.acronym,
+            "accountBalance": record.glaccountBalance.toString().replace(/,/g , '')};
+        console.log(updateDto);
+        this.busy = this.periodicReportService.updateTerraInvestment(updateDto)
+            .subscribe(
+                response  => {
+                    if(response){
+                        this.postAction("Record successfully updated", null);
+                        this.checkRecords();
+                        record.editing = false;
+                    }
+                },
+                (error: ErrorResponse) => {
+                    this.processErrorResponse(error);
+                    //this.successMessage = null;
+                    //this.errorMessage = "Error updating account balance";
+                    //if(error && !error.isEmpty()){
+                    //    this.processErrorMessage(error);
+                    //}
+                    //this.postAction(null, this.errorMessage);
+                }
+            );
+    }
 }

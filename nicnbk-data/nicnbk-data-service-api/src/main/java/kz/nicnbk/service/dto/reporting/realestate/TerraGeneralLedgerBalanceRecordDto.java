@@ -19,6 +19,7 @@ public class TerraGeneralLedgerBalanceRecordDto implements BaseDto {
     private Double accountBalanceGP;
     private Double accountBalanceNICKMF;
     private Double accountBalanceGrandTotal;
+    private Double glAccountBalanceEdited;
 
     private Boolean excludeFromTerraCalculation;
 
@@ -100,5 +101,13 @@ public class TerraGeneralLedgerBalanceRecordDto implements BaseDto {
 
     public void setExcludeFromTerraCalculation(Boolean excludeFromTerraCalculation) {
         this.excludeFromTerraCalculation = excludeFromTerraCalculation;
+    }
+
+    public Double getGlAccountBalanceEdited() {
+        return glAccountBalanceEdited;
+    }
+
+    public void setGlAccountBalanceEdited(Double glAccountBalanceEdited) {
+        this.glAccountBalanceEdited = glAccountBalanceEdited;
     }
 }

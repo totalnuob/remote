@@ -1,11 +1,8 @@
 package kz.nicnbk.repo.model.reporting.realestate;
 
 import kz.nicnbk.repo.model.base.CreateUpdateBaseEntity;
-import kz.nicnbk.repo.model.common.Currency;
 import kz.nicnbk.repo.model.reporting.PeriodicReport;
 import kz.nicnbk.repo.model.reporting.hedgefunds.FinancialStatementCategory;
-import kz.nicnbk.repo.model.reporting.hedgefunds.HFChartOfAccountsType;
-import kz.nicnbk.repo.model.reporting.privateequity.PETrancheType;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -24,6 +21,7 @@ public class ReportingREGeneralLedgerBalance extends CreateUpdateBaseEntity{
 
     private Double accountBalanceGP;
     private Double accountBalanceNICKMF;
+    private Double glAccountBalanceEdited;
     private Double accountBalanceGrandTotal;
 
     private Boolean excludeFromTerraCalculation;
@@ -238,5 +236,13 @@ public class ReportingREGeneralLedgerBalance extends CreateUpdateBaseEntity{
 
     public void setExcludeFromTerraCalculation(Boolean excludeFromTerraCalculation) {
         this.excludeFromTerraCalculation = excludeFromTerraCalculation;
+    }
+
+    public Double getGlAccountBalanceEdited() {
+        return glAccountBalanceEdited;
+    }
+
+    public void setGlAccountBalanceEdited(Double glAccountBalanceEdited) {
+        this.glAccountBalanceEdited = glAccountBalanceEdited;
     }
 }
