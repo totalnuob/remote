@@ -95,7 +95,7 @@ export class AppComponent implements OnInit{
     busy: Subscription;
     notificationsBusy: Subscription;
     activeMenu;
-    activeBlock = 'corp';
+    activeBlock = 'invest'; //'corp';
     //snow = true;
 
     authenticatedUserNotifications = [];
@@ -134,7 +134,7 @@ export class AppComponent implements OnInit{
         if(activeBlockSelected){
             this.activeBlock = activeBlockSelected;
         }else{
-            this.activeBlock ='corp';
+            this.activeBlock = 'invest';//'corp';
         }
 
         // Active Menu
@@ -145,7 +145,7 @@ export class AppComponent implements OnInit{
     }
 
     initMenu(url){
-        this.activeBlock = 'corp';
+        this.activeBlock = 'invest'; //'corp';
         if(url.startsWith('/invest')){
             this.activeBlock = 'invest';
         }else if(url.startsWith('/admin')){
@@ -271,7 +271,7 @@ export class AppComponent implements OnInit{
         if(menu === "HR"){
             return this.activeBlock === 'corp';
         }else if(menu === "TRAININGS"){
-            return this.activeBlock === 'corp';
+            return this.activeBlock === 'invest'; //'corp';
         }else if(menu === "MONITORING"){
             return this.activeBlock === 'invest' && this.showMonitoring();
         }else if(menu === "MACROMONITOR"){
@@ -358,7 +358,7 @@ export class AppComponent implements OnInit{
         if(type === 'corp'){
             return 'hr/news';
         }else if(type === 'invest'){
-            return "news";
+            return "hr/news";
         }else if(type === 'admin'){
             return "admin/main";
         }
@@ -368,7 +368,7 @@ export class AppComponent implements OnInit{
         localStorage.setItem("activeBlock", selected);
         this.activeBlock = selected;
         if(this.activeBlock === 'invest'){
-            this.activeMenu = 'NEWS';
+            this.activeMenu = 'HR_NEWS';//'NEWS';
         }else if(this.activeBlock === 'corp'){
             this.activeMenu = 'HR_NEWS';
         }else if(this.activeBlock === 'admin'){

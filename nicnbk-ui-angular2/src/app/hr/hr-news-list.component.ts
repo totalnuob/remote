@@ -24,7 +24,7 @@ declare var $: any
     changeDetection: ChangeDetectionStrategy.Default // TODO: change to OnPush ??
 })
 export class HRNewsListComponent extends CommonFormViewComponent implements OnInit{
-    activeTab = "NEWS_HR";
+    activeTab = 'LEGAL_UPDATES';//"NEWS_HR";
 
     busy: Subscription;
     busyLegalUpdateModal: Subscription;
