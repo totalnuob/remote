@@ -34,5 +34,29 @@ public class VersionDto implements Comparable<VersionDto> {
     }
 
     @Override
-    public int compareTo(VersionDto dto) {return this.description.get(0).compareTo(dto.getDescription().get(0)); }
+    public int compareTo(VersionDto other) {
+        if(this.getVersionNumberScore() > 0 && other.getVersionNumberScore() < 0){
+            return 1;
+        }else if(this.getVersionNumberScore() < 0 && other.getVersionNumberScore() > 0) {
+            return -1;
+        }else{
+            return this.getVersionNumberScore() - other.getVersionNumberScore();
+        }
+        //return this.description.get(0).compareTo(dto.getDescription().get(0)); }
+    }
+
+    public int getVersionNumberScore(){
+        if (this.description != null && this.description.get(0) != null) {
+            String versionName = this.description.get(0);
+            if(versionName.startsWith("Версия:")){
+                String versionNum = versionName.substring(7).trim();
+                String[] versionNums = versionNum.split("\\.");
+                if(versionNums.length == 3){
+                    return Integer.parseInt(versionNums[0]) * 1000 + Integer.parseInt(versionNums[1]) * 100 +
+                            Integer.parseInt(versionNums[2]) * 10;
+                }
+            }
+        }
+        return -1;
+    }
 }
