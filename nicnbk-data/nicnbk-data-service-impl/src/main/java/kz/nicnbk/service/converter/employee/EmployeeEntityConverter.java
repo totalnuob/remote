@@ -23,6 +23,8 @@ public class EmployeeEntityConverter extends BaseDozerEntityConverter<Employee, 
         if(dto.getPosition() != null){
             dto.getPosition().setHead(entity.getPosition().isHead());
         }
+//        dto.setIsActing(entity.getIsActing());
+//        dto.setActingEmployee(entity.getActingEmployee());
         return dto;
     }
 

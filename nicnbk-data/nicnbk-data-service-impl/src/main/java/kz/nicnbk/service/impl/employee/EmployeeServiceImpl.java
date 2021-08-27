@@ -1,7 +1,6 @@
 package kz.nicnbk.service.impl.employee;
 
 import kz.nicnbk.common.service.model.BaseDictionaryDto;
-import kz.nicnbk.common.service.util.DateUtils;
 import kz.nicnbk.common.service.util.HashUtils;
 import kz.nicnbk.common.service.util.PaginationUtils;
 import kz.nicnbk.common.service.util.StringUtils;
@@ -24,7 +23,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
 import java.util.*;
 
 /**
@@ -89,7 +87,7 @@ public class EmployeeServiceImpl implements EmployeeService{
     public List<EmployeeDto> findActiveAll(){
         try {
             List<EmployeeDto> dtoList = new ArrayList<>();
-            Iterator<Employee> entities = this.employeeRepository.findAll(new Sort(Sort.Direction.ASC, "firstName")).iterator();
+            Iterator<Employee> entities = this.employeeRepository.findActiveAll(new Sort(Sort.Direction.ASC, "firstName")).iterator();
             while (entities.hasNext()) {
                 EmployeeDto employeeDto = this.employeeEntityConverter.disassemble(entities.next());
                 dtoList.add(employeeDto);
@@ -369,7 +367,8 @@ public class EmployeeServiceImpl implements EmployeeService{
                 entity.setLastNameRuPossessive(employeeFullDto.getLastNameRuPossessive());
 
                 entity.setEmail(employeeFullDto.getEmail());
-
+                entity.setIsActing(employeeFullDto.getIsActing());
+                entity.setActingEmployee(employeeFullDto.getActingEmployee());
             }
             Position position = null;
             if(employeeFullDto.getPosition() != null && StringUtils.isNotEmpty(employeeFullDto.getPosition().getCode())){

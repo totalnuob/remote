@@ -7,6 +7,7 @@ import {ErrorResponse} from "../common/error-response";
 import {Observable} from "rxjs/Observable";
 import {Subscription} from "../../../node_modules/rxjs";
 import {ModuleAccessCheckerService} from "../authentication/module.access.checker.service";
+import {el} from "@angular/platform-browser/testing/browser_util";
 
 declare var $:any;
 
@@ -26,15 +27,17 @@ export class EmployeeProfileAdminComponent extends CommonFormViewComponent{
     private breadcrumbParams: string;
     private breadcrumbParamsPath: string;
 
-    private employee = new Employee();
+    private employee = new Employee;
 
     private departments;
     private positions;
     private roles;
+    private activeEmployees;
 
     private chosenDepartment;
     private chosenPosition;
     private departmentPositions;
+    private chosenSubstitutedEmployee;
 
     newPassword = '';
     newPasswordConfirm = '';
@@ -42,6 +45,8 @@ export class EmployeeProfileAdminComponent extends CommonFormViewComponent{
     passwordFieldType: boolean;
     confirmPasswordFieldType: boolean;
     emailCheckbox = false;
+    isActingAs: boolean;
+    actingEmployee: number;
 
     constructor(
         private router: Router,
@@ -60,9 +65,10 @@ export class EmployeeProfileAdminComponent extends CommonFormViewComponent{
             this.employeeService.getAllDepartments(),
             this.employeeService.getAllPositions(),
             this.employeeService.getAllRoles(),
+            this.employeeService.findActiveAll(),
         )
             .subscribe(
-                ([data1, data2, data3]) => {
+                ([data1, data2, data3, data4]) => {
 
                     this.departments = data1;
                     this.departments.push({"code": "NONE", "nameEn": "-- no department or unknown --", "nameRu": "-- без департамента или неизвестен --"});
@@ -77,6 +83,13 @@ export class EmployeeProfileAdminComponent extends CommonFormViewComponent{
                     this.roles = data3;
                     console.log('All roles');
                     console.log(this.roles);
+
+                    this.activeEmployees = data4;
+                    // this.activeEmployees.removeAt(55);
+                    // this.activeEmployees.removeAt(61);
+                    // this.activeEmployees.removeAt(62);
+                    // this.activeEmployees.removeAt(67);
+                    console.log(this.activeEmployees);
 
                     $('#birthDatePicker').datetimepicker({
                         format: 'DD-MM-YYYY'
@@ -93,7 +106,20 @@ export class EmployeeProfileAdminComponent extends CommonFormViewComponent{
                                 this.employeeService.getFullEmployeeByUsername(this.username)
                                     .subscribe( response => {
                                             this.employee = response;
+                                            console.log(response);
+                                            // this.employee.isActing = response.isActing;
+                                            // this.employee.actingEmployee = response.actingEmployee;
                                             console.log(this.employee);
+                                            if (this.employee.isActing != null  && this.employee.actingEmployee != null) {
+                                                if (this.employee.isActing) {
+                                                    this.isActingAs = this.employee.isActing;
+                                                    this.actingEmployee = this.employee.actingEmployee;
+                                                    this.chosenSubstitutedEmployee = this.employee.actingEmployee;
+                                                }
+                                            } else {
+                                                this.employee.isActing = false;
+                                                this.employee.actingEmployee = null;
+                                            }
 
                                             if(this.employee.position == null) {
                                                 this.chosenDepartment = "NONE";
@@ -126,6 +152,8 @@ export class EmployeeProfileAdminComponent extends CommonFormViewComponent{
                                 this.employee.locked = false;
                                 this.employee.failedLoginAttempts = 0;
                                 this.employee.mfaEnabled = false;
+                                this.employee.isActing = false;
+                                this.employee.actingEmployee = null;
 
                                 console.log('New User creation');
                             }
@@ -141,6 +169,10 @@ export class EmployeeProfileAdminComponent extends CommonFormViewComponent{
                     this.postAction(null, this.errorMessage);
                 }
             );
+    }
+
+    toggleIsEmployeeActingAsButton() {
+        this.isActingAs = !this.isActingAs;
     }
 
     hasRole(value) {
@@ -194,12 +226,27 @@ export class EmployeeProfileAdminComponent extends CommonFormViewComponent{
         this.chosenPosition = null;
     }
 
+    selectedActingEmployee(value: number) {
+        console.log(value);
+        // for (let i = 0; i < this.activeEmployees.length; i++) {
+        //     if (value === this.activeEmployees[i].id) {
+        //         this.actingEmployee = this.activeEmployees[i].id;
+        //         this.isActingAs = true;
+        //     }
+        // }
+        this.actingEmployee = value;
+        this.isActingAs = true;
+    }
+
     saveEmployeeProfile() {
         this.employee.birthDate= $('#birthDate').val();
 
         console.log(this.chosenPosition);
         this.employee.position = {};
         this.employee.position.code = this.chosenPosition;
+        this.employee.isActing = this.isActingAs;
+        console.log(this.employee.isActing);
+        this.employee.actingEmployee = this.actingEmployee;
 
         if(this.newPassword == this.newPasswordConfirm) {
             if(this.newPassword == '') {
@@ -207,14 +254,16 @@ export class EmployeeProfileAdminComponent extends CommonFormViewComponent{
                     .subscribe(
                         response => {
                             this.employee.id = response.entityId;
-                            this.postAction("Successfully saved profile", null);
+                            this.successMessage = "Successfully saved profile"
+                            this.postAction(this.successMessage, null);
                         },
                         (error:ErrorResponse) => {
                             if (error && !error.isEmpty()) {
                                 this.processErrorMessage(error);
                                 console.log(error);
+                                this.errorMessage = "Error saving profile";
                             }else {
-                                this.postAction(null, "Error saving profile");
+                                this.postAction(null, this.errorMessage);
                             }
                         }
                     );
@@ -223,14 +272,16 @@ export class EmployeeProfileAdminComponent extends CommonFormViewComponent{
                     .subscribe(
                         response => {
                             this.employee.id = response.entityId;
-                            this.postAction("Successfully saved profile", null);
+                            this.successMessage = "Successfully saved profile";
+                            this.postAction(this.successMessage, null);
                         },
                         (error:ErrorResponse) => {
                             if (error && !error.isEmpty()) {
                                 this.processErrorMessage(error);
                                 console.log(error);
+                                this.errorMessage = "Error saving profile";
                             }else {
-                                this.postAction(null, "Error saving profile");
+                                this.postAction(null, this.errorMessage);
                             }
                         }
                     );

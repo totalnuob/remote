@@ -38,6 +38,9 @@ public class Employee extends BaseEntity {
     private String secret;
     private String email;
 
+    private Boolean isActing;
+    private Long actingEmployee;
+
     public Employee(){}
 
     public Employee(Long id){
@@ -217,5 +220,23 @@ public class Employee extends BaseEntity {
 
     public void setLastNameRuPossessive(String lastNameRuPossessive) {
         this.lastNameRuPossessive = lastNameRuPossessive;
+    }
+
+    @Column(name = "is_acting")
+    public Boolean getIsActing() {
+        return isActing;
+    }
+
+    public void setIsActing(Boolean isActing) {
+        this.isActing = isActing;
+    }
+
+    @Column(name = "acting_employee_id")
+    public Long getActingEmployee() {
+        return actingEmployee;
+    }
+
+    public void setActingEmployee(Long actingEmployee) {
+        this.actingEmployee = actingEmployee;
     }
 }

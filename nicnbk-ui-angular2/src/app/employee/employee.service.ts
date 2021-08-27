@@ -104,13 +104,13 @@ export class EmployeeService extends CommonService{
     getEmployeeByUsername(username){
         //console.log(body);
         return this.http.get(this.EMPLOYEE_GET_BY_USERNAME_URL + username, this.getOptionsWithCredentials())
-            .map(this.extractDataList)
+            .map(this.extractData)
             .catch(this.handleErrorResponse);
     }
 
-    getFullEmployeeByUsername(username){
+    getFullEmployeeByUsername(username): Observable<any>{
         return this.http.get(this.EMPLOYEE_GET_FULL_BY_USERNAME_URL + username, this.getOptionsWithCredentials())
-            .map(this.extractDataList)
+            .map(this.extractData)
             .catch(this.handleErrorResponse);
     }
 

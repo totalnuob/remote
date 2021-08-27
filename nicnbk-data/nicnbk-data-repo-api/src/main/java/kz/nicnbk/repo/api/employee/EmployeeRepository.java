@@ -3,6 +3,7 @@ package kz.nicnbk.repo.api.employee;
 import kz.nicnbk.repo.model.employee.Employee;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
@@ -30,7 +31,7 @@ public interface EmployeeRepository extends PagingAndSortingRepository<Employee,
     Page<Employee> findAll(Pageable pageable);
 
     @Query("SELECT e FROM  Employee e WHERE e.active=true" )
-    List<Employee> findActiveAll();
+    List<Employee> findActiveAll(Sort sort);
 
     @Query("SELECT e FROM  Employee e WHERE e.active=true AND e.failedLoginAttempts<=?3")
     List<Employee> findActiveAndNoFailedLoginAttempts();

@@ -32,6 +32,9 @@ public class EmployeeDto extends BaseEntityDto<Employee> {
     private Boolean mfaEnabled;
     private Integer failedLoginAttempts;
 
+    private Boolean isActing;
+    private Long actingEmployee;
+
     public EmployeeDto(){}
 
     public String getLastName() {
@@ -65,7 +68,6 @@ public class EmployeeDto extends BaseEntityDto<Employee> {
     public void setBirthDate(Date birthDate) {
         this.birthDate = birthDate;
     }
-
 
     public String getUsername() {
         return username;
@@ -147,6 +149,22 @@ public class EmployeeDto extends BaseEntityDto<Employee> {
         this.lastNameRuPossessive = lastNameRuPossessive;
     }
 
+    public Boolean getIsActing() {
+        return isActing;
+    }
+
+    public void setIsActing(Boolean isActing) {
+        this.isActing = isActing;
+    }
+
+    public Long getActingEmployee() {
+        return actingEmployee;
+    }
+
+    public void setActingEmployee(Long actingEmployee) {
+        this.actingEmployee = actingEmployee;
+    }
+
     public Integer getFailedLoginAttempts() {
         return failedLoginAttempts;
     }
@@ -176,6 +194,15 @@ public class EmployeeDto extends BaseEntityDto<Employee> {
 
     public String getFullPositionRu(){
         if(this.position != null) {
+//            if (this.isActing) {
+//                if (StringUtils.isNotEmpty(this.actingEmployee.getPosition().getNameRuPossessive()) &&
+//                        StringUtils.isNotEmpty(this.position.getNameRu()) && this.position.getDepartment() != null &&
+//                        StringUtils.isNotEmpty(this.position.getDepartment().getNameUsedWithPositionRu())) {
+//                    return "и.о. " + this.actingEmployee.getPosition().getNameRuPossessive() + " "
+//                            + this.actingEmployee.getPosition().getDepartment().getNameUsedWithPositionRu() +
+//                            "/" + this.position.getNameRu() + " " + this.position.getDepartment().getNameUsedWithPositionRu();
+//                }
+//            }
             if (StringUtils.isNotEmpty(this.position.getNameRu()) && this.position.getDepartment() != null &&
                     StringUtils.isNotEmpty(this.position.getDepartment().getNameUsedWithPositionRu())) {
                 return this.position.getNameRu() + " " + this.position.getDepartment().getNameUsedWithPositionRu();

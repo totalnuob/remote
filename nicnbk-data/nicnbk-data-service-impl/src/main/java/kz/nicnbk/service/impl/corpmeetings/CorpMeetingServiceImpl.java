@@ -3192,6 +3192,20 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
 
     }
 
+    private String createActingEmployeeTitle(String actingPosition, DepartmentDto actingDepartment, String originalPosition, DepartmentDto originalDepartment) {
+        String result = "и.о. ";
+        if (actingDepartment != null) {
+            result = result + actingPosition + " " + actingDepartment.getNameUsedWithPositionRu();
+        } else {
+            result = result + actingPosition;
+        }
+        result = result + " " + originalPosition;
+        if (originalDepartment != null) {
+            result = result + " " + originalDepartment.getNameUsedWithPositionRu();
+        }
+        return result;
+    }
+
     private void updateICMeetingProtocolAttendees(XWPFDocument document, List<EmployeeDto> attendees){
         if(attendees != null && !attendees.isEmpty()){
             List<XWPFParagraph> paragraphs = document.getParagraphs();
@@ -3208,7 +3222,27 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
                     attendees.forEach((attendee -> {
                         String fullNameInitials = attendee.getFullNameInitialsRu();
                         fullNameInitials = fullNameInitials == null ? attendee.getLastName() : fullNameInitials;
-                        String position = attendee.getFullPositionRu() != null ? attendee.getFullPositionRu() : null;
+                        EmployeeDto actingEmployee = this.employeeService.getEmployeeById(attendee.getActingEmployee());
+                        String position = "";
+                        if (attendee.getIsActing() != null && attendee.getActingEmployee() != null) {
+//                            if (attendee.getIsActing()) {
+//                                position = "и.о. " + actingEmployee.getPosition().getNameRuPossessive() + " " +
+//                                        actingEmployee.getPosition().getDepartment().getNameUsedWithPositionRu() +
+//                                        "/" + attendee.getPosition().getNameRu() + " " + attendee.getPosition().getDepartment().getNameUsedWithPositionRu();
+//                                String actingPosition = "и.о. " + actingEmployee.getPosition().getNameRuPossessive();
+//                                String actingPositionDepartment = "";
+//                                if (actingEmployee.getPosition().getDepartment() != null) {
+//                                    actingPositionDepartment = actingEmployee.getPosition().getDepartment().getNameUsedWithPositionRu();
+//                                }
+//                            }
+                            if (attendee.getIsActing()) {
+                                position = createActingEmployeeTitle(actingEmployee.getPosition().getNameRuPossessive(),
+                                        actingEmployee.getPosition().getDepartment(),
+                                        attendee.getPosition().getNameRu(), attendee.getPosition().getDepartment());
+                            }
+                        } else {
+                            position = attendee.getFullPositionRu() != null ? attendee.getFullPositionRu() : null;
+                        }
                         values.add(fullNameInitials + (position != null ? "/" + position : ""));
                     }));
                 }
@@ -3743,7 +3777,7 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
                 File tmpDir = new File(this.rootDirectory + "/tmp/corp_meetings");
 
                 // write to new
-                String filePath = tmpDir + "/IC_PROTOCOL_" + MathUtils.getRandomNumber(0, 10000) + ".docx";
+                String filePath = tmpDir + "/IC_PROTOCOL_" + MathUtils.getRandomNumber(0, 1) + ".docx";
                 try (FileOutputStream outputStream = new FileOutputStream(filePath)) {
                     document.write(outputStream);
                 }
