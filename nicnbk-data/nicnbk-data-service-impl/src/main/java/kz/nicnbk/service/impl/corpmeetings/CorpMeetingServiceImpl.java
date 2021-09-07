@@ -3199,7 +3199,7 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
         } else {
             result = result + actingPosition;
         }
-        result = result + " " + originalPosition;
+        result = result + "/ " + originalPosition;
         if (originalDepartment != null) {
             result = result + " " + originalDepartment.getNameUsedWithPositionRu();
         }
