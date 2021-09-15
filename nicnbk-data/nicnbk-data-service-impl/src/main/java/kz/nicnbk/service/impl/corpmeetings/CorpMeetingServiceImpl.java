@@ -2706,6 +2706,7 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
                         // skip non-CLOSED ic
                         continue;
                     }
+                    ic.getTopics().sort(Comparator.comparing(ICMeetingTopicDto::getIcOrder));
                     Row newRow = sheet.createRow(templateRowIndex + 1 + added);
                     added++;
 
