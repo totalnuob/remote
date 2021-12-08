@@ -4707,7 +4707,11 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
     }
 
     private boolean hasAssignmentViewRole(String username, ICMeetingTopicAssignmentDto dto){
-        return hasAssignmentEditRole(username, dto);
+        if (dto.getViewableByAll()) {
+            return true;
+        } else {
+            return hasAssignmentEditRole(username, dto);
+        }
     }
     private boolean hasAssignmentEditRole(String username, ICMeetingTopicAssignmentDto dto){
         EmployeeDto employeeDto = this.employeeService.findByUsername(username);

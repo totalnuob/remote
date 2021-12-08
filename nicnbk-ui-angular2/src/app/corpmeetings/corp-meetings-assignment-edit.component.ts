@@ -137,6 +137,10 @@ export class CorpMeetingAssignmentEditComponent extends CommonFormViewComponent 
         return false;
     }
 
+    checkIsViewableByAll() {
+        if()
+    }
+
 
     save(){
         this.assignment.dateDue = $('#dateDueValue').val();
