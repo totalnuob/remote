@@ -21,6 +21,7 @@ public class ICMeetingTopicAssignment extends BaseEntity {
     private Date dateDue;
     private String status;
     private boolean closed;
+    private boolean viewableByAll;
 
     private List<Department> departments;
     private List<Employee> employees;
@@ -78,6 +79,15 @@ public class ICMeetingTopicAssignment extends BaseEntity {
 
     public void setClosed(boolean closed) {
         this.closed = closed;
+    }
+
+    @Column(name = "publicly_viewable")
+    public boolean isViewableByAll() {
+        return viewableByAll;
+    }
+
+    public void setViewableByAll(boolean viewableByAll) {
+        this.viewableByAll = viewableByAll;
     }
 
     //@OneToMany(mappedBy = "assignment", cascade = CascadeType.ALL, orphanRemoval = true)

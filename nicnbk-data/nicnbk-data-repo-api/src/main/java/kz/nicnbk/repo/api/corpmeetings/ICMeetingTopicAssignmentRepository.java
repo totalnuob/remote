@@ -44,6 +44,9 @@ public interface ICMeetingTopicAssignmentRepository extends PagingAndSortingRepo
                                                      @Param("hideClosed")boolean hideClosed,
                                                      Pageable pageable);
 
+    @Query("SELECT DISTINCT e FROM ic_meeting_topic_assignment e WHERE e.viewableByAll=true")
+    Page<ICMeetingTopicAssignment> searchAssignmentsViewableByAll(Pageable pageable);
+
     @Query("SELECT e FROM ic_meeting_topic_assignment e JOIN FETCH e.departments " +
             " WHERE (e.closed IS NULL OR e.closed=false) AND e.dateDue = :date")
     List<ICMeetingTopicAssignment> searchOpenAssignmentsDueThisDay( @Param("date") @Temporal(TemporalType.DATE) Date date);

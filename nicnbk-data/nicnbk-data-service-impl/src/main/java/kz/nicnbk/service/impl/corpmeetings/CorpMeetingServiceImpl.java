@@ -4673,21 +4673,39 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
                         searchParams.getDateFromNonEmpty(), searchParams.getDateToNonEmpty(),
                         searchParams.getSearchText(), searchParams.getIcNumber(), searchParams.isHideClosed(),
                         new PageRequest(page, searchParams.getPageSize(), new Sort(Sort.Direction.DESC, "id")));
+        Page<ICMeetingTopicAssignment> entitiesPageViewableByAll = this.icMeetingTopicAssignmentRepository.searchAssignmentsViewableByAll(
+                new PageRequest(page, searchParams.getPageSize(), new Sort(Sort.Direction.DESC, "id")));
         ICAssignmentPagedSearchResult result = new ICAssignmentPagedSearchResult();
         if (entitiesPage != null) {
-            result.setTotalElements(entitiesPage.getTotalElements());
-            if (entitiesPage.getTotalElements() > 0) {
+//            entitiesPage.getContent().addAll(entitiesPageViewableByAll.getContent());
+            result.setTotalElements(entitiesPage.getTotalElements() + entitiesPageViewableByAll.getTotalElements());
+            if (entitiesPage.getTotalElements() > 0 || entitiesPageViewableByAll.getTotalElements() > 0) {
                 result.setShowPageFrom(PaginationUtils.getShowPageFrom(DEFAULT_PAGES_PER_VIEW, page));
                 result.setShowPageTo(PaginationUtils.getShowPageTo(DEFAULT_PAGES_PER_VIEW,
-                        page, result.getShowPageFrom(), entitiesPage.getTotalPages()));
+                        page, result.getShowPageFrom(), entitiesPage.getTotalPages() + entitiesPageViewableByAll.getTotalPages()));
             }
-            result.setTotalPages(entitiesPage.getTotalPages());
+            result.setTotalPages(entitiesPage.getTotalPages() + entitiesPageViewableByAll.getTotalPages());
             result.setCurrentPage(page + 1);
             if (searchParams != null) {
                 result.setSearchParams(searchParams.getSearchParamsAsString());
             }
             result.setAssignments(assignmentEntityConverter.disassembleList(entitiesPage.getContent()));
+            result.addAssignments(assignmentEntityConverter.disassembleList(entitiesPageViewableByAll.getContent()));
         }
+//        if (entitiesPageViewableByAll != null) {
+//            result.setTotalElements(entitiesPage.getTotalElements());
+//            if (entitiesPageViewableByAll.getTotalElements() > 0) {
+//                result.setShowPageFrom(PaginationUtils.getShowPageFrom(DEFAULT_PAGES_PER_VIEW, page));
+//                result.setShowPageTo(PaginationUtils.getShowPageTo(DEFAULT_PAGES_PER_VIEW,
+//                        page, result.getShowPageFrom(), entitiesPageViewableByAll.getTotalPages()));
+//            }
+//            result.setTotalPages(entitiesPageViewableByAll.getTotalPages());
+//            result.setCurrentPage(page + 1);
+//            if (searchParams != null) {
+//                result.setSearchParams(searchParams.getSearchParamsAsString());
+//            }
+//            result.setAssignments(assignmentEntityConverter.disassembleList(entitiesPageViewableByAll.getContent()));
+//        }
         return result;
     }
 
@@ -4707,7 +4725,7 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
     }
 
     private boolean hasAssignmentViewRole(String username, ICMeetingTopicAssignmentDto dto){
-        if (dto.getViewableByAll()) {
+        if (dto.isViewableByAll()) {
             return true;
         } else {
             return hasAssignmentEditRole(username, dto);

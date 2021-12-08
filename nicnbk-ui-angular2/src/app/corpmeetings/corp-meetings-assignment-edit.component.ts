@@ -137,9 +137,9 @@ export class CorpMeetingAssignmentEditComponent extends CommonFormViewComponent 
         return false;
     }
 
-    checkIsViewableByAll() {
-        if()
-    }
+    // checkIsViewableByAll() {
+    //     if()
+    // }
 
 
     save(){

@@ -21,6 +21,10 @@ public class ICAssignmentPagedSearchResult extends PageableResult {
         this.assignments = assignments;
     }
 
+    public void addAssignments(List<ICMeetingTopicAssignmentDto> assignments) {
+        this.assignments.addAll(assignments);
+    }
+
     public String getSearchParams() {
         return searchParams;
     }
