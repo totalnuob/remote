@@ -19,7 +19,6 @@ public class ICMeetingTopicAssignmentDto extends BaseEntityDto {
     private boolean closed;
     private List<DepartmentDto> departments;
     private List<EmployeeDto> employees;
-    private boolean viewableByAll;
 
     public ICMeetingTopicDto getIcMeetingTopic() {
         return icMeetingTopic;
@@ -84,14 +83,6 @@ public class ICMeetingTopicAssignmentDto extends BaseEntityDto {
 
     public void setEmployees(List<EmployeeDto> employees) {
         this.employees = employees;
-    }
-
-    public boolean isViewableByAll() {
-        return viewableByAll;
-    }
-
-    public void setViewableByAll(boolean viewableByAll) {
-        this.viewableByAll = viewableByAll;
     }
 
     public String getDepartmentsText(){

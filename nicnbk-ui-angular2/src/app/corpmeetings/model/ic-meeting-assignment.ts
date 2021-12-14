@@ -9,5 +9,4 @@ export class ICMeetingAssignment{
     icMeetingTopic: ICMeetingTopic;
 
     closed: boolean;
-    viewableByAll: boolean;
 }
