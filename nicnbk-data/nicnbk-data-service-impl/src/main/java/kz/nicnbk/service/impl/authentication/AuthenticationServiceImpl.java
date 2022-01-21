@@ -89,7 +89,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         emailService.sendMail(email, "UNIC – password reset (auto-generated)",
                 "Password change has been requested for the specified email address: " + email + ". " +
                         "In order to change your password, please click the confirmation link below. " +
-                        "http://localhost:8080/#/confirmReset/" + username + "/" + token);
+                        "https://unic.nicnbk.kz/#/confirmReset/" + username + "/" + token);
     }
 
     @Override
@@ -97,7 +97,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         emailService.sendHtmlMail(email, "UNIC – password reset (auto-generated)",
                 "<p>Password change has been requested for the specified email address: " + email + ". " +
                 "In order to change your password, please click the reset link below.</p>" + " <a href=\"" +
-                        "http://localhost:8080/#/confirmReset/" + username + "/" + token + "\">" + "link" + "</a>");
+                        "https://unic.nicnbk.kz/#/confirmReset/" + username + "/" + token + "\">" + "link" + "</a>");
     }
 
     @Override

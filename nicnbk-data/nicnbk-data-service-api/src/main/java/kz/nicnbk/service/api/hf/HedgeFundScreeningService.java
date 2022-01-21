@@ -36,6 +36,8 @@ public interface HedgeFundScreeningService extends BaseService {
 
     FileUploadResultDto saveAndParseAttachmentDataFile(Long screeningId, FilesDto filesDto, String username);
 
+    void sendEmailNotificationForAudit(Long screeningId, FilesDto filesDto, String username);
+
     FileUploadResultDto saveAttachmentUcitsFile(Long screeningId, FilesDto filesDto, String username);
 
     FileUploadResultDto saveFundParamsFile(Long screeningId, FilesDto filesDto, String username);

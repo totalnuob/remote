@@ -84,6 +84,7 @@ public class HedgeFundScreeningServiceREST extends CommonServiceREST{
         if (filesDto != null) {
             FileUploadResultDto result = this.screeningService.saveAndParseAttachmentDataFile(screeningId, filesDto, username);
             if (result != null && result.getStatus() == ResponseStatusType.SUCCESS) {
+                this.screeningService.sendEmailNotificationForAudit(screeningId, filesDto, username);
                 return new ResponseEntity<>(result, null, HttpStatus.OK);
             } else {
                 return new ResponseEntity<>(result, null, HttpStatus.INTERNAL_SERVER_ERROR);

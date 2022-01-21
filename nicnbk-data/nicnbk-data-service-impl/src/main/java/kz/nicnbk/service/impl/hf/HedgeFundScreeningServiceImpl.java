@@ -12,6 +12,7 @@ import kz.nicnbk.repo.model.lookup.CurrencyLookup;
 import kz.nicnbk.repo.model.lookup.FileTypeLookup;
 import kz.nicnbk.service.api.benchmark.BenchmarkService;
 import kz.nicnbk.service.api.common.CurrencyRatesService;
+import kz.nicnbk.service.api.email.EmailService;
 import kz.nicnbk.service.api.employee.EmployeeService;
 import kz.nicnbk.service.api.files.FileService;
 import kz.nicnbk.service.api.hf.HedgeFundScoringService;
@@ -129,6 +130,9 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
 
     @Autowired
     private EmployeeService employeeService;
+
+    @Autowired
+    private EmailService emailService;
 
     @Autowired
     private HedgeFundScreeningSavedResultsRepository screeningSavedResultsRepository;
@@ -609,6 +613,21 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
             logger.error("Error saving HF Screening attachments", ex);
         }
         return null;
+    }
+
+    @Override
+    public void sendEmailNotificationForAudit(Long screeningId, FilesDto filesDto, String username) {
+        try {
+            HedgeFundScreening entity = this.screeningRepository.findOne(screeningId);
+            String screeningName = entity.getName();
+            String fileName = filesDto.getFileName();
+
+            emailService.sendHtmlMail("aitmyrza@nicnbk.kz", "UNIC Notification – HF Screening/Scoring file upload",
+                    "<p>Data file " + "<u><b>" + fileName + "</b></u>" + " has been uploaded for screening  " + "<u><b>" + screeningName + "</b></u>" +
+                            " by user " + "<u><b>" + username + "</b></u>");
+        } catch (Exception ex) {
+            logger.error("Error sending notification email");
+        }
     }
 
     @Override
