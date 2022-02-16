@@ -39,6 +39,7 @@ export class HFScreeningFilteredResultsEditComponent extends GoogleChartComponen
     fundListLookbackAUM;
     fundListLookbackReturn;
     fundListType;
+    isAlternative = false;
 
     modalSuccessMessage;
     modalErrorMessage;
@@ -456,7 +457,8 @@ export class HFScreeningFilteredResultsEditComponent extends GoogleChartComponen
                     this.successMessage = null;
                     this.errorMessage = null;
                     this.modalSuccessMessage = null;
-                    this.modalErrorMessage = nulls;
+                    //TODO check if impacts on anything (nulls)
+                    this.modalErrorMessage = null;
                     this.selectedFundErrorMessage = null;
                     this.selectedFundSuccessMessage = null;
                 },
@@ -567,7 +569,7 @@ export class HFScreeningFilteredResultsEditComponent extends GoogleChartComponen
     exportFundList() {
         ////console.log(this.fundListLookbackAUM, this.fundListLookbackReturn, this.fundListType);
         ////console.log(this.fundListType);
-        this.busyModal = this.screeningService.makeFileRequest(DATA_APP_URL + `hf/screening/scoring/export/${this.fundListType}/${this.filteredResult.id}/${this.fundListLookbackAUM}/${this.fundListLookbackReturn}`)
+        this.busyModal = this.screeningService.makeFileRequest(DATA_APP_URL + `hf/screening/scoring/export/${this.fundListType}/${this.filteredResult.id}/${this.fundListLookbackAUM}/${this.fundListLookbackReturn}/${this.isAlternative}`)
             .subscribe(
                 response  => {
                     ////console.log("ok");
@@ -580,11 +582,12 @@ export class HFScreeningFilteredResultsEditComponent extends GoogleChartComponen
             );
     }
 
-    showFunds(lookbackReturn, lookbackAUM, type, value: number){
+    showFunds(lookbackReturn, lookbackAUM, type, value: number, isAlternative: boolean){
 
         this.fundListLookbackAUM = lookbackAUM;
         this.fundListLookbackReturn = lookbackReturn;
         this.fundListType = type;
+        this.isAlternative = isAlternative;
 
         this.modalErrorMessage = null;
         this.modalSuccessMessage = null;
@@ -611,35 +614,68 @@ export class HFScreeningFilteredResultsEditComponent extends GoogleChartComponen
         }
 
         if(type == 1) {
-            this.busyModal = this.screeningService.getFilteredResultQualifiedFundList(params)
-                .subscribe(
-                    response  => {
-                        if (response) {
-                            if (response.status === 'FAIL') {
-                                if(response.message != null){
-                                    this.modalErrorMessage = response.message.nameEn ? response.message.nameEn :
-                                        response.message.nameKz ? response.message.nameKz : response.message.nameRu ? response.message.nameRu : null;
-                                }
-                                if(this.modalErrorMessage == null){
-                                    this.modalErrorMessage = "Error loading KZT Form 1";
-                                }
-                                this.isQualifiedFundList = true;
+            if (this.isAlternative) {
+                this.busyModal = this.screeningService.getFilteredResultQualifiedFundListAlternative(params)
+                    .subscribe(
+                        response  => {
+                            if (response) {
+                                if (response.status === 'FAIL') {
+                                    if(response.message != null){
+                                        this.modalErrorMessage = response.message.nameEn ? response.message.nameEn :
+                                            response.message.nameKz ? response.message.nameKz : response.message.nameRu ? response.message.nameRu : null;
+                                    }
+                                    if(this.modalErrorMessage == null){
+                                        this.modalErrorMessage = "Error loading KZT Form 1";
+                                    }
+                                    this.isQualifiedFundList = true;
 
-                                this.filteredFundList = response.records;
-                                if(value != null && value != this.filteredFundList.length){
-                                    alert("Expected " + value + ", received " + this.filteredFundList.length);
-                                }
+                                    this.filteredFundList = response.records;
+                                    if(value != null && value != this.filteredFundList.length){
+                                        alert("Expected " + value + ", received " + this.filteredFundList.length);
+                                    }
 
-                                this.modalPostAction(null, this.modalErrorMessage);
-                            }else {
-                                this.filteredFundList = response.records;
+                                    this.modalPostAction(null, this.modalErrorMessage);
+                                }else {
+                                    this.filteredFundList = response.records;
+                                }
                             }
+                        },
+                        error => {
+                            this.modalPostAction(null,  "Failed to load fund list");
                         }
-                    },
-                    error => {
-                        this.modalPostAction(null,  "Failed to load fund list");
-                    }
-                );
+                    );
+            } else {
+                this.busyModal = this.screeningService.getFilteredResultQualifiedFundList(params)
+                    .subscribe(
+                        response  => {
+                            if (response) {
+                                if (response.status === 'FAIL') {
+                                    if(response.message != null){
+                                        this.modalErrorMessage = response.message.nameEn ? response.message.nameEn :
+                                            response.message.nameKz ? response.message.nameKz : response.message.nameRu ? response.message.nameRu : null;
+                                    }
+                                    if(this.modalErrorMessage == null){
+                                        this.modalErrorMessage = "Error loading KZT Form 1";
+                                    }
+                                    this.isQualifiedFundList = true;
+
+                                    this.filteredFundList = response.records;
+                                    if(value != null && value != this.filteredFundList.length){
+                                        alert("Expected " + value + ", received " + this.filteredFundList.length);
+                                    }
+
+                                    this.modalPostAction(null, this.modalErrorMessage);
+                                }else {
+                                    this.filteredFundList = response.records;
+                                }
+                            }
+                        },
+                        error => {
+                            this.modalPostAction(null,  "Failed to load fund list");
+                        }
+                    );
+            }
+
         }else if(type == 2) {
             this.isUnqualifiedFundList = true;
             this.busyModal = this.screeningService.getFilteredResultUnqualifiedFundList(params)

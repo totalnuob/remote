@@ -44,6 +44,7 @@ export class HedgeFundScreeningService extends CommonService{
     private HF_SCREENING_FILTERED_RESULTS_STATISTICS_GET_URL = this.HF_BASE_URL + "filteredResults/statistics/get/";
 
     private HF_SCREENING_FILTERED_RESULTS_QUALIFIED_FUNDS_LIST_GET_URL = this.HF_BASE_URL + "filteredResults/qualifiedFundList/get/";
+    private HF_SCREENING_FILTERED_RESULTS_QUALIFIED_FUNDS_LIST_GET_ALTERNATIVE_URL = this.HF_BASE_URL + "filteredResults/qualifiedFundList/getAlternative/";
     private HF_SCREENING_FILTERED_RESULTS_UNQUALIFIED_FUNDS_LIST_GET_URL = this.HF_BASE_URL + "filteredResults/unqualifiedFundList/get/";
     private HF_SCREENING_FILTERED_RESULTS_UNDECIDED_FUNDS_LIST_GET_URL = this.HF_BASE_URL + "filteredResults/undecidedFundList/get/";
 
@@ -185,6 +186,15 @@ export class HedgeFundScreeningService extends CommonService{
         let body = JSON.stringify(params);
 
         return this.http.post(this.HF_SCREENING_FILTERED_RESULTS_QUALIFIED_FUNDS_LIST_GET_URL, body, this.getOptionsWithCredentials())
+            .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+    getFilteredResultQualifiedFundListAlternative(params): Observable<ListResponse> {
+
+        let body = JSON.stringify(params);
+
+        return this.http.post(this.HF_SCREENING_FILTERED_RESULTS_QUALIFIED_FUNDS_LIST_GET_ALTERNATIVE_URL, body, this.getOptionsWithCredentials())
             .map(this.extractData)
             .catch(this.handleErrorResponse);
     }

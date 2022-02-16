@@ -60,6 +60,8 @@ public interface HedgeFundScreeningService extends BaseService {
 
     ListResponseDto getFilteredResultQualifiedFundList(HedgeFundScreeningFilteredResultDto params, boolean withScoring);
 
+    ListResponseDto getFilteredResultQualifiedFundListAlternative(HedgeFundScreeningFilteredResultDto params, boolean withScoring);
+
     List<HedgeFundScreeningParsedDataDto> getFilteredResultUnqualifiedFundList( HedgeFundScreeningFilteredResultDto params);
 
     List<HedgeFundScreeningParsedDataDto> getFilteredResultUndecidedFundList( HedgeFundScreeningFilteredResultDto params);
@@ -78,7 +80,7 @@ public interface HedgeFundScreeningService extends BaseService {
 
     double[] getParsedFundReturns(Long screeningId, Long fundId, int trackRecord, Date dateFrom, Date dateTo);
 
-    FilesDto getQualifiedFundListAsStream(Long filteredResultId, int lookbackAUM, int lookbackReturn);
+    FilesDto getQualifiedFundListAsStream(Long filteredResultId, int lookbackAUM, int lookbackReturn, boolean isAlternative);
 
     FilesDto getUnqualifiedFundListAsStream(Long filteredResultId, int lookbackAUM, int lookbackReturn);
 

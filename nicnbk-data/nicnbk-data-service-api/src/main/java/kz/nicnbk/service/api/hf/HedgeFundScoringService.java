@@ -25,4 +25,6 @@ public interface HedgeFundScoringService extends BaseService {
     //List<HedgeFundScreeningParsedDataDto> etCalculatedScoring(HedgeFundScoringFundParamsDto params);
 
     /*List<HedgeFundScreeningParsedDataDto>*/ ListResponseDto getCalculatedScoring(List<HedgeFundScreeningParsedDataDto> screeningList, HedgeFundScoringFundParamsDto scoringParams);
+
+    ListResponseDto getCalculatedScoringAlternative(List<HedgeFundScreeningParsedDataDto> screeningList, HedgeFundScoringFundParamsDto scoringParams);
 }

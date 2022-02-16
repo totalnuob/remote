@@ -2053,6 +2053,60 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
     }
 
     @Override
+    public ListResponseDto getFilteredResultQualifiedFundListAlternative(HedgeFundScreeningFilteredResultDto params, boolean withScoring) {
+        ListResponseDto responseDto = new ListResponseDto();
+        // RETURNS
+        Map<Integer, List<HedgeFundScreeningFundCounts>> returnsMap = getQualifiedFundMapByReturnLookback(params, params.getLookbackReturns().intValue());
+        Assert.isTrue(returnsMap.size() == 1);
+        Assert.isTrue(returnsMap.get(params.getLookbackReturns().intValue()) != null);
+
+        // AUM
+        Map<Integer, List<HedgeFundScreeningFundAUMDto>> aumsMap = getQualifiedUndecidedAUMLookbackMap(params, 1, params.getLookbackAUM().intValue());
+        Assert.isTrue(aumsMap.size() == 1);
+        Assert.isTrue(aumsMap.get(params.getLookbackAUM().intValue()) != null);
+
+        List<HedgeFundScreeningFundAUMDto> resultFunds =
+                getIntersectingFunds(returnsMap.get(params.getLookbackReturns().intValue()), aumsMap.get(params.getLookbackAUM().intValue()));
+
+        if(resultFunds != null){
+            List<HedgeFundScreeningParsedDataDto> fundList = getResultFundListWithAdditionalInfo(params.getScreeningId(), params.getId(), resultFunds);
+
+//            Map<Integer, List<HedgeFundScreeningParsedDataDto>> addedFundsQualifiedMap = getAddedFundsQualifiedByReturnLookbackMap(params);
+//            if(addedFundsQualifiedMap != null){
+//                List<HedgeFundScreeningParsedDataDto> addedFunds = addedFundsQualifiedMap.get(params.getLookbackReturns().intValue());
+//                if(addedFunds != null) {
+//                    fundList.addAll(addedFunds);
+//                }
+//            }
+
+            // SCORING
+            HedgeFundScoringFundParamsDto scoringParams = new HedgeFundScoringFundParamsDto();
+            scoringParams.setScreeningId(params.getScreeningId());
+            scoringParams.setFilteredResultId(params.getId());
+            scoringParams.setLookbackReturn(params.getLookbackReturns().intValue());
+            scoringParams.setLookbackAUM(params.getLookbackAUM().intValue());
+
+            responseDto.setRecords(fundList);
+            if(withScoring) {
+                responseDto = this.scoringService.getCalculatedScoringAlternative(fundList, scoringParams);
+                if (responseDto.getStatus() != null && responseDto.getStatus().getCode().equalsIgnoreCase(ResponseStatusType.SUCCESS.getCode())) {
+                    // SUCCESS
+                } else {
+                    // FAILED
+                    return responseDto;
+                }
+            }else{
+            }
+            Collections.sort(responseDto.getRecords());
+
+            responseDto.setStatus(ResponseStatusType.SUCCESS);
+            return responseDto;
+        }
+
+        return responseDto;
+    }
+
+    @Override
     public List<HedgeFundScreeningParsedDataDto> getFilteredResultUndecidedFundList(HedgeFundScreeningFilteredResultDto params)  {
 //        // RETURNS
 //        List<HedgeFundScreeningFundCounts>  validFundCounts = getQualifiedFundReturnCounts(params, params.getLookbackReturns().intValue());
@@ -3936,7 +3990,7 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
 
 
     @Override
-    public FilesDto getQualifiedFundListAsStream(Long filteredResultId, int lookbackAUM, int lookbackReturn){
+    public FilesDto getQualifiedFundListAsStream(Long filteredResultId, int lookbackAUM, int lookbackReturn, boolean isAlternative){
         FilesDto filesDto = new FilesDto();
 
         Resource resource = new ClassPathResource("export_template/hf_scoring/HF_SCORING_QUALIFIED_TEMPLATE.xlsx");
@@ -3959,6 +4013,9 @@ public class HedgeFundScreeningServiceImpl implements HedgeFundScreeningService 
         params.setStartDateMonth(DateUtils.getMM_YYYYYFormatDate(filteredResultDto.getStartDate()));
         params.setTrackRecord(filteredResultDto.getTrackRecord());
         ListResponseDto responseDto = getFilteredResultQualifiedFundList(params, true);
+        if (isAlternative) {
+            responseDto = getFilteredResultQualifiedFundListAlternative(params, true);
+        }
         if(responseDto.getStatus() != null && responseDto.getStatus().getCode().equalsIgnoreCase(ResponseStatusType.FAIL.getCode())){
             logger.error("HF Scoring - Failed to export fund list: filter id=" + filteredResultId.longValue() + ", lookback AUM=" +
                     lookbackAUM + ", lookback return=" + lookbackReturn + (responseDto.getMessage() != null ? responseDto.getMessage().getMessageText() : ""));

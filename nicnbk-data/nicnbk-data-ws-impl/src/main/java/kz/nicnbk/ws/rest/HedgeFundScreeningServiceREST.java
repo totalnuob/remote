@@ -256,6 +256,19 @@ public class HedgeFundScreeningServiceREST extends CommonServiceREST{
     }
 
     @PreAuthorize("hasRole('ROLE_HEDGE_FUND_VIEWER') OR hasRole('ROLE_HEDGE_FUND_EDITOR') OR hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/filteredResults/qualifiedFundList/getAlternative", method = RequestMethod.POST)
+    public ResponseEntity getFilteredResultQualifiedFundListAlternative(@RequestBody HedgeFundScreeningFilteredResultDto params){
+        long start = new Date().getTime();
+
+        ListResponseDto responseDto = this.screeningService.getFilteredResultQualifiedFundListAlternative(params, true);
+
+        long end = new Date().getTime();
+        System.out.println("Qualified fund list total time = " + (end-start) / 1000.);
+
+        return buildNonNullResponse(responseDto);
+    }
+
+    @PreAuthorize("hasRole('ROLE_HEDGE_FUND_VIEWER') OR hasRole('ROLE_HEDGE_FUND_EDITOR') OR hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/filteredResults/unqualifiedFundList/get", method = RequestMethod.POST)
     public ResponseEntity getFilteredResultUnqualifiedFundList(@RequestBody HedgeFundScreeningFilteredResultDto params){
 
@@ -331,12 +344,13 @@ public class HedgeFundScreeningServiceREST extends CommonServiceREST{
         return buildEntitySaveResponseEntity(saved);
     }
 
-    @RequestMapping(value="/scoring/export/{type}/{filteredResultId}/{lookbackAUM}//{lookbackReturn}", method= RequestMethod.GET)
+    @RequestMapping(value="/scoring/export/{type}/{filteredResultId}/{lookbackAUM}//{lookbackReturn}/{isAlternative}", method= RequestMethod.GET)
     @ResponseBody
     public void exportFundList(@PathVariable(value = "type") int type,
                                @PathVariable(value="filteredResultId") Long filteredResultId,
                              @PathVariable(value = "lookbackAUM") int lookbackAUM,
                              @PathVariable(value = "lookbackReturn") int lookbackReturn,
+                             @PathVariable(value = "isAlternative") boolean isAlternative,
                              HttpServletResponse response) {
 
         // TODO: control file download by user role
@@ -345,7 +359,7 @@ public class HedgeFundScreeningServiceREST extends CommonServiceREST{
         FilesDto filesDto = null;
         try{
             if(type == 1) {
-                filesDto = this.screeningService.getQualifiedFundListAsStream(filteredResultId, lookbackAUM, lookbackReturn);
+                filesDto = this.screeningService.getQualifiedFundListAsStream(filteredResultId, lookbackAUM, lookbackReturn, isAlternative);
             }else if(type == 2){
                 filesDto = this.screeningService.getUnqualifiedFundListAsStream(filteredResultId, lookbackAUM, lookbackReturn);
             }

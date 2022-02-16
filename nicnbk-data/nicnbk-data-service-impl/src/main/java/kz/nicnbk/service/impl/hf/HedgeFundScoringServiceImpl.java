@@ -141,6 +141,331 @@ public class HedgeFundScoringServiceImpl implements HedgeFundScoringService {
                     0 - (Math.max(0, filteredResultDto.getTrackRecord().intValue() + scoringParams.getLookbackReturn().intValue()- 1))));
             Date dateTo = DateUtils.getLastDayOfCurrentMonth(DateUtils.moveDateByMonths(filteredResultDto.getStartDate(), 0 - scoringParams.getLookbackReturn().intValue()));
 
+            // T-bills
+            List<BenchmarkValueDto> tbills = this.benchmarkService.getBenchmarkValuesForDatesAndType(dateFrom, dateTo, BenchmarkLookup.T_BILLS.getCode());
+            if(tbills.size() != filteredResultDto.getTrackRecord().intValue()){
+                String errorMessage = "HF Scoring calculation failed: missing T-bills return values for selected track record period (found " + tbills.size() + " values)";
+                logger.error(errorMessage);
+                responseDto.setErrorMessageEn(errorMessage);
+                responseDto.setRecords(screeningList);
+                return responseDto;
+                //throw new IllegalStateException(errorMessage);
+            }
+            double[] tbillsReturns = new double[tbills.size()];
+            for(int i = 0; i < tbillsReturns.length; i++){
+                if(tbills.get(i).getCalculatedMonthReturn() == null){
+                    String errorMessage = "HF Scoring calculation failed: missing T-bills return values for date " + DateUtils.getDateFormatted(tbills.get(i).getDate());
+                    logger.error(errorMessage);
+                    responseDto.setErrorMessageEn(errorMessage);
+                    responseDto.setRecords(screeningList);
+                    return responseDto;
+                    //throw new IllegalStateException(errorMessage);
+                }
+                tbillsReturns[i] = tbills.get(i).getCalculatedMonthReturn();
+            }
+
+            //S & P
+            List<BenchmarkValueDto> snp = this.benchmarkService.getBenchmarkValuesForDatesAndType(dateFrom, dateTo, BenchmarkLookup.SNP_500_SPTR.getCode());
+            if(snp.size() != filteredResultDto.getTrackRecord().intValue()){
+                String errorMessage = "HF Scoring calculation failed: missing S&P return values for selected track record period (found " + snp.size() + " values)";
+                logger.error(errorMessage);
+                responseDto.setErrorMessageEn(errorMessage);
+                responseDto.setRecords(screeningList);
+                return responseDto;
+                //throw new IllegalStateException(errorMessage);
+            }
+            double[] snpReturns = new double[snp.size()];
+            for(int i = 0; i < snpReturns.length; i++){
+                if(snp.get(i).getCalculatedMonthReturn() == null){
+                    String errorMessage = "HF Scoring calculation failed: missing S & P reeturn values for date " + DateUtils.getDateFormatted(snp.get(i).getDate());
+                    logger.error(errorMessage);
+                    responseDto.setErrorMessageEn(errorMessage);
+                    responseDto.setRecords(screeningList);
+                    return responseDto;
+                    //throw new IllegalStateException(errorMessage);
+                }
+                snpReturns[i] = snp.get(i).getCalculatedMonthReturn();
+            }
+
+            Collections.sort(screeningList);
+
+//            for(HedgeFundScreeningParsedDataDto fund: screeningList){
+//                double[] returns = null;
+//                if(fund.isAdded()){
+//                    returns = this.screeningService.getAddedFundReturns(fund.getFilteredResultId(), fund.getFundName(), filteredResultDto.getTrackRecord(), dateFrom, dateTo);
+//                }else{
+//                    try {
+//                        returns = this.screeningService.getParsedFundReturns(filteredResultDto.getScreeningId(), fund.getFundId(), filteredResultDto.getTrackRecord().intValue(), dateFrom, dateTo);
+//                    }catch (Exception ex){
+//                        responseDto.setErrorMessageEn("Scoring failed. " + ex.getMessage());
+//                        responseDto.setRecords(screeningList);
+//                        return responseDto;
+//                    }
+//                }
+//            }
+
+            HedgeFundScreeningDto screeningDto = this.screeningService.getScreening(scoringParams.getScreeningId());
+            List<HedgeFundScreeningFundParamDataDto> fundParams = screeningDto.getParsedFundParamData();
+            Map<String, HedgeFundScreeningFundParamDataDto> fundParamsMap = new HashMap<>();
+            if(fundParams != null && !fundParams.isEmpty()){
+                for(HedgeFundScreeningFundParamDataDto dataDto: fundParams){
+                    fundParamsMap.put(dataDto.getFundName(), dataDto);
+                }
+            }
+
+            int annualizedReturnUploadDataCount = 0;
+            int alphaUploadDataCount = 0;
+            int betaUploadDataCount = 0;
+            int omegaUploadDataCount = 0;
+            int sortinoUploadDataCount = 0;
+            int cfVarUploadDataCount = 0;
+            int annualizedReturnCalcCount = 0;
+            int alphaCalcCount = 0;
+            int betaCalcCount = 0;
+            int omegaCalcCount = 0;
+            int sortinoCalcCount = 0;
+            int cfVarCalcCount = 0;
+            for(HedgeFundScreeningParsedDataDto fund: screeningList){
+                // Fund returns
+                double[] returns = null;
+                if(fund.isAdded()){
+                    returns = this.screeningService.getAddedFundReturns(fund.getFilteredResultId(), fund.getFundName(), filteredResultDto.getTrackRecord(), dateFrom, dateTo);
+                }else{
+                    try {
+                        returns = this.screeningService.getParsedFundReturns(filteredResultDto.getScreeningId(), fund.getFundId(), filteredResultDto.getTrackRecord().intValue(), dateFrom, dateTo);
+                    }catch (Exception ex){
+                        responseDto.setErrorMessageEn("Scoring failed. " + ex.getMessage());
+                        responseDto.setRecords(screeningList);
+                        return responseDto;
+                    }
+                }
+                if(returns == null || returns.length != filteredResultDto.getTrackRecord().intValue()){
+                    String errorMessage = "HF Scoring Calculation failed: missing fund returns (found " + (returns != null ? returns.length : 0) + " from " + filteredResultDto.getTrackRecord().intValue() + ")";
+                    logger.error(errorMessage);
+                    responseDto.setErrorMessageEn(errorMessage);
+                    responseDto.setRecords(screeningList);
+                    return responseDto;
+                    //throw new IllegalStateException(errorMessage);
+                }
+
+                int scale = 16;
+                if(returns != null && returns.length == filteredResultDto.getTrackRecord().intValue()) {
+                    // Annualized return
+                    if(fundParamsMap.get(fund.getFundName()) != null && fundParamsMap.get(fund.getFundName()).getAnnualizedReturn() != null){
+                        fund.setAnnualizedReturn(fundParamsMap.get(fund.getFundName()).getAnnualizedReturn());
+                        annualizedReturnUploadDataCount++;
+                    }else {
+                        fund.setAnnualizedReturn(MathUtils.getAnnualizedReturn(returns, scale));
+                        annualizedReturnCalcCount++;
+                    }
+
+                    // Sortino
+                    Double annualizedTbills = MathUtils.getAnnualizedReturn(tbillsReturns, scale);
+                    if(fund.getAnnualizedReturn() != null && annualizedTbills != null) {
+                        if(fundParamsMap.get(fund.getFundName()) != null && fundParamsMap.get(fund.getFundName()).getSortino() != null){
+                            fund.setSortino(fundParamsMap.get(fund.getFundName()).getSortino());
+                            sortinoUploadDataCount++;
+                        }else {
+                            //fund.setSortino(MathUtils.getSortinoRatio(fund.getAnnualizedReturn(), annualizedTbills, returns, scale));
+                            fund.setSortino(MathUtils.getSortinoRatio2(returns, tbillsReturns, scale));
+                            sortinoCalcCount++;
+                        }
+
+                    }
+
+                    // Beta
+                    if(fundParamsMap.get(fund.getFundName()) != null && fundParamsMap.get(fund.getFundName()).getBeta() != null){
+                        fund.setBeta(fundParamsMap.get(fund.getFundName()).getBeta());
+                        betaUploadDataCount++;
+                    }else {
+                        //Double beta = MathUtils.getBeta(returns, snpReturns, scale);
+                        fund.setBeta(MathUtils.getBeta2(returns, snpReturns, tbillsReturns, scale));
+                        betaCalcCount++;
+                    }
+
+                    double betaValue = fund.getBeta() != null ? fund.getBeta().doubleValue() : 0;
+                    if(fund.getBeta() != null){
+                        double newValue = (new BigDecimal(fund.getBeta() ).setScale(1, RoundingMode.HALF_UP)).doubleValue();
+                        if(newValue == 0.0){
+                            newValue = fund.getBeta() > 0 ? 0.1 : -0.1;
+                        }
+                        fund.setBeta(newValue);
+                    }
+
+                    // Alpha
+                    if(fund.getBeta() != null) {
+                        if(fundParamsMap.get(fund.getFundName()) != null && fundParamsMap.get(fund.getFundName()).getAlpha() != null){
+                            fund.setAlpha(fundParamsMap.get(fund.getFundName()).getAlpha());
+                            alphaUploadDataCount++;
+                        }else {
+                            //fund.setAlpha(MathUtils.getAlpha(scale, returns, tbillsReturns, snpReturns, beta));
+                            fund.setAlpha(MathUtils.getAlpha2(scale, returns, tbillsReturns, snpReturns, betaValue));
+                            alphaCalcCount++;
+                        }
+                    }
+
+                    // Omega
+                    if(fundParamsMap.get(fund.getFundName()) != null && fundParamsMap.get(fund.getFundName()).getOmega() != null){
+                        fund.setOmega(fundParamsMap.get(fund.getFundName()).getOmega());
+                        omegaUploadDataCount++;
+                    }else {
+                        fund.setOmega(MathUtils.getOmega(scale, returns));
+                        omegaCalcCount++;
+                    }
+
+
+                    // CFVar
+                    if(fundParamsMap.get(fund.getFundName()) != null && fundParamsMap.get(fund.getFundName()).getCfVar() != null){
+                        fund.setCfVar(fundParamsMap.get(fund.getFundName()).getCfVar());
+                        cfVarUploadDataCount++;
+                    }else {
+                        //fund.setCfVar(MathUtils.getCFVar(scale, returns, MathUtils.Z_SCORE_99_PERCENT));
+                        fund.setCfVar(MathUtils.getCFVar2(scale, returns, MathUtils.Z_SCORE_99_PERCENT));
+                        cfVarCalcCount++;
+                    }
+                }else{
+                }
+            }
+
+            calculateTotalScore(screeningList);
+//            Collections.sort(screeningList);
+//            for(HedgeFundScreeningParsedDataDto fund: screeningList){
+//                System.out.print(fund.getFundName() + "\t");
+//                System.out.print(fund.getAnnualizedReturn() + "\t");
+//                System.out.print(fund.getSortino() + "\t");
+//                System.out.print(fund.getBeta() + "\t");
+//                System.out.print(fund.getCfVar() + "\t");
+//                System.out.print(fund.getAlpha() + "\t");
+//                System.out.print(fund.getOmega() + "\t");
+//                System.out.println(fund.getTotalScore());
+//            }
+
+            if(annualizedReturnUploadDataCount > 0 && annualizedReturnCalcCount > 0){
+                responseDto.appendErrorMessageEn(" 'Ann Return' calculation used both calculated and uploaded values.");
+            }
+            if(sortinoUploadDataCount > 0 && sortinoCalcCount > 0){
+                responseDto.appendErrorMessageEn(" 'Sortino' calculation used both calculated and uploaded values.");
+            }
+            if(betaUploadDataCount > 0  && betaCalcCount > 0){
+                responseDto.appendErrorMessageEn(" 'Beta' calculation used both calculated and uploaded values.");
+            }
+            if(alphaUploadDataCount > 0 && alphaCalcCount > 0){
+                responseDto.appendErrorMessageEn(" 'Alpha' calculation used both calculated and uploaded values.");
+            }
+            if(omegaUploadDataCount > 0 && omegaCalcCount > 0){
+                responseDto.appendErrorMessageEn(" 'Omega' calculation used both calculated and uploaded values.");
+            }
+            if(cfVarUploadDataCount > 0 && cfVarCalcCount > 0){
+                responseDto.appendErrorMessageEn(" 'cfVar' calculation used both calculated and uploaded values.");
+            }
+        }
+        if(responseDto.getStatus() == null) {
+            responseDto.setStatus(ResponseStatusType.SUCCESS);
+        }
+        responseDto.setRecords(screeningList);
+        return responseDto;
+    }
+
+    private void calculateTotalScore(List<HedgeFundScreeningParsedDataDto> funds){
+        if(funds != null){
+            double[] annualizedReturnsList = new double[funds.size()];
+            double[] sortinoList = new double[funds.size()];
+            //double[] betaList = new double[funds.size()];
+            double[] alphaList = new double[funds.size()];
+            double[] omegaList = new double[funds.size()];
+            double[] cfVarList = new double[funds.size()];
+            for(int i = 0; i < funds.size(); i++){
+                annualizedReturnsList[i] = funds.get(i).getAnnualizedReturn().doubleValue();
+                sortinoList[i] = funds.get(i).getSortino().doubleValue();
+                //betaList[i] = funds.get(i).getBeta().doubleValue();
+                alphaList[i] = funds.get(i).getAlpha().doubleValue();
+                omegaList[i] = funds.get(i).getOmega().doubleValue();
+                cfVarList[i] = funds.get(i).getCfVar().doubleValue();
+            }
+
+//            System.out.println("ANN ROR Percentile");
+//            System.out.println(MathUtils.getPercentile(annualizedReturnsList, 10));
+//            System.out.println(MathUtils.getPercentile(annualizedReturnsList, 20));
+//            System.out.println(MathUtils.getPercentile(annualizedReturnsList, 30));
+//            System.out.println(MathUtils.getPercentile(annualizedReturnsList, 40));
+//            System.out.println(MathUtils.getPercentile(annualizedReturnsList, 50));
+//            System.out.println(MathUtils.getPercentile(annualizedReturnsList, 60));
+//            System.out.println(MathUtils.getPercentile(annualizedReturnsList, 70));
+//            System.out.println(MathUtils.getPercentile(annualizedReturnsList, 80));
+//            System.out.println(MathUtils.getPercentile(annualizedReturnsList, 90));
+
+            for(HedgeFundScreeningParsedDataDto fund: funds){
+                int totalScore = 0;
+                totalScore += getPercentileCoeff(annualizedReturnsList, fund.getAnnualizedReturn());
+                totalScore += getPercentileCoeff(sortinoList, fund.getSortino());
+                totalScore += getBetaPercentileCoeff(fund.getBeta());
+                totalScore += getPercentileCoeff(alphaList, fund.getAlpha());
+                totalScore += getPercentileCoeff(omegaList, fund.getOmega());
+                totalScore += getPercentileCoeff(cfVarList, fund.getCfVar());
+
+                // TODO: adjustable scale?
+                int scale = 18;
+                fund.setTotalScore(MathUtils.divide(scale, totalScore + 0.0, 6.0));
+            }
+
+//            for(int p = 10; p <= 90; p = p + 10){
+//                System.out.print(p);
+//                System.out.print("\t" + MathUtils.getPercentile(annualizedReturnsList, p));
+//                System.out.print("\t" + MathUtils.getPercentile(sortinoList, p));
+//                System.out.print("\t" + p/100.0);
+//                System.out.print("\t" +  MathUtils.getPercentile(cfVarList, p));
+//                System.out.print("\t" +  MathUtils.getPercentile(alphaList, p));
+//                System.out.println("\t" + MathUtils.getPercentile(omegaList, p));
+//            }
+//
+//            for(int p = 10; p <= 90; p = p + 10){
+//                System.out.print(p);
+//                System.out.print("\t" + MathUtils.getPercentileExcel(annualizedReturnsList, p));
+//                System.out.print("\t" + MathUtils.getPercentileExcel(sortinoList, p));
+//                System.out.print("\t" + p/100.0);
+//                System.out.print("\t" +  MathUtils.getPercentileExcel(cfVarList, p));
+//                System.out.print("\t" +  MathUtils.getPercentileExcel(alphaList, p));
+//                System.out.println("\t" + MathUtils.getPercentileExcel(omegaList, p));
+//            }
+        }
+    }
+
+    private int getPercentileCoeff(double[] values, Double checkValue){
+        for(int p = 10; p <= 90; p = p + 10){
+            Double percentileValue = MathUtils.getPercentileExcel(values, p);
+            if(checkValue < percentileValue.doubleValue()){
+                int coeff = p/10;
+                return coeff;
+            }
+        }
+        return 10;
+    }
+
+    private int getBetaPercentileCoeff(Double checkValue){
+        Double newCheckValue = new BigDecimal(checkValue).setScale(1, RoundingMode.HALF_UP).doubleValue();
+//        if(newCheckValue.doubleValue() == 0.0){
+//            newCheckValue = checkValue > 0 ? 0.1 : -0.1;
+//        }
+        checkValue = newCheckValue;
+        for(int p = 1; p <= 9; p = p + 1){
+            if(Math.abs(checkValue.doubleValue()) < p/10.0){
+                int coeff = 10 - p + 1;
+                return coeff;
+                //return (coeff == 10 ? 9 : coeff);
+            }
+        }
+        return 1;
+    }
+
+    public ListResponseDto getCalculatedScoringAlternative(List<HedgeFundScreeningParsedDataDto> screeningList, HedgeFundScoringFundParamsDto scoringParams){
+        ListResponseDto responseDto = new ListResponseDto();
+        if(screeningList != null){
+            HedgeFundScreeningFilteredResultDto filteredResultDto = this.screeningService.getFilteredResultWithoutFundsInfo(scoringParams.getFilteredResultId());
+
+            Date dateFrom =  DateUtils.getFirstDayOfCurrentMonth(DateUtils.moveDateByMonths(filteredResultDto.getStartDate(),
+                    0 - (Math.max(0, filteredResultDto.getTrackRecord().intValue() + scoringParams.getLookbackReturn().intValue()- 1))));
+            Date dateTo = DateUtils.getLastDayOfCurrentMonth(DateUtils.moveDateByMonths(filteredResultDto.getStartDate(), 0 - scoringParams.getLookbackReturn().intValue()));
+
 //            // T-bills
 //            List<BenchmarkValueDto> tbills = this.benchmarkService.getBenchmarkValuesForDatesAndType(dateFrom, dateTo, BenchmarkLookup.T_BILLS.getCode());
 //            if(tbills.size() != filteredResultDto.getTrackRecord().intValue()){
@@ -217,7 +542,8 @@ public class HedgeFundScoringServiceImpl implements HedgeFundScoringService {
             Map<String, double[]> fundParamsMappedValues = getValuesArray(fundParamsList);
             Map<Integer, Double> annualizedReturnPercentileCoeffMap = getPercentileCoeff2(fundParamsMappedValues.get("AnnRoR"));
             Map<Integer, Double> sortinoPercentileCoeffMap = getPercentileCoeff2(fundParamsMappedValues.get("Sortino"));
-            Map<Integer, Double> betaPercentileCoeffMap = getPercentileCoeff2(fundParamsMappedValues.get("Beta"));
+//            Map<Integer, Double> betaPercentileCoeffMap = getPercentileCoeff2(fundParamsMappedValues.get("Beta"));
+            Map<Integer, Double> betaPercentileCoeffMap = getBetaPercentile();
             Map<Integer, Double> alphaPercentileCoeffMap = getPercentileCoeff2(fundParamsMappedValues.get("Alpha"));
             Map<Integer, Double> omegaPercentileCoeffMap = getPercentileCoeff2(fundParamsMappedValues.get("Omega"));
             Map<Integer, Double> cfvarPercentileCoeffMap = getPercentileCoeff2(fundParamsMappedValues.get("Cfvar"));
@@ -300,14 +626,14 @@ public class HedgeFundScoringServiceImpl implements HedgeFundScoringService {
 
                     // Beta
                     if(fundParamsMap.get(fund.getFundName()) != null && fundParamsMap.get(fund.getFundName()).getBeta() != null){
-                        Double beta = fundParamsMap.get(fund.getFundName()).getBeta();
-                        if (beta <= 0) {
-                            beta = 0.0;
-                        } else if (beta > 0 && beta <= 1) {
-                            beta = -beta;
-                        } else if (beta > 1) {
-                            beta = -1.0;
-                        }
+                        Double beta = normalizeBetaValue(fundParamsMap.get(fund.getFundName()).getBeta());
+//                        if (beta <= 0) {
+//                            beta = 0.0;
+//                        } else if (beta > 0 && beta <= 1) {
+//                            beta = -beta;
+//                        } else if (beta > 1) {
+//                            beta = -1.0;
+//                        }
                         for(Map.Entry<Integer, Double> entry : betaPercentileCoeffMap.entrySet()) {
                             if (beta <= entry.getValue()) {
                                 beta = entry.getKey().doubleValue();
@@ -407,7 +733,7 @@ public class HedgeFundScoringServiceImpl implements HedgeFundScoringService {
             }
 
             try {
-                calculateTotalScore(screeningList);
+                calculateTotalScoreAlternative(screeningList);
             } catch (NullPointerException ex) {
                 responseDto.setErrorMessageEn("Scoring error. Fund missing scoring parameters. " + ex.getMessage());
                 responseDto.setRecords(screeningList);
@@ -470,7 +796,7 @@ public class HedgeFundScoringServiceImpl implements HedgeFundScoringService {
             }
             mappedValues.put("AnnRoR", annualizedReturnsList);
             mappedValues.put("Sortino", sortinoList);
-            mappedValues.put("Beta", normalizeBetaValues(betaList));
+            mappedValues.put("Beta", normalizeBetaValuesNew(betaList));
             mappedValues.put("Alpha", alphaList);
             mappedValues.put("Omega", omegaList);
             mappedValues.put("Cfvar", cfVarList);
@@ -480,7 +806,7 @@ public class HedgeFundScoringServiceImpl implements HedgeFundScoringService {
         return null;
     }
 
-    private void calculateTotalScore(List<HedgeFundScreeningParsedDataDto> funds) throws NullPointerException{
+    private void calculateTotalScoreAlternative(List<HedgeFundScreeningParsedDataDto> funds) throws NullPointerException{
         if(funds != null){
 //            double[] annualizedReturnsList = new double[funds.size()];
 //            double[] sortinoList = new double[funds.size()];
@@ -547,17 +873,6 @@ public class HedgeFundScoringServiceImpl implements HedgeFundScoringService {
         }
     }
 
-    private int getPercentileCoeff(double[] values, Double checkValue){
-        for(int p = 10; p <= 90; p = p + 10){
-            Double percentileValue = MathUtils.getPercentileExcel(values, p);
-            if(checkValue <= percentileValue.doubleValue()){
-                int coeff = p/10;
-                return coeff;
-            }
-        }
-        return 10;
-    }
-
 //    private int calculatePercentileCoeff(double[] values, Double checkValue) {
 //        for (int p = 10; p <= 100; p = p + 10) {
 //            Double percentileValue = MathUtils.getPercentileExcel(values, p);
@@ -569,6 +884,15 @@ public class HedgeFundScoringServiceImpl implements HedgeFundScoringService {
         for (int p = 10; p <= 100; p = p + 10) {
             Double percentileValue = MathUtils.getPercentileExcel(values, p);
             percentileCoeff.put(p/10, percentileValue);
+        }
+        return percentileCoeff;
+    }
+
+    private Map<Integer, Double> getBetaPercentile() {
+        Map<Integer, Double> percentileCoeff = new HashMap<>();
+        for (int p = 1; p <= 10; p = p + 1) {
+            double percentileValue = (10 - p);
+            percentileCoeff.put(p, -percentileValue/10.0);
         }
         return percentileCoeff;
     }
@@ -590,20 +914,16 @@ public class HedgeFundScoringServiceImpl implements HedgeFundScoringService {
         return normalizedValues;
     }
 
-    private int getBetaPercentileCoeff(Double checkValue){
-        Double newCheckValue = new BigDecimal(checkValue).setScale(1, RoundingMode.HALF_UP).doubleValue();
-//        if(newCheckValue.doubleValue() == 0.0){
-//            newCheckValue = checkValue > 0 ? 0.1 : -0.1;
-//        }
-        checkValue = newCheckValue;
-        for(int p = 1; p <= 9; p = p + 1){
-            if(Math.abs(checkValue.doubleValue()) < p/10.0){
-                int coeff = 10 - p + 1;
-                return coeff;
-                //return (coeff == 10 ? 9 : coeff);
-            }
+    private double normalizeBetaValue(double value) {
+        return value >= 1 ? -1 : -Math.abs(value);
+    }
+
+    private double[] normalizeBetaValuesNew(double[] values) {
+        double[] normalizedValues = new double[values.length];
+        for (int i = 0; i < values.length; i++) {
+            normalizedValues[i] = normalizeBetaValue(values[i]);
         }
-        return 1;
+        return normalizedValues;
     }
 
 //    @Override
