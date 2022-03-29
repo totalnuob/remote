@@ -35,12 +35,12 @@ declare var $:any
 var moment = require("moment");
 
 @Component({
-    selector: 'corp-meetings-list',
+    selector: 'corporate-committee-list',
     templateUrl: 'view/corp-meetings-list.component.html',
     styleUrls: [],
     providers: [],
 })
-export class CorpMeetingsListComponent extends CommonFormViewComponent implements OnInit {
+export class CorporateCommitteeListComponent extends CommonFormViewComponent implements OnInit {
     activeTab = "UPCOMING";
     modalSuccessMessage: string;
     modalErrorMessage: string;
@@ -72,10 +72,8 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
     icMeeting = new ICMeeting();
     uploadProtocolFile: any;
 
-    icMeetingTypes: BaseDictionary[];
     icMeetingTopicTypes: BaseDictionary[];
-
-    icMeetingType = "IC";
+    icMeetingType = "CC";
 
     constructor(
         private corpMeetingService: CorpMeetingService,
@@ -92,11 +90,11 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
 
         Observable.forkJoin(
             // Load lookups
-            this.lookupService.getICMeetingTopicTypes(),
-            this.lookupService.getICMeetingTypes()
-            )
+            //TODO What are the Corporate Committee topic types?
+            this.lookupService.getICMeetingTopicTypes()
+        )
             .subscribe(
-                ([data1, data2]) => {
+                ([data1]) => {
                     this.icMeetingTopicTypes = [];
                     // Check rights
                     for(var i = 0; i < data1.length; i++){
@@ -127,23 +125,6 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
 
                         }
                     }
-                    this.icMeetingTypes = [];
-                    for(var i = 0; i < data2.length; i++){
-                        var element = data2[i];
-                        if(this.moduleAccessChecker.checkAccessAdmin()){
-                            this.icMeetingTypes.push(element);
-                        } else if(element.code === "IC"){
-                            if(this.moduleAccessChecker.checkAccessICMeetingsView() || this.moduleAccessChecker.checkAccessICMeetingsEdit()){
-                                this.icMeetingTypes.push(element);
-                            }
-                        } else if(element.code === "CC"){
-                            if(this.moduleAccessChecker.checkAccessCCMeetingsView() || this.moduleAccessChecker.checkAccessCCMeetingEdit()){
-                                this.icMeetingTypes.push(element);
-                            }
-                        } else{
-
-                        }
-                    }
                     //data1.forEach(element => {
                     //    this.icMeetingTopicTypes.push(element);
                     //});
@@ -153,10 +134,6 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
                             console.log(params);
                             var page = 0;
                             this.activeTab = params['activeTab'];
-
-                            for (let i = 0; i < this.icMeetingTypes.length; i++) {
-
-                            }
 
                             if(this.activeTab === 'IC_LIST'){
                                 if (params['params'] != null) {
@@ -259,10 +236,10 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
                 }
             }
             daysOfWeek.push({date: new Date(d), day: d.getDate(), isToday: (d.getDate() == todayDate), isCurrentMonth: true, isWeekend: (dayOfWeek > 5), events: []});
-             if(dayOfWeek == 7){
+            if(dayOfWeek == 7){
                 daysOfMonth.push(daysOfWeek);
                 daysOfWeek = [];
-             }
+            }
         }
         if(daysOfWeek.length != 7 && daysOfWeek.length > 0){
             daysOfMonth.push(daysOfWeek);
@@ -277,8 +254,8 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
                 nextMonthDate.setDate(nextMonthDate.getDate() + 1);
                 var dayOfWeek = nextMonthDate.getDay() == 0 ? 7 : nextMonthDate.getDay();
                 lastWeek.push({date: new Date(nextMonthDate), day: nextMonthDate.getDate(),
-                                isToday: (nextMonthDate.getDate() == todayDate), isCurrentMonth: false,
-                                isWeekend: (dayOfWeek > 5), events: []})
+                    isToday: (nextMonthDate.getDate() == todayDate), isCurrentMonth: false,
+                    isWeekend: (dayOfWeek > 5), events: []})
                 lastDay++;
             }
         }
@@ -287,33 +264,33 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
         this.upcomingEventsCalendar = daysOfMonth;
 
         this.busy = this.corpMeetingService.searchUpcomingEvents()
-                    .subscribe(
-                        events => {
-                            if(events != null && events.length > 0){
-                                for(var k = 0; k < events.length; k++){
-                                    var found = false;
-                                    for(var i = 0; !found && i < this.upcomingEventsCalendar.length; i++){
-                                        for(var j = 0; !found && j < this.upcomingEventsCalendar[i].length; j++){
-                                            var item = this.upcomingEventsCalendar[i][j];
-                                            // check date
-                                            var eventDate = moment(events[k].date, 'DD-MM-YYYY').toDate();
-                                            if(item.date.getTime() === eventDate.getTime()){
-                                                item.events.push(events[k]);
-                                                found = true;
-                                            }
-                                        }
+            .subscribe(
+                events => {
+                    if(events != null && events.length > 0){
+                        for(var k = 0; k < events.length; k++){
+                            var found = false;
+                            for(var i = 0; !found && i < this.upcomingEventsCalendar.length; i++){
+                                for(var j = 0; !found && j < this.upcomingEventsCalendar[i].length; j++){
+                                    var item = this.upcomingEventsCalendar[i][j];
+                                    // check date
+                                    var eventDate = moment(events[k].date, 'DD-MM-YYYY').toDate();
+                                    if(item.date.getTime() === eventDate.getTime()){
+                                        item.events.push(events[k]);
+                                        found = true;
                                     }
                                 }
                             }
-                        },
-                        (error: ErrorResponse) => {
-                            this.errorMessage = "Error searching IC meeting topic";
-                            if(error && !error.isEmpty()){
-                                this.processErrorMessage(error);
-                            }
-                            this.postAction(null,  this.errorMessage);
                         }
-                    );
+                    }
+                },
+                (error: ErrorResponse) => {
+                    this.errorMessage = "Error searching IC meeting topic";
+                    if(error && !error.isEmpty()){
+                        this.processErrorMessage(error);
+                    }
+                    this.postAction(null,  this.errorMessage);
+                }
+            );
         /*
         this.upcomingEventsCalendar.push([{date: "31-08-2020", day: "31", isCurrentMonth: false, events: []},
         {date: "01-09-2020", day: "01", isCurrentMonth: true, events: []}, {date: "02-09-2020", day: "02", isToday: true, isCurrentMonth: true, events: [
@@ -477,7 +454,6 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
 
         this.icMeetingsSearchParams.dateFrom = $('#fromDateIC').val();
         this.icMeetingsSearchParams.dateTo = $('#toDateIC').val();
-        this.icMeetingsSearchParams.meetingType = this.icMeetingType;
         //console.log(this.icMeetingsSearchParams);
         this.busy = this.corpMeetingService.searchICMeetings(this.icMeetingsSearchParams)
             .subscribe(
@@ -499,7 +475,6 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
 
     saveICMeeting(){
         this.icMeeting.date = $('#ICDate').val();
-        this.icMeeting.type = this.icMeetingType;
         //console.log(this.icMeeting.date);
         if(this.icMeeting.date == null || this.icMeeting.date.trim() === ''){
             this.modalErrorMessage = "Date required"
@@ -708,7 +683,7 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
     }*/
 
 
-     getICClassByStatus(ic){
+    getICClassByStatus(ic){
         //console.log(ic);
         if(ic.status === 'CLOSED'){
             return 'label label-primary';

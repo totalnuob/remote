@@ -256,6 +256,9 @@ public class LookupServiceImpl implements LookupService {
     private ICMeetingTypeRepository icMeetingTypeRepository;
 
     @Autowired
+    private ICCorpMeetingTypeRepository icCorpMeetingTypeRepository;
+
+    @Autowired
     private BenchmarkRepository benchmarkTypeRepository;
 
     @Autowired
@@ -2606,6 +2609,23 @@ public class LookupServiceImpl implements LookupService {
             logger.error("Error deleting Matching Chart of accounts lookup value with id " + id + ", type '" + type + "'", ex);
         }
         return false;
+    }
+
+    @Override
+    public List<BaseDictionaryDto> getICMeetingTypes() {
+        try {
+            List<BaseDictionaryDto> dtoList = new ArrayList<>();
+            Iterator<ICMeetingType> iterator = this.icCorpMeetingTypeRepository.findAll().iterator();
+            while (iterator.hasNext()) {
+                ICMeetingType entity = iterator.next();
+                BaseDictionaryDto dto = disassemble(entity);
+                dtoList.add(dto);
+            }
+            return dtoList;
+        } catch (Exception ex) {
+            logger.error("Failed to load lookup: ICMeetingType", ex);
+        }
+        return null;
     }
 
     @Override

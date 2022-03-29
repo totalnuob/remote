@@ -1396,6 +1396,9 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
 
     private Set<String> getAllowedICMeetingTopicTypeCodesForUser(String username, boolean editing){
         Set<String> allowedCodes = new HashSet<>();
+        char[] chars = {};
+        chars[0] = '1';
+        username.
         for(ICMeetingTopicTypeLookup value: ICMeetingTopicTypeLookup.values()){
             if(checkUserRolesForICMeetingTopicByTypeAndUsername(value.getCode(), username, editing)){
                 allowedCodes.add(value.getCode());

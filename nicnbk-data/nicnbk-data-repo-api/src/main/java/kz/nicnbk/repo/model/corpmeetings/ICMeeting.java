@@ -28,6 +28,7 @@ public class ICMeeting extends CreateUpdateBaseEntity{
     private Date date;
     private String time;
     private ICMeetingPlaceType place;
+    private ICMeetingType type;
 
     private Boolean closed;
     private Boolean deleted;
@@ -98,6 +99,16 @@ public class ICMeeting extends CreateUpdateBaseEntity{
 
     public void setPlace(ICMeetingPlaceType place) {
         this.place = place;
+    }
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "type_id")
+    public ICMeetingType getType() {
+        return type;
+    }
+
+    public void setType(ICMeetingType type) {
+        this.type = type;
     }
 
     @OneToOne(fetch = FetchType.LAZY)

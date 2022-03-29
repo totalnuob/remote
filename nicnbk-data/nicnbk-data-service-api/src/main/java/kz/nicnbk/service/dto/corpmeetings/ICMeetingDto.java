@@ -20,7 +20,7 @@ import java.util.List;
 public class ICMeetingDto extends CreateUpdateBaseEntityDto<ICMeeting> implements Comparable {
 
     public static final String OPEN = "OPEN";
-    public static final String LOCKED_FOR_IC = "LOCKED FOR IC";
+    public static final String LOCKED_FOR_IC = "LOCKED";
     public static final String TO_BE_FINALIZED = "TO BE FINALIZED";
     public static final String FINALIZED = "FINALIZED";
     public static final String CLOSED = "CLOSED";
@@ -32,6 +32,7 @@ public class ICMeetingDto extends CreateUpdateBaseEntityDto<ICMeeting> implement
     private Date date;
     private String time;
     private String place;
+    private String type;
 
     private List<ICMeetingAttendeesDto> attendees;
     private EmployeeDto ceoSubEmployee;
@@ -150,6 +151,14 @@ public class ICMeetingDto extends CreateUpdateBaseEntityDto<ICMeeting> implement
 
     public void setBulletin(FilesDto bulletin) {
         this.bulletin = bulletin;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     @Override

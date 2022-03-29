@@ -10,7 +10,7 @@ import { Http, Response, Headers, RequestOptions } from '@angular/http';
 import {Observable} from "rxjs/Observable";
 import {CommonService} from "./common.service";
 import {
-    BLOOMBERG_STATIONS_URL,
+    BLOOMBERG_STATIONS_URL, IC_MEETING_TYPES_URL,
     PE_STRATEGIES_URL,
     PORTFOLIO_VAR_TYPE_URL,
     SAVE_PORTFOLIO_VARS_URL, SAVE_STRESS_TESTS_URL,
@@ -682,6 +682,12 @@ export class LookupService extends CommonService{
     deleteMathcingLookupValue(type, id){
         return this.http.delete(DELETE_MATCHING_LOOKUP_VALUE_BY_TYPE_URL + type + "/" + id, this.getOptionsWithCredentials())
             .map(this.extractData)
+            .catch(this.handleErrorResponse);
+    }
+
+    getICMeetingTypes(){
+        return this.http.get(IC_MEETING_TYPES_URL, this.getOptionsWithCredentials())
+            .map(this.extractDataList)
             .catch(this.handleErrorResponse);
     }
 
