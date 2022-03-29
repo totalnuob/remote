@@ -1,13 +1,6 @@
 import { Injectable } from '@angular/core';
 import {CommonService} from "../common/common.service";
-import {
-    ROLE_ADMIN,
-    ROLE_CC_ADMIN,
-    ROLE_CC_EDIT,
-    ROLE_CC_MEMBER,
-    ROLE_CC_TOPIC_EDIT, ROLE_CC_TOPIC_RESTR, ROLE_CC_TOPIC_VIEW, ROLE_CC_TOPIC_VIEW_ALL,
-    ROLE_CC_VIEW
-} from "./roles.constants";
+import {ROLE_ADMIN} from "./roles.constants";
 import {ROLE_NEWS_EDIT} from "./roles.constants";
 import {ROLE_RE_EDIT} from "./roles.constants";
 import {ROLE_HF_EDIT} from "./roles.constants";
@@ -152,6 +145,7 @@ export class ModuleAccessCheckerService extends CommonService{
     //    return this.checkAccess(ROLE_CORPMEETINGS_EDIT);
     //}
 
+
     public checkAccessCorpMeetingsView(){
         return this.checkAccess(ROLE_IC_EDIT) || this.checkAccess(ROLE_IC_VIEW) || this.checkAccess(ROLE_IC_TOPIC_EDIT)
         || this.checkAccess(ROLE_IC_TOPIC_VIEW) || this.checkAccess(ROLE_IC_TOPIC_RESTR) || this.checkAccess(ROLE_IC_MEMBER)
@@ -198,44 +192,6 @@ export class ModuleAccessCheckerService extends CommonService{
 
     public checkAccessICMember(){
         return this.checkAccess(ROLE_IC_MEMBER);
-    }
-
-    public checkAccessCCMeetingsView(){
-        return this.checkAccess(ROLE_CC_EDIT) || this.checkAccess(ROLE_CC_VIEW) || this.checkAccess(ROLE_CC_MEMBER)
-            || this.checkAccess(ROLE_CC_ADMIN);
-    }
-
-    public checkAccessCCMeetingEdit(){
-        return this.checkAccess(ROLE_CC_EDIT) || this.checkAccess(ROLE_CC_ADMIN);
-    }
-
-    public checkAccessCCMeetingTopicsView(){
-        return this.checkAccess(ROLE_CC_TOPIC_EDIT) || this.checkAccess(ROLE_CC_TOPIC_VIEW_ALL)
-            || this.checkAccess(ROLE_CC_TOPIC_VIEW) || this.checkAccess(ROLE_CC_TOPIC_RESTR)
-            || this.checkAccess(ROLE_CC_MEMBER) || this.checkAccess(ROLE_CC_ADMIN);
-    }
-
-    public checkAccessCCMeetingTopicsViewFull(){
-        return this.checkAccess(ROLE_CC_TOPIC_EDIT) || this.checkAccess(ROLE_CC_TOPIC_VIEW_ALL)
-            || this.checkAccess(ROLE_CC_MEMBER) || this.checkAccess(ROLE_CC_ADMIN);
-    }
-
-    public checkAccessCCMeetingAdmin(){
-        return this.checkAccess(ROLE_CC_ADMIN);
-    }
-
-    public checkAccessCCMeetingTopicsEdit(departmentId){
-        if(this.checkAccessAdmin() || this.checkAccess(ROLE_CC_ADMIN)){
-            return true;
-        }
-        var access = this.checkAccess(ROLE_CC_TOPIC_EDIT);
-        var userPosition = JSON.parse(localStorage.getItem("authenticatedUserPosition"));
-        var departmentOk = userPosition != null && userPosition.department != null && departmentId != null && userPosition.department.id == departmentId;
-        return access && departmentOk;
-    }
-
-    public checkAccessCCMember(){
-        return this.checkAccess(ROLE_CC_MEMBER);
     }
 
     public checkAccessStrategyRisksEditor(){

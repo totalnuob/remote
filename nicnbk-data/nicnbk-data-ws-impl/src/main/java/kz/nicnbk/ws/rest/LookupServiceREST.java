@@ -514,12 +514,6 @@ public class LookupServiceREST extends CommonServiceREST{
         return buildDeleteResponseEntity(deleted);
     }
 
-    @RequestMapping(value = "/ICMeetingTypes", method = RequestMethod.GET)
-    public ResponseEntity getAllICMeetingTypes(){
-        List<BaseDictionaryDto> lookups = this.lookupService.getICMeetingTypes();
-        return buildNonNullResponse(lookups);
-    }
-
     @RequestMapping(value = "/ICMeetingTopicTypes", method = RequestMethod.GET)
     public ResponseEntity getAllICMeetingTopicTypes(){
         List<BaseDictionaryDto> lookups = this.lookupService.getICMeetingTopicTypes();

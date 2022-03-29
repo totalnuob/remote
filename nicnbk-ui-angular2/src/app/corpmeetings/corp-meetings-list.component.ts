@@ -63,7 +63,7 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
 
     icMeetings = [];
     icMeetingsSearchParams = new ICMeetingSearchParams();
-    icMeetingsSearchResult: ICMeetingSearchResults;
+    icMeetingsSearchResult: ICMeetingSearchResults
 
     assignmentsSearchParams = new ICAssignmentSearchParams();
     assignmentsSearchResult = new ICAssignmentSearchResults();
@@ -72,10 +72,7 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
     icMeeting = new ICMeeting();
     uploadProtocolFile: any;
 
-    icMeetingTypes: BaseDictionary[];
     icMeetingTopicTypes: BaseDictionary[];
-
-    icMeetingType = "IC";
 
     constructor(
         private corpMeetingService: CorpMeetingService,
@@ -92,11 +89,10 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
 
         Observable.forkJoin(
             // Load lookups
-            this.lookupService.getICMeetingTopicTypes(),
-            this.lookupService.getICMeetingTypes()
+            this.lookupService.getICMeetingTopicTypes()
             )
             .subscribe(
-                ([data1, data2]) => {
+                ([data1]) => {
                     this.icMeetingTopicTypes = [];
                     // Check rights
                     for(var i = 0; i < data1.length; i++){
@@ -127,23 +123,6 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
 
                         }
                     }
-                    this.icMeetingTypes = [];
-                    for(var i = 0; i < data2.length; i++){
-                        var element = data2[i];
-                        if(this.moduleAccessChecker.checkAccessAdmin()){
-                            this.icMeetingTypes.push(element);
-                        } else if(element.code === "IC"){
-                            if(this.moduleAccessChecker.checkAccessICMeetingsView() || this.moduleAccessChecker.checkAccessICMeetingsEdit()){
-                                this.icMeetingTypes.push(element);
-                            }
-                        } else if(element.code === "CC"){
-                            if(this.moduleAccessChecker.checkAccessCCMeetingsView() || this.moduleAccessChecker.checkAccessCCMeetingEdit()){
-                                this.icMeetingTypes.push(element);
-                            }
-                        } else{
-
-                        }
-                    }
                     //data1.forEach(element => {
                     //    this.icMeetingTopicTypes.push(element);
                     //});
@@ -153,10 +132,6 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
                             console.log(params);
                             var page = 0;
                             this.activeTab = params['activeTab'];
-
-                            for (let i = 0; i < this.icMeetingTypes.length; i++) {
-
-                            }
 
                             if(this.activeTab === 'IC_LIST'){
                                 if (params['params'] != null) {
@@ -477,7 +452,6 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
 
         this.icMeetingsSearchParams.dateFrom = $('#fromDateIC').val();
         this.icMeetingsSearchParams.dateTo = $('#toDateIC').val();
-        this.icMeetingsSearchParams.meetingType = this.icMeetingType;
         //console.log(this.icMeetingsSearchParams);
         this.busy = this.corpMeetingService.searchICMeetings(this.icMeetingsSearchParams)
             .subscribe(
@@ -499,7 +473,6 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
 
     saveICMeeting(){
         this.icMeeting.date = $('#ICDate').val();
-        this.icMeeting.type = this.icMeetingType;
         //console.log(this.icMeeting.date);
         if(this.icMeeting.date == null || this.icMeeting.date.trim() === ''){
             this.modalErrorMessage = "Date required"

@@ -22,8 +22,6 @@ public interface EmployeeService extends BaseService {
 
     List<EmployeeDto> findICMembers();
 
-    List<EmployeeDto> findCorpMembers();
-
     List<EmployeeDto> findUsersWithRole(String role, Boolean active);
 
     List<EmployeeDto> findByDepartmentAndActive(int id, Boolean active);
