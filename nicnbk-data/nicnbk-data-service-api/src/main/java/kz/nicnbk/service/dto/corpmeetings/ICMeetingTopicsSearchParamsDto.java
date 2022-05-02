@@ -19,6 +19,7 @@ public class ICMeetingTopicsSearchParamsDto implements BaseDto {
 
     private String searchText;
     private String icNumber;
+    private String corpMeetingType;
     //private String type;
 
     /* Pagination */
@@ -112,6 +113,15 @@ public class ICMeetingTopicsSearchParamsDto implements BaseDto {
 //        this.type = type;
 //    }
 
+
+    public String getCorpMeetingType() {
+        return corpMeetingType;
+    }
+
+    public void setCorpMeetingType(String corpMeetingType) {
+        this.corpMeetingType = corpMeetingType;
+    }
+
     /**
      * Returns true if no search parameters are specified, false otherwise.
      * @return - true/false
@@ -132,7 +142,7 @@ public class ICMeetingTopicsSearchParamsDto implements BaseDto {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
         params.append(searchText != null ? "searchText=" + searchText + "&"  : "");
         params.append(icNumber != null ? "icNumber=" + icNumber + "&"  : "");
-        //params.append(type != null ? "type=" + type + "&"  : "");
+        params.append(corpMeetingType != null ? "type=" + corpMeetingType + "&"  : "");
         params.append(dateFrom != null ? "dateFrom=" + simpleDateFormat.format(dateFrom) + "&"  : "");
         params.append(dateTo != null ? "dateTo=" + simpleDateFormat.format(dateTo) + "&"  : "");
         return params.toString();

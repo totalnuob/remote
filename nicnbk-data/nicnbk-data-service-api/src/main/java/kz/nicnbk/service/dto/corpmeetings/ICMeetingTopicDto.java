@@ -22,7 +22,7 @@ public class ICMeetingTopicDto extends CreateUpdateBaseEntityDto<ICMeetingTopic>
     public static final String READY = "READY";
     public static final String UNDER_REVIEW = "UNDER REVIEW";
     public static final String  APPROVED = "APPROVED";
-    public static final String LOCKED_FOR_IC = "LOCKED FOR IC";
+    public static final String LOCKED_FOR_IC = "LOCKED";
     public static final String TO_BE_FINALIZED = "TO BE FINALIZED";
     public static final String FINALIZED = "FINALIZED";
     public static final String CLOSED = "CLOSED";
@@ -33,6 +33,7 @@ public class ICMeetingTopicDto extends CreateUpdateBaseEntityDto<ICMeetingTopic>
     private String name;
     //private String nameUpd;
     private String description;
+    private String corpMeetingType;
 
     private String decision;
    // private String decisionUpd;
@@ -64,8 +65,7 @@ public class ICMeetingTopicDto extends CreateUpdateBaseEntityDto<ICMeetingTopic>
     private Integer icOrder;
     private boolean sharedWithDepartment;
 
-    @Deprecated
-    private String type;
+//    private String type;
 
     public String getStatus(){
         if(this.deleted != null && this.deleted.booleanValue()){
@@ -188,12 +188,12 @@ public class ICMeetingTopicDto extends CreateUpdateBaseEntityDto<ICMeetingTopic>
         this.decision = decision;
     }
 
-    public String getType() {
-        return type;
+    public String getCorpMeetingType() {
+        return corpMeetingType;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setCorpMeetingType(String corpMeetingType) {
+        this.corpMeetingType = corpMeetingType;
     }
 
     public Set<EmployeeApproveDto> getApproveList() {

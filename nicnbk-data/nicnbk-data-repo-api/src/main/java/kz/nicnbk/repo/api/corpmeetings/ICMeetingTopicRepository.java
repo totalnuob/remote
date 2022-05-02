@@ -1,5 +1,6 @@
 package kz.nicnbk.repo.api.corpmeetings;
 
+import kz.nicnbk.repo.model.corpmeetings.CorpMeetingType;
 import kz.nicnbk.repo.model.corpmeetings.ICMeetingTopic;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,7 +23,7 @@ public interface ICMeetingTopicRepository extends PagingAndSortingRepository<ICM
 
     @Query("SELECT DISTINCT e from ICMeetingTopic e LEFT JOIN e.tags tags LEFT JOIN e.icMeeting ic LEFT JOIN e.approveList approve " +
             "LEFT JOIN approve.employee emp LEFT JOIN approve.employee.position pos LEFT JOIN approve.employee.position.department dep" +
-            " LEFT JOIN e.sharedDepartments shares WHERE " +
+            "LEFT JOIN e.corpMeetingType type LEFT JOIN e.sharedDepartments shares WHERE " +
             " (e.icMeeting.id is null OR (e.icMeeting.date >= :dateFrom AND e.icMeeting.date <= :dateTo)) " +
             " AND (:searchText='' OR (LOWER(e.name) LIKE CONCAT('%', :searchText, '%')) " +
             //" OR (LOWER(e.nameUpd) LIKE CONCAT('%', :searchText,'%')) " +
@@ -32,6 +33,7 @@ public interface ICMeetingTopicRepository extends PagingAndSortingRepository<ICM
             " OR (LOWER(tags.name) LIKE CONCAT('%', :searchText,'%'))" +
             ") " +
             " AND (:icNumber='' OR  e.icMeeting.number=:icNumber)" +
+            "AND (:corpMeetingType IS NULL OR e.corpMeetingType=:corpMeetingType)" +
             " AND (:departmentId IS NULL OR e.department.id=:departmentId OR (:isICMember=true AND e.published=true) OR " +
             "(shares.icMeetingTopic.id=e.id AND shares.department.id=:departmentId) OR " +
             " (e.published=true AND e.id=approve.icMeetingTopic.id AND approve.employee.position.department.id=:departmentId))" +
@@ -40,21 +42,28 @@ public interface ICMeetingTopicRepository extends PagingAndSortingRepository<ICM
                                           @Param("isICMember") Boolean isICMember,
                                           @Param("dateFrom") @Temporal(TemporalType.DATE)  Date dateFrom,
                                           @Param("dateTo") @Temporal(TemporalType.DATE) Date dateTo,
-                                          @Param("searchText") String searchText, @Param("icNumber")String icNumber, Pageable pageable);
+                                          @Param("searchText") String searchText, @Param("icNumber")String icNumber,
+                                          @Param("corpMeetingType") CorpMeetingType corpMeetingType, Pageable pageable);
 
 
-    @Query("SELECT DISTINCT e FROM ICMeetingTopic e  LEFT JOIN e.icMeeting ic LEFT JOIN ic.invitees inv LEFT JOIN e.approveList b " +
+    @Query("SELECT DISTINCT e FROM ICMeetingTopic e  LEFT JOIN e.icMeeting ic LEFT JOIN ic.invitees inv LEFT JOIN e.approveList b LEFT JOIN e.corpMeetingType type" +
             " LEFT JOIN b.employee emp LEFT JOIN b.employee.position pos LEFT JOIN b.employee.position.department dep " +
             " LEFT JOIN e.sharedDepartments shares WHERE " +
-            " (:departmentId IS NULL OR e.department.id=:departmentId OR :employeeId IS NULL OR inv.id=:employeeId OR " +
-            " (:viewICTopicAll=true AND e.published=true) OR " +
-            " (e.published=true AND e.id=b.icMeetingTopic.id AND b.employee.position.department.id=:departmentId) OR " +
-            " (shares.icMeetingTopic.id=e.id AND shares.department.id=:departmentId)) " +
-            " AND (e.deleted is null OR e.deleted=false) ")
+            "(:corpMeetingType IS NULL OR e.corpMeetingType=:corpMeetingType) AND" +
+            "(e.deleted is null OR e.deleted=false) AND" +
+            "(:departmentId IS NULL OR e.department.id=:departmentId OR :employeeId IS NULL OR inv.id=:employeeId) OR " +
+            "(e.published=true AND e.id=b.icMeetingTopic.id AND b.employee.position.department.id=:departmentId) OR " +
+            "(shares.icMeetingTopic.id=e.id AND shares.department.id=:departmentId) ")
     Page<ICMeetingTopic> searchAllByDepartmentAndUserNonDeleted(@Param("departmentId") Integer departmentId,
                                                                 @Param("employeeId") Long employeeId,
-                                                                @Param("viewICTopicAll") Boolean viewICTopicAll,
+                                                                @Param("corpMeetingType") CorpMeetingType corpMeetingType,
                                                                 Pageable pageable);
+
+//    @Query("SELECT DISTINCT e FROM ICMeetingTopic e ")
+//    Page<ICMeetingTopic> searchAllByDepartmentUserAndTypeNonDeleted(@Param("departmentId") Integer departmentId,
+//                                                                    @Param("employeeId") Long employeeId,
+//                                                                    @Param("corpMeetingType") Integer corpMeetingType,
+//                                                                    Pageable pageable);
 
 //    @Query("select DISTINCT e from ICMeetingTopic e where e.icMeeting.number=?1 AND " +
 //            " (e.icMeeting.deleted is null OR e.icMeeting.deleted=false) AND (e.deleted is null OR e.deleted=false)")

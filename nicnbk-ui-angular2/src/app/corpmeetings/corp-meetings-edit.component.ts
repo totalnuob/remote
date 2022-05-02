@@ -79,6 +79,7 @@ export class CorpMeetingEditComponent extends CommonFormViewComponent implements
 
     public departmentList = [];
     public assignmentEmployeeList = [];
+    public corpMeetingTypes = ['IC', 'EXEC'];
 
     constructor(
         private employeeService: EmployeeService,

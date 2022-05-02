@@ -52,6 +52,11 @@ public class ICMeetingTopicEntityConverter extends BaseDozerEntityConverter<ICMe
             }
         }
 
+        if (dto.getCorpMeetingType() != null) {
+            CorpMeetingType type = this.lookupService.findByTypeAndCode(CorpMeetingType.class, dto.getCorpMeetingType());
+            entity.setCorpMeetingType(type);
+        }
+
         // Tags
         if(dto.getTags() != null && !dto.getTags().isEmpty()){
             List<Tag> tags = new ArrayList<>();
@@ -88,6 +93,10 @@ public class ICMeetingTopicEntityConverter extends BaseDozerEntityConverter<ICMe
         // updater
         if(entity.getUpdater() != null) {
             dto.setUpdater(entity.getUpdater().getUsername());
+        }
+
+        if (entity.getCorpMeetingType() != null) {
+            dto.setCorpMeetingType(entity.getCorpMeetingType().getCode());
         }
 
         // Tags

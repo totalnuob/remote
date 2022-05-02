@@ -28,6 +28,16 @@ public enum UserRoles {
     IC_TOPIC_RESTR("IC_T_RESTR"),
     IC_ADMIN("IC_ADMIN"),
 
+    MB_MEMBER("MB_MEMBR"),
+
+    MB_EDIT("MB_EDIT"),
+    MB_VIEW("MB_VIEW"),
+    MB_TOPIC_EDIT("MB_T_EDIT"),
+    MB_TOPIC_VIEW("MB_T_VIEW"),
+    MB_TOPIC_VIEW_ALL("MB_T_VIEWA"),
+    MB_TOPIC_RESTR("MB_T_RESTR"),
+    MB_ADMIN("MB_ADMIN"),
+
     NEWS_EDIT("NEWS_EDIT");
 
     UserRoles(String code){

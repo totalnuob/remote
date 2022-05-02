@@ -6,7 +6,6 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 
-@Deprecated
 @Entity
 @Table(name = "corp_meeting_type")
 public class CorpMeetingType extends BaseTypeEntityImpl {

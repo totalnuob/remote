@@ -253,6 +253,9 @@ public class LookupServiceImpl implements LookupService {
     private PeriodicReportREService periodicReportREService;
 
     @Autowired
+    private ICMeetingTopicTypeRepository icMeetingTopicTypeRepository;
+
+    @Autowired
     private ICMeetingTypeRepository icMeetingTypeRepository;
 
     @Autowired
@@ -344,7 +347,7 @@ public class LookupServiceImpl implements LookupService {
             } else if (clazz.equals(REBalanceType.class)) {
                 return (T) this.reBalanceTypeRepository.findByCode(code);
             } else if (clazz.equals(ICMeetingTopicType.class)) {
-                return (T) this.icMeetingTypeRepository.findByCode(code);
+                return (T) this.icMeetingTopicTypeRepository.findByCode(code);
             } else if (clazz.equals(Benchmark.class)) {
                 return (T) this.benchmarkTypeRepository.findByCode(code);
             } else if (clazz.equals(PortfolioVar.class)) {
@@ -2609,10 +2612,27 @@ public class LookupServiceImpl implements LookupService {
     }
 
     @Override
+    public List<BaseDictionaryDto> getICMeetingTypes(){
+        try {
+            List<BaseDictionaryDto> dtoList = new ArrayList<>();
+            Iterator<CorpMeetingType> iterator = this.corpMeetingTypeRepository.findAll().iterator();
+            while (iterator.hasNext()) {
+                CorpMeetingType entity = iterator.next();
+                BaseDictionaryDto dto = disassemble(entity);
+                dtoList.add(dto);
+            }
+            return dtoList;
+        } catch (Exception ex) {
+            logger.error("Failed to load lookup: CorpMeetingType", ex);
+        }
+        return null;
+    }
+
+    @Override
     public List<BaseDictionaryDto> getICMeetingTopicTypes() {
         try {
             List<BaseDictionaryDto> dtoList = new ArrayList<>();
-            Iterator<ICMeetingTopicType> iterator = this.icMeetingTypeRepository.findAll().iterator();
+            Iterator<ICMeetingTopicType> iterator = this.icMeetingTopicTypeRepository.findAll().iterator();
             while (iterator.hasNext()) {
                 ICMeetingTopicType entity = iterator.next();
                 BaseDictionaryDto dto = disassemble(entity);

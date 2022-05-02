@@ -1,6 +1,6 @@
 package kz.nicnbk.service.converter.corpmeetings;
 
-import kz.nicnbk.common.service.util.DateUtils;
+import kz.nicnbk.repo.model.corpmeetings.CorpMeetingType;
 import kz.nicnbk.repo.model.corpmeetings.ICMeeting;
 import kz.nicnbk.repo.model.corpmeetings.ICMeetingPlaceType;
 import kz.nicnbk.service.api.corpmeetings.CorpMeetingService;
@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -33,10 +32,16 @@ public class ICMeetingsEntityConverter extends BaseDozerEntityConverter<ICMeetin
         }
 
         ICMeeting entity = super.assemble(dto);
+
         if(dto.getPlace() != null){
             ICMeetingPlaceType place = this.lookupService.findByTypeAndCode(ICMeetingPlaceType.class, dto.getPlace());
             entity.setPlace(place);
         }
+        if(dto.getCorpMeetingType() != null){
+            CorpMeetingType type = this.lookupService.findByTypeAndCode(CorpMeetingType.class, dto.getCorpMeetingType());
+            entity.setCorpMeetingType(type);
+        }
+
         return entity;
     }
 
@@ -58,6 +63,9 @@ public class ICMeetingsEntityConverter extends BaseDozerEntityConverter<ICMeetin
         }
         if(entity.getPlace() != null){
             dto.setPlace(entity.getPlace().getCode());
+        }
+        if(entity.getCorpMeetingType() != null){
+            dto.setCorpMeetingType(entity.getCorpMeetingType().getCode());
         }
 
         return dto;

@@ -409,6 +409,10 @@
             <a>place</a>
             <b>place</b>
         </field-exclude>
+        <field-exclude>
+            <a>corpMeetingType</a>
+            <b>corpMeetingType</b>
+        </field-exclude>
 <!--        <field-exclude>-->
 <!--            <a>ceoSubEmployee</a>-->
 <!--            <b>ceoSubEmployee</b>-->

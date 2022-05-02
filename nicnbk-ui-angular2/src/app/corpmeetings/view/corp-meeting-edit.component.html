@@ -54,7 +54,16 @@
                     <fieldset [disabled]="!canEdit()">
                         <div class="row top-buffer">
                             <div class="col-md-3 form-group form-horizontal">
-                                <label class="control-label col-md-2" for="icList">IC </label>
+                                <label class="control-label col-md-2" for="icList">Type </label>
+                                <div class="col-md-10">
+                                    <select class="form-control" id="typeList" name="typeList" [(ngModel)]="icMeetingTopic.icMeeting.corpMeetingType" (ngModelChange)="icListChanged()">
+                                        <option [value]="0">---</option>
+                                        <option *ngFor = "let corpMeetingType of corpMeetingTypes" [value]="corpMeetingType">{{corpMeetingType}}</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3 form-group form-horizontal">
+                                <label class="control-label col-md-2" for="icList">ID </label>
                                 <div class="col-md-10">
                                     <select class="form-control" id="icList" name="icList" [(ngModel)]="icMeetingTopic.icMeeting.id" (ngModelChange)="icListChanged()">
                                         <option [value]="0">---</option>
@@ -62,7 +71,7 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-md-9 form-group form-horizontal">
+                            <div class="col-md-6 form-group form-horizontal">
                                 <label class="control-label col-md-1" for="questionName">Name:</label>
                                 <div class="col-md-11">
                                     <textarea fz-elastic type="text" id="questionName" class="form-control"

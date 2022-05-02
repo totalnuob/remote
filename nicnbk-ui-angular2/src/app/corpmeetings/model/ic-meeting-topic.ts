@@ -6,6 +6,7 @@ import {FileEntity} from "../../common/model/file-entity";
 export class ICMeetingTopic{
     id: number;
     icMeeting: ICMeeting;
+    type: string;
     name: string;
     //nameUpd: string;
     description: string;

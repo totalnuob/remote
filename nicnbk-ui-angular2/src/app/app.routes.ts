@@ -90,6 +90,7 @@ import {CorpMeetingsListComponent} from "./corpmeetings/corp-meetings-list.compo
 import {CorpMeetingEditComponent} from "./corpmeetings/corp-meetings-edit.component";
 import {CorpMeetingAssignmentEditComponent} from "./corpmeetings/corp-meetings-assignment-edit.component";
 import {CorpMeetingICEditComponent} from "./corpmeetings/corp-meetings-ic-edit.component";
+import {CorpMeetingMBEditComponent} from "./corpmeetings/corp-meetings-mb-edit.component";
 import {LookupValuesCorpMeetingsComponent} from "./corpmeetings/lookup-values-corp-meetings.component";
 import {TerraGeneralLedgerBalanceNBReportingComponent} from "./reporting/terra.general.ledger.balance.nb.reporting.component";
 import {TerraGeneratedFormNBReportingComponent} from "./reporting/terra.generated.form.nb.reporting.component";
@@ -688,6 +689,11 @@ const routes: Routes  = [
     {
         path: 'corpMeetings/ic/edit/:id',
         component: CorpMeetingICEditComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'corpMeetings/mb/edit/:id',
+        component: CorpMeetingMBEditComponent,
         canActivate: [AuthGuard]
     },
     {

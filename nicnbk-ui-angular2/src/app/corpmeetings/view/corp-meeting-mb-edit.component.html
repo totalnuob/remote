@@ -5,14 +5,14 @@
                 <div class="col-md-12">
                     <ol class="breadcrumb">
                         <li>
-                            <span *ngIf="this.breadcrumbParams != null"><a [routerLink]="['/corpMeetings', {params: this.breadcrumbParams, activeTab: 'IC_LIST'}]">IC List</a></span>
-                            <span *ngIf="this.breadcrumbParams == null"><a [routerLink]="['/corpMeetings', {activeTab: 'IC_LIST'}]">IC List</a></span>
-                        </li>
-                        <li>
                             <span *ngIf="this.breadcrumbParams != null"><a [routerLink]="['/corpMeetings', {params: this.breadcrumbParams, activeTab: 'MB_LIST'}]">MB List</a></span>
                             <span *ngIf="this.breadcrumbParams == null"><a [routerLink]="['/corpMeetings', {activeTab: 'MB_LIST'}]">MB List</a></span>
                         </li>
-                        <li class="active">Edit</li>
+                        <li>
+                            <span *ngIf="this.breadcrumbParams != null"><a [routerLink]="['/corpMeetings', {params: this.breadcrumbParams, activeTab: 'IC_LIST'}]">IC List</a></span>
+                            <span *ngIf="this.breadcrumbParams == null"><a [routerLink]="['/corpMeetings', {activeTab: 'IC_LIST'}]">IC List</a></span>
+                        </li>
+                        <li class="active">MB Edit</li>
                     </ol>
                 </div>
             </div>
@@ -32,14 +32,6 @@
                     </div>
                     <fieldset [disabled]="!canEdit()">
                         <div class="row top-buffer">
-                            <div class="col-md-2 form-group form-horizontal">
-                                <label class="control-label" for="corpMeetingType">Type </label>
-                                <select class="form-control small" style="display:inline; font-size: small" id="corpMeetingType" name="corpMeetingType"
-                                        [(ngModel)]="icMeeting.corpMeetingType" [ngModelOptions]="{standalone: true}" (change)="changeType()">
-                                    <option *ngFor="let item of corpMeetingTypes" [value]="item">{{item}}</option>
-                                </select>
-                            </div>
-
                             <div class="col-md-2">
                                 <label class="control-label" for="icDate">Date </label>
                                 <div class='input-group date col-md-2' id='icDate' style="width: 100%">
@@ -61,58 +53,27 @@
                             </div>
                             <div class="col-md-3 form-group form-horizontal">
                                 <label class="control-label" for="icNumber">Number </label>
-                                <input type="text" class="form-control" placeholder="IC Number..."
+                                <input type="text" class="form-control" placeholder="MB Number..."
                                        id="icNumber" name="icNumber" [(ngModel)]="icMeeting.number"/>
                             </div>
                             <div class="col-md-3 form-group form-horizontal">
                                 <label class="control-label" for="icNumber">Place </label>
                                 <select class=" form-control small" style="display:inline; font-size: smaller" name="place" [(ngModel)]="icMeeting.place" [ngModelOptions]="{standalone: true}">
                                     <option *ngFor="let item of placeTypes" [value]="item.code">{{item.nameRu}}</option>
-<!--                                    <option value="OFFICE">в здании АО «Национальная инвестиционная корпорация Национального Банка Казахстана»,-->
-<!--                                        находящемся по адресу: г. Нур - Султан, проспект Мәңгілік ел 57 А, 5 - й этаж.</option>-->
-<!--                                    <option value="WEBEX">Webex Meeting</option>-->
-<!--                                    <option value="OTHER">Other</option>-->
+                                    <!--                                    <option value="OFFICE">в здании АО «Национальная инвестиционная корпорация Национального Банка Казахстана»,-->
+                                    <!--                                        находящемся по адресу: г. Нур - Султан, проспект Мәңгілік ел 57 А, 5 - й этаж.</option>-->
+                                    <!--                                    <option value="WEBEX">Webex Meeting</option>-->
+                                    <!--                                    <option value="OTHER">Other</option>-->
                                 </select>
                             </div>
                         </div>
 
                         <div class="row top-buffer withpadding">
-                            <div class="col-md-6 " *ngIf="icMeeting.corpMeetingType === 'IC'">
-                                <label class="control-label">Attendees (IC Members):</label>
+                            <div class="col-md-6">
+                                <label class="control-label">Attendees (MB Members):</label>
                                 <table class="condensed-table small" *ngIf="attendeesList != null">
                                     <tbody>
-                                        <tr *ngFor="let attendee of attendeesList; let i = index">
-                                            <td style="text-align: right;">
-                                                <input type="checkbox" name="icMemberPresence" (click)="checkICMember(attendee)"
-                                                       [checked]="attendee.present" [attr.id]="'checkbox_' + i"/>
-                                            </td>
-                                            <td style="text-align: right;">{{i+1}}. &nbsp;</td>
-                                            <td>{{attendee.employee.firstName + ' ' + attendee.employee.lastName}} {{attendee.employee.isCeo ? ' (CEO)' : ''}}</td>
-                                            <td>
-                                                <select class="small" [disabled]="attendee.present" style="display:inline; font-size: smaller" name="absenceReason"
-                                                        [attr.id]="'select_' + i" [(ngModel)]="attendee.absenceType" [ngModelOptions]="{standalone: true}">
-                                                    <option *ngFor="let item of absenceTypes" [value]="item.code">{{item.nameEn}}</option>
-
-                                                </select>
-                                            </td>
-                                            <td *ngIf="!attendee.present && attendee.employee.isCeo">
-                                                &nbsp;Sub: &nbsp;
-                                            </td>
-                                            <td *ngIf="!attendee.present && attendee.employee.isCeo">
-                                                <select class="small" [disabled]="attendee.present" style="display:inline; font-size: smaller" name="ceoSub"
-                                                        [(ngModel)]="icMeeting.ceoSubEmployee.id" [ngModelOptions]="{standalone: true}">
-                                                    <option *ngFor="let sub of ceoSubList" [ngValue]="sub.id">{{sub.lastName}} {{sub.firstName}}</option>
-                                                </select>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div class="col-md-6" *ngIf="icMeeting.corpMeetingType === 'EXEC'">
-                                <label class="control-label">Attendees (MB Members):</label>
-                                <table class="condensed-table small" *ngIf="attendeesListMB != null">
-                                    <tbody>
-                                    <tr *ngFor="let attendee of attendeesListMB; let i = index">
+                                    <tr *ngFor="let attendee of attendeesList; let i = index">
                                         <td style="text-align: right;">
                                             <input type="checkbox" name="icMemberPresence" (click)="checkICMember(attendee)"
                                                    [checked]="attendee.present" [attr.id]="'checkbox_' + i"/>
@@ -161,45 +122,45 @@
                             </span>
                             <table class="table">
                                 <thead>
-                                    <tr>
-                                        <th width="5%"></th>
-                                        <th width="5%"></th>
-                                        <th width="40%">NAME</th>
-                                        <th width="10%">STATUS</th>
-                                        <th width="10%">CREATOR</th>
-                                        <th width="10%">CREATED</th>
-                                        <th width="10%">UPDATED</th>
-                                        <th width="5%">&nbsp;</th>
-                                        <th width="5%">&nbsp;</th>
-                                    </tr>
+                                <tr>
+                                    <th width="5%"></th>
+                                    <th width="5%"></th>
+                                    <th width="40%">NAME</th>
+                                    <th width="10%">STATUS</th>
+                                    <th width="10%">CREATOR</th>
+                                    <th width="10%">CREATED</th>
+                                    <th width="10%">UPDATED</th>
+                                    <th width="5%">&nbsp;</th>
+                                    <th width="5%">&nbsp;</th>
+                                </tr>
                                 </thead>
 
                                 <tbody>
-                                    <tr *ngFor="let topic of icMeeting.topics; let i = index" style="cursor: pointer"
-                                        [style.color]="canViewICTopic(topic) ? 'black' : 'grey'">
-                                        <td>
-                                            <a *ngIf="i > 0" class="btn btn-primary btn-xs glyphicon glyphicon-arrow-up" (click)="moveTopicUp(i)"></a>
-                                            <a *ngIf="i < icMeeting.topics.length - 1" class="btn btn-primary btn-xs glyphicon glyphicon-arrow-down" (click)="moveTopicDown(i)"></a>
-                                        </td>
-                                        <td (click)="navigate(topic)">{{i + 1}}.</td>
-                                        <td (click)="navigate(topic)">{{topic.name}}</td>
-                                        <td (click)="navigate(topic)">
-                                            <label [ngClass]="getICMeetingTopicClassByStatus(topic)">{{topic.status}}
-                                                <span *ngIf="topic.closed || topic?.icMeeting.lockedByDeadline" class="glyphicon glyphicon-lock"></span>
-                                            </label>
-                                        </td>
-                                        <td (click)="navigate(topic)">{{topic.creator}}</td>
-                                        <td (click)="navigate(topic)">{{topic.creationDate}}</td>
-                                        <td (click)="navigate(topic)">{{topic.updateDate}}</td>
-                                        <td>
-                                            <span *ngIf="!canViewICTopic(topic)" class="glyphicon glyphicon-ban-circle" style="color:red"></span>
-                                        </td>
-                                        <td>
-                                            <span *ngIf="topic.authenticatedUserVote === 'YES'" class="glyphicon glyphicon-thumbs-up" style="color:green"></span>
-                                            <span *ngIf="topic.authenticatedUserVote === 'NO'" class="glyphicon glyphicon-thumbs-down" style="color:red"></span>
-                                            <span *ngIf="topic.authenticatedUserVote === '-'" class="glyphicon glyphicon-remove-circle" style="color:grey"></span>
-                                        </td>
-                                    </tr>
+                                <tr *ngFor="let topic of icMeeting.topics; let i = index" style="cursor: pointer"
+                                    [style.color]="canViewICTopic(topic) ? 'black' : 'grey'">
+                                    <td>
+                                        <a *ngIf="i > 0" class="btn btn-primary btn-xs glyphicon glyphicon-arrow-up" (click)="moveTopicUp(i)"></a>
+                                        <a *ngIf="i < icMeeting.topics.length - 1" class="btn btn-primary btn-xs glyphicon glyphicon-arrow-down" (click)="moveTopicDown(i)"></a>
+                                    </td>
+                                    <td (click)="navigate(topic)">{{i + 1}}.</td>
+                                    <td (click)="navigate(topic)">{{topic.name}}</td>
+                                    <td (click)="navigate(topic)">
+                                        <label [ngClass]="getICMeetingTopicClassByStatus(topic)">{{topic.status}}
+                                            <span *ngIf="topic.closed || topic?.icMeeting.lockedByDeadline" class="glyphicon glyphicon-lock"></span>
+                                        </label>
+                                    </td>
+                                    <td (click)="navigate(topic)">{{topic.creator}}</td>
+                                    <td (click)="navigate(topic)">{{topic.creationDate}}</td>
+                                    <td (click)="navigate(topic)">{{topic.updateDate}}</td>
+                                    <td>
+                                        <span *ngIf="!canViewICTopic(topic)" class="glyphicon glyphicon-ban-circle" style="color:red"></span>
+                                    </td>
+                                    <td>
+                                        <span *ngIf="topic.authenticatedUserVote === 'YES'" class="glyphicon glyphicon-thumbs-up" style="color:green"></span>
+                                        <span *ngIf="topic.authenticatedUserVote === 'NO'" class="glyphicon glyphicon-thumbs-down" style="color:red"></span>
+                                        <span *ngIf="topic.authenticatedUserVote === '-'" class="glyphicon glyphicon-remove-circle" style="color:grey"></span>
+                                    </td>
+                                </tr>
                                 </tbody>
                             </table>
                         </div>
@@ -224,11 +185,11 @@
                                                     <span>{{i + 1}}. {{topic.name}}</span>
                                                 </div>
                                                 <div class="col-md-2">
-<!--                                                        <select>-->
-<!--                                                            <option values="YES">YES</option>-->
-<!--                                                            <option values="NO">NO</option>-->
-<!--                                                            <option values="-">-&#45;&#45;</option>-->
-<!--                                                        </select>-->
+                                                    <!--                                                        <select>-->
+                                                    <!--                                                            <option values="YES">YES</option>-->
+                                                    <!--                                                            <option values="NO">NO</option>-->
+                                                    <!--                                                            <option values="-">-&#45;&#45;</option>-->
+                                                    <!--                                                        </select>-->
 
                                                     <select [(ngModel)] = "topic.authenticatedUserVote" [ngModelOptions]="{standalone: true}">
                                                         <option *ngFor="let item of voteTypes" [value]="item.code">{{item.nameRu}}</option>
@@ -297,7 +258,7 @@
                                 <td>
                                     <div *ngIf="icMeeting.agenda == null && canEdit()" align="center">
                                         <label class="btn btn-primary btn-xs " [ngClass]="icMeeting.agenda != null && icMeeting.agenda.id > 0 ? 'disabled' : ''"  for="agenda">
-                                        <input type="file" id="agenda" (change)="onFileChangeAgenda($event)" [disabled]="icMeeting.agenda != null && icMeeting.agenda.id > 0" name="agendaScan" style="display:none;"/>Upload</label>
+                                            <input type="file" id="agenda" (change)="onFileChangeAgenda($event)" [disabled]="icMeeting.agenda != null && icMeeting.agenda.id > 0" name="agendaScan" style="display:none;"/>Upload</label>
                                         <div  *ngFor="let aFile of uploadAgendaFile"  class="label label-info" style="display: table;">
                                             <span>{{aFile.name}}</span> &nbsp;
                                             <button class="btn btn-xs btn-danger" (click)="deleteUnsavedAgenda(aFile)">

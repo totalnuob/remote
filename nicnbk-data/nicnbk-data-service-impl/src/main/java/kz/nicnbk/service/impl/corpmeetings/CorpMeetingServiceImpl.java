@@ -1450,21 +1450,38 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
             // Check if allowed topic by department id
             Integer departmentId = null; // all topics
             boolean viewICTopicAll = false;
+            boolean viewMBTopicAll = false;
             EmployeeDto employee = this.employeeService.findByUsername(searchParams.getUsername());
+            CorpMeetingType type = this.lookupService.findByTypeAndCode(CorpMeetingType.class, searchParams.getCorpMeetingType());
             if(searchParams != null && searchParams.getUsername() != null) {
                 departmentId = employee.getPosition() != null && employee.getPosition().getDepartment() != null ?
                         employee.getPosition().getDepartment().getId() : -1; // -1 means dept not specified
                 if (employee.getRoles() != null && !employee.getRoles().isEmpty()) {
-                    for (BaseDictionaryDto role : employee.getRoles()) {
-                        if (role.getCode().equalsIgnoreCase(UserRoles.IC_ADMIN.getCode()) ||
-                                role.getCode().equalsIgnoreCase(UserRoles.ADMIN.getCode())) {
-                            // IC ADMIN
-                            departmentId = null;
-                            viewICTopicAll = true;
-                        }else if (role.getCode().equalsIgnoreCase(UserRoles.IC_MEMBER.getCode()) ||
-                                role.getCode().equalsIgnoreCase(UserRoles.IC_TOPIC_VIEW_ALL.getCode())) {
-                            // IC MEMBER
-                            viewICTopicAll = true;
+                    if (searchParams.getCorpMeetingType().equalsIgnoreCase("IC")) {
+                        for (BaseDictionaryDto role : employee.getRoles()) {
+                            if (role.getCode().equalsIgnoreCase(UserRoles.IC_ADMIN.getCode()) ||
+                                    role.getCode().equalsIgnoreCase(UserRoles.ADMIN.getCode())) {
+                                // IC ADMIN
+                                departmentId = null;
+                                viewICTopicAll = true;
+                            }else if (role.getCode().equalsIgnoreCase(UserRoles.IC_MEMBER.getCode()) ||
+                                    role.getCode().equalsIgnoreCase(UserRoles.IC_TOPIC_VIEW_ALL.getCode())) {
+                                // IC MEMBER
+                                viewICTopicAll = true;
+                            }
+                        }
+                    } else {
+                        for (BaseDictionaryDto role : employee.getRoles()) {
+                            if (role.getCode().equalsIgnoreCase(UserRoles.MB_ADMIN.getCode()) ||
+                                    role.getCode().equalsIgnoreCase(UserRoles.ADMIN.getCode())) {
+                                // MB ADMIN
+                                departmentId = null;
+                                viewMBTopicAll = true;
+                            }else if (role.getCode().equalsIgnoreCase(UserRoles.MB_MEMBER.getCode()) ||
+                                    role.getCode().equalsIgnoreCase(UserRoles.MB_TOPIC_VIEW_ALL.getCode())) {
+                                // MB MEMBER
+                                viewMBTopicAll = true;
+                            }
                         }
                     }
                 }
@@ -1475,14 +1492,20 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
             if (searchParams == null || searchParams.isEmpty()) {
                 int pageSize = searchParams != null && searchParams.getPageSize() > 0 ? searchParams.getPageSize() : DEFAULT_PAGE_SIZE;
                 page = searchParams != null && searchParams.getPage() > 0 ? searchParams.getPage() - 1 : 0;
-                entitiesPage = icMeetingTopicRepository.searchAllByDepartmentAndUserNonDeleted(departmentId, employee.getId(),
-                        viewICTopicAll, new PageRequest(page, pageSize, new Sort(Sort.Direction.DESC, "id")));
+                if (type.getCode().equalsIgnoreCase("IC")) {
+                    entitiesPage = icMeetingTopicRepository.searchAllByDepartmentAndUserNonDeleted(departmentId, employee.getId(),
+                            type, new PageRequest(page, pageSize, new Sort(Sort.Direction.DESC, "id")));
+                } else {
+                    entitiesPage = icMeetingTopicRepository.searchAllByDepartmentAndUserNonDeleted(departmentId, employee.getId(),
+                            type, new PageRequest(page, pageSize, new Sort(Sort.Direction.DESC, "id")));
+                }
+
             } else {
                 page = searchParams.getPage() > 0 ? searchParams.getPage() - 1 : 0;
 
                 entitiesPage = icMeetingTopicRepository.searchNonDeleted(departmentId, viewICTopicAll,
                         searchParams.getDateFromNonEmpty(), searchParams.getDateToNonEmpty(),
-                        searchParams.getSearchTextLowerCase(), searchParams.getICNumberLowerCase(),
+                        searchParams.getSearchTextLowerCase(), searchParams.getICNumberLowerCase(), type,
                         new PageRequest(page, searchParams.getPageSize(), new Sort(Sort.Direction.DESC, "id")));
             }
 
@@ -2548,12 +2571,20 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
             if (searchParams == null || searchParams.isEmpty()) {
                 int pageSize = searchParams != null && searchParams.getPageSize() > 0 ? searchParams.getPageSize() : DEFAULT_PAGE_SIZE;
                 page = searchParams != null && searchParams.getPage() > 0 ? searchParams.getPage() - 1 : 0;
-                entitiesPage = icMeetingsRepository.searchAll(new PageRequest(page, pageSize));
+//                entitiesPage = icMeetingsRepository.searchAll(new PageRequest(page, pageSize));
+                String type = searchParams.getTypeNonEmpty();
+                if (type.equalsIgnoreCase("IC")) {
+                    entitiesPage = icMeetingsRepository.searchAllByType(lookupService.findByTypeAndCode(CorpMeetingType.class, "IC"), new PageRequest(page, pageSize));
+                } else {
+                    entitiesPage = icMeetingsRepository.searchAllByType(lookupService.findByTypeAndCode(CorpMeetingType.class, "EXEC"), new PageRequest(page, pageSize));
+                }
             } else {
                 page = searchParams.getPage() > 0 ? searchParams.getPage() - 1 : 0;
 
-                entitiesPage = icMeetingsRepository.search(searchParams.getNumberNonEmpty(), searchParams.getDateFromNonEmpty(), searchParams.getDateToNonEmpty(),
-                        new PageRequest(page, searchParams.getPageSize()));
+//                entitiesPage = icMeetingsRepository.search(searchParams.getNumberNonEmpty(), searchParams.getDateFromNonEmpty(), searchParams.getDateToNonEmpty(),
+//                        new PageRequest(page, searchParams.getPageSize()));
+                entitiesPage = icMeetingsRepository.searchByType(searchParams.getNumberNonEmpty(), searchParams.getTypeNonEmpty(),
+                        searchParams.getDateFromNonEmpty(), searchParams.getDateToNonEmpty(), new PageRequest(page, searchParams.getPageSize()));
 
             }
 
@@ -2584,7 +2615,7 @@ public class CorpMeetingServiceImpl implements CorpMeetingService {
             return result;
         }catch(Exception ex){
             // TODO: log search params
-            logger.error("Error searching IC meetings", ex);
+            logger.error("Error searching corp meetings", ex);
         }
         return null;
     }

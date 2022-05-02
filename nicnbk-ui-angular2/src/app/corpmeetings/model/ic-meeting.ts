@@ -6,6 +6,7 @@ export class ICMeeting{
     time: string;
     place: string;
     number: string;
+    corpMeetingType: string;
 
     //numberOfTopics: number;
 

@@ -127,6 +127,17 @@ public class EmployeeServiceImpl implements EmployeeService{
     }
 
     @Override
+    public List<EmployeeDto> findMBMembers(){
+        try {
+            List<EmployeeDto> dtoList = findEmployeesByRoleCode(UserRoles.MB_MEMBER.getCode(), true);
+            return dtoList;
+        }catch (Exception ex){
+            logger.error("Failed to load full employee list", ex);
+        }
+        return null;
+    }
+
+    @Override
     public List<EmployeeDto> findUsersWithRole(String role,Boolean active){
         try {
             List<EmployeeDto> dtoList = findEmployeesByRoleCode(role, active);

@@ -1,6 +1,13 @@
 import { Injectable } from '@angular/core';
 import {CommonService} from "../common/common.service";
-import {ROLE_ADMIN} from "./roles.constants";
+import {
+    ROLE_ADMIN, ROLE_MB_ADMIN,
+    ROLE_MB_EDIT, ROLE_MB_MEMBER,
+    ROLE_MB_TOPIC_EDIT,
+    ROLE_MB_TOPIC_RESTR,
+    ROLE_MB_TOPIC_VIEW, ROLE_MB_TOPIC_VIEW_ALL,
+    ROLE_MB_VIEW
+} from "./roles.constants";
 import {ROLE_NEWS_EDIT} from "./roles.constants";
 import {ROLE_RE_EDIT} from "./roles.constants";
 import {ROLE_HF_EDIT} from "./roles.constants";
@@ -161,6 +168,16 @@ export class ModuleAccessCheckerService extends CommonService{
         return this.checkAccess(ROLE_IC_EDIT) || this.checkAccess(ROLE_IC_ADMIN);
     }
 
+    public checkAccessMBMeetingsView(){
+        return this.checkAccess(ROLE_MB_EDIT) || this.checkAccess(ROLE_MB_VIEW) || this.checkAccess(ROLE_MB_TOPIC_EDIT)
+        || this.checkAccess(ROLE_MB_TOPIC_VIEW) || this.checkAccess(ROLE_MB_TOPIC_RESTR) || this.checkAccess(ROLE_MB_MEMBER)
+        || this.checkAccess(ROLE_MB_ADMIN);
+    }
+
+    public checkAccessMBMeetingsEdit(){
+        return this.checkAccess(ROLE_MB_EDIT) || this.checkAccess(ROLE_MB_ADMIN);
+    }
+
     public checkAccessICMeetingTopicsView(){
         return this.checkAccess(ROLE_IC_TOPIC_EDIT) || this.checkAccess(ROLE_IC_TOPIC_VIEW_ALL)
             || this.checkAccess(ROLE_IC_TOPIC_VIEW) || this.checkAccess(ROLE_IC_TOPIC_RESTR)
@@ -172,8 +189,23 @@ export class ModuleAccessCheckerService extends CommonService{
             || this.checkAccess(ROLE_IC_MEMBER) || this.checkAccess(ROLE_IC_ADMIN);
     }
 
+    public checkAccessMBMeetingTopicsView(){
+        return this.checkAccess(ROLE_MB_TOPIC_EDIT) || this.checkAccess(ROLE_MB_TOPIC_VIEW_ALL)
+            || this.checkAccess(ROLE_MB_TOPIC_VIEW) || this.checkAccess(ROLE_MB_TOPIC_RESTR)
+            || this.checkAccess(ROLE_MB_MEMBER) || this.checkAccess(ROLE_MB_ADMIN)
+    }
+
+    public checkAccessMBMeetingTopicsViewFull(){
+        return this.checkAccess(ROLE_MB_TOPIC_EDIT) || this.checkAccess(ROLE_MB_TOPIC_VIEW_ALL)
+            || this.checkAccess(ROLE_MB_MEMBER) || this.checkAccess(ROLE_MB_ADMIN)
+    }
+
     public checkAccessICMeetingAdmin(){
         return this.checkAccess(ROLE_IC_ADMIN);
+    }
+
+    public checkAccessMBMeetingAdmin(){
+        return this.checkAccess(ROLE_MB_ADMIN);
     }
 
     public checkAccessICMeetingTopicsEdit(departmentId){
@@ -186,12 +218,26 @@ export class ModuleAccessCheckerService extends CommonService{
         return access && departmentOk;
     }
 
+    public checkAccessMBMeetingTopicsEdit(departmentId){
+        if (this.checkAccessAdmin() || this.checkAccess(ROLE_MB_ADMIN)){
+            return true;
+        }
+        var access = this.checkAccess(ROLE_MB_TOPIC_EDIT);
+        var userPosition = JSON.parse(localStorage.getItem("authenticatedUserPosition"));
+        var departmentOk = userPosition != null && userPosition.deparment != null && departmentId != null && userPosition.deparment.id == departmentId;
+        return access && departmentOk;
+    }
+
     public checkAccessCorpMeetingsEdit(){
         return this.checkAccess(ROLE_CORPMEETINGS_EDIT);
     }
 
     public checkAccessICMember(){
         return this.checkAccess(ROLE_IC_MEMBER);
+    }
+
+    public checkAccessMBMember(){
+        return this.checkAccess(ROLE_MB_MEMBER);
     }
 
     public checkAccessStrategyRisksEditor(){

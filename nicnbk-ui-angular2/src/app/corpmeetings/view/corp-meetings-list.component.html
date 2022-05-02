@@ -192,7 +192,7 @@ f<style>
                                            aria-selected="false"
                                            class="date-tabs__link"
                                            [style.border-bottom-color]="activeTab === 'IC_LIST' ? '#D9A158' : 'white'"
-                                           (click)="searchIC(0)">IC LIST</a>
+                                           (click)="searchCorpMeetings(0, 'IC')">IC LIST</a>
             </li>
             <li *ngIf="canViewICTopics()" class="date-tabs__item"><a data-toggle="tab"
                                            href="#IC_TOPICS"
@@ -200,15 +200,39 @@ f<style>
                                            aria-selected="false"
                                            class="date-tabs__link"
                                            [style.border-bottom-color]="activeTab === 'IC_TOPICS' ? '#D9A158' : 'white'"
-                                           (click)="searchICMeetingTopics(0)">IC TOPICS</a>
+                                           (click)="searchMBMeetingTopics(0, 'IC')">IC TOPICS</a>
             </li>
             <li *ngIf="canViewICAssignments()" class="date-tabs__item"><a data-toggle="tab"
-                                                                     href="#IC_ASSIGNMENTS"
-                                                                     role="tab" aria-controls="IC_ASSIGNMENTS"
-                                                                     aria-selected="false"
-                                                                     class="date-tabs__link"
-                                                                     [style.border-bottom-color]="activeTab === 'IC_ASSIGNMENTS' ? '#D9A158' : 'white'"
-                                                                     (click)="searchICAssignments(0)">IC ASSIGNMENTS</a>
+                                             href="#IC_ASSIGNMENTS"
+                                             role="tab" aria-controls="IC_ASSIGNMENTS"
+                                             aria-selected="false"
+                                             class="date-tabs__link"
+                                             [style.border-bottom-color]="activeTab === 'IC_ASSIGNMENTS' ? '#D9A158' : 'white'"
+                                             (click)="searchICAssignments(0)">IC ASSIGNMENTS</a>
+            </li>
+            <li *ngIf="canViewMB()" class="date-tabs__item"><a data-toggle="tab"
+                                           href="#MB_LIST"
+                                           role="tab" aria-controls="MB_LIST"
+                                           aria-selected="false"
+                                           class="date-tabs__link"
+                                           [style.border-bottom-color]="activeTab === 'MB_LIST' ? '#D9A158' : 'white'"
+                                           (click)="searchCorpMeetings(0, 'EXEC')">MB LIST</a>
+            </li>
+            <li *ngIf="canViewMBTopics()" class="date-tabs__item"><a data-toggle="tab"
+                                             href="#MB_TOPICS"
+                                             role="tab" aria-controls="MB_TOPICS"
+                                             aria-selected="false"
+                                             class="date-tabs__link"
+                                             [style.border-bottom-color]="activeTab === 'MB_TOPICS' ? '#D9A158' : 'white'"
+                                             (click)="searchMBMeetingTopics(0, 'EXEC')">MB TOPICS</a>
+            </li>
+            <li *ngIf="canViewMBAssignments()" class="date-tabs__item"><a data-toggle="tab"
+                                              href="#MB_ASSIGNMENTS"
+                                              role="tab" aria-controls="MB_ASSIGNMENTS"
+                                              aria-selected="false"
+                                              class="date-tabs__link"
+                                              [style.border-bottom-color]="activeTab === 'MB_ASSIGNMENTS' ? '#D9A158' : 'white'"
+                                              (click)="searchICAssignments(0)">MB ASSIGNMENTS</a>
             </li>
         </ul>
         <div class="tab-content">
@@ -530,7 +554,7 @@ f<style>
                                 <button type="button"class="btn-xs btn-default pull-left" (click)="clearSearchFormIC()">
                                     <!--<i class="glyphicon glyphicon-trash"></i>-->Reset
                                 </button>
-                                <button type="button" class="btn btn-success pull-right" (click)="searchIC()">Search</button>
+                                <button type="button" class="btn btn-success pull-right" (click)="searchCorpMeetings(0, 'IC')">Search</button>
                             </div>
                         </div>
                     </form>
@@ -545,11 +569,11 @@ f<style>
                 <div class="row">
                     <div class="row pull-right">
                         <ul class="pagination" *ngIf="icMeetingsSearchResult?.showPageFrom > 0">
-                            <li><a *ngIf="icMeetingsSearchResult?.showPageFrom > 1" (click)="searchIC(icMeetingsSearchResult.showPageFrom - 1)">&laquo;</a></li>
+                            <li><a *ngIf="icMeetingsSearchResult?.showPageFrom > 1" (click)="searchCorpMeetings(icMeetingsSearchResult.showPageFrom - 1, 'IC')">&laquo;</a></li>
                             <li *ngFor="let i of range(icMeetingsSearchResult.showPageFrom, icMeetingsSearchResult.showPageTo)" [class.active]="i == icMeetingsSearchResult.currentPage">
-                                <a (click)="searchIC(i)">{{i}}</a>
+                                <a (click)="searchCorpMeetings(i, 'IC')">{{i}}</a>
                             </li>
-                            <li><a *ngIf="icMeetingsSearchResult.showPageTo < icMeetingsSearchResult.totalPages" (click)="searchIC(icMeetingsSearchResult.showPageTo + 1)">&raquo;</a></li>
+                            <li><a *ngIf="icMeetingsSearchResult.showPageTo < icMeetingsSearchResult.totalPages" (click)="searchCorpMeetings(icMeetingsSearchResult.showPageTo + 1, 'IC')">&raquo;</a></li>
                         </ul>
                     </div>
                     <table [ngBusy]="busy" class="table table-hover">
@@ -598,11 +622,11 @@ f<style>
                 </div>
                 <div class="row pull-right">
                     <ul class="pagination" *ngIf="icMeetingsSearchResult?.showPageFrom > 0">
-                        <li><a *ngIf="icMeetingsSearchResult?.showPageFrom > 1" (click)="searchIC(icMeetingsSearchResult.showPageFrom - 1)">&laquo;</a></li>
+                        <li><a *ngIf="icMeetingsSearchResult?.showPageFrom > 1" (click)="searchCorpMeetings(icMeetingsSearchResult.showPageFrom - 1, 'IC')">&laquo;</a></li>
                         <li *ngFor="let i of range(icMeetingsSearchResult.showPageFrom, icMeetingsSearchResult.showPageTo)" [class.active]="i == icMeetingsSearchResult.currentPage">
-                            <a (click)="searchIC(i)">{{i}}</a>
+                            <a (click)="searchCorpMeetings(i, 'IC')">{{i}}</a>
                         </li>
-                        <li><a *ngIf="icMeetingsSearchResult.showPageTo < icMeetingsSearchResult.totalPages" (click)="searchIC(icMeetingsSearchResult.showPageTo + 1)">&raquo;</a></li>
+                        <li><a *ngIf="icMeetingsSearchResult.showPageTo < icMeetingsSearchResult.totalPages" (click)="searchCorpMeetings(icMeetingsSearchResult.showPageTo + 1, 'IC')">&raquo;</a></li>
                     </ul>
                 </div>
 <!--
@@ -739,6 +763,255 @@ f<style>
 <!--                        </div>-->
 <!--                    </div>-->
 <!--                </div>-->
+            </div>
+            <div id="MB_LIST" role="tabpanel" aria-labelledby="MB_LIST" [ngClass]="activeTab === 'MB_LIST' ? 'tab-pane active' : 'tab-pane' ">
+                <div class="row withpadding">
+                    <!--                    <a class="btn btn-primary pull-right" data-toggle="modal" data-target="#newICModal" (click)="editICMeeting(null)">NEW</a>-->
+                    <a [routerLink]="['/corpMeetings/ic/edit/', 0 ]" class="btn btn-primary pull-right">NEW MB</a>
+                </div>
+                <br/>
+
+                <div class="jumbotron">
+                    <form (ngSubmit)="searchICMeetingTopics(0)">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="col-md-2">
+                                    <label for="fromDateDTPickeerCM">CM Date From</label>
+                                    <div class='input-group date col-md-2' id='fromDateDTPickeerCM' style="width: 100%">
+                                        <input type='text' class="form-control" id="fromDateCM" name="fromDate" style="font-size: small" [(ngModel)]="corpMeetingsSearchParams.dateFrom"/>
+                                        <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="untilDateDTPickeerCM">CM Date To</label>
+                                    <div class='input-group date col-md-2' id='untilDateDTPickeerCM' style="width: 100%">
+                                        <input type='text' class="form-control" id="toDateCM" name="toDate"style="font-size: small" [(ngModel)]="corpMeetingsSearchParams.dateTo"/>
+                                        <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="icSearchNumberCM">MB №</label>
+                                    <div class="form-group">
+                                        <input type="text" name="icSearchNumberCM" id="icSearchNumberCM" class="form-control"
+                                               placeholder="CM № ..." [(ngModel)]="corpMeetingsSearchParams.number"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!--                        <div class="row">-->
+                        <!--                            <div class="col-md-7">-->
+                        <!--                                <label for="icMeetingSearchText">Search Text</label>-->
+                        <!--                                <div class="form-group ">-->
+                        <!--                                    <input type="text" name="searchText" id="icMeetingSearchText" class="form-control"-->
+                        <!--                                           placeholder="Search in topics...." [(ngModel)]="icMeetingsSearchParams.searchText"/>-->
+                        <!--                                </div>-->
+                        <!--                            </div>-->
+                        <!--                        </div>-->
+                        <div class="row">
+                            <div class="col-md-12">
+                                <button type="button"class="btn-xs btn-default pull-left" (click)="clearSearchFormCM()">
+                                    <!--<i class="glyphicon glyphicon-trash"></i>-->Reset
+                                </button>
+                                <button type="button" class="btn btn-success pull-right" (click)="searchCorpMeetings(0, 'EXEC')">Search</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div>
+                    <label>Total found:  <span>{{corpMeetingsSearchResult?.totalElements > 0 ? corpMeetingsSearchResult?.totalElements : 0}}</span></label>
+                </div>
+                <div class="row">
+                    <button class="btn btn-success btn-xs pull-right" (click)="exportRegistry()">XLSX registry</button>
+                </div>
+
+                <div class="row">
+                    <div class="row pull-right">
+                        <ul class="pagination" *ngIf="corpMeetingsSearchResult?.showPageFrom > 0">
+                            <li><a *ngIf="corpMeetingsSearchResult?.showPageFrom > 1" (click)="searchCorpMeetings(corpMeetingsSearchResult.showPageFrom - 1, 'EXEC')">&laquo;</a></li>
+                            <li *ngFor="let i of range(corpMeetingsSearchResult.showPageFrom, corpMeetingsSearchResult.showPageTo)" [class.active]="i == corpMeetingsSearchResult.currentPage">
+                                <a (click)="searchCorpMeetings(i, 'EXEC')">{{i}}</a>
+                            </li>
+                            <li><a *ngIf="corpMeetingsSearchResult.showPageTo < corpMeetingsSearchResult.totalPages" (click)="searchCorpMeetings(corpMeetingsSearchResult.showPageTo + 1, 'EXEC')">&raquo;</a></li>
+                        </ul>
+                    </div>
+                    <table [ngBusy]="busy" class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th>MB NUMBER</th>
+                            <th>MB DATE</th>
+                            <th>STATUS</th>
+                            <!--                            <th>NUM.OF TOPICS</th>-->
+                            <th>ACTIONS</th>
+                            <!--                            <th>PROTOCOL</th>-->
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr *ngFor = "let mbMeeting of corpMeetings" style="cursor: pointer" (click)="editICMeeting(mbMeeting)">
+                            <td>{{mbMeeting.number}}</td>
+                            <td>{{mbMeeting.date}}</td>
+                            <td>
+                                <label [ngClass]="getICClassByStatus(mbMeeting)">{{mbMeeting.status}}
+                                    <span *ngIf="mbMeeting.closed || mbMeeting.lockedByDeadline" class="glyphicon glyphicon-lock"></span>
+                                </label>
+                            </td>
+                            <td>
+                                <!--                                <button class="btn btn-xs btn-primary" (click)="editICMeeting(icMeeting)" *ngIf="!canEditICMeeting(icMeeting)"><span class="glyphicon glyphicon-search"></span></button>-->
+                                <!--                                <button class="btn btn-xs btn-success" (click)="editICMeeting(icMeeting)" *ngIf="canEditICMeeting(icMeeting)"><span class="glyphicon glyphicon-pencil"></span></button>-->
+                                <button class="btn btn-xs btn-danger" (click)="deleteICMeeting(mbMeeting)" *ngIf="canDeleteICMeeting(mbMeeting)"><span class="glyphicon glyphicon-trash"></span></button>
+                            </td>
+                            <!--                            <td>-->
+                            <!--                                <button *ngIf="canAddProtocol(icMeeting)" class="btn btn-primary" (click)="showAddProtocolModal(icMeeting)" data-toggle="modal" data-target="#addProtocolModal">Add protocol</button>-->
+
+                            <!--                                <div *ngIf="canViewProtocol(icMeeting)">-->
+
+                            <!--                                    <file-attachment-downloader fileId="{{icMeeting?.protocolFileId}}"-->
+                            <!--                                                                fileName="{{icMeeting?.protocolFileName}}"-->
+                            <!--                                                                displayFileName="{{icMeeting?.protocolFileId > 0 ? 'PROTOCOL' : ''}}"-->
+                            <!--                                                                fileType="IC_PRTCL">-->
+                            <!--                                    </file-attachment-downloader>-->
+
+                            <!--                                    <button  class="btn btn-xs btn-danger" (click)="deleteICMeetingProtocol(icMeeting)" *ngIf="icMeeting.protocolFileId > 0"><span class="glyphicon glyphicon-trash"></span></button>-->
+
+                            <!--                                </div>-->
+                            <!--                            </td>-->
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="row pull-right">
+                    <ul class="pagination" *ngIf="corpMeetingsSearchResult?.showPageFrom > 0">
+                        <li><a *ngIf="corpMeetingsSearchResult?.showPageFrom > 1" (click)="searchCorpMeetings(corpMeetingsSearchResult.showPageFrom - 1, 'EXEC')">&laquo;</a></li>
+                        <li *ngFor="let i of range(corpMeetingsSearchResult.showPageFrom, corpMeetingsSearchResult.showPageTo)" [class.active]="i == corpMeetingsSearchResult.currentPage">
+                            <a (click)="searchCorpMeetings(i, 'MB')">{{i}}</a>
+                        </li>
+                        <li><a *ngIf="corpMeetingsSearchResult.showPageTo < corpMeetingsSearchResult.totalPages" (click)="searchCorpMeetings(corpMeetingsSearchResult.showPageTo + 1, 'EXEC')">&raquo;</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div id="MB_TOPICS" role="tabpanel" aria-labelledby="MB_TOPICS" [ngClass]="activeTab === 'MB_TOPICS' ? 'tab-pane active' : 'tab-pane' ">
+                <div class="row withpadding">
+                    <a *ngIf="canCreateNewTopicMB()" [routerLink]="['/corpMeetings/edit/',0 ]" class="btn btn-primary pull-right">NEW</a>
+                </div>
+                <br/>
+
+                <div class="jumbotron">
+                    <form (ngSubmit)="searchMBMeetingTopics(0, 'EXEC')">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="col-md-5">
+                                    <label for="searchText">Search Text</label>
+                                    <div class="form-group">
+                                        <input type="text" name="searchText" id="searchTextCM" class="form-control"
+                                               placeholder="Search in description or tags...." [(ngModel)]="mbTopicsSearchParams.searchText"/>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="fromDateDTPickeer">MB Date From</label>
+                                    <div class='input-group date col-md-2' id='fromDateCMTopicsDTPickeer' style="width: 100%">
+                                        <input type='text' class="form-control" id="fromDateMBTopics" name="fromDate" style="font-size: small" [(ngModel)]="mbTopicsSearchParams.dateFrom"/>
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="untilDateDTPickeer">MB Date To</label>
+                                    <div class='input-group date col-md-2' id='untilDateCMTopicsDTPickeer' style="width: 100%">
+                                        <input type='text' class="form-control" id="toDateMBTopics" name="toDate"style="font-size: small" [(ngModel)]="mbTopicsSearchParams.dateTo"/>
+                                        <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="icSearchNumber">MB №</label>
+                                    <div class="form-group">
+                                        <input type="text" name="icSearchNumber" id="cmSearchNumber" class="form-control"
+                                               placeholder="MB № ..." [(ngModel)]="mbTopicsSearchParams.icNumber"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!--                        <div class="row">-->
+                        <!--                            <div class="col-md-12">-->
+                        <!--                                <div class="col-md-4">-->
+                        <!--                                    <select class="form-control" id="type" name="type" [(ngModel)]="icTopicSearchParams.type">-->
+                        <!--                                        <option *ngIf="icMeetingTopicTypes?.length > 1" value="NONE">-&#45;&#45;</option>-->
+                        <!--                                        <option *ngFor = "let type of icMeetingTopicTypes" [value]="type.code">{{type.nameEn}}</option>-->
+                        <!--                                    </select>-->
+                        <!--                                </div>-->
+                        <!--                            </div>-->
+                        <!--                        </div>-->
+                        <div class="row">
+                            &nbsp;
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <button type="button" class="btn-xs btn-default pull-left" (click)="clearSearchForm()">
+                                    <!--<i class="glyphicon glyphicon-trash"></i>-->Reset
+                                </button>
+                                <button type="submit" class="btn btn-success pull-right">Search</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div>
+                    <label>Total found:  <span>{{mbTopicsSearchResult?.totalElements > 0 ? mbTopicsSearchResult?.totalElements : 0}}</span></label>
+                </div>
+                <div class="row withpadding" style="position: relative; min-height: 80px;">
+                    <div class="row pull-right">
+                        <ul class="pagination" *ngIf="mbTopicsSearchResult?.showPageFrom > 0">
+                            <li><a *ngIf="mbTopicsSearchResult?.showPageFrom > 1" (click)="searchMBMeetingTopics(icTopicSearchResult.showPageFrom - 1, 'EXEC')">&laquo;</a></li>
+                            <li *ngFor="let i of range(mbTopicsSearchResult.showPageFrom, mbTopicsSearchResult.showPageTo)" [class.active]="i == mbTopicsSearchResult.currentPage">
+                                <a (click)="searchICMeetingTopics(i)">{{i}}</a>
+                            </li>
+                            <li><a *ngIf="mbTopicsSearchResult.showPageTo < mbTopicsSearchResult.totalPages" (click)="searchMBMeetingTopics(mbTopicsSearchResult.showPageTo + 1, 'EXEC')">&raquo;</a></li>
+                        </ul>
+                    </div>
+                    <table [ngBusy]="busy"  class = "table table-hover">
+                        <thead>
+                        <tr>
+                            <th width="10%">MB NUMBER</th>
+                            <th width="10%">MB DATE</th>
+                            <!--                            <th width="10%">TYPE</th>-->
+                            <th width="40%">NAME</th>
+                            <th width="10%">DEPARTMENT</th>
+                            <th width="10%">STATUS</th>
+                            <th width="10%">CREATED</th>
+                            <th width="10%">UPDATED</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr *ngFor="let topic of mbTopics"  style="cursor: pointer" (click)="navigate(topic.id)">
+                            <td width="10%" >{{topic?.icMeeting?.number}}</td>
+                            <td width="10%">{{topic?.icMeeting?.date}}</td>
+                            <!--                            <td width="10%">{{topic?.type}}</td>-->
+                            <td width="40%">{{topic.name}}</td>
+                            <td width="10%">{{topic.department.shortNameRu}}</td>
+                            <td width="10%">
+                                <label [ngClass]="getTopicClassByStatus(topic)">{{topic.status}}
+                                    <span *ngIf="topic?.closed" class="glyphicon glyphicon-lock"></span>
+                                </label>
+                            </td>
+                            <td width="10%">{{topic?.creationDate}}</td>
+                            <td width="10%">{{topic?.updateDate}}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <div class="row pull-right">
+                        <ul class="pagination" *ngIf="mbTopicsSearchResult?.showPageFrom > 0">
+                            <li><a *ngIf="mbTopicsSearchResult?.showPageFrom > 1" (click)="searchMBMeetingTopics(mbTopicsSearchResult.showPageFrom - 1, 'EXEC')">&laquo;</a></li>
+                            <li *ngFor="let i of range(mbTopicsSearchResult.showPageFrom, mbTopicsSearchResult.showPageTo)" [class.active]="i == mbTopicsSearchResult.currentPage">
+                                <a (click)="searchMBMeetingTopics(i, 'EXEC')">{{i}}</a>
+                            </li>
+                            <li><a *ngIf="mbTopicsSearchResult.showPageTo < mbTopicsSearchResult.totalPages" (click)="searchMBMeetingTopics(mbTopicsSearchResult.showPageTo + 1, 'EXEC')">&raquo;</a></li>
+                        </ul>
+                    </div>
+                </div>
             </div>
         </div>
 

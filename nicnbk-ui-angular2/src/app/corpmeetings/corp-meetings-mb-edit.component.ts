@@ -21,15 +21,15 @@ import {BaseDictionary} from "../common/model/base-dictionary";
 
 //import { TagInputModule } from 'ng2-tag-input';
 
-declare var $:any
+declare var $:any;
 
 @Component({
-    selector: 'corp-meeting-ic-edit',
-    templateUrl: 'view/corp-meeting-ic-edit.component.html',
+    selector: 'corp-meeting-mb-edit',
+    templateUrl: 'view/corp-meeting-mb-edit.component.html',
     styleUrls: [],
     providers: [],
 })
-export class CorpMeetingICEditComponent extends CommonFormViewComponent implements OnInit {
+export class CorpMeetingMBEditComponent extends CommonFormViewComponent implements OnInit {
 
     busy: Subscription;
     public sub: any;
@@ -43,20 +43,8 @@ export class CorpMeetingICEditComponent extends CommonFormViewComponent implemen
     public attendeesList = [];
     ceoSubList = [];
 
-    public attendeesListMB = [];
-    ceoSublistMB = [];
-
-    public finalAttendeesList = [];
-    finalCeoSublist = [];
-
-    attendeesListPlaceholder = [];
-    ceoSublistPlaceholder = [];
-
     @ViewChild('inviteesSelect')
     private inviteesSelect;
-
-    @ViewChild('corpMeetingTypeSelect')
-    private corpMeetingTypeSelect;
 
     public inviteesList = [];
 
@@ -76,9 +64,7 @@ export class CorpMeetingICEditComponent extends CommonFormViewComponent implemen
         secondaryPlaceholder: "Enter a new tag",
         separatorKeys: [188, 191], // exclude coma from tag content
         maxItems: 20
-    };
-
-    public corpMeetingTypes = ['IC', 'EXEC'];
+    }
 
     uploadAgendaFile = [];
     uploadProtocolFile = [];
@@ -97,19 +83,17 @@ export class CorpMeetingICEditComponent extends CommonFormViewComponent implemen
         super(router);
 
         this.icMeeting = new ICMeeting();
-        this.icMeeting.corpMeetingType = 'IC';
 
         Observable.forkJoin(
             // Load lookups
             this.lookupService.getICMeetingAbsenceTypes(),
-            this.employeeService.findICMembers(),
+            this.employeeService.findMBMembers(),
             this.employeeService.findAll(),
             this.lookupService.getICMeetingPlaceTypes(),
             this.lookupService.getICMeetingVoteTypes(),
-            this.employeeService.findMBMembers(),
-            )
+        )
             .subscribe(
-                ([data1, data2, data3, data4, data5, data6]) => {
+                ([data1, data2, data3, data4, data5]) => {
                     data1.forEach(element => {
                         this.absenceTypes.push(element);
                     });
@@ -121,7 +105,7 @@ export class CorpMeetingICEditComponent extends CommonFormViewComponent implemen
 
                         if(element.position != null && element.position.code != null && element.position.code === 'DEP_CEO'){
                             this.ceoSubList.push({id: element.id, text: element.firstName + " " + element.lastName,
-                                                            firstName: element.firstName, lastName: element.lastName});
+                                firstName: element.firstName, lastName: element.lastName});
                         }
                     });
                     data3.forEach(element => {
@@ -133,17 +117,6 @@ export class CorpMeetingICEditComponent extends CommonFormViewComponent implemen
                     data5.forEach(element => {
                         this.voteTypes.push(element);
                     });
-                    data6.forEach(element => {
-                        if(element.position != null && element.position.code != null && element.position.code === 'CEO'){
-                            element.isCeo = true;
-                        }
-                        this.attendeesListMB.push({"employee" : element, present: true});
-
-                        if(element.position != null && element.position.code != null && element.position.code === 'DEP_CEO'){
-                            this.ceoSublistMB.push({id: element.id, text: element.firstName + " " + element.lastName,
-                                firstName: element.firstName, lastName: element.lastName});
-                        }
-                    });
 
                     this.sub = this.route
                         .params
@@ -154,7 +127,7 @@ export class CorpMeetingICEditComponent extends CommonFormViewComponent implemen
                                 this.searchParams = JSON.parse(this.breadcrumbParams);
                             }
                             if(this.icMeeting.id > 0) {
-                               this.getICMeeting(this.icMeeting.id, null, null);
+                                this.getICMeeting(this.icMeeting.id, null, null);
                             }else{
                                 this.icMeeting.id = null;
                                 this.icMeeting.ceoSubEmployee = {};
@@ -224,7 +197,7 @@ export class CorpMeetingICEditComponent extends CommonFormViewComponent implemen
                     // preselect invitees
                     if(this.icMeeting.invitees != null){
                         for(var i = 0; i < this.icMeeting.invitees.length; i++){
-                           this.icMeeting.invitees[i].text = this.icMeeting.invitees[i].firstName + " " + this.icMeeting.invitees[i].lastName;
+                            this.icMeeting.invitees[i].text = this.icMeeting.invitees[i].firstName + " " + this.icMeeting.invitees[i].lastName;
                         }
                     }
                     /*this.inviteesSelect.active = [];
@@ -243,10 +216,10 @@ export class CorpMeetingICEditComponent extends CommonFormViewComponent implemen
                     if(this.icMeeting.topics != null){
                         for(var i = 0; i < this.icMeeting.topics.length; i++){
                             for(var j = 0;  this.icMeeting.topics[i].votes != null && j < this.icMeeting.topics[i].votes.length; j++){
-                                 if(this.icMeeting.topics[i].votes[j].employee.username === localStorage.getItem("authenticatedUser")){
+                                if(this.icMeeting.topics[i].votes[j].employee.username === localStorage.getItem("authenticatedUser")){
                                     this.icMeeting.topics[i].authenticatedUserVote = this.icMeeting.topics[i].votes[j].vote;
                                     this.icMeeting.topics[i].authenticatedUserVoteComment = this.icMeeting.topics[i].votes[j].comment;
-                                 }
+                                }
                             }
                         }
                     }
@@ -342,7 +315,7 @@ export class CorpMeetingICEditComponent extends CommonFormViewComponent implemen
             console.log(this.icMeeting);
             this.errorMessage = "Number required";
             this.successMessage = null;
-             this.postAction(this.successMessage, this.errorMessage);
+            this.postAction(this.successMessage, this.errorMessage);
             return;
         }
 
@@ -376,9 +349,9 @@ export class CorpMeetingICEditComponent extends CommonFormViewComponent implemen
         }
         //console.log(this.icMeeting);
         this.busy = this.corpMeetingService.saveICMeeting(this.icMeeting,
-                                      (this.uploadAgendaFile != null && this.uploadAgendaFile.length > 0 ? this.uploadAgendaFile[0]: null),
-                                      (this.uploadProtocolFile != null && this.uploadProtocolFile.length > 0 ? this.uploadProtocolFile[0]: null),
-                                      (this.uploadBulletinFile != null && this.uploadBulletinFile.length > 0 ? this.uploadBulletinFile[0]: null))
+            (this.uploadAgendaFile != null && this.uploadAgendaFile.length > 0 ? this.uploadAgendaFile[0]: null),
+            (this.uploadProtocolFile != null && this.uploadProtocolFile.length > 0 ? this.uploadProtocolFile[0]: null),
+            (this.uploadBulletinFile != null && this.uploadBulletinFile.length > 0 ? this.uploadBulletinFile[0]: null))
             .subscribe(
                 (response: SaveResponse)  => {
                     this.uploadAgendaFile = [];
@@ -423,15 +396,15 @@ export class CorpMeetingICEditComponent extends CommonFormViewComponent implemen
         if(!this.canViewICTopic(topic)){
             return;
         }
-        let params = JSON.stringify({"fromICMeeting": true, "backPath": "/corpMeetings/ic/edit/" + this.icMeeting.id});
+        let params = JSON.stringify({"fromICMeeting": true, "backPath": "/corpMeetings/mb/edit/" + this.icMeeting.id});
         this.router.navigate(['/corpMeetings/edit/', topic.id, { params }]);
     }
 
     canViewICTopic(topic){
-        if(this.moduleAccessChecker.checkAccessICMeetingTopicsViewFull()){
+        if(this.moduleAccessChecker.checkAccessMBMeetingTopicsView()){
             return true;
         }
-        if(this.moduleAccessChecker.checkAccessICMeetingTopicsView()){
+        if(this.moduleAccessChecker.checkAccessMBMeetingTopicsView()){
             // check same dept
             var userPosition = JSON.parse(localStorage.getItem("authenticatedUserPosition"));
             var sameDept = userPosition != null && topic.department != null &&
@@ -520,13 +493,13 @@ export class CorpMeetingICEditComponent extends CommonFormViewComponent implemen
     }
 
     onFileChangeBulletin(event){
-            var target = event.target || event.srcElement;
-            var files = target.files;
-            this.uploadBulletinFile.length = 0;
-            for (var i = 0; i < files.length; i++) {
-                this.uploadBulletinFile.push(files[i]);
-            }
+        var target = event.target || event.srcElement;
+        var files = target.files;
+        this.uploadBulletinFile.length = 0;
+        for (var i = 0; i < files.length; i++) {
+            this.uploadBulletinFile.push(files[i]);
         }
+    }
 
     deleteUnsavedAgenda(aFile){
         for(var i = this.uploadAgendaFile.length - 1; i >= 0; i--) {
@@ -651,19 +624,19 @@ export class CorpMeetingICEditComponent extends CommonFormViewComponent implemen
         var canVote = false;
         if(this.icMeeting.attendees != null && this.icMeeting.attendees.length > 0){
             for(var i = 0; i < this.icMeeting.attendees.length; i++){
-                 if(this.icMeeting.attendees[i].employee.username === localStorage.getItem("authenticatedUser") &&
-                        this.icMeeting.attendees[i].present){
+                if(this.icMeeting.attendees[i].employee.username === localStorage.getItem("authenticatedUser") &&
+                    this.icMeeting.attendees[i].present){
                     canVote = true;
                     break;
-                 }
+                }
             }
         }
         if(canVote){
             if(this.icMeeting.topics != null && this.icMeeting.topics.length > 0){
                 for(var i = 0; i < this.icMeeting.topics.length; i++){
-                     if(this.icMeeting.topics[i].status != 'FINALIZED'){
+                    if(this.icMeeting.topics[i].status != 'FINALIZED'){
                         return false;
-                     }
+                    }
                 }
             }
             return true;
@@ -684,23 +657,23 @@ export class CorpMeetingICEditComponent extends CommonFormViewComponent implemen
         console.log(this.icMeeting.topics);
         for(let i = 0; i < this.icMeeting.topics.length; i++){
             votes.push({"icMeetingTopicId": this.icMeeting.topics[i].id, "vote": this.icMeeting.topics[i].authenticatedUserVote,
-            "comment": this.icMeeting.topics[i].authenticatedUserVoteComment}
+                "comment": this.icMeeting.topics[i].authenticatedUserVoteComment}
             );
         }
 
         this.busy = this.corpMeetingService.voteICMeetingTopics({"icMeetingId": this.icMeeting.id, "votes": votes})
-                .subscribe(
-                    response => {
-                        //this.postAction("IC Meeting opened for finalize.", null);
-                        //this.getICMeeting(this.icMeeting.id, "IC Meeting opened for finalize.", null);
-                        this.voteSuccessMessage = "Votes successfully saved";
-                        this.voteErrorMessage = null;
-                    },
-                    (error: ErrorResponse) => {
-                        this.voteSuccessMessage = null;
-                        this.voteErrorMessage = "Failed to save votes";
-                    }
-                );
+            .subscribe(
+                response => {
+                    //this.postAction("IC Meeting opened for finalize.", null);
+                    //this.getICMeeting(this.icMeeting.id, "IC Meeting opened for finalize.", null);
+                    this.voteSuccessMessage = "Votes successfully saved";
+                    this.voteErrorMessage = null;
+                },
+                (error: ErrorResponse) => {
+                    this.voteSuccessMessage = null;
+                    this.voteErrorMessage = "Failed to save votes";
+                }
+            );
     }
 
     moveTopicUp(i){
@@ -778,30 +751,5 @@ export class CorpMeetingICEditComponent extends CommonFormViewComponent implemen
                     }
                 );
         }
-    }
-
-    onTypeChange() {
-        if (this.icMeeting.corpMeetingType === 'EXEC') {
-            this.attendeesListPlaceholder = this.attendeesList;
-            this.attendeesList = this.attendeesListMB;
-            this.attendeesListMB = this.attendeesListPlaceholder;
-        } else if (this.icMeeting.corpMeetingType === 'IC') {
-            this.attendeesListPlaceholder = this.attendeesListMB;
-            this.attendeesListMB = this.attendeesList;
-            this.attendeesList = this.attendeesListPlaceholder;
-        }
-    }
-
-    changeType() {
-        if (this.icMeeting.corpMeetingType === 'IC') {
-            this.icMeeting.corpMeetingType = 'EXEC';
-        }
-        if (this.icMeeting.corpMeetingType === 'EXEC') {
-            this.icMeeting.corpMeetingType = 'IC';
-        }
-    }
-
-    isIC() {
-        return this.icMeeting.corpMeetingType === 'IC';
     }
 }

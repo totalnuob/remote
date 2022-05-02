@@ -15,6 +15,7 @@ import java.util.Set;
 public class ICMeetingTopic extends CreateUpdateBaseEntity{
 
     private ICMeeting icMeeting;
+    private CorpMeetingType corpMeetingType;
     private String name;
     //private String nameUpd;
     private String description;
@@ -56,6 +57,16 @@ public class ICMeetingTopic extends CreateUpdateBaseEntity{
 
     public void setIcMeeting(ICMeeting icMeeting) {
         this.icMeeting = icMeeting;
+    }
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "corp_meeting_type")
+    public CorpMeetingType getCorpMeetingType() {
+        return corpMeetingType;
+    }
+
+    public void setCorpMeetingType(CorpMeetingType type) {
+        this.corpMeetingType = type;
     }
 
     @Column(name="name", columnDefinition="TEXT")

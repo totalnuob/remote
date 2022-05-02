@@ -1,17 +1,14 @@
 package kz.nicnbk.repo.model.corpmeetings;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import kz.nicnbk.repo.model.base.CreateUpdateBaseEntity;
 import kz.nicnbk.repo.model.base.DataConstraints;
 import kz.nicnbk.repo.model.employee.Employee;
 import kz.nicnbk.repo.model.files.Files;
-import kz.nicnbk.repo.model.tag.Tag;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Created by magzumov.
@@ -22,6 +19,7 @@ import java.util.Set;
 public class ICMeeting extends CreateUpdateBaseEntity{
 
     private String number;
+    private CorpMeetingType corpMeetingType;
     @Basic
     @Temporal(TemporalType.DATE)
     @DateTimeFormat(pattern="dd-MM-yyyy")
@@ -54,6 +52,16 @@ public class ICMeeting extends CreateUpdateBaseEntity{
 
     public void setNumber(String number) {
         this.number = number;
+    }
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "corp_meeting_type_id")
+    public CorpMeetingType getCorpMeetingType() {
+        return corpMeetingType;
+    }
+
+    public void setCorpMeetingType(CorpMeetingType type) {
+        this.corpMeetingType = type;
     }
 
     @Column(name="date", nullable = false)

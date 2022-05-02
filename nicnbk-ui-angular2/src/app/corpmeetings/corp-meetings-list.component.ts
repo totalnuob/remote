@@ -30,7 +30,7 @@ import {DATA_APP_URL} from "../common/common.service.constants";
 import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/observable/forkJoin';
 
-declare var $:any
+declare var $:any;
 
 var moment = require("moment");
 
@@ -61,9 +61,17 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
     icTopics = [];
     icTopicSearchResult: ICMeetingTopicSearchResults;
 
+    mbTopicsSearchParams = new ICMeetingTopicSearchParams();
+    mbTopics = [];
+    mbTopicsSearchResult: ICMeetingTopicSearchResults;
+
     icMeetings = [];
     icMeetingsSearchParams = new ICMeetingSearchParams();
-    icMeetingsSearchResult: ICMeetingSearchResults
+    icMeetingsSearchResult: ICMeetingSearchResults;
+
+    corpMeetings = [];
+    corpMeetingsSearchParams = new ICMeetingSearchParams();
+    corpMeetingsSearchResult: ICMeetingSearchResults;
 
     assignmentsSearchParams = new ICAssignmentSearchParams();
     assignmentsSearchResult = new ICAssignmentSearchResults();
@@ -72,7 +80,11 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
     icMeeting = new ICMeeting();
     uploadProtocolFile: any;
 
+    corpMeeting = new ICMeeting();
+    uploadMBProtocolFile: any;
+
     icMeetingTopicTypes: BaseDictionary[];
+    corpMeetingTopicTypes: BaseDictionary[];
 
     constructor(
         private corpMeetingService: CorpMeetingService,
@@ -162,7 +174,26 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
                                 page = this.assignmentsSearchParams.page > 0 ? this.assignmentsSearchParams.page : 0;
 
                                 this.searchICAssignments(page)
-                            }else{
+                            }else if(this.activeTab === 'MB_LIST'){
+                                if (params['params'] != null) {
+                                    this.corpMeetingsSearchParams = JSON.parse(params['params']);
+                                }
+                                $('#fromDateMB').val(this.corpMeetingsSearchParams.dateFrom);
+                                $('#toDateMB').val(this.corpMeetingsSearchParams.dateTo);
+                                page = this.corpMeetingsSearchParams.page > 0 ? this.corpMeetingsSearchParams.page : 0;
+
+                                this.searchCorpMeetings(page, 'MB');
+                            }else if(this.activeTab === 'MB_TOPICS'){
+                                if (params['params'] != null) {
+                                    this.mbTopicsSearchParams = JSON.parse(params['params']);
+                                }
+                                $('#fromDateMBTopics').val(this.mbTopicsSearchParams.dateFrom);
+                                $('#toDateMBTopics').val(this.mbTopicsSearchParams.dateTo);
+                                page = this.mbTopicsSearchParams.page > 0 ? this.mbTopicsSearchParams.page : 0;
+
+                                this.searchCorpMeetings(page, 'MB');
+                            }
+                            else{
                                 this.searchICMeetingUpcomingEvents();
                             }
                         });
@@ -200,7 +231,37 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
             format: 'DD-MM-YYYY'
         });
 
+        $('#fromDateCMTopicsPicker').datetimepicker({
+            format: 'DD-MM-YYYY'
+        });
+
+        $('#untilDateCMTopicsPicker').datetimepicker({
+            format: 'DD-MM-YYYY'
+        });
+
+        $('#fromDateCMAssignmentsPicker').datetimepicker({
+            //defaultDate: new Date(),
+            format: 'DD-MM-YYYY'
+        });
+        $('#untilDateCMAssignmentsPicker').datetimepicker({
+            //defaultDate: new Date(),
+            format: 'DD-MM-YYYY'
+        });
+
+        $('#fromDateDTPickeerCM').datetimepicker({
+            format: 'DD-MM-YYYY'
+        });
+
+        $('#untilDateDTPickeerCM').datetimepicker({
+            format: 'DD-MM-YYYY'
+        });
+
         $('#ICDateDTPickeer').datetimepicker({
+            //defaultDate: new Date(),
+            format: 'DD-MM-YYYY'
+        });
+
+        $('#CMDateDTPickeer').datetimepicker({
             //defaultDate: new Date(),
             format: 'DD-MM-YYYY'
         });
@@ -402,6 +463,71 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
             );
     }
 
+    searchMBMeetingTopics(page, type){
+        this.successMessage = null;
+        this.errorMessage = null;
+
+        if (type === 'EXEC') {
+            this.activeTab = "MB_TOPICS";
+
+            this.mbTopicsSearchParams.pageSize = 20;
+            this.mbTopicsSearchParams.page = page;
+
+            if (this.mbTopicsSearchParams.corpMeetingType === 'NONE'){
+                this.mbTopicsSearchParams.corpMeetingType = null;
+            }
+
+            this.mbTopicsSearchParams.dateFrom = $('#fromDateMBTopics').val();
+            this.mbTopicsSearchParams.dateTo = $('#toDateMBTopics').val();
+            this.mbTopicsSearchParams.corpMeetingType = type;
+
+            this.busy = this.corpMeetingService.searchICMeetingTopics(this.mbTopicsSearchParams)
+                .subscribe(
+                    (searchResult: ICMeetingTopicSearchResults) => {
+                        this.mbTopics = searchResult.icMeetingTopics;
+                        this.mbTopicsSearchResult = searchResult;
+                        console.log(this.mbTopics);
+                    },
+                    (error : ErrorResponse) => {
+                        this.errorMessage = "Error searching EXEC meeting topic";
+                        if(error && !error.isEmpty()){
+                            this.processErrorMessage(error);
+                        }
+                        this.postAction(null,  this.errorMessage);
+                    }
+                );
+        } else {
+            this.activeTab = "IC_TOPICS";
+
+            this.mbTopicsSearchParams.pageSize = 20;
+            this.mbTopicsSearchParams.page = page;
+
+            if (this.icTopicSearchParams.corpMeetingType === 'NONE'){
+                this.icTopicSearchParams.corpMeetingType = null;
+            }
+
+            this.icTopicSearchParams.dateFrom = $('#fromDateMBTopics').val();
+            this.icTopicSearchParams.dateTo = $('#toDateMBTopics').val();
+            this.icTopicSearchParams.corpMeetingType = type;
+
+            this.busy = this.corpMeetingService.searchICMeetingTopics(this.icTopicSearchParams)
+                .subscribe(
+                    (searchResult: ICMeetingTopicSearchResults) => {
+                        this.icTopics = searchResult.icMeetingTopics;
+                        this.icTopicSearchResult = searchResult;
+                        console.log(this.icTopics);
+                    },
+                    (error : ErrorResponse) => {
+                        this.errorMessage = "Error searching IC meeting topic";
+                        if(error && !error.isEmpty()){
+                            this.processErrorMessage(error);
+                        }
+                        this.postAction(null,  this.errorMessage);
+                    }
+                );
+        }
+    }
+
     navigate(topicId){
         this.icTopicSearchParams.path = '/corpMeetings';
         let params = JSON.stringify(this.icTopicSearchParams);
@@ -410,6 +536,10 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
 
     canViewICAssignments(){
         return this.canViewICTopics();
+    }
+
+    canViewMBAssignments(){
+        return this.canViewMBTopics();
     }
 
     navigateAssignment(assignmentId){
@@ -437,6 +567,15 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
         $('#toDateIC').val(null);
     }
 
+    clearSearchFormCM(){
+        this.corpMeetingsSearchParams.dateFrom = null;
+        this.corpMeetingsSearchParams.dateTo = null;
+        this.corpMeetingsSearchParams.number = null;
+
+        $('#fromDateCM').val(null);
+        $('#toDateCM').val(null);
+    }
+
     searchIC(page){
         this.activeTab = "IC_LIST";
 
@@ -462,6 +601,52 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
                 },
                 error => this.errorMessage = "Failed to search IC meetings."
             );
+    }
+
+    searchCorpMeetings(page, type){
+        this.successMessage = null;
+        this.errorMessage = null;
+
+        this.corpMeetingsSearchParams.pageSize = 20;
+        this.corpMeetingsSearchParams.page = 0;
+
+        if(page) {
+            this.corpMeetingsSearchParams.page = page;
+        }
+
+        if (type === "IC") {
+            this.activeTab = "IC_LIST";
+
+            this.icMeetingsSearchParams.dateFrom = $('#fromDateIC').val();
+            this.icMeetingsSearchParams.dateTo = $('#toDateIC').val();
+
+            this.icMeetingsSearchParams.type = type;
+
+            this.busy = this.corpMeetingService.searchICMeetings(this.icMeetingsSearchParams)
+                .subscribe(
+                    (searchResult:ICMeetingSearchResults) => {
+                        this.icMeetings = searchResult.icMeetings;
+                        this.icMeetingsSearchResult = searchResult;
+                        //console.log(this.icMeetingsSearchResult);
+                    },
+                    error => this.errorMessage = "Failed to search IC meetings."
+                );
+        } else {
+            this.activeTab = "MB_LIST";
+            this.corpMeetingsSearchParams.dateFrom = $('#fromDateCM').val();
+            this.corpMeetingsSearchParams.dateTo = $('#toDateCM').val();
+
+            this.corpMeetingsSearchParams.type = type;
+
+            this.busy = this.corpMeetingService.searchICMeetings(this.corpMeetingsSearchParams)
+                .subscribe(
+                    (searchResult:ICMeetingSearchResults) => {
+                        this.corpMeetings = searchResult.icMeetings;
+                        this.corpMeetingsSearchResult = searchResult;
+                    },
+                    error => this.errorMessage = "Failed to search corp meetings."
+                );
+        }
     }
 
     closeICSaveModal(){
@@ -614,12 +799,24 @@ export class CorpMeetingsListComponent extends CommonFormViewComponent implement
         return (this.moduleAccessChecker.checkAccessAdmin() || this.moduleAccessChecker.checkAccessCorpMeetingsView());
     }
 
+    canCreateNewTopicMB(){
+        return (this.moduleAccessChecker.checkAccessAdmin() || this.moduleAccessChecker.checkAccessMBMeetingsView());
+    }
+
     canViewIC(){
         return this.moduleAccessChecker.checkAccessICMeetingsView();
     }
 
     canViewICTopics(){
         return this.moduleAccessChecker.checkAccessICMeetingTopicsView();
+    }
+
+    canViewMB(){
+        return this.moduleAccessChecker.checkAccessMBMeetingsView();
+    }
+
+    canViewMBTopics(){
+        return this.moduleAccessChecker.checkAccessMBMeetingTopicsView();
     }
 
     getTopicClassByStatus(topic){

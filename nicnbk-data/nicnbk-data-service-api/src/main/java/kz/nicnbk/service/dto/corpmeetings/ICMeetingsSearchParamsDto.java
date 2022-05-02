@@ -16,6 +16,8 @@ public class ICMeetingsSearchParamsDto implements BaseDto {
 
     private String number;
 
+    private String type;
+
     @DateTimeFormat(pattern="dd-MM-yyyy")
     private Date dateFrom;
 
@@ -39,6 +41,18 @@ public class ICMeetingsSearchParamsDto implements BaseDto {
 
     public void setNumber(String number) {
         this.number = number;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public String getTypeNonEmpty() {
+        return StringUtils.isNotEmpty(this.type) ? this.type : null;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public int getPage() {
@@ -102,6 +116,7 @@ public class ICMeetingsSearchParamsDto implements BaseDto {
         params.append(dateFrom != null ? "dateFrom=" + simpleDateFormat.format(dateFrom) + "&"  : "");
         params.append(dateTo != null ? "dateTo=" + simpleDateFormat.format(dateTo) + "&"  : "");
         params.append(StringUtils.isNotEmpty(number) ? "number=" + number + "&"  : "");
+        params.append(StringUtils.isNotEmpty(type) ? "type=" + type + "&" : "");
         return params.toString();
     }
 

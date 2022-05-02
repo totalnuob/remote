@@ -3,7 +3,6 @@ package kz.nicnbk.service.dto.corpmeetings;
 import kz.nicnbk.common.service.model.CreateUpdateBaseEntityDto;
 import kz.nicnbk.common.service.util.DateUtils;
 import kz.nicnbk.repo.model.corpmeetings.ICMeeting;
-import kz.nicnbk.repo.model.employee.Employee;
 import kz.nicnbk.service.api.corpmeetings.CorpMeetingService;
 import kz.nicnbk.service.dto.employee.EmployeeDto;
 import kz.nicnbk.service.dto.files.FilesDto;
@@ -27,6 +26,7 @@ public class ICMeetingDto extends CreateUpdateBaseEntityDto<ICMeeting> implement
     public static final String DELETED = "DELETED";
 
     private String number;
+    private String corpMeetingType;
     @Temporal(TemporalType.DATE)
     @DateTimeFormat(pattern="dd-MM-yyyy")
     private Date date;
@@ -53,6 +53,14 @@ public class ICMeetingDto extends CreateUpdateBaseEntityDto<ICMeeting> implement
 
     public void setNumber(String number) {
         this.number = number;
+    }
+
+    public String getCorpMeetingType() {
+        return corpMeetingType;
+    }
+
+    public void setCorpMeetingType(String corpMeetingType) {
+        this.corpMeetingType = corpMeetingType;
     }
 
     public Date getDate() {

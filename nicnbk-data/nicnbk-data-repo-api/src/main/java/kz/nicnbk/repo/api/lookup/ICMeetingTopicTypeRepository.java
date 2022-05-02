@@ -6,7 +6,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 /**
  * Created by zhambyl on 27-Mar-17.
  */
-public interface ICMeetingTypeRepository extends PagingAndSortingRepository<ICMeetingTopicType, Long> {
+public interface ICMeetingTopicTypeRepository extends PagingAndSortingRepository<ICMeetingTopicType, Long> {
 
     ICMeetingTopicType findByCode(String code);
 

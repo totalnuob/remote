@@ -16,6 +16,7 @@ export class EmployeeService extends CommonService{
     private EMPLOYEE_ACTIVE_FIND_ALL_URL = this.EMPLOYEE_BASE_URL + "findActiveAll/";
 
     private EMPLOYEE_FIND_IC_MEMBERS_URL = this.EMPLOYEE_BASE_URL + "findICMembers/";
+    private EMPLOYEE_FIND_MB_MEMBERS_URL = this.EMPLOYEE_BASE_URL + "findMBMembers/";
     private EMPLOYEE_FIND_USERS_BY_ROLE_URL = this.EMPLOYEE_BASE_URL + "findUsersWithRole/";
     private EMPLOYEE_FIND_USERS_BY_DEPARTMENT_URL = this.EMPLOYEE_BASE_URL + "findByDepartmentAndActive/";
     private EMPLOYEE_FIND_EXECUTIVES_URL = this.EMPLOYEE_BASE_URL + "findExecutivesAndActive/";
@@ -51,6 +52,12 @@ export class EmployeeService extends CommonService{
 
     findICMembers(): Observable<any[]> {
         return this.http.get(this.EMPLOYEE_FIND_IC_MEMBERS_URL, this.getOptionsWithCredentials())
+            .map(this.extractDataList)
+            .catch(this.handleErrorResponse);
+    }
+
+    findMBMembers(): Observable<any[]> {
+        return this.http.get(this.EMPLOYEE_FIND_MB_MEMBERS_URL, this.getOptionsWithCredentials())
             .map(this.extractDataList)
             .catch(this.handleErrorResponse);
     }
