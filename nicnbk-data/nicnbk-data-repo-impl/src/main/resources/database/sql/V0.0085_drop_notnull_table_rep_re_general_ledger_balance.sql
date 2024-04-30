@@ -1,1 +1,0 @@
-ALTER TABLE rep_re_general_ledger_balance ALTER COLUMN tranche DROP NOT NULL;

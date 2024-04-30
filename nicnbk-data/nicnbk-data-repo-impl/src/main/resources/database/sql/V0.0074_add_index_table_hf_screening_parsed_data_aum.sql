@@ -1,1 +1,0 @@
-CREATE INDEX index_1 ON hf_screening_parsed_data_aum(screening_id,fund_id, date);

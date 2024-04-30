@@ -1,1 +1,0 @@
-INSERT INTO public.rep_re_tranche_type(id, code, name_en, name_kz, name_ru) VALUES (1, 'TERRA', 'Terra', null, '');

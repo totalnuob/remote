@@ -1,1 +1,0 @@
-ALTER TABLE rep_nic_chart_of_accounts ALTER COLUMN code TYPE varchar(12);

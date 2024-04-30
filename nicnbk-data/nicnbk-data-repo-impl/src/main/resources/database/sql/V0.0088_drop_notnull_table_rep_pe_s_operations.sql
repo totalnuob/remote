@@ -1,1 +1,0 @@
-ALTER TABLE rep_pe_s_operations ALTER COLUMN tranche DROP NOT NULL;

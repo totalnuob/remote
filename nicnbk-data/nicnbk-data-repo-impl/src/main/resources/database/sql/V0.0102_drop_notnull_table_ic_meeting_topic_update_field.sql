@@ -1,1 +1,0 @@
-ALTER TABLE ic_mmeting_topic_files ALTER COLUMN update DROP NOT NULL;

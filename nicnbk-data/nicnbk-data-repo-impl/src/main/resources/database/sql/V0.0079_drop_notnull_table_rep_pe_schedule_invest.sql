@@ -1,1 +1,0 @@
-ALTER TABLE rep_pe_schedule_invest ALTER COLUMN tranche DROP NOT NULL;

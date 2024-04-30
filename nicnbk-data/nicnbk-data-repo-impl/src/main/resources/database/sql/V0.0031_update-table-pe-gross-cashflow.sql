@@ -1,1 +1,0 @@
-UPDATE pe_gross_cashflow SET auto_calculation = false where auto_calculation IS NULL;
